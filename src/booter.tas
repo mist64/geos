@@ -8,6 +8,7 @@
 
 ;17.8 - ACME port
 ;21.8.2000 - fixed directory position bug (bootTr2)
+;22.9.2000 - macros, conditionale fixes
 
 		SEI
 		CLD
@@ -31,51 +32,61 @@
 		JSR MOUSE_JMP
 		+LoadB interleave, currentInterleave
 		LDY curDevice
-		LDA #1
+	!if (use1541) {
+		LDA #DRV_1541
+	} else {
+	!if (use1571) {
+		LDA #DRV_1571
+	} else {
+	!if (use1581) {
+		LDA #DRV_1581
+	}}}
 		STA _driveType,y
 		STY curDrive
+	!if (REUPresent) {
 		LDX #0
 		LDA $5f0f
 		CMP #$13
 		BNE Boot2
 		LDY #3
-Boot1		LDA $5f06,y	;5050
+Boot1		LDA $5f06,y
 		CMP bootTest,y
 		BNE Boot2
 		DEY
 		BPL Boot1
+	}
 		LDX #$80
-Boot2		TXA		;505d
+Boot2		TXA
 		STA firstBoot
 		BEQ Boot4
+	!if (REUPresent) {
 		LDY #2
-Boot3		LDA $5f18,y	;5065
+Boot3		LDA $5f18,y
 		STA year,y
 		DEY
 		BPL Boot3
 		LDA $5f12
 		STA sysRAMFlg
 		+bra Boot6
-Boot4		+LoadB CPU_DATA, IO_IN	;5077
+	}
+Boot4		+LoadB CPU_DATA, IO_IN
 		LDA cia1base+15
 		AND #%01111111
 		STA cia1base+15
 		+LoadB cia1base+11, currentHour | (AMPM << 7)
 		+LoadB cia1base+10, currentMinute
-		LDA #0
-		STA cia1base+9
-		STA cia1base+8
+		+LoadW cia1base+8, 0
 		+LoadB CPU_DATA, $30
 		+LoadB year, currentYear
 		+LoadB month, currentMonth
 		+LoadB day, currentDay
 		LDX #7
 		LDA #$bb
-Boot5		STA A8FE8,x	;50aa
+Boot5		STA A8FE8,x
 		DEX
 		BPL Boot5
 		+LoadB A8FF0, $bf
-Boot6		LDA #>_IRQHandler	;50b6
+Boot6		LDA #>_IRQHandler
 		STA $ffff
 		LDA #<_IRQHandler
 		STA $fffe
@@ -139,23 +150,17 @@ BootCont	JSR OpenDisk
 		JSR PutDirHead
 Boot7		+MoveB curDirHead+0, bootTr2
 		+MoveB curDirHead+1, bootSec2
-		LDA bootSec		;50d9
-		STA r1H
-		LDA bootTr
-		STA r1L
-		LDA bootOffs
-		+addv $20
-		STA bootOffs
+		+MoveB bootSec, r1H
+		+MoveB bootTr, r1L
+		+AddVB 32, bootOffs
 		BNE Boot10
-Boot8		LDA bootSec2		;50ee
-		STA r1H
-		LDA bootTr2
-		STA r1L
+Boot8		+MoveB bootSec2, r1H
+		+MoveB bootTr2, r1L
 		BNE Boot10
 		LDA NUMDRV
 		BNE Boot9
 		INC NUMDRV
-Boot9		LDA #>_EnterDeskTop	;5102
+Boot9		LDA #>_EnterDeskTop
 		STA EnterDeskTop+2
 		LDA #<_EnterDeskTop
 		STA EnterDeskTop+1
@@ -164,30 +169,26 @@ Boot9		LDA #>_EnterDeskTop	;5102
 	}
 		JMP _EnterDeskTop
 
-Boot10		LDA r1H 		;510f
+Boot10		LDA r1H
 		STA bootSec
 		LDA r1L
 		STA bootTr
 		+LoadW r4, diskBlkBuf
 		JSR GetBlock
 		+bnex Boot9
-		LDA diskBlkBuf+1
-		STA bootSec2
-		LDA diskBlkBuf
-		STA bootTr2
-Boot101 	LDY bootOffs		;5133
+		+MoveB diskBlkBuf+1, bootSec2
+		+MoveB diskBlkBuf, bootTr2
+Boot101 	LDY bootOffs
 		LDA diskBlkBuf+2,y
 		BEQ Boot11
 		LDA diskBlkBuf+$18,y
 		CMP #AUTO_EXEC
 		BEQ Boot12
-Boot11		LDA bootOffs		;5142
-		+addv $20
-		STA bootOffs
+Boot11		+AddVB 32, bootOffs
 		BNE Boot101
 		BEQ Boot8
-Boot12		LDX #0			;514f
-Boot13		LDA diskBlkBuf+2,y	;5151
+Boot12		LDX #0
+Boot13		LDA diskBlkBuf+2,y
 		STA dirEntryBuf,x
 		INY
 		INX
@@ -209,7 +210,7 @@ Boot13		LDA diskBlkBuf+2,y	;5151
 		PHA
 		JMP LdApplic
 
-_BootEnterDeskTop			;5182
+_BootEnterDeskTop
 		SEI
 		CLD
 		LDX #$ff
@@ -235,7 +236,7 @@ Plus60KTestEnd
 
 	!if (useRamExp) {
 LoadDeskTop	+LoadB a0L, NULL
-		+LoadB BVChainTab, 1	;1 - pierwszy wolny
+		+LoadB BVChainTab, 1	;1 - first free
 LoadDTLp	lda #>DeskTopName
 		sta r6H
 		lda #<DeskTopName
@@ -311,13 +312,13 @@ BVLast_1	lda BVChainTab,x
 		jmp RamExpPutStat
 	}
 
-bootTr		!byte 0 	;5190
-bootSec 	!byte 0 	;5191
-bootTr2 	!byte DIR_TRACK ;5192
-bootSec2	!byte 1 	;5194
+bootTr		!byte 0
+bootSec 	!byte 0
+bootTr2 	!byte DIR_TRACK
+bootSec2	!byte 1
 bootOffs	!byte $e0
 
-bootTest	!text "GEOS"	;5195
+bootTest	!text "GEOS"
 
 	!if (useRamExp) {
 LoadDT_DB

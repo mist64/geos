@@ -9,10 +9,10 @@
 
 		;*=DISK_BASE + DISK_DRV_LGH
 
-LoKernal	+AddVW 2, r6			;9d80
-LoKern0 	RTS				;9d8b
+LoKernal	+AddVW 2, r6
+LoKern0 	RTS
 
-_ReadFile					;9d8c
+_ReadFile
 		JSR EnterTurbo
 		+bnex LoKern0
 		JSR InitForIO
@@ -20,7 +20,7 @@ _ReadFile					;9d8c
 		+LoadW r4, diskBlkBuf
 		+LoadB r5L, 2
 		+MoveW r1, fileTrScTab+2
-RdFile1 	JSR ReadBlock			;9db1
+RdFile1 	JSR ReadBlock
 		+bnex RdFile6
 		LDY #$fe
 		LDA diskBlkBuf
@@ -28,27 +28,27 @@ RdFile1 	JSR ReadBlock			;9db1
 		LDY diskBlkBuf+1
 		DEY
 		BEQ RdFile5
-RdFile2 	LDA r2H 			;9dc4
+RdFile2 	LDA r2H
 		BNE RdFile3
 		CPY r2L
 		BCC RdFile3
 		BEQ RdFile3
 		LDX #BFR_OVERFLOW
 		BNE RdFile6
-RdFile3 	STY r1L 			;9dd2
+RdFile3 	STY r1L
 		+LoadB CPU_DATA, $30
-RdFile4 	LDA diskBlkBuf+1,y		;9dd8
+RdFile4 	LDA diskBlkBuf+1,y
 		DEY
 		STA (r7),y
 		BNE RdFile4
-		+LoadB CPU_DATA, $36
+		+LoadB CPU_DATA, KRNL_IO_IN
 		+AddB r1L, r7L
 		BCC *+4
 		INC r7H
 		+SubB r1L, r2L
 		BCS *+4
 		DEC r2H
-RdFile5 	INC r5L 			;9dfa
+RdFile5 	INC r5L
 		INC r5L
 		LDY r5L
 		+MoveB diskBlkBuf+1, r1H
@@ -57,15 +57,15 @@ RdFile5 	INC r5L 			;9dfa
 		STA fileTrScTab,y
 		BNE RdFile1
 		LDX #0
-RdFile6 	+PopW r0			;9e14
+RdFile6 	+PopW r0
 		JMP DoneWithIO
 
-FlaggedPutBlock LDA verifyFlag			;9e1d
+FlaggedPutBlock LDA verifyFlag
 		BEQ FlggdPutBl1
 		JMP VerWriteBlock
-FlggdPutBl1	JMP WriteBlock			;9e25
+FlggdPutBl1	JMP WriteBlock
 
-_WriteFile	JSR EnterTurbo			;9e28
+_WriteFile	JSR EnterTurbo
 		+bnex DoWrFile3
 		STA verifyFlag
 		JSR InitForIO
@@ -80,7 +80,7 @@ _WriteFile	JSR EnterTurbo			;9e28
 		JSR DoWriteFile
 WrFile1 	jmp DoneWithIO
 
-DoWriteFile	LDY #0				;9e64
+DoWriteFile	LDY #0
 		LDA (r6),y
 		BEQ DoWrFile2
 		STA r1L
@@ -96,28 +96,28 @@ DoWriteFile	LDY #0				;9e64
 		STA (r4),y
 		LDY #$fe
 		+LoadB CPU_DATA, $30
-DoWrFile1	DEY				;9e64
+DoWrFile1	DEY
 		LDA (r7),y
 		STA diskBlkBuf+2,y
 		TYA
 		BNE DoWrFile1
-		+LoadB CPU_DATA, $36
+		+LoadB CPU_DATA, KRNL_IO_IN
 		JSR FlaggedPutBlock
 		+bnex DoWrFile3
 		+AddVW $fe, r7
 		+bra DoWriteFile
-DoWrFile2	TAX				;9ea5
-DoWrFile3	RTS				;9ea6
+DoWrFile2	TAX
+DoWrFile3	RTS
 
 	!if (REUPresent) {
-_VerifyRAM	LDY #$93			;9eaa
+_VerifyRAM	LDY #$93
 		BNE _DoRAMOp
-_StashRAM	LDY #$90			;9eae
+_StashRAM	LDY #$90
 		BNE _DoRAMOp
-_SwapRAM	LDY #$92			;9eb2
+_SwapRAM	LDY #$92
 		BNE _DoRAMOp
-_FetchRAM	LDY #$91			;9eb6
-_DoRAMOp	LDX #DEV_NOT_FOUND		;9eb8
+_FetchRAM	LDY #$91
+_DoRAMOp	LDX #DEV_NOT_FOUND
 		LDA r3L
 		CMP ramExpSize
 		BCS DRAMOp2
@@ -131,12 +131,12 @@ _DoRAMOp	LDX #DEV_NOT_FOUND		;9eb8
 		STA EXP_BASE+9
 		STA EXP_BASE+10
 		STY EXP_BASE+1
-DRAMOp1 	LDA EXP_BASE			;9ef5
+DRAMOp1 	LDA EXP_BASE
 		AND #%01100000
 		BEQ DRAMOp1
 		STX CPU_DATA
 		LDX #0
-DRAMOp2 	RTS				;9f00
+DRAMOp2 	RTS
 	}
 
 	!if (useRamExp) {
@@ -330,20 +330,20 @@ RamExWr_1	lda (r0),y
 
 	!if (removeToBASIC) {
 	} else {
-LoKernalBuf					;9f01
+LoKernalBuf
 		!byte 0, 0, 0, 0, 0, 0, 0, 0
 		!byte 0, 0, 0, 0, 0, 0, 0, 0
 		!byte 0, 0, 0, 0, 0, 0, 0, 0
 		!byte 0, 0, 0, 0, 0, 0, 0, 0
 		!byte 0, 0, 0, 0, 0, 0, 0, 0
-LKIntTimer	!byte 0 			;9f29
-LKSaveBASIC	!byte 0, 0, 0			;9f2a
-LKSaveR7	!byte 0, 0			;9f2d
+LKIntTimer	!byte 0
+LKSaveBASIC	!byte 0, 0, 0
+LKSaveR7	!byte 0, 0
 
-LoKernal1	SEI				;9f2f
-		+LoadB CPU_DATA, $36
+LoKernal1	SEI
+		+LoadB CPU_DATA, KRNL_IO_IN
 		LDY #2
-LKernal1	LDA BASICspace,y		;9f36
+LKernal1	LDA BASICspace,y
 		STA LKSaveBASIC,y
 		DEY
 		BPL LKernal1
@@ -356,7 +356,7 @@ LKernal1	LDA BASICspace,y		;9f36
 		LDX curDevice
 		LDA #0
 		TAY
-LKernal2	STA zpage+2,y			;9f5b
+LKernal2	STA zpage+2,y
 		STA zpage+$0200, y
 		STA zpage+$0300, y
 		INY
@@ -381,7 +381,7 @@ LKernal2	STA zpage+2,y			;9f5b
 		+LoadB cia2base+14, $01
 		JMP (BASIC_START)
 
-execBASIC	PHA				;9fac
+execBASIC	PHA
 		TYA
 		PHA
 		LDA cia2base+13
@@ -390,25 +390,25 @@ execBASIC	PHA				;9fac
 		+LoadB cia2base+13, $7f
 		+LoadW nmivec, OS_ROM
 		LDY #2
-exeBAS1 	LDA LKSaveBASIC, y		;9fc8
+exeBAS1 	LDA LKSaveBASIC, y
 		STA BASICspace, y
 		DEY
 		BPL exeBAS1
 		+MoveW LKSaveR7, cardDataPntr+1
 		INY
-exeBAS2 	LDA LoKernalBuf,y		;9fdc
+exeBAS2 	LDA LoKernalBuf,y
 		BEQ exeBAS3
 		STA (curScrLine),y
 		LDA #14
 		STA curScrLineColor,y
 		INY
 		BNE exeBAS2
-exeBAS3 	TYA				;9feb
+exeBAS3 	TYA
 		BEQ exeBAS4
 		+LoadB curPos, $28
 		+LoadB kbdQuePos, 1
 		+LoadB kbdQue, CR
-exeBAS4 	PLA				;9ffb
+exeBAS4 	PLA
 		TAY
 		PLA
 		RTI
