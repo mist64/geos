@@ -21,3 +21,5 @@
 - little optimization in GetScanLine
 23.09.2000
 - fixes and cleanups to booter, removed ;xxxx from toplevel sources
+24.09.2000
+- booter cleanups
