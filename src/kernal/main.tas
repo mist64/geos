@@ -399,7 +399,7 @@ DFIIO1		STX cia1base+14 		;c468
 		LDY #30
 		JSR SetVICRegs
 		JSR Init_KRNLVec
-		+LoadB CPU_DATA, $30
+		+LoadB CPU_DATA, RAM_64K
 		JMP ResetMseRegion
 
 DeskTopStart	!word 0 	;these are for ensuring compatibility with

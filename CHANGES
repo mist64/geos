@@ -38,3 +38,5 @@
 - added option for much faster DialogBox routine
 23.08.2001
 - little optimization of SmallPutChar
+31.08.2001
+- more names instead of constants

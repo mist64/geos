@@ -190,7 +190,7 @@ _GetNxtDirEntry 				;91cf
 		LDX #0
 		LDY #0
 		+AddVW $20, r5
-		+CmpWI r5, $80ff
+		+CmpWI r5, diskBlkBuf+$ff
 		BCC GNDirEntry1
 		LDY #$ff
 		+MoveW diskBlkBuf, r1
@@ -282,7 +282,7 @@ GFDirBlk5	+PopW r2			;92c5
 _AddDirBlock					;92d0
 		+PushW r6
 		LDY #$48
-		LDX #4
+		LDX #FULL_DIRECTORY
 		LDA curDirHead,y
 		BEQ ADirBlk0
 		+MoveW r1, r3

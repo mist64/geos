@@ -36,7 +36,7 @@ RdFile2 	LDA r2H
 		LDX #BFR_OVERFLOW
 		BNE RdFile6
 RdFile3 	STY r1L
-		+LoadB CPU_DATA, $30
+		+LoadB CPU_DATA, RAM_64K
 RdFile4 	LDA diskBlkBuf+1,y
 		DEY
 		STA (r7),y
@@ -95,7 +95,7 @@ DoWriteFile	LDY #0
 		LDA (r6),y
 		STA (r4),y
 		LDY #$fe
-		+LoadB CPU_DATA, $30
+		+LoadB CPU_DATA, RAM_64K
 DoWrFile1	DEY
 		LDA (r7),y
 		STA diskBlkBuf+2,y
@@ -197,7 +197,7 @@ RamExpRdHlp	+PushB CPU_DATA
 
 RamExRdH_1	ldx #$80
 		stx PLUS60K_CR
-		ldx #$30
+		ldx #RAM_64K
 		stx CPU_DATA
 		lda (r1),y
 		ldx #IO_IN
@@ -229,7 +229,7 @@ RamExWrH_1	ldx #IO_IN
 		lda (r0),y
 		ldx #$80
 		stx PLUS60K_CR
-		ldx #$30
+		ldx #RAM_64K
 		stx CPU_DATA
 		sta (r1),y
 		iny

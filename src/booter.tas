@@ -14,7 +14,7 @@
 		CLD
 		LDX #$ff
 		TXS
-		+LoadB CPU_DATA, $30
+		+LoadB CPU_DATA, RAM_64K
 		LDA #<_NMIHandler
 		STA $fffa
 		STA $fffc
