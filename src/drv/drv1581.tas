@@ -301,7 +301,7 @@ __GetFreeDirBlk 				;92de
 		LDX r10L
 		INX
 		STX r6L
-		+LoadB r1L, $28
+		+LoadB r1L, DIR_1581_TRACK
 		+LoadB r1H, 3
 GFDirBlk0	JSR ReadBuff			;92f6
 GFDirBlk1	+bnex GFDirBlk5 		;92f9
@@ -367,14 +367,14 @@ SNF_1		LDA r3H				;9393
 		+addv 1
 		STA r6H
 		+MoveB r3L, r6L
-		CMP #$28
+		CMP #DIR_1581_TRACK
 		BEQ SNF_3
 SNF_2		LDA r6L				;93a2
-		CMP #$28
+		CMP #DIR_1581_TRACK
 		BEQ SNF_8
-SNF_3		CMP #$29			;93a8
+SNF_3		CMP #DIR_1581_TRACK+1		;93a8
 		BCC SNF_4
-		+subv $28
+		+subv DIR_1581_TRACK
 SNF_4		+subv $01			;93af
 		ASL
 		STA r7L
@@ -382,24 +382,24 @@ SNF_4		+subv $01			;93af
 		CLC
 		ADC r7L
 		TAX
-		+CmpBI r6L, $29
+		+CmpBI r6L, DIR_1581_TRACK+1
 		BCC SNF_5
 		LDA dir3Head+$10,x
 		+bra SNF_6
 SNF_5		LDA dir2Head+$10,x		;93c6
 SNF_6		BEQ SNF_8			;93c9
-		+LoadB r7L, $28
+		+LoadB r7L, DIR_1581_TRACK
 		TAY
 SNF_7		JSR SNxtFreeHelp		;93d0
 		BEQ SNF_11
 		INC r6H
 		DEY
 		BNE SNF_7
-SNF_8		+CmpBI r6L, $29			;93da
+SNF_8		+CmpBI r6L, DIR_1581_TRACK+1			;93da
 		BCS SNF_9
 		DEC r6L
 		BNE SNF_10
-		+LoadB r6L, $29
+		+LoadB r6L, DIR_1581_TRACK+1
 		BNE SNF_10
 SNF_9		INC r6L				;93ea
 SNF_10		+CmpBI r6L, $51			;93ec
@@ -424,7 +424,7 @@ _AllocateBlock	JSR FindBAMBit			;9414
 		LDX #BAD_BAM
 		RTS
 AllBlk_0	PHP				;941c
-		+CmpBI r6L, $29
+		+CmpBI r6L, DIR_1581_TRACK+1
 		BCC AllBlk_2
 		LDA r8H
 		EOR dir3Head+$10,x
@@ -459,9 +459,9 @@ __FindBAMBit					;945d
 		TAX
 		LDA FBBBitTab,x
 		STA r8H
-		+CmpBI r6L, $29
+		+CmpBI r6L, DIR_1581_TRACK+1
 		BCC FBB_1
-		+subv $28
+		+subv DIR_1581_TRACK
 FBB_1		+subv $1
 		ASL
 		STA r7H
@@ -475,7 +475,7 @@ FBB_1		+subv $1
 		SEC
 		ADC r7H
 		TAX
-		+CmpBI r6L, $29
+		+CmpBI r6L, DIR_1581_TRACK+1
 		BCC FBB_2
 		LDA dir3Head+$10,x
 		AND r8H
@@ -524,7 +524,7 @@ __SetGEOSDisk					;94de
 		LDA r4L
 		ORA r4H
 		BEQ SetGDisk2
-		+LoadB r3L, $28
+		+LoadB r3L, DIR_1581_TRACK
 		+LoadB r3H, $12
 		JSR SetNextFree
 		+bnex SetGDisk2
@@ -993,7 +993,7 @@ RdBlock_00	JSR Hst_RecvByte		;9911
 		CPY errCount
 		BEQ RdBlock1
 		BCS RdBlock0
-RdBlock1	+CmpBI r1L, $28			;9924
+RdBlock1	+CmpBI r1L, DIR_1581_TRACK			;9924
 		BNE RdBlock_2
 		LDA r1H
 		BNE RdBlock_2
@@ -1347,7 +1347,7 @@ DoClrCache3	LDA E9C63-1,x			;9be2
 		RTS
 
 DoCacheVerify	LDA r1L				;9beb
-		CMP #$28
+		CMP #DIR_1581_TRACK
 		BNE E9BF9
 		LDY #$93			;9bf1
 		JSR DoCacheDisk
@@ -1358,7 +1358,7 @@ E9BF9		LDX #0				;9bf9
 		RTS
 
 DoCacheRead	LDA r1L				;9bfe
-		CMP #$28
+		CMP #DIR_1581_TRACK
 		BNE GiveNoError
 		LDY #%10010001			;9bfe
 		JSR DoCacheDisk
@@ -1371,7 +1371,7 @@ GiveNoError	LDX #0				;9c11
 		RTS
 
 DoCacheWrite	LDA r1L				;9c14
-		CMP #$28
+		CMP #DIR_1581_TRACK
 		BNE E9C1E
 		LDY #%10010000
 		BNE DoCacheDisk
