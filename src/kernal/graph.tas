@@ -524,7 +524,7 @@ _GetScanLine					;ca7d
 		LSR
 		TAX
 		+bbrf 7, dispBufferOn, GSC2
-		+bbsf 6, dispBufferOn, GSC1
+		bvs GSC1
 		LDA LineTabL,X
 		ORA r6H
 		STA r5L
@@ -566,7 +566,6 @@ GSC3		+LoadB r5L, 0			;cadc
 		PLA
 		TAX
 		RTS
-
 
 
 _BitOtherClip					;e3a4

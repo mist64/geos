@@ -17,3 +17,5 @@
 - removed unneded NOP from Font_10
 01.09.2000
 - little optimization in BitmapUp
+22.09.2000
+- little optimization in GetScanLine
