@@ -6,8 +6,8 @@
 
 ;select the driver for the boot drive from the list:
 ;(only one value may be 'true')
-!set use1541		=	false
-!set use1571		=	true
+!set use1541		=	true
+!set use1571		=	false
 !set use1581		=	false
 
 
