@@ -15,3 +15,5 @@
 - fixed dir_track/sector bug in booter.tas, works with 1581, should work with any device now
 30.08.2000
 - removed unneded NOP from Font_10
+01.09.2000
+- little optimization in BitmapUp
