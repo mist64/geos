@@ -136,7 +136,9 @@ BootCont	JSR OpenDisk
 		BEQ Boot7
 		STA curDirHead+OFF_GS_DTYPE
 		JSR PutDirHead
-Boot7		LDA bootSec		;50d9
+Boot7		+MoveB curDirHead+0, bootTr2
+		+MoveB curDirHead+1, bootSec2
+		LDA bootSec		;50d9
 		STA r1H
 		LDA bootTr
 		STA r1L
