@@ -1,6 +1,6 @@
 
 ;GEOS system variables
-;by Maciej 'YTM/Alliance' Witkowiak
+;by Maciej 'YTM/Elysium' Witkowiak
 ;19-3-99
 
 ;addresses defined so-so
@@ -116,6 +116,7 @@ A885D		=	$885d
 A885E		=	$885e
 A885F		=	$885f
 A8860		=	$8860
+e88b7		=	$88b7	;4 bytes indexed by curDrive, 1571 disk type (SS/DS)
 A8FE8		=	$8fe8
 A8FF0		=	$8ff0
 

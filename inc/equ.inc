@@ -1,13 +1,13 @@
 
 ;GEOS System various equations
-;by Maciej 'YTM/Alliance' Witkowiak
+;by Maciej 'YTM/Elysium' Witkowiak
 ;19-20,30.3, 3,5,18,20.4, 4.6, 17-19.8
 
 
 ;select the driver for the boot drive from the list:
 ;(only one value may be 'true')
-!set use1541		=	true
-!set use1571		=	false
+!set use1541		=	false
+!set use1571		=	true
 !set use1581		=	false
 
 
