@@ -751,7 +751,8 @@ DBGFilesHelp4	STA r0L
 		PLA
 		TAX
 		LDA r1L
-		+add <fileTrScTab
+		CLC
+		ADC #<fileTrScTab
 		STA zpage,x
 		LDA #>fileTrScTab
 		ADC #0
