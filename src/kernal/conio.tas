@@ -373,7 +373,7 @@ PrmptOff1	LDA alphaFlag			;e898
 _InitTextPrompt 				;e8a3
 		TAY
 		+PushB CPU_DATA
-		+LoadB CPU_DATA, $35
+		+LoadB CPU_DATA, IO_IN
 		+MoveB mob0clr, mob1clr
 		LDA moby2
 		AND #%11111101

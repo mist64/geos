@@ -18,7 +18,7 @@ DSpr0		LDA (r4),Y			;cca8
 
 _PosSprite					;ccc0
 		+PushB CPU_DATA
-		+LoadB CPU_DATA, $35
+		+LoadB CPU_DATA, IO_IN
 		LDA r3L
 		ASL
 		TAY
@@ -53,7 +53,7 @@ _EnablSprite					;cd02
 		LDA BitMask2,X
 		TAX
 		+PushB CPU_DATA
-		+LoadB CPU_DATA, $35
+		+LoadB CPU_DATA, IO_IN
 		TXA
 		ORA mobenble
 		STA mobenble
@@ -66,8 +66,7 @@ _DisablSprite					;cd1a
 		EOR #$FF
 		PHA
 		LDX CPU_DATA
-		LDA #$35
-		STA CPU_DATA
+		+LoadB CPU_DATA, IO_IN
 		PLA
 		AND mobenble
 		STA mobenble

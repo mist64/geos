@@ -17,7 +17,7 @@ IRQHand1	TXA				;fab0
 		TYA
 		PHA
 		+PushB CPU_DATA
-		+LoadB CPU_DATA, $35
+		+LoadB CPU_DATA, IO_IN
 	!if (use2MHz) {
 		+LoadB clkreg, 0
 	}
@@ -74,7 +74,7 @@ IRQ2Handler	pha
 		txa
 		pha
 		ldx CPU_DATA
-		+LoadB CPU_DATA, $35
+		+LoadB CPU_DATA, IO_IN
 		lda rasreg
 		and #%11110000
 		beq IRQ2BordOK
@@ -289,7 +289,7 @@ KbdScanHlp_61	PLA				;fd50
 _DoUpdateTime					;fd52
 		SEI
 		LDX CPU_DATA
-		+LoadB CPU_DATA, $35
+		+LoadB CPU_DATA, IO_IN
 		LDA cia1base+15
 		AND #%01111111
 		STA cia1base+15
@@ -373,7 +373,7 @@ CheckMonth2	RTS				;fe16
 DoClockAlarm	LDA alarmWarnFlag		;fe37
 		BNE DoClkAlrm3
 		LDY CPU_DATA
-		+LoadB CPU_DATA, $35
+		+LoadB CPU_DATA, IO_IN
 		LDX #24
 DoClkAlrm1	LDA pingTab,x			;fe44
 		STA sidbase,x

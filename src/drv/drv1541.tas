@@ -471,7 +471,7 @@ __InitForIO					;9479
 		SEI
 		LDA CPU_DATA
 		STA tmpCPU_DATA
-		+LoadB CPU_DATA, $36
+		+LoadB CPU_DATA, KRNL_IO_IN
 		LDA grirqen
 		STA tmpgrirqen
 		LDA clkreg

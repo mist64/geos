@@ -55,7 +55,7 @@ Boot3		LDA $5f18,y	;5065
 		LDA $5f12
 		STA sysRAMFlg
 		+bra Boot6
-Boot4		+LoadB CPU_DATA, $35	;5077
+Boot4		+LoadB CPU_DATA, IO_IN	;5077
 		LDA cia1base+15
 		AND #%01111111
 		STA cia1base+15
@@ -82,7 +82,7 @@ Boot6		LDA #>_IRQHandler	;50b6
 		+LoadB rasreg, $fc
 	}
 	!if (useRamCart64 | useRamCart128) {
-		+LoadB CPU_DATA, $35
+		+LoadB CPU_DATA, IO_IN
 		+LoadW RAMC_BASE, 0
 		ldx RAMC_WINDOW
 		ldy RAMC_WINDOW+$80
@@ -109,7 +109,7 @@ BootRC_OK	+LoadB CPU_DATA, $30
 	}
 
 	!if (usePlus60K) {
-		+LoadB CPU_DATA, $35
+		+LoadB CPU_DATA, IO_IN
 		ldx #0
 BootP6K_1	lda Plus60KTest,x
 		sta $0400,x
@@ -289,7 +289,7 @@ BLoadDTop_1	clc
 		sty r2H
 		jsr RamExpWrite
 
-		+LoadB CPU_DATA, $35
+		+LoadB CPU_DATA, IO_IN
 		inc $d020
 		+LoadB CPU_DATA, $30
 		jmp BLoadDTop

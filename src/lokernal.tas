@@ -122,7 +122,7 @@ _DoRAMOp	LDX #DEV_NOT_FOUND		;9eb8
 		CMP ramExpSize
 		BCS DRAMOp2
 		LDX CPU_DATA
-		+LoadB CPU_DATA, $35
+		+LoadB CPU_DATA, IO_IN
 		+MoveW r0, EXP_BASE+2
 		+MoveW r1, EXP_BASE+4
 		+MoveB r3L, EXP_BASE+6
@@ -192,7 +192,7 @@ RamExpRdHlp	+PushB CPU_DATA
 		sta r1H
 		ldy #0
 		sty r1L
-		ldx #$35
+		ldx #IO_IN
 		stx CPU_DATA
 
 RamExRdH_1	ldx #$80
@@ -200,7 +200,7 @@ RamExRdH_1	ldx #$80
 		ldx #$30
 		stx CPU_DATA
 		lda (r1),y
-		ldx #$35
+		ldx #IO_IN
 		stx CPU_DATA
 		ldx #0
 		stx PLUS60K_CR
@@ -222,7 +222,7 @@ RamExpWrHlp	+PushB CPU_DATA
 		ldy #0
 		sty r1L
 
-RamExWrH_1	ldx #$35
+RamExWrH_1	ldx #IO_IN
 		stx CPU_DATA
 		ldx #0
 		stx PLUS60K_CR
@@ -238,7 +238,7 @@ RamExWrH_1	ldx #$35
 		inc r1H
 		dec r2H
 		bpl RamExWrH_1
-		+LoadB CPU_DATA, $35
+		+LoadB CPU_DATA, IO_IN
 		+LoadB PLUS60K_CR, 0
 		+PopB CPU_DATA
 		rts
@@ -248,7 +248,7 @@ RamExpWrHlpEnd
 
 	!if (useRamCart64) {
 RamExpRead	+PushB CPU_DATA
-		+LoadB CPU_DATA, $35
+		+LoadB CPU_DATA, IO_IN
 		+PushB r1L
 		+PushB r0H
 		ldx r2H
@@ -268,7 +268,7 @@ RamExRd_End	+PopB r0H
 		rts
 
 RamExpWrite	+PushB CPU_DATA
-		+LoadB CPU_DATA, $35
+		+LoadB CPU_DATA, IO_IN
  		+PushB r1L
 		+PushB r0H
 		ldx r2H
@@ -287,7 +287,7 @@ RamExWr_1	lda (r0),y
 
 	!if (useRamCart128) {
 RamExpRead	+PushB CPU_DATA
-		+LoadB CPU_DATA, $35
+		+LoadB CPU_DATA, IO_IN
  		+PushW r1
 		+PushB r0H
 		ldx r2H
@@ -309,7 +309,7 @@ RamExRd_End	+PopB r0H
 		rts
 
 RamExpWrite	+PushB CPU_DATA
-		+LoadB CPU_DATA, $35
+		+LoadB CPU_DATA, IO_IN
  		+PushW r1
 		+PushB r0H
 		ldx r2H

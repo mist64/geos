@@ -368,7 +368,7 @@ InitGEOEnv	LDA #>InitRamTab		;c40d ;UNK_1_1
 
 _DoFirstInitIO
 		+LoadB CPU_DDR, $2f		;c436
-		+LoadB CPU_DATA, $36
+		+LoadB CPU_DATA, KRNL_IO_IN
 		LDX #7
 		LDA #true
 DFIIO0		STA KbdDMltTab,X		;c442
@@ -422,7 +422,7 @@ _MNLP		JSR CallRoutine 		;c0f1
 		CLI
 
 _MainLoop2	LDX CPU_DATA			;c313
-		+LoadB CPU_DATA, $35
+		+LoadB CPU_DATA, IO_IN
 		LDA grcntrl1
 		AND #%01111111
 		STA grcntrl1
@@ -461,7 +461,7 @@ BootREUTab
 	!if (removeToBASIC) {
 _ToBASIC	sei
 		jsr PurgeTurbo
-		+LoadB CPU_DATA, $37
+		+LoadB CPU_DATA, KRNL_BAS_IO_IN
 		+LoadB $DE00, 0
 		jmp $fce2
 	} else {
@@ -668,7 +668,7 @@ _FirstInit					;c4e6
 		!word COLOR_MATRIX
 FItempColor	!byte (DKGREY << 4)+LTGREY
 		LDX CPU_DATA
-		+LoadB CPU_DATA, $35
+		+LoadB CPU_DATA, IO_IN
 		+LoadB mob0clr, BLUE
 		STA mob1clr
 		+LoadB extclr, BLACK

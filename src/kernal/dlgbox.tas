@@ -83,7 +83,7 @@ DlgBoxProcH					;f347
 		!byte >DBDoUSR_ROUT
 
 DlgBoxPrep	+PushB CPU_DATA 		;f35a
-		+LoadB CPU_DATA, $35
+		+LoadB CPU_DATA, IO_IN
 		+LoadW r4, dlgBoxRamBuf
 	JSR Dialog_3
 		+LoadB mobenble, 1
@@ -181,7 +181,7 @@ _RstrFrmDialogue				;f420
 		RTS
 
 Dialog_2	+PushB CPU_DATA 		;f438
-		+LoadB CPU_DATA, $35
+		+LoadB CPU_DATA, IO_IN
 		+LoadW r4, dlgBoxRamBuf
 	JSR Dialog_4
 		+PopB CPU_DATA

@@ -21,7 +21,7 @@ _UpdateMouse	+bbsf 7, mouseOn, UM_1
 		jmp UM_END
 
 UM_1		+PushB CPU_DATA
-		+LoadB CPU_DATA, $35
+		+LoadB CPU_DATA, IO_IN
 		+PushW cia1base+2
 		+PushB cia1base+0
 		+LoadW cia1base+2, 0
