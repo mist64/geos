@@ -134,7 +134,7 @@ ILin6		EOR #$FF
 		EOR (r5),Y
 		JMP HLin7
 
-ILin7		+PushW r3
+ImprintLine	+PushW r3
 		+PushW r4
 		+PushB dispBufferOn
 		ORA #ST_WR_FORE | ST_WR_BACK
@@ -294,7 +294,7 @@ _i_ImprintRectangle
 
 _ImprintRectangle
 		+MoveB r2L, r11L
-ImRec1		JSR ILin7
+ImRec1		JSR ImprintLine
 		LDA r11L
 		INC r11L
 		CMP r2H
