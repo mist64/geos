@@ -92,7 +92,7 @@ BSWFont 	!binary "bin/bswfont.bin" 	    ;~d210
 				    !binary "bin/input/koalapad.bin"
 				    } else {
 					!if (useLightPen) {
-					    !binary "bin/input/lightpen.bin"
+					    !source "src/input/lightpen.tas"
 					    } else {
 						!if (usePCAnalogJoy) {
 						    !binary "bin/input/pcanalog.bin"
