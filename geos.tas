@@ -39,7 +39,7 @@
 				    !binary "bin/drv/drv1571.bin"
 				    } else {
 					!if (use1581) {
-						!binary "bin/drv/drv1581.bin"
+						!source "src/drv/drv1581.tas"
 						}
 					}
 				}

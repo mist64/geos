@@ -8,3 +8,6 @@ code extensions:
 - upgrade DlgBox to use more than 16 files
 - allow to use +60K and RamCart simultaneousy (hell!)
 - allow to swap Kernal modules to/from expansion
+- disk cache (at least dir cache) (hell!)
+- source 1571 driver
+- try to rewrite 1571/81 to use Burst commands instead of turbodos
