@@ -60,7 +60,7 @@
 !source "src/kernal/memory.tas"	  ;
 !source "src/kernal/process.tas"  ;
 !source "src/kernal/sprites.tas"  ;
-!source "src/kernal/graph.tas"	  ;
+!source "src/kernal/dlgbox.tas"	  ;
 
 ;--------------------------------------------
 PatternTab	!binary "bin/patterns.bin"	    ;~d000
@@ -70,13 +70,13 @@ ID100		!binary "bin/unknown.bin"	    ;~d100
 BSWFont 	!binary "bin/bswfont.bin" 	    ;~d210
 ;--------------------------------------------
 
-!source "src/kernal/files.tas"	  ;
-!source "src/kernal/menu.tas"	  ;
 !source "src/kernal/icon.tas"	  ;
-!source "src/kernal/dlgbox.tas"	  ;
 !source "src/kernal/fonts.tas"	  ;
 !source "src/kernal/conio.tas"	  ;
 !source "src/kernal/mouseio.tas"  ;
+!source "src/kernal/graph.tas"	  ;
+!source "src/kernal/menu.tas"	  ;
+!source "src/kernal/files.tas"	  ;
 !source "src/kernal/system.tas"	  ;
 
 ;GEOS generic input driver (used in auto-execs, before DeskTop boots up)

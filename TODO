@@ -1,20 +1,10 @@
-BUG:
-- error in drawing routines, filled boxes/lines(?) - see deskTop
-  might be that some registers are not restored upon output, need
-  to revise and find last working version to compare
-
-overall:
-+ change sources names to 8.3
-- try to make under MS-DOS
-- remove REU reboot code from booter if there's no REU
 
 code purity:
 - throughoutly test it with various configurations
 - cleanup code using !zone's
-- remove ;xxxx from code
 - don't install REU cache code (drv1541.tas) if there's no REU
 
 code extensions:
 - upgrade DlgBox to use more than 16 files
-- allow to use +60K and RamCart simultaneousy
+- allow to use +60K and RamCart simultaneousy (hell!)
 - allow to swap Kernal modules to/from expansion

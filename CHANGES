@@ -31,3 +31,6 @@
 - renamed ILin7 to its real meaning == ImprintLine
 29.07.2001
 - added Amiga Mouse source driver
+30.07.2001
+- reordered modules in geos.tas to remove drawing bug when RC128+2MHz were both enabled
+  (note that this might introduce another hidden error, but this is unlikely)
