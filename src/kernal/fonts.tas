@@ -492,7 +492,7 @@ Font_9		LSR Z45 			;e201
 		ROR Z45+7
 		RTS
 
-Font_10 	NOP				;e212
+Font_10 					;e212
 		TAY
 		+PushB r1H
 		TYA
