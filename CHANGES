@@ -36,3 +36,5 @@
   (note that this might introduce another hidden error, but this is unlikely)
 18.08.2001
 - added option for much faster DialogBox routine
+23.08.2001
+- little optimization of SmallPutChar

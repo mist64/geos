@@ -29,6 +29,7 @@ PutChar1	PHA
 		BEQ PutChar2
 		BCS PutChar3
 PutChar2	PLA
+_SmallPutChar
 		+subv $20
 		JMP Font_10
 PutChar3	LDA r13L
@@ -41,10 +42,6 @@ PutChar4	PLA
 		LDX StringFaultVec+1
 		LDA StringFaultVec
 		JMP CallRoutine
-
-_SmallPutChar
-		+subv $20
-		JMP Font_10
 
 DoTAB		LDA #0
 		+add r11L
