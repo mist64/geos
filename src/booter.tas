@@ -65,8 +65,7 @@ Boot3		LDA $5f18,y
 		STA year,y
 		DEY
 		BPL Boot3
-		LDA $5f12
-		STA sysRAMFlg
+		+MoveB $5f12, sysRAMFlg
 		+bra Boot6
 	}
 Boot4		+LoadB CPU_DATA, IO_IN
@@ -169,10 +168,8 @@ Boot9		LDA #>_EnterDeskTop
 	}
 		JMP _EnterDeskTop
 
-Boot10		LDA r1H
-		STA bootSec
-		LDA r1L
-		STA bootTr
+Boot10		+MoveB r1H, bootSec
+		+MoveB r1L, bootTr
 		+LoadW r4, diskBlkBuf
 		JSR GetBlock
 		+bnex Boot9
