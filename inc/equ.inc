@@ -56,6 +56,10 @@
 !set SelectFlashDelay	= 10				; 10 in 1/50 s
 !set SerialNumber	= $1cd5 			; $1cd5
 
+;makes drawing dialog boxes much faster, might cause visual mess
+;takes more bytes
+!set speedupDlgBox	= true
+
 !set oldMenu_5		= false				; bug - when false no blinking in menu
 
 ;if both menu separator patterns are null, then kernal menu code

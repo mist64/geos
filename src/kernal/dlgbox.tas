@@ -95,11 +95,62 @@ DrawDlgBox	+LoadB dispBufferOn, ST_WR_FORE | ST_WRGS_FORE
 		LDY #0
 		LDA (DBoxDesc),y
 		AND #%00011111
+	!if (speedupDlgBox) {
+	    	BNE DrwDlgSpd0
+		JMP DrwDlgBx1
+DrwDlgSpd0	;1st: right,right+8,top+8,bottom
+		;2nd: left+8,right+8,bottom,bottom+8
+		JSR SetPattern
+		+PushW DBoxDesc
+		LDY #0
+		LDA (DBoxDesc),y
+		BPL DrwDlgSpd1
+		LDA #>DBDefinedPos-1
+		STA DBoxDescH
+		LDA #<DBDefinedPos-1
+		STA DBoxDesc
+DrwDlgSpd1	LDY #1
+		LDA (DBoxDesc),y
+		+addv 8
+		STA r2L
+		INY
+		LDA (DBoxDesc),y
+		STA r2H
+		INY
+		INY
+		INY
+		LDA (DBoxDesc),y
+		STA r3L
+		TAX
+		INY
+		LDA (DBoxDesc),y
+		STA r3H
+		TXA
+		+addv 8
+		STA r4L
+		LDA r3H
+		ADC #0
+		STA r4H
+		JSR Rectangle
+		+MoveB r2H, r2L
+		+addv 8
+		STA r2H
+		LDY #1+2
+		LDA (DBoxDesc),y
+		STA r3L
+		INY
+		LDA (DBoxDesc),y
+		STA r3H
+		+AddVW 8, r3
+		JSR Rectangle
+		+PopW DBoxDesc
+	} else {
 		BEQ DrwDlgBx1
 		JSR SetPattern
 		SEC
 		JSR CalcDialogCoords
 		JSR Rectangle
+	}
 DrwDlgBx1	LDA #0
 		JSR SetPattern
 		CLC
@@ -127,10 +178,14 @@ Dialog_12	JSR CalcDialogCoords
 		JMP RcvrMnu0
 
 CalcDialogCoords
+	!if (speedupDlgBox) {
+	    	+LoadB r1H, 0
+	} else {
 		LDA #0
 		BCC ClcDlgCoor1
 		LDA #8
 ClcDlgCoor1	STA r1H
+	}
 		+PushW DBoxDesc
 		LDY #0
 		LDA (DBoxDesc),y

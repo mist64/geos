@@ -34,3 +34,5 @@
 30.07.2001
 - reordered modules in geos.tas to remove drawing bug when RC128+2MHz were both enabled
   (note that this might introduce another hidden error, but this is unlikely)
+18.08.2001
+- added option for much faster DialogBox routine
