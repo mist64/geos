@@ -19,3 +19,5 @@
 - little optimization in BitmapUp
 22.09.2000
 - little optimization in GetScanLine
+23.09.2000
+- fixes and cleanups to booter, removed ;xxxx from toplevel sources
