@@ -1,3 +1,7 @@
+BUG:
+- error in drawing routines, filled boxes/lines(?) - see deskTop
+  might be that some registers are not restored upon output, need
+  to revise and find last working version to compare
 
 overall:
 + change sources names to 8.3
