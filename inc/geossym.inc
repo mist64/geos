@@ -101,7 +101,6 @@ cardDataPntr		=	$2c
 currentMode		=	$2e
 dispBufferOn		=	$2f
 mouseOn 		=	$30
-RAM_64K 		=	$30
 msePicPtr		=	$31
 windowTop		=	$33
 windowBottom		=	$34
