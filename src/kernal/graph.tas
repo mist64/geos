@@ -639,7 +639,7 @@ _i_BitmapUp					;e3f6
 _BitmapUp					;e424
 		+PushB r9H
 		+LoadB r9H, NULL
-		+LoadB r3L, NULL
+		STA r3L
 		STA r4L
 BitmUp1 	JSR BitmapUpHelp		;e431
 		INC r1H
