@@ -96,6 +96,10 @@ BSWFont 	!binary "bin/bswfont.bin" 	    ;~d210
 					    } else {
 						!if (usePCAnalogJoy) {
 						    !binary "bin/input/pcanalog.bin"
+						    } else {
+							!if (useAmigaMouse) {
+							    !source "src/input/amigamse.tas"
+							}
 						    }
 					    }
 				    }
