@@ -11,3 +11,5 @@
 - added 1531 mouse driver in source
 27.07.2000
 - cleaned up IO_IN and friends stuff, updated kernal sources with these constants
+23.08.2000
+- fixed dir_track/sector bug in booter.tas, works with 1581, should work with any device now
