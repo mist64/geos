@@ -85,7 +85,6 @@ PDH_0		JSR SetDirHead_1		;90ac
 		+bbrf 7, curDirHead+3, PDH_1
 		JSR SetDirHead_2
 		JSR VerWriteBlock
-		+bnex PDH_1		;!!!
 PDH_1		JMP DoneWithIO			;90c3
 
 _WriteBuff	+LoadW r4, diskBlkBuf		;90c6
