@@ -6,22 +6,22 @@
 ;17.08.1999 - ACME port
 
 		;*=MOUSE_JMP
-						;
-MouseJMP	JMP _MouseInit			;fe80
-SlowMouse	JMP _SlowMouse			;fe83
-UpdateMouse	JMP _UpdateMouse		;fe86
-SetMouse					;fe89
 
-joyStat0	!byte 0				;fe89
-joyStat1	!byte 0				;fe8a
-joyStat2	!byte 0				;fe8b
-joyStat3	!byte 0				;fe8c
-joyStat4	!byte 0				;fe8d
-joyStat5	!byte 0				;fe8e
-joyStat6	!byte 0				;fe8f
-joyStat7	!byte 0				;fe90
+MouseJMP	JMP _MouseInit
+SlowMouse	JMP _SlowMouse
+UpdateMouse	JMP _UpdateMouse
+SetMouse
 
-_MouseInit					;fe91
+joyStat0	!byte 0
+joyStat1	!byte 0
+joyStat2	!byte 0
+joyStat3	!byte 0
+joyStat4	!byte 0
+joyStat5	!byte 0
+joyStat6	!byte 0
+joyStat7	!byte 0
+
+_MouseInit
 		JSR _SlowMouse
 		STA joyStat2
 		STA mouseXPos
@@ -30,11 +30,11 @@ _MouseInit					;fe91
 		+LoadB inputData, $ff
 		JMP JProc1_4
 
-_SlowMouse					;fea5
+_SlowMouse
 		+LoadB mouseSpeed, NULL
 SlowMse0	RTS
 
-_UpdateMouse					;feab
+_UpdateMouse
 		JSR JoyProc3
 		+bbrf MOUSEON_BIT, mouseOn, SlowMse0
 		JSR JoyProc1
@@ -43,7 +43,7 @@ _UpdateMouse					;feab
 		LDA joyStat4
 		BPL UpdMse0
 		DEY
-UpdMse0		STY r1H				;fec0
+UpdMse0		STY r1H
 		ASL
 		ROL r1H
 		ASL
@@ -57,7 +57,7 @@ UpdMse0		STY r1H				;fec0
 		STA mouseYPos
 		RTS
 
-JoyProc1	LDX inputData			;fed9
+JoyProc1	LDX inputData
 		BMI JProc1_2
 		+CmpB maxMouseSpeed, mouseSpeed
 		BCC JProc1_1
@@ -65,15 +65,15 @@ JoyProc1	LDX inputData			;fed9
 		BCC JProc1_4
 		INC mouseSpeed
 		+bra JProc1_4
-JProc1_1	STA mouseSpeed			;fef8
-JProc1_2	+CmpB minMouseSpeed, mouseSpeed	;fefb
+JProc1_1	STA mouseSpeed
+JProc1_2	+CmpB minMouseSpeed, mouseSpeed
 		BCS JProc1_3
 		+SubB mouseAccel, joyStat2
 		BCS JProc1_4
 		DEC mouseSpeed
 		+bra JProc1_4
-JProc1_3	STA mouseSpeed			;ff15
-JProc1_4	LDX inputData			;ff18
+JProc1_3	STA mouseSpeed
+JProc1_4	LDX inputData
 		BMI JProc1_5
 		LDY mouseSpeed
 		STY r0L
@@ -81,15 +81,15 @@ JProc1_4	LDX inputData			;ff18
 		+MoveB r1H, joyStat3
 		+MoveB r2H, joyStat4
 		RTS
-JProc1_5	+LoadB joyStat3, 0		;ff30
+JProc1_5	+LoadB joyStat3, 0
 		STA joyStat4
 		RTS
 
-JoyProc2	LDY #$ff			;ff39
+JoyProc2	LDY #$ff
 		LDA joyStat3
 		BMI JProc2_1
 		INY
-JProc2_1	STY r11H			;ff41
+JProc2_1	STY r11H
 		STY r12L
 		ASL
 		ROL r11H
@@ -107,8 +107,7 @@ JProc2_1	STY r11H			;ff41
 		STA mouseXPos+1
 		RTS
 
-JoyProc3	LDA #$ff			;ff62
-		STA cia1base
+JoyProc3	+LoadB cia1base, $ff
 		LDA cia1base+1
 		EOR #$ff
 		CMP joyStat7
@@ -123,7 +122,7 @@ JoyProc3	LDA #$ff			;ff62
 		STA inputData
 		+smbf INPUT_BIT, pressFlag
 		JSR JProc1_4
-JProc3_1	LDA joyStat7			;ff8e
+JProc3_1	LDA joyStat7
 		AND #%00010000
 		CMP joyStat5
 		BEQ JProc3_2
@@ -134,15 +133,15 @@ JProc3_1	LDA joyStat7			;ff8e
 		EOR #%10000000
 		STA mouseData
 		+smbf MOUSE_BIT, pressFlag
-JProc3_2	RTS				;ffa9
+JProc3_2	RTS
 
-JoyDirectionTab					;ffaa
+JoyDirectionTab
 		!byte $ff, $02, $06, $ff
 		!byte $04, $03, $05, $ff
 		!byte $00, $01, $07, $ff
 		!byte $ff, $ff, $ff, $ff
 
-JoyProc4	LDA JoyTab1,x			;ffba
+JoyProc4	LDA JoyTab1,x
 		STA r1L
 		LDA JoyTab1+2,x
 		STA r2L
@@ -158,19 +157,17 @@ JoyProc4	LDA JoyTab1,x			;ffba
 		BPL JProc4_1
 		LDX #r1
 		JSR Dnegate
-JProc4_1	PLA				;ffdd
+JProc4_1	PLA
 		AND #%01000000
-		BEQ JProc4_2
+		BEQ JProc3_2
 		LDX #r2
-		JSR Dnegate
-JProc4_2	RTS				;ffe7
+		jmp Dnegate
 
-JoyTab1						;ffe8
+JoyTab1
 		!byte $ff, $b5, $00, $b5
 		!byte $ff, $b5, $00, $b5
 		!byte $ff, $b5
-JoyTab2						;fff2
+JoyTab2
 		!byte $00, $40, $40, $c0
 		!byte $80, $80, $00, $00
-
 ;fffa

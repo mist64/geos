@@ -9,9 +9,9 @@ UpdateMouse	jmp _UpdateMouse
 SetMouse
 
 ;fe89
-tmpFire		!byte 0		;fe89
-mseX		!byte 0		;fe8a
-mseY		!byte 0		;fe8b
+tmpFire		!byte 0
+mseX		!byte 0
+mseY		!byte 0
 
 _MouseInit	+LoadW mouseXPos, 8
 		+LoadB mouseYPos, 8
@@ -40,7 +40,7 @@ UM_1		+PushB CPU_DATA
 UM_2		+LoadB cia1base+2, $ff
 		+LoadB cia1base+0, $40
 		ldx #$66
-UM_3		nop			;fee0
+UM_3		nop
 		nop
 		nop
 		dex
@@ -57,7 +57,7 @@ UM_3		nop			;fee0
 		and #$80
 		bne UM_4
 		lda #$40
-UM_4		ora r1L			;feff
+UM_4		ora r1L
 		sta r1L
 		pla
 UM_5		+add mouseXPos+0
@@ -79,10 +79,10 @@ UM_5		+add mouseXPos+0
 		lsr
 		bne UM_6
 		lda #$20
-UM_6		ora r1L			;ff28
+UM_6		ora r1L
 		sta r1L
 		pla
-UM_7		sec			;ff2d
+UM_7		sec
 		eor #$ff
 		adc mouseYPos
 		sta mouseYPos
@@ -90,14 +90,14 @@ UM_7		sec			;ff2d
 		+CmpBI mouseYPos, 199
 		bcc UM_8
 		+LoadB mouseYPos, 199
-UM_8		plp			;ff3f
+UM_8		plp
 		txa
 		eor #$ff
 		adc #0
 		cmp #$ff
 		bne UM_9
 		+LoadB mouseYPos, 0
-UM_9		lda r1L			;ff4d
+UM_9		lda r1L
 		lsr
 		lsr
 		lsr
@@ -108,13 +108,12 @@ UM_9		lda r1L			;ff4d
 		+PopB cia1base
 		+PopW cia1base+2
 		+PopB CPU_DATA
-UM_END		rts			;ff69
+UM_END		rts
 
-;ff6a
 mseDirTab	!byte $ff, $06, $02, $ff, $00, $07, $01, $ff
 		!byte $04, $05, $03, $ff, $ff, $ff, $ff, $ff
-;ff7a
-CountDelta	sty r0L			;ff7a
+
+CountDelta	sty r0L
 		sta r0H
 		ldx #0
 		sec
@@ -128,7 +127,7 @@ CountDelta	sty r0L			;ff7a
 		lda deltaTab-1,y
 		ldy r0H
 		rts
-deltaNegative	ora #$c0		;ff93
+deltaNegative	ora #$c0
 		cmp #$ff
 		beq deltaZero
 		sec
@@ -142,9 +141,9 @@ deltaNegative	ora #$c0		;ff93
 		ldx #$ff
 		ldy r0H
 		rts
-deltaZero	lda #0			;ffab
+deltaZero	lda #0
 		rts
-;ffae
+
 deltaTab	!byte $01, $01, $02, $02, $03, $04, $06, $08
 		!byte $09, $0b, $0d, $0f, $11, $13, $15, $19
 		!byte $1d, $20, $23, $26, $29, $2c, $2f, $32
