@@ -13,12 +13,12 @@
 
 ;select generic input driver from the list:
 ;(only one value may be 'true')
-!set useJoystick	=	false		; classical digital joystick
+!set useJoystick	=	true		; classical digital joystick
 !set use1531		=	false		; 1531 mouse
 !set useKoalaPad	=	false		; Koala Pad whatever it is...
 !set useLightPen	=	false		; lightpen (rocks!)
 !set usePCAnalogJoy	=	false		; analog PC joystick connected like paddles (kixx!)
-!set useAmigaMouse	=	true		; Amiga style mouse
+!set useAmigaMouse	=	false		; Amiga style mouse
 
 ;general code generation/optimization control:
 !set onlyVLIR		=	true		; only VLIR and SEQ supported
