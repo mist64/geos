@@ -3,14 +3,14 @@
 
 ;17-8-99 - ACME port
 
-_PutChar					;e4ec
+_PutChar
 		CMP #$20
 		BCS PutChar1
 		TAY
-		LDA PutCharTabL-8,y	;e543
-		LDX PutCharTabH-8,y	;e557
+		LDA PutCharTabL-8,y
+		LDX PutCharTabH-8,y
 		JMP CallRoutine
-PutChar1	PHA				;e4fa
+PutChar1	PHA
 		LDY r11H
 		STY r13H
 		LDY r11L
@@ -28,60 +28,60 @@ PutChar1	PHA				;e4fa
 		+CmpW leftMargin, r11
 		BEQ PutChar2
 		BCS PutChar3
-PutChar2	PLA				;e52d
+PutChar2	PLA
 		+subv $20
 		JMP Font_10
-PutChar3	LDA r13L			;e534
+PutChar3	LDA r13L
 		+addv 1
 		STA r11L
 		LDA r13H
 		ADC #0
 		STA r11H
-PutChar4	PLA				;e541
+PutChar4	PLA
 		LDX StringFaultVec+1
 		LDA StringFaultVec
 		JMP CallRoutine
 
-_SmallPutChar					;e573
+_SmallPutChar
 		+subv $20
 		JMP Font_10
 
-DoTAB		LDA #0				;e579
+DoTAB		LDA #0
 		+add r11L
 		STA r11L
 		BCC *+4
 		INC r11H
 		RTS
 
-DoLF		LDA r1H 			;e585
+DoLF		LDA r1H 
 		SEC
 		ADC curHeight
 		STA r1H
 		RTS
 
-DoHOME		+LoadW r11, 0			;e58d
+DoHOME		+LoadW r11, 0
 		STA r1H
 DoESC_RULER	RTS
 
-DoUPLINE	+SubB curHeight, r1H		;e596
+DoUPLINE	+SubB curHeight, r1H
 		RTS
 
-DoCR		+MoveW leftMargin, r11		;e59e
+DoCR		+MoveW leftMargin, r11
 		JMP DoLF
 
-DoULINEON	+smbf UNDERLINE_BIT, currentMode	;e5a9
+DoULINEON	+smbf UNDERLINE_BIT, currentMode
 		RTS
 
-DoULINEOFF	+rmbf UNDERLINE_BIT, currentMode	;e5b0
+DoULINEOFF	+rmbf UNDERLINE_BIT, currentMode
 		RTS
 
-DoREV_ON	+smbf REVERSE_BIT, currentMode		;e5b7
+DoREV_ON	+smbf REVERSE_BIT, currentMode
 		RTS
 
-DoREV_OFF	+rmbf REVERSE_BIT, currentMode		;e5be
+DoREV_OFF	+rmbf REVERSE_BIT, currentMode
 		RTS
 
-DoGOTOX 	INC r0L 			;e5c5
+DoGOTOX 	INC r0L
 		BNE *+4
 		INC r0H
 		LDY #0
@@ -94,7 +94,7 @@ DoGOTOX 	INC r0L 			;e5c5
 		STA r11H
 		RTS
 
-DoGOTOY 	INC r0L 			;e5dc
+DoGOTOY 	INC r0L
 		BNE *+4
 		INC r0H
 		LDY #0
@@ -102,28 +102,28 @@ DoGOTOY 	INC r0L 			;e5dc
 		STA r1H
 		RTS
 
-DoGOTOXY	JSR DoGOTOX			;e5e9
+DoGOTOXY	JSR DoGOTOX
 		JMP DoGOTOY
 
-DoNEWCARDSET	+AddVW 3, r0			;e5ef
+DoNEWCARDSET	+AddVW 3, r0
 		RTS
 
-DoBOLDON	+smbf BOLD_BIT, currentMode	;e5fb
+DoBOLDON	+smbf BOLD_BIT, currentMode
 		RTS
 
-DoITALICON	+smbf ITALIC_BIT, currentMode	;e602
+DoITALICON	+smbf ITALIC_BIT, currentMode
 		RTS
 
-DoOUTLINEON	+smbf OUTLINE_BIT, currentMode	;e609
+DoOUTLINEON	+smbf OUTLINE_BIT, currentMode
 		RTS
 
-DoPLAINTEXT	+LoadB currentMode, NULL	;e610
+DoPLAINTEXT	+LoadB currentMode, NULL
 		RTS
 
-DoBACKSPC	LDX currentMode 		;e615
+DoBACKSPC	LDX currentMode
 		JSR _GetRealSize
 		STY PrvCharWidth
-DoBACKSPACE	+SubB PrvCharWidth, r11L	;e61d
+DoBACKSPACE	+SubB PrvCharWidth, r11L
 		BCS *+4
 		DEC r11H
 		+PushW r11
@@ -132,7 +132,7 @@ DoBACKSPACE	+SubB PrvCharWidth, r11L	;e61d
 		+PopW r11
 		RTS
 
-DoESC_GRAPHICS	INC r0L 			;e63b
+DoESC_GRAPHICS	INC r0L
 		BNE *+4
 		INC r0H
 		JSR _GraphicsString
@@ -141,12 +141,12 @@ DoESC_GRAPHICS	INC r0L 			;e63b
 		LDX #r0
 		jmp Ddec
 
-_i_PutString	+PopB r0L			;e64f
+_i_PutString	+PopB r0L
 		PLA
 		INC r0L
 		BNE iPutSt1
 		+addv 1
-iPutSt1 	STA r0H 			;e65a
+iPutSt1 	STA r0H
 		LDY #0
 		LDA (r0),y
 		INC r0L
@@ -169,7 +169,7 @@ iPutSt1 	STA r0H 			;e65a
 		INC r0H
 		JMP (r0)
 
-_PutString					;e688
+_PutString
 		LDY #0
 		LDA (r0),y
 		BEQ PutStr1
@@ -178,12 +178,12 @@ _PutString					;e688
 		BNE *+4
 		INC r0H
 		+bra _PutString
-PutStr1 	RTS				;e69a
+PutStr1 	RTS
 
-_UseSystemFont					;e69b
+_UseSystemFont
 		+LoadW r0, BSWFont
-_LoadCharSet	LDY #0				;e6a3
-UseSysFnt1	LDA (r0),y			;e6a5
+_LoadCharSet	LDY #0
+UseSysFnt1	LDA (r0),y
 		STA baselineOffset,y
 		INY
 		CPY #8
@@ -192,16 +192,16 @@ UseSysFnt1	LDA (r0),y			;e6a5
 		+AddW r0, cardDataPntr
 		rts
 
-_GetCharWidth					;e6d5
+_GetCharWidth
 		+subv $20
 		BCS GetChWdth1
 		LDA #0
 		RTS
-GetChWdth1	CMP #$5f			;e6dd
+GetChWdth1	CMP #$5f
 		BNE GetChWdth2
 		LDA PrvCharWidth
 		RTS
-GetChWdth2	ASL				;e6e5
+GetChWdth2	ASL
 		TAY
 		INY
 		INY
@@ -212,7 +212,7 @@ GetChWdth2	ASL				;e6e5
 		SBC (curIndexTable),y
 		RTS
 
-_GetString					;e6f1
+_GetString
 		+MoveW r0, string
 		+MoveB r1L, stringMargCtrl
 		+MoveB r1H, stringY
@@ -240,15 +240,15 @@ _GetString					;e6f1
 		STA StringFaultVec
 		+bbrf 7, stringMargCtrl, GetStr1
 		+MoveW r4, StringFaultVec
-GetStr1 	LDA curHeight			;e759
+GetStr1 	LDA curHeight
 		JSR _InitTextPrompt
 		JMP _PromptOn
 
-GSStringFault	+MoveB stringLen, stringMaxLen	;e761
+GSStringFault	+MoveB stringLen, stringMaxLen
 		DEC stringLen
 GSStrFltEnd	RTS
 
-ProcessCursor	LDA alphaFlag			;e76b
+ProcessCursor	LDA alphaFlag
 		BPL GSStrFltEnd
 		DEC alphaFlag
 		LDA alphaFlag
@@ -256,17 +256,17 @@ ProcessCursor	LDA alphaFlag			;e76b
 		BNE GSStrFltEnd
 		+bbrf 6, alphaFlag, ProcCur1
 		JMP _PromptOff
-ProcCur1	JMP _PromptOn			;e782
+ProcCur1	JMP _PromptOn
 
-GSSkeyVector					;e786
+GSSkeyVector
 		JSR _PromptOff
 		+MoveW stringX, r11
 		+MoveB stringY, r1H
 		LDY stringLen
 		LDA keyData
 		BPL GSSkeyVec2
-GSSkeyVec1	RTS				;e7a0
-GSSkeyVec2	CMP #CR 			;e7a1
+GSSkeyVec1	RTS
+GSSkeyVec2	CMP #CR
 		BEQ GSSkeyVec5
 		CMP #BACKSPACE
 		BEQ GSSkeyVec3
@@ -284,7 +284,7 @@ GSSkeyVec2	CMP #CR 			;e7a1
 		+PushB dispBufferOn
 		+bbrf 5, dispBufferOn, GSSkeyVec21
 		+LoadB dispBufferOn, (ST_WR_FORE | ST_WRGS_FORE)
-GSSkeyVec21	+PushB r1H			;e7cd
+GSSkeyVec21	+PushB r1H
 		CLC
 		LDA baselineOffset
 		ADC r1H
@@ -299,10 +299,10 @@ GSSkeyVec21	+PushB r1H			;e7cd
 		LDX r11L
 		STX stringX
 		+bra GSSkeyVec4
-GSSkeyVec3	JSR GSHelp1			;e7f2
+GSSkeyVec3	JSR GSHelp1
 		+bra GSSkeyVec4
-GSSkeyVec4	JMP _PromptOn			;e7f8
-GSSkeyVec5	SEI				;e7fb
+GSSkeyVec4	JMP _PromptOn
+GSSkeyVec5	SEI
 		JSR _PromptOff
 		LDA #%01111111
 		AND alphaFlag
@@ -319,7 +319,7 @@ GSSkeyVec5	SEI				;e7fb
 		LDX stringLen
 		JMP (r0)
 
-GSHelp1 	CPY #0				;e82a
+GSHelp1 	CPY #0
 		BEQ GSHelp12
 		DEY
 		STY stringLen
@@ -342,12 +342,10 @@ GSHelp11	+PushB r1H
 		STX stringX
 		CLC
 		RTS
-GSHelp12	SEC				;e863
+GSHelp12	SEC
 		RTS
-;e865
 
-
-_PromptOn					;e865
+_PromptOn
 		LDA #%01000000
 		ORA alphaFlag
 		STA alphaFlag
@@ -358,19 +356,19 @@ _PromptOn					;e865
 		JSR _EnablSprite
 		+bra PrmptOff1
 
-_PromptOff					;e889
+_PromptOff
 		LDA #%10111111
 		AND alphaFlag
 		STA alphaFlag
 		+LoadB r3L, 1
 		JSR _DisablSprite
-PrmptOff1	LDA alphaFlag			;e898
+PrmptOff1	LDA alphaFlag
 		AND #%11000000
 		ORA #%00111100
 		STA alphaFlag
 		RTS
 
-_InitTextPrompt 				;e8a3
+_InitTextPrompt
 		TAY
 		+PushB CPU_DATA
 		+LoadB CPU_DATA, IO_IN
@@ -383,7 +381,7 @@ _InitTextPrompt 				;e8a3
 		+LoadB alphaFlag, %10000011
 		LDX #64
 		LDA #0
-IniTxPrm1	STA spr1pic-1,x 		;e8c4
+IniTxPrm1	STA spr1pic-1,x
 		DEX
 		BNE IniTxPrm1
 		PLA
@@ -397,8 +395,8 @@ IniTxPrm1	STA spr1pic-1,x 		;e8c4
 		LDA moby2
 		ORA #2
 		STA moby2
-IniTxPrm2	LDA #%10000000			;e8dd
-IniTxPrm3	STA spr1pic,x			;e8df
+IniTxPrm2	LDA #%10000000
+IniTxPrm3	STA spr1pic,x
 		INX
 		INX
 		INX
@@ -407,12 +405,12 @@ IniTxPrm3	STA spr1pic,x			;e8df
 		+PopB CPU_DATA
 		RTS
 
-CalcDecimal	STA r2L 			;e8ec
+CalcDecimal	STA r2L
 		+LoadB r2H, 4
 		+LoadW r3, 0
-CalcDec0	LDY #0				;e8f8
+CalcDec0	LDY #0
 		LDX r2H
-CalcDec1	LDA r0L 			;e8fc
+CalcDec1	LDA r0L
 		SEC
 		SBC DecTabL,x
 		STA r0L
@@ -430,7 +428,7 @@ CalcDec2	LDA r0L
 		CPX #0
 		BEQ CalcDec3
 		+bbsf 6, r2L, CalcDec4
-CalcDec3	ORA #%00110000			;e923
+CalcDec3	ORA #%00110000
 		LDX r3L
 		STA Z45,x
 		LDX currentMode
@@ -442,11 +440,11 @@ CalcDec3	ORA #%00110000			;e923
 		LDA #%10111111
 		AND r2L
 		STA r2L
-CalcDec4	DEC r2H 			;e93c
+CalcDec4	DEC r2H
 		BPL CalcDec0
 		RTS
 
-_PutDecimal					;e94b
+_PutDecimal
 		JSR CalcDecimal
 		+bbsf 7, r2L, PutDec1
 		LDA r2L
@@ -456,20 +454,20 @@ _PutDecimal					;e94b
 		STA r11L
 		BCC *+4
 		INC r11H
-PutDec1 	LDX r3L 			;e962
+PutDec1 	LDX r3L
 		STX r0L
-PutDec2 	LDA Z45-1,x			;e966
+PutDec2 	LDA Z45-1,x
 		PHA
 		DEX
 		BNE PutDec2
-PutDec3 	PLA				;e96c
+PutDec3 	PLA
 		JSR _PutChar
 		DEC r0L
 		BNE PutDec3
 		RTS
 
-_GetNextChar					;fceb
+_GetNextChar
 		+bbrf KEYPRESS_BIT, pressFlag, GetNxtChar1
 		JMP KbdScanHelp3
-GetNxtChar1	LDA #0				;fcf2
+GetNxtChar1	LDA #0
 		RTS
