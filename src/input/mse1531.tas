@@ -17,7 +17,7 @@ _MouseInit	+LoadW mouseXPos, 8
 		+LoadB mouseYPos, 8
 _SlowMouse	rts
 
-_UpdateMouse	+bbsf 7, mouseOn, UM_1
+_UpdateMouse	+bbsf MOUSEON_BIT, mouseOn, UM_1
 		jmp UM_END
 
 UM_1		+PushB CPU_DATA
@@ -35,7 +35,7 @@ UM_1		+PushB CPU_DATA
 		asl
 		asl
 		sta mouseData
-		+smbf 5, pressFlag
+		+smbf MOUSE_BIT, pressFlag
 
 UM_2		+LoadB cia1base+2, $ff
 		+LoadB cia1base+0, $40
