@@ -23,3 +23,5 @@
 - fixes and cleanups to booter, removed ;xxxx from toplevel sources
 24.09.2000
 - booter cleanups
+01.02.2000
+- more ;xxxx removals

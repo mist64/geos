@@ -3,10 +3,10 @@
 
 ;18-8-99 - ACME port
 
-_DoDlgBox					;f2b0
+_DoDlgBox
 		+MoveW r0, DBoxDesc
 		LDX #0
-DDlgB1		LDA r5L,x			;f2ba
+DDlgB1		LDA r5L,x
 		PHA
 		INX
 		CPX #12
@@ -17,7 +17,7 @@ DDlgB1		LDA r5L,x			;f2ba
 		JSR _StartMouseMode
 		JSR _UseSystemFont
 		LDX #11
-DDlgB2		PLA				;f2d8
+DDlgB2		PLA
 		STA r5L,x
 		DEX
 		BPL DDlgB2
@@ -26,13 +26,13 @@ DDlgB2		PLA				;f2d8
 		LDA (DBoxDesc),y
 		BPL DDlgB3
 		LDX #1
-DDlgB3		TXA				;f2e8
+DDlgB3		TXA
 		TAY
-DDlgB31 	LDA (DBoxDesc),y		;f2ea
+DDlgB31 	LDA (DBoxDesc),y
 		STA r0L
 		BEQ DDlgB6
 		LDX #0
-DDlgB4		LDA r5L,x			;f2f2
+DDlgB4		LDA r5L,x
 		PHA
 		INX
 		CPX #12
@@ -44,13 +44,13 @@ DDlgB4		LDA r5L,x			;f2f2
 		LDX DlgBoxProcH-1,y
 		JSR CallRoutine
 		LDX #11
-DDlgB5		PLA				;f30a
+DDlgB5		PLA
 		STA r5L,x
 		DEX
 		BPL DDlgB5
 		LDY r1L
 		+bra DDlgB31
-DDlgB6		LDA defIconTab			;f315
+DDlgB6		LDA defIconTab
 		BEQ DDlgB7
 		+LoadW r0, defIconTab
 		JSR DoIcons
@@ -59,7 +59,7 @@ DDlgB7		+PopW dlgBoxCallerPC
 		STX dlgBoxCallerSP
 		JMP MainLoop
 
-DlgBoxProcL					;f334
+DlgBoxProcL
 		!byte <DBDoIcons, <DBDoIcons
 		!byte <DBDoIcons, <DBDoIcons
 		!byte <DBDoIcons, <DBDoIcons
@@ -70,7 +70,7 @@ DlgBoxProcL					;f334
 		!byte <DBDoGRPHSTR, <DBDoGETFILES
 		!byte <DBDoOPVEC,   <DBDoUSRICON
 		!byte <DBDoUSR_ROUT
-DlgBoxProcH					;f347
+DlgBoxProcH
 		!byte >DBDoIcons, >DBDoIcons
 		!byte >DBDoIcons, >DBDoIcons
 		!byte >DBDoIcons, >DBDoIcons
@@ -82,7 +82,7 @@ DlgBoxProcH					;f347
 		!byte >DBDoOPVEC,   >DBDoUSRICON
 		!byte >DBDoUSR_ROUT
 
-DlgBoxPrep	+PushB CPU_DATA 		;f35a
+DlgBoxPrep	+PushB CPU_DATA
 		+LoadB CPU_DATA, IO_IN
 		+LoadW r4, dlgBoxRamBuf
 	JSR Dialog_3
@@ -91,7 +91,7 @@ DlgBoxPrep	+PushB CPU_DATA 		;f35a
 		+LoadB sysDBData, NULL
 		JMP InitGEOEnv
 
-DrawDlgBox	+LoadB dispBufferOn, ST_WR_FORE | ST_WRGS_FORE	;f37d
+DrawDlgBox	+LoadB dispBufferOn, ST_WR_FORE | ST_WRGS_FORE
 		LDY #0
 		LDA (DBoxDesc),y
 		AND #%00011111
@@ -100,7 +100,7 @@ DrawDlgBox	+LoadB dispBufferOn, ST_WR_FORE | ST_WRGS_FORE	;f37d
 		SEC
 		JSR CalcDialogCoords
 		JSR Rectangle
-DrwDlgBx1	LDA #0				;f393
+DrwDlgBx1	LDA #0
 		JSR SetPattern
 		CLC
 		JSR CalcDialogCoords
@@ -116,21 +116,21 @@ DrwDlgBx1	LDA #0				;f393
 		STA defIconTab+2
 		RTS
 
-Dialog_1	LDY #0				;f3bc
+Dialog_1	LDY #0
 		LDA (DBoxDesc),y
 		AND #%00011111
 		BEQ Dialog_11
 		SEC
 		JSR Dialog_12
-Dialog_11	CLC				;f3c8
-Dialog_12	JSR CalcDialogCoords		;f3c9
+Dialog_11	CLC
+Dialog_12	JSR CalcDialogCoords
 		JMP RcvrMnu0
 
 CalcDialogCoords
-		LDA #0				;f3cf
+		LDA #0
 		BCC ClcDlgCoor1
 		LDA #8
-ClcDlgCoor1	STA r1H 			;f3d5
+ClcDlgCoor1	STA r1H
 		+PushW DBoxDesc
 		LDY #0
 		LDA (DBoxDesc),y
@@ -139,9 +139,9 @@ ClcDlgCoor1	STA r1H 			;f3d5
 		STA DBoxDescH
 		LDA #<DBDefinedPos-1
 		STA DBoxDesc
-ClcDlgCoor2	LDX #0				;f3eb
+ClcDlgCoor2	LDX #0
 		LDY #1
-ClcDlgCoor3	LDA (DBoxDesc),y		;f3ef
+ClcDlgCoor3	LDA (DBoxDesc),y
 		CLC
 		ADC r1H
 		STA r2L,x
@@ -149,7 +149,7 @@ ClcDlgCoor3	LDA (DBoxDesc),y		;f3ef
 		INX
 		CPX #2
 		BNE ClcDlgCoor3
-ClcDlgCoor4	LDA (DBoxDesc),y		;f3fc
+ClcDlgCoor4	LDA (DBoxDesc),y
 		CLC
 		ADC r1H
 		STA r2L,x
@@ -166,12 +166,12 @@ ClcDlgCoor4	LDA (DBoxDesc),y		;f3fc
 		+PopW DBoxDesc
 		RTS
 
-DBDefinedPos	!byte DEF_DB_TOP		;f41a
+DBDefinedPos	!byte DEF_DB_TOP
 		!byte DEF_DB_BOT
 		!word DEF_DB_LEFT
 		!word DEF_DB_RIGHT
 
-_RstrFrmDialogue				;f420
+_RstrFrmDialogue
 	JSR Dialog_2
 		JSR Dialog_1
 		+MoveB sysDBData, r0L
@@ -180,16 +180,16 @@ _RstrFrmDialogue				;f420
 		+PushW dlgBoxCallerPC
 		RTS
 
-Dialog_2	+PushB CPU_DATA 		;f438
+Dialog_2	+PushB CPU_DATA
 		+LoadB CPU_DATA, IO_IN
 		+LoadW r4, dlgBoxRamBuf
 	JSR Dialog_4
 		+PopB CPU_DATA
 		RTS
 
-Dialog_3	LDX #0				;f44e
+Dialog_3	LDX #0
 		LDY #0
-Dialog_31 JSR Dialog_5				;f452
+Dialog_31 JSR Dialog_5
 		BEQ Dialog_33
 Dialog_32	LDA (r2),y
 		STA (r4),y
@@ -197,24 +197,24 @@ Dialog_32	LDA (r2),y
 		DEC r3L
 		BNE Dialog_32
 		BEQ Dialog_31
-Dialog_33	RTS				;f462
+Dialog_33	RTS
 
-Dialog_4	PHP				;f463
+Dialog_4	PHP
 		SEI
 		LDX #0
 		LDY #0
-Dialog_41 JSR Dialog_5				;f469
+Dialog_41 JSR Dialog_5
 		BEQ Dialog_43
-Dialog_42	LDA (r4),y			;f46e
+Dialog_42	LDA (r4),y
 		STA (r2),y
 		INY
 		DEC r3L
 		BNE Dialog_42
 		BEQ Dialog_41
-Dialog_43	PLP				;f479
+Dialog_43	PLP
 		RTS
 
-Dialog_5	TYA				;f47b
+Dialog_5	TYA
 		+add r4L
 		STA r4L
 		BCC *+4
@@ -231,9 +231,9 @@ Dialog_5	TYA				;f47b
 		LDA DialogCopyTab,x
 		STA r3L
 		INX
-Dialog_51	RTS				;f49d
+Dialog_51	RTS
 
-DialogCopyTab					;f49e
+DialogCopyTab
 		!word curPattern
 		!byte 23
 		!word appMain
@@ -260,7 +260,7 @@ DialogCopyTab					;f49e
 		!byte 1
 		!word NULL
 
-DBDoIcons	DEY				;f4c4
+DBDoIcons	DEY
 		BNE DBDoIcns1
 		LDA keyVector
 		ORA keyVector+1
@@ -269,7 +269,7 @@ DBDoIcons	DEY				;f4c4
 		STA keyVector+1
 		LDA #<DBKeyVector
 		STA keyVector
-DBDoIcns1	TYA				;f4d9
+DBDoIcns1	TYA
 		ASL
 		ASL
 		ASL
@@ -282,7 +282,7 @@ DBDoIcns1	TYA				;f4d9
 		JSR DBIconsHelp1
 		JMP DBIconsHelp2
 
-DBDoUSRICON	JSR DBIconsHelp1		;f4ee
+DBDoUSRICON	JSR DBIconsHelp1
 		LDA (DBoxDesc),y
 		STA r5L
 		INY
@@ -295,7 +295,7 @@ DBDoUSRICON	JSR DBIconsHelp1		;f4ee
 		+PopB r1L
 		RTS
 
-DBIconsHelp1	CLC				;f504
+DBIconsHelp1	CLC
 		JSR CalcDialogCoords
 		LSR r3H
 		ROR r3L
@@ -315,7 +315,7 @@ DBIconsHelp1	CLC				;f504
 		STY r1L
 		RTS
 
-DBIconsHelp2	LDX defIconTab			;f525
+DBIconsHelp2	LDX defIconTab
 		CPX #8
 		BCS DBIcHlp_23
 		TXA
@@ -324,21 +324,21 @@ DBIconsHelp2	LDX defIconTab			;f525
 		JSR CalcIconDescTab
 		TAX
 		LDY #0
-DBIcHlp_20	LDA (r5),y			;f537
+DBIcHlp_20	LDA (r5),y
 		CPY #2
 		BNE DBIcHlp_21
 		LDA r3L
-DBIcHlp_21	CPY #3				;f53f
+DBIcHlp_21	CPY #3
 		BNE DBIcHlp_22
 		LDA r2L
-DBIcHlp_22	STA defIconTab,x		;f545
+DBIcHlp_22	STA defIconTab,x
 		INX
 		INY
 		CPY #8
 		BNE DBIcHlp_20
-DBIcHlp_23	RTS				;f54e
+DBIcHlp_23	RTS
 
-DBDefIconsTab					;f54f
+DBDefIconsTab
 		!word DBIcPicOK
 		!word 0
 		!byte 6, 16
@@ -369,36 +369,36 @@ DBDefIconsTab					;f54f
 		!byte 6, 16
 		!word DBIcDISK
 
-DBKeyVector	+CmpBI keyData, CR		;f57f
+DBKeyVector	+CmpBI keyData, CR
 		BEQ DBIcOK
 		RTS
-DBIcOK		LDA #OK 			;f587
+DBIcOK		LDA #OK
 		BNE DBKeyVec1
-DBIcCANCEL	LDA #CANCEL			;f58b
+DBIcCANCEL	LDA #CANCEL
 		BNE DBKeyVec1
-DBIcYES 	LDA #YES			;f58f
+DBIcYES 	LDA #YES
 		BNE DBKeyVec1
-DBIcNO		LDA #NO 			;f593
+DBIcNO		LDA #NO
 		BNE DBKeyVec1
-DBIcOPEN	LDA #OPEN			;f597
+DBIcOPEN	LDA #OPEN
 		BNE DBKeyVec1
-DBIcDISK	LDA #DISK			;f59b
-DBKeyVec1	STA sysDBData			;f59f
+DBIcDISK	LDA #DISK
+DBKeyVec1	STA sysDBData
 		JMP RstrFrmDialogue
 
-DBDoSYSOPV	LDA #>DBStringFaultVec		;f5a5
+DBDoSYSOPV	LDA #>DBStringFaultVec
 		STA otherPressVec+1
 		LDA #<DBStringFaultVec
 		STA otherPressVec
 		RTS
 
-DBStringFaultVec				;f5b0
+DBStringFaultVec
 		+bbsf 7, mouseData, DBDoOpVec1
 		LDA #DBSYSOPV
 		STA sysDBData
 		JMP RstrFrmDialogue
 
-DBDoOPVEC	LDY r1L 			;f5bd
+DBDoOPVEC	LDY r1L
 		LDA (DBoxDesc),y
 		STA otherPressVec
 		INY
@@ -406,10 +406,10 @@ DBDoOPVEC	LDY r1L 			;f5bd
 		STA otherPressVec+1
 		INY
 		STY r1L
-DBDoOpVec1	RTS				;f5cd
+DBDoOpVec1	RTS
 
 
-DBDoGRPHSTR	LDY r1L 			;f5ce
+DBDoGRPHSTR	LDY r1L
 		LDA (DBoxDesc),y
 		STA r0L
 		INY
@@ -422,7 +422,7 @@ DBDoGRPHSTR	LDY r1L 			;f5ce
 		+PopB r1L
 		RTS
 
-DBDoUSR_ROUT	LDY r1L 			;f5e3
+DBDoUSR_ROUT	LDY r1L
 		LDA (DBoxDesc),y
 		STA r0L
 		INY
@@ -436,7 +436,7 @@ DBDoUSR_ROUT	LDY r1L 			;f5e3
 		+PopB r1L
 		RTS
 
-DBDoTXTSTR	CLC				;f5f9
+DBDoTXTSTR	CLC
 		JSR CalcDialogCoords
 		JSR DBTextCoords
 		LDA (DBoxDesc),y
@@ -451,7 +451,7 @@ DBDoTXTSTR	CLC				;f5f9
 		+PopB r1L
 		RTS
 
-DBDoVARSTR	CLC				;f613
+DBDoVARSTR	CLC
 		JSR CalcDialogCoords
 		JSR DBTextCoords
 		LDA (DBoxDesc),y
@@ -467,7 +467,7 @@ DBDoVARSTR	CLC				;f613
 		+PopB r1L
 		RTS
 
-DBDoGETSTR	CLC				;f62f
+DBDoGETSTR	CLC
 		JSR CalcDialogCoords
 		JSR DBTextCoords
 		LDA (DBoxDesc),y
@@ -491,10 +491,10 @@ DBDoGETSTR	CLC				;f62f
 		+PopB r1L
 		RTS
 
-DBKeyVector2	+LoadB sysDBData, DBGETSTRING	;f65e
+DBKeyVector2	+LoadB sysDBData, DBGETSTRING
 		JMP RstrFrmDialogue
 
-DBTextCoords	LDY r1L 			;f666
+DBTextCoords	LDY r1L
 		LDA (DBoxDesc),y
 		+add r3L
 		STA r11L
@@ -508,7 +508,7 @@ DBTextCoords	LDY r1L 			;f666
 		STA r1H
 		RTS
 
-DBDoGETFILES	LDY r1L 			;f67f
+DBDoGETFILES	LDY r1L
 		LDA (DBoxDesc),y
 		STA DBGFOffsLeft
 		INY
@@ -559,7 +559,7 @@ DBDoGETFILES	LDY r1L 			;f67f
 		LDA #<DBGFilesArrowsIcons
 		STA r5L
 		JSR DBIconsHelp2
-DBDGFls1	LDA #>DBGFPressVector		;f702
+DBDGFls1	LDA #>DBGFPressVector
 		STA otherPressVec+1
 		LDA #<DBGFPressVector
 		STA otherPressVec
@@ -569,35 +569,35 @@ DBDGFls1	LDA #>DBGFPressVector		;f702
 DBDGFls2	+PopB r1L
 		RTS
 
-DBGFilesHelp1	+PushB DBGFilesFound		;f719
-DBGFlsHlp_11	PLA				;f71d
+DBGFilesHelp1	+PushB DBGFilesFound
+DBGFlsHlp_11	PLA
 		+subv 1
 		PHA
 		BEQ DBGFlsHlp_13
 		JSR DBGFilesHelp3
 		LDY #0
-DBGFlsHlp_12	LDA (r0),y			;f729
+DBGFlsHlp_12	LDA (r0),y
 		CMP (r1),y
 		BNE DBGFlsHlp_11
 		TAX
 		BEQ DBGFlsHlp_13
 		INY
 		BNE DBGFlsHlp_12
-DBGFlsHlp_13	+PopB DBGFileSelected		;f735
+DBGFlsHlp_13	+PopB DBGFileSelected
 		+subv 4
 		BPL DBGFlsHlp_14
 		LDA #0
-DBGFlsHlp_14	STA DBGFTableIndex		;f740
+DBGFlsHlp_14	STA DBGFTableIndex
 DBGFlsHlp_15	RTS
 
 
-DBGFilesArrowsIcons				;f744
+DBGFilesArrowsIcons
 		!word DBGFArrowPic
-DBGFArrowX	!word 0 			;f746
+DBGFArrowX	!word 0
 		!byte 3, 12
 		!word DBGFDoArrow
 
-DBGFArrowPic					;f74c
+DBGFArrowPic
 		!byte 3, %########, $80+(10*3)
 		     ;%########, %########, %########
 		!byte %#......., %........, %.......# ;1
@@ -613,7 +613,7 @@ DBGFArrowPic					;f74c
 		     ;%########, %########, %########
 		!byte 3, %########
 
-DBGFPressVector LDA mouseData			;f76f
+DBGFPressVector LDA mouseData
 		BMI DBGFlsHlp_15
 		JSR DBGFilesHelp7
 		CLC
@@ -640,11 +640,11 @@ DBGFPressVector LDA mouseData			;f76f
 		LDX DBGFilesFound
 		DEX
 		TXA
-DBGFPrVec1	STA DBGFileSelected		;f7b1
+DBGFPrVec1	STA DBGFileSelected
 		JSR DBGFilesHelp6
 		jmp DBGFilesHelp2
 
-DBGFDoArrow	JSR DBGFilesHelp6		;f7bb
+DBGFDoArrow	JSR DBGFilesHelp6
 		+LoadB r0H, 0
 		LDA DBGFArrowX
 		ASL
@@ -660,33 +660,33 @@ DBGFDoArrow	JSR DBGFilesHelp6		;f7bb
 		BCC DBDoArrow1
 		DEX
 		BPL DBDoArrow2
-DBDoArrow1	INX				;f7e5
+DBDoArrow1	INX
 		LDA DBGFilesFound
 		+sub DBGFTableIndex
 		CMP #6
 		BCC DBDoArrow3
-DBDoArrow2	STX DBGFTableIndex		;f7f1
-DBDoArrow3	+CmpB DBGFTableIndex, DBGFileSelected	;f7f4
+DBDoArrow2	STX DBGFTableIndex
+DBDoArrow3	+CmpB DBGFTableIndex, DBGFileSelected
 		BCC DBDoArrow4
 		STA DBGFileSelected
-DBDoArrow4	+addv 4 			;f7ff
+DBDoArrow4	+addv 4
 		CMP DBGFileSelected
 		BCS DBDoArrow5
 		STA DBGFileSelected
-DBDoArrow5	JSR DBGFilesHelp2		;f80a
+DBDoArrow5	JSR DBGFilesHelp2
 		JMP DBGFilesHelp5
 
-DBGFilesHelp2	LDA DBGFileSelected		;f810
+DBGFilesHelp2	LDA DBGFileSelected
 		JSR DBGFilesHelp3
 		LDY #r1
 		JMP CopyString
 
-DBGFilesHelp3	LDX #r0 			;f81b
+DBGFilesHelp3	LDX #r0
 		JSR DBGFilesHelp4
 		+MoveW DBGFNameTable, r1
 		RTS
 
-DBGFilesHelp4	STA r0L 			;f82b
+DBGFilesHelp4	STA r0L
 		+LoadB r1L, 17
 		TXA
 		PHA
@@ -703,7 +703,7 @@ DBGFilesHelp4	STA r0L 			;f82b
 		STA zpage+1,x
 		RTS
 
-DBGFilesHelp5	+PushW rightMargin		;f84a
+DBGFilesHelp5	+PushW rightMargin
 		LDA #0
 		JSR DBGFilesHelp8
 		+MoveW r4, rightMargin
@@ -713,7 +713,7 @@ DBGFilesHelp5	+PushW rightMargin		;f84a
 		LDX #r14
 		JSR DBGFilesHelp4
 		+LoadB currentMode, SET_BOLD
-DBGFlsHlp_51	LDA r15L			;f870
+DBGFlsHlp_51	LDA r15L
 		JSR DBGFilesHelp8
 		JSR Rectangle
 		+MoveW r3, r11
@@ -731,12 +731,12 @@ DBGFlsHlp_51	LDA r15L			;f870
 		+PopW rightMargin
 		RTS
 
-DBGFilesHelp6	LDA DBGFileSelected		;f8b3
+DBGFilesHelp6	LDA DBGFileSelected
 		+sub DBGFTableIndex
 		JSR DBGFilesHelp8
 		JMP InvertRectangle
 
-DBGFilesHelp7	CLC				;f8c0
+DBGFilesHelp7	CLC
 		JSR CalcDialogCoords
 		+AddB DBGFOffsLeft, r3L
 		BCC *+4
@@ -751,7 +751,7 @@ DBGFilesHelp7	CLC				;f8c0
 		STA r2H
 		RTS
 
-DBGFilesHelp8	STA r0L 			;f8e8
+DBGFilesHelp8	STA r0L
 		+LoadB r1L, 14
 		LDY #r1
 		LDX #r0

@@ -3,7 +3,7 @@
 
 ;17-8-99 - ACME port
 
-_GetRealSize					;de42
+_GetRealSize
 		+subv 32
 		JSR GetChWdth1
 		TAY
@@ -13,7 +13,7 @@ _GetRealSize					;de42
 		AND #$40
 		BEQ GReSiz1
 		INY
-GReSiz1 	PLA				;de52
+GReSiz1 	PLA
 		AND #8
 		BEQ GReSiz2
 		INX
@@ -23,10 +23,10 @@ GReSiz1 	PLA				;de52
 		LDA baselineOffset
 		+addv 2
 		RTS
-GReSiz2 	LDA baselineOffset		;de61
+GReSiz2 	LDA baselineOffset
 		RTS
 
-Font_1						;de64
+Font_1
 		LDY r1H
 		INY
 	STY E87FE
@@ -62,7 +62,7 @@ Font_1						;de64
 		CPX #3
 		BCC Font_11
 		LDX #3
-Font_11 	LDA Font_tabL,x 		;dea3
+Font_11 	LDA Font_tabL,x
 		STA r13L
 		LDA Font_tabH,x
 		STA r13H
@@ -95,7 +95,7 @@ Font_11 	LDA Font_tabL,x 		;dea3
 		AND #SET_OUTLINE
 		BEQ Font_12
 		LDA #$80
-Font_12 	STA r8H 			;dee5
+Font_12 	STA r8H
 		LDA r5L
 		+addv 32
 		JSR GetRealSize
@@ -108,11 +108,11 @@ Font_12 	STA r8H 			;dee5
 		BMI Font_13
 		+CmpW rightMargin, r11
 		BCC Font_16
-Font_13 	LDA currentMode 		;df0c
+Font_13 	LDA currentMode
 		AND #SET_ITALIC
 		BNE Font_14
 		TAX
-Font_14 	TXA				;df13
+Font_14 	TXA
 		LSR
 		STA r3L
 		+add r11L
@@ -135,11 +135,11 @@ Font_14 	TXA				;df13
 		AND #SET_REVERSE
 		BEQ Font_15
 		DEX
-Font_15 	STX r10L			;df4f
+Font_15 	STX r10L
 		CLC
 		RTS
 
-Font_16 					;df53
+Font_16
 		+PopB PrvCharWidth
 		+add r11L
 		STA r11L
@@ -147,17 +147,17 @@ Font_16 					;df53
 		INC r11H
 		SEC
 		RTS
-Font_17 					;df62
+Font_17
 		+SubB r3L, r11L
 		BCS Font_18
 		DEC r11H
-Font_18 	SEC				;df6d
+Font_18 	SEC
 		RTS
 
 Font_tabL	!byte <FontGt1, <FontGt2, <FontGt3, <FontGt4
 Font_tabH	!byte >FontGt1, >FontGt2, >FontGt3, >FontGt4
 
-Font_2						;df77
+Font_2
 		LDX r1H
 		JSR GetScanLine
 		LDA FontTVar2
@@ -166,25 +166,25 @@ Font_2						;df77
 		CPX leftMargin+1
 		BNE Font_21
 		CMP leftMargin
-Font_21 	BCS Font_23			;df8a
-Font_22 	LDX leftMargin+1		;df8c
+Font_21 	BCS Font_23
+Font_22 	LDX leftMargin+1
 		LDA leftMargin
-Font_23 	PHA				;df90
+Font_23 	PHA
 		AND #%11111000
 		STA r4L
 		CPX #0
 		BNE Font_24
 		CMP #$c0
 		BCC Font_26
-Font_24 	+subv $80			;df9d
+Font_24 	+subv $80
 		PHA
 		+AddVB $80, r5L
 		STA r6L
 		BCC Font_25
 		INC r5H
 		INC r6H
-Font_25 	PLA				;dfb0
-Font_26 	STA r1L 			;dfb1
+Font_25 	PLA
+Font_26 	STA r1L
 		+MoveB FontTVar2+1, r3L
 		LSR r3L
 		LDA FontTVar2
@@ -203,7 +203,7 @@ Font_26 	STA r1L 			;dfb1
 		+sub r7L
 		BPL Font_27
 		LDA #0
-Font_27 	STA FontTVar1			;dfd5
+Font_27 	STA FontTVar1
 		LDA FontTVar2
 		AND #%00000111
 		STA r7L
@@ -221,7 +221,7 @@ Font_27 	STA FontTVar1			;dfd5
 		CPX r11H
 		BNE Font_28
 		CMP r11L
-Font_28 	BCS Font_29			;dff9
+Font_28 	BCS Font_29
 		TAY
 Font_29 	TYA
 		AND #%00000111
@@ -234,7 +234,7 @@ Font_29 	TYA
 		+sub r4L
 		BPL Font_210
 		LDA #0
-Font_210	LSR				;e011
+Font_210	LSR
 		LSR
 		LSR
 		+add FontTVar1
@@ -242,12 +242,12 @@ Font_210	LSR				;e011
 		CMP r3H
 		BCS Font_211
 		LDA r3H
-Font_211	CMP #3				;e020
+Font_211	CMP #3
 		BCS Font_213
 		CMP #2
 		BNE Font_212
 		LDA #1
-Font_212	ASL				;e02a
+Font_212	ASL
 		ASL
 		ASL
 		ASL
@@ -263,14 +263,14 @@ Font_212	ASL				;e02a
 		LDA #0
 		ADC #>FontSH1
 		BNE Font_214
-Font_213	LDA #>FontSH5			;e04a
+Font_213	LDA #>FontSH5
 		LDY #<FontSH5
-Font_214	STA r12H			;e04e
+Font_214	STA r12H
 		STY r12L
-Font_215	CLC				;e052
+Font_215	CLC
 		RTS
 
-Font_tab2					;e054
+Font_tab2
 		!byte <(FntSh56-FontSH1)
 		!byte <(FontSH3-FontSH1+0)
 		!byte <(FontSH3-FontSH1+1)
@@ -304,7 +304,7 @@ Font_tab2					;e054
 		!byte <(FontSH2-FontSH1+5)
 		!byte <(FontSH2-FontSH1+0)
 
-Font_3		LDA currentMode 		;e074
+Font_3		LDA currentMode
 		BPL Font_32
 		LDY r1H
 	CPY E87FE
@@ -312,32 +312,32 @@ Font_3		LDA currentMode 		;e074
 		DEY
 	CPY E87FE
 		BNE Font_32
-Font_31 	LDA r10L			;e085
+Font_31 	LDA r10L
 		EOR #$ff
 		STA r10L
-Font_32 	+bbrf ITALIC_BIT, currentMode, Font_215 ;e08b
+Font_32 	+bbrf ITALIC_BIT, currentMode, Font_215
 		LDA r10H
 		LSR
 		BCS Font_35
 		LDX FontTVar2
 		BNE Font_33
 		DEC FontTVar2+1
-Font_33 	DEX				;e09e
+Font_33 	DEX
 		STX FontTVar2
 		LDX r11L
 		BNE Font_34
 		DEC r11H
-Font_34 	DEX				;e0a8
+Font_34 	DEX
 		STX r11L
 	JSR Font_2
 Font_35 	+CmpW rightMargin, FontTVar2
 		BCC Font_36
 		+CmpW leftMargin, r11
 		RTS
-Font_36 	SEC				;e0c7
+Font_36 	SEC
 		RTS
 
-Font_4		LDY r1L 			;e0c9
+Font_4		LDY r1L
 		LDX FontTVar1
 		LDA Z45,x
 		CPX r8L
@@ -352,7 +352,7 @@ Font4_B1 = *+1
 		ORA #0
 		STA (r6),y
 		STA (r5),y
-Font_41 	TYA				;e0e7
+Font_41 	TYA
 		+addv 8
 		TAY
 		INX
@@ -363,7 +363,7 @@ Font_41 	TYA				;e0e7
 		STA (r6),y
 		STA (r5),y
 		+bra Font_41
-Font_42 	LDA Z45,x			;e0fc
+Font_42 	LDA Z45,x
 		EOR r10L
 		AND r9H
 		STA Font4_B2
@@ -374,7 +374,7 @@ Font4_B2 = *+1
 		STA (r6),y
 		STA (r5),y
 		RTS
-Font_43 	EOR r10L			;e110
+Font_43 	EOR r10L
 		AND r9H
 		EOR #$ff
 		ORA r3L
@@ -388,25 +388,25 @@ Font4_B3 = *+1
 		ORA #0
 		STA (r6),y
 		STA (r5),y
-Font_44 	RTS				;e12b
+Font_44 	RTS
 
-Font_5		LDX r8L 			;e12c
+Font_5		LDX r8L
 		LDA #0
-Font_51 STA E87FF,x				;e130
+Font_51 STA E87FF,x
 		DEX
 		BPL Font_51
 		LDA r8H
 		AND #%01111111
 		BNE Font_54
-Font_52 JSR Font_8				;e13c
+Font_52 JSR Font_8
 Font_52_2	LDX r8L
-Font_53 LDA E87FF,x				;e141
+Font_53 LDA E87FF,x
 		STA Z45,x
 		DEX
 		BPL Font_53
 		INC r8H
 		RTS
-Font_54 	CMP #1				;e14c
+Font_54 	CMP #1
 		BEQ Font_55
 		LDY r10H
 		DEY
@@ -417,39 +417,39 @@ Font_54 	CMP #1				;e14c
 	JSR Font_6
 		PLP
 		BEQ Font_56
-Font_55 JSR Font_6				;e160
+Font_55 JSR Font_6
 		JSR FntIndirectJMP
 	JSR Font_8
 		+SubW curSetWidth, r2
-Font_56 	JSR FntIndirectJMP		;e176
+Font_56 	JSR FntIndirectJMP
 	JSR Font_8
 	JSR Font_7
 		+bra Font_52_2
 
-Font_6		+AddW curSetWidth, r2		;e182
+Font_6		+AddW curSetWidth, r2
 		RTS
 
-Font_7		LDY #$ff			;e190
-Font_71 	INY				;e192
+Font_7		LDY #$ff
+Font_71 	INY
 		LDX #7
-Font_72 	LDA Z45,y			;e195
+Font_72 	LDA Z45,y
 		AND BitMask2,x
 		BEQ Font_73
 		LDA BitMask2,x
 		EOR #$ff
 	AND E87FF,y
 	STA E87FF,y
-Font_73 	DEX				;e1a8
+Font_73 	DEX
 		BPL Font_72
 		CPY r8L
 		BNE Font_71
 		RTS
 
-Font_8	JSR Font_9				;e1b0
+Font_8	JSR Font_9
 		LDY #$ff
-Font_81 	INY				;e1b5
+Font_81 	INY
 		LDX #7
-Font_82 	LDA Z45,y			;e1b8
+Font_82 	LDA Z45,y
 		AND BitMask2,x
 		BEQ Font_87
 	LDA E87FF,y
@@ -462,27 +462,27 @@ Font_82 	LDA Z45,y			;e1b8
 		ORA #1
 	STA E87FE,y
 		BNE Font_84
-Font_83 LDA E87FF,y				;e1d8
+Font_83 LDA E87FF,y
 		ORA BitMask2,x
 	STA E87FF,y
-Font_84 	DEX				;e1e1
+Font_84 	DEX
 		DEX
 		BPL Font_85
 	LDA E8800,y
 		ORA #$80
 	STA E8800,y
 		BNE Font_86
-Font_85 LDA E87FF,y				;e1ef
+Font_85 LDA E87FF,y
 		ORA BitMask2,x
 	STA E87FF,y
-Font_86 	INX				;e1f8
-Font_87 	DEX				;e1f9
+Font_86 	INX
+Font_87 	DEX
 		BPL Font_82
 		CPY r8L
 		BNE Font_81
 		RTS
 
-Font_9		LSR Z45 			;e201
+Font_9		LSR Z45
 		ROR Z45+1
 		ROR Z45+2
 		ROR Z45+3
@@ -492,25 +492,25 @@ Font_9		LSR Z45 			;e201
 		ROR Z45+7
 		RTS
 
-Font_10 					;e212
+Font_10 
 		TAY
 		+PushB r1H
 		TYA
 	JSR Font_1
 		BCS Font_108
-Font_100	CLC				;e21d
+Font_100	CLC
 		LDA currentMode
 		AND #SET_UNDERLINE | SET_ITALIC
 		BEQ Font_101
 	JSR Font_3
-Font_101	PHP				;e227
+Font_101	PHP
 		BCS Font_102
 		JSR FntIndirectJMP
-Font_102	+bbrf 7, r8H, Font_103		;e22d
+Font_102	+bbrf 7, r8H, Font_103
 	JSR Font_5
 		+bra Font_104
-Font_103 JSR Font_6				;e237
-Font_104	PLP				;e23a
+Font_103 JSR Font_6
+Font_104	PLP
 		BCS Font_106
 		LDA r1H
 		CMP windowTop
@@ -518,8 +518,8 @@ Font_104	PLP				;e23a
 		CMP windowBottom
 		BCC Font_105
 		BNE Font_106
-Font_105 JSR Font_4				;e249
-Font_106	INC r5L 			;e24c
+Font_105 JSR Font_4
+Font_106	INC r5L
 		INC r6L
 		LDA r5L
 		AND #%00000111
@@ -531,15 +531,15 @@ Font_106	INC r5L 			;e24c
 		BCC Font_107
 		INC r5H
 		INC r6H
-Font_107	INC r1H 			;e269
+Font_107	INC r1H 
 		DEC r10H
 		BNE Font_100
-Font_108	+PopB r1H			;e26f
+Font_108	+PopB r1H
 		RTS
 
 ;procedures indexed from Font_Tab2, DO NOT CHANGE!
 
-FontSH1 	LSR				;e273
+FontSH1 	LSR
 		LSR
 		LSR
 		LSR
@@ -547,7 +547,7 @@ FontSH1 	LSR				;e273
 		LSR
 		LSR
 		JMP FntShJump
-FontSH2 	LSR				;e27d
+FontSH2 	LSR
 		ROR Z46
 		ROR Z47
 		LSR
@@ -569,7 +569,7 @@ FontSH2 	LSR				;e27d
 		ROR Z46
 		ROR Z47
 		JMP FntShJump
-FontSH3 	ASL				;e2a3
+FontSH3 	ASL
 		ASL
 		ASL
 		ASL
@@ -577,7 +577,7 @@ FontSH3 	ASL				;e2a3
 		ASL
 		ASL
 		JMP FntShJump
-FontSH4 	ASL Z47 			;e2ad
+FontSH4 	ASL Z47
 		ROL Z46
 		ROL
 		ASL Z47
@@ -599,21 +599,21 @@ FontSH4 	ASL Z47 			;e2ad
 		ROL Z46
 		ROL
 		JMP FntShJump
-FontSH5 	STA Z45 			;e2d3
+FontSH5 	STA Z45
 		LDA r7L
 	+sub E87FD
 		BEQ FntSh52
 		BCC FntSh53
 		TAY
-FntSh51 JSR Font_9				;e2e0
+FntSh51 JSR Font_9
 		DEY
 		BNE FntSh51
-FntSh52 	LDA Z45 			;e2e6
+FntSh52 	LDA Z45
 		JMP FntShJump
-FntSh53 LDA E87FD				;e2eb
+FntSh53 LDA E87FD
 		+sub r7L
 		TAY
-FntSh54 	ASL Z45+7			;e2f2
+FntSh54 	ASL Z45+7
 		ROL Z45+6
 		ROL Z45+5
 		ROL Z45+4
@@ -624,12 +624,12 @@ FntSh54 	ASL Z45+7			;e2f2
 		DEY
 		BNE FntSh54
 		LDA Z45
-FntShJump	STA Z45 			;e307
+FntShJump	STA Z45
 		+bbrf BOLD_BIT, currentMode, FntSh56
 		LDA #0
 		PHA
 		LDY #$ff
-FntSh55 	INY				;e312
+FntSh55 	INY
 		LDX Z45,y
 		PLA
 		ORA ID100+$10,x
@@ -642,21 +642,21 @@ FntSh55 	INY				;e312
 		CPY r8L
 		BNE FntSh55
 		PLA
-FntSh56 	RTS				;e327
+FntSh56 	RTS
 
 ; end of indexed table, keep on changin'
 
-FntIndirectJMP	LDY #0				;e328
+FntIndirectJMP	LDY #0
 		JMP (r13)
 
-FontGt1 	STY Z45+1			;e32d
+FontGt1 	STY Z45+1
 		STY Z45+2
 		LDA (r2),y
 	AND E87FC
 		AND r7H
 		JMP (r12)
 
-FontGt2 	STY Z45+2			;e33b
+FontGt2 	STY Z45+2
 		STY Z45+3
 		LDA (r2),y
 	AND E87FC
@@ -665,10 +665,10 @@ FontGt2 	STY Z45+2			;e33b
 		LDA (r2),y
 		AND r7H
 		STA Z45+1
-FontGt2_1	LDA Z45 			;e34d
+FontGt2_1	LDA Z45
 		JMP (r12)
 
-FontGt3 	STY Z45+3			;e352
+FontGt3 	STY Z45+3
 		STY Z45+4
 		LDA (r2),y
 	AND E87FC
@@ -682,16 +682,16 @@ FontGt3 	STY Z45+3			;e352
 		STA Z45+2
 		+bra FontGt2_1
 
-FontGt4 	LDA (r2),y			;e36c
+FontGt4 	LDA (r2),y
 	AND E87FC
 		STA Z45
-FontGt4_1	INY				;e373
+FontGt4_1	INY
 		CPY r3H
 		BEQ FontGt4_2
 		LDA (r2),y
 		STA Z45,y
 		+bra FontGt4_1
-FontGt4_2	LDA (r2),y			;e380
+FontGt4_2	LDA (r2),y
 		AND r7H
 		STA Z45,y
 		LDA #0

@@ -3,33 +3,33 @@
 
 ;17-8-99 - ACME port
 
-_IsMseInRegion					;cf5c
+_IsMseInRegion
 		LDA mouseYPos
 		CMP r2L
 		BCC IMIRl4
 		CMP r2H
 		BEQ IMIRl0
 		BCS IMIRl4
-IMIRl0		LDA mouseXPos+1 		;cf68
+IMIRl0		LDA mouseXPos+1
 		CMP r3H
 		BNE IMIRl1
 		LDA mouseXPos
 		CMP r3L
-IMIRl1		BCC IMIRl4			;cf72
+IMIRl1		BCC IMIRl4
 		LDA mouseXPos+1
 		CMP r4H
 		BNE IMIRl2
 		LDA mouseXPos
 		CMP r4L
-IMIRl2		BEQ IMIRl3			;cf7e
+IMIRl2		BEQ IMIRl3
 		BCS IMIRl4
-IMIRl3		LDA #true			;cf82
+IMIRl3		LDA #true
 		RTS
-IMIRl4		LDA #false			;cf85
+IMIRl4		LDA #false
 		RTS
 
 
-_StartMouseMode 				;eb98
+_StartMouseMode
 		BCC SMousMd1
 		LDA r11L
 		ORA r11H
@@ -48,18 +48,18 @@ SMousMd1	LDA #>CheckClickPos
 		+LoadB faultData, NULL
 		JMP MouseUp
 
-_ClearMouseMode 				;ebc9
+_ClearMouseMode
 		+LoadB mouseOn, NULL
-CMousMd1	+LoadB r3L, NULL		;ebcd
+CMousMd1	+LoadB r3L, NULL
 		JMP _DisablSprite
 
-_MouseOff	+rmbf MOUSEON_BIT, mouseOn	;ebd4
+_MouseOff	+rmbf MOUSEON_BIT, mouseOn
 		JMP CMousMd1
 
-_MouseUp	+smbf MOUSEON_BIT, mouseOn	;ebdd
+_MouseUp	+smbf MOUSEON_BIT, mouseOn
 MseUp1		RTS
 
-ProcessMouse	JSR UpdateMouse 		;ebe4
+ProcessMouse	JSR UpdateMouse
 		+bbrf MOUSEON_BIT, mouseOn, MseUp1
 		JSR CheckMsePos
 		+LoadB r3L, 0
@@ -70,56 +70,56 @@ ProcessMouse	JSR UpdateMouse 		;ebe4
 		JSR PosSprite
 		jmp EnablSprite
 
-CheckMsePos	LDY mouseLeft			;ec10
+CheckMsePos	LDY mouseLeft
 		LDX mouseLeft+1
 		LDA mouseXPos+1
 		BMI ChMsePs2
 		CPX mouseXPos+1
 		BNE ChMsePs1
 		CPY mouseXPos
-ChMsePs1	BCC ChMsePs3			;ec20
+ChMsePs1	BCC ChMsePs3
 		BEQ ChMsePs3
-ChMsePs2	+smbf OFFLEFT_BIT, faultData	   ;ec24
+ChMsePs2	+smbf OFFLEFT_BIT, faultData
 		STY mouseXPos
 		STX mouseXPos+1
-ChMsePs3	LDY mouseRight			;ec30
+ChMsePs3	LDY mouseRight
 		LDX mouseRight+1
 		CPX mouseXPos+1
 		BNE ChMsePs4
 		CPY mouseXPos
-ChMsePs4	BCS ChMsePs5			;ec3c
+ChMsePs4	BCS ChMsePs5
 		+smbf OFFRIGHT_BIT, faultData
 		STY mouseXPos
 		STX mouseXPos+1
-ChMsePs5	LDY mouseTop			;ec4a
+ChMsePs5	LDY mouseTop
 		+CmpBI mouseYPos, 228
 		BCS ChMsePs6
 		CPY mouseYPos
 		BCC ChMsePs7
 		BEQ ChMsePs7
-ChMsePs6	+smbf OFFTOP_BIT, faultData	;ec59
+ChMsePs6	+smbf OFFTOP_BIT, faultData
 		STY mouseYPos
-ChMsePs7	LDY mouseBottom 		;ec63
+ChMsePs7	LDY mouseBottom
 		CPY mouseYPos
 		BCS ChMsePs8
 		+smbf OFFBOTTOM_BIT, faultData
 		STY mouseYPos
-ChMsePs8	+bbrf MENUON_BIT, mouseOn, ChMsePs11   ;ec74
+ChMsePs8	+bbrf MENUON_BIT, mouseOn, ChMsePs11
 		LDA mouseYPos
 		CMP menuTop
 		BCC ChMsePs10
 		CMP menuBottom
 		BEQ ChMsePs9
 		BCS ChMsePs10
-ChMsePs9	+CmpW mouseXPos, menuLeft	;ec86
+ChMsePs9	+CmpW mouseXPos, menuLeft
 		BCC ChMsePs10
 		+CmpW mouseXPos, menuRight
 		BCC ChMsePs11
 		BEQ ChMsePs11
-ChMsePs10	+smbf OFFMENU_BIT, faultData	;eca4
-ChMsePs11	RTS				;ecac
+ChMsePs10	+smbf OFFMENU_BIT, faultData
+ChMsePs11	RTS
 
-CheckClickPos	LDA mouseData			;ecad
+CheckClickPos	LDA mouseData
 		BMI ChClkPos4
 		LDA mouseOn
 		AND #SET_MSE_ON
@@ -132,15 +132,15 @@ CheckClickPos	LDA mouseData			;ecad
 		CMP menuBottom
 		BEQ ChClkPos1
 		BCS ChClkPos3
-ChClkPos1	+CmpW mouseXPos, menuLeft	;eccc
+ChClkPos1	+CmpW mouseXPos, menuLeft
 		BCC ChClkPos3
 		+CmpW mouseXPos, menuRight
 		BEQ ChClkPos2
 		BCS ChClkPos3
-ChClkPos2 JMP Menu_5				;ecea
-ChClkPos3	+bbrf ICONSON_BIT, mouseOn, ChClkPos4	;eced
+ChClkPos2 JMP Menu_5
+ChClkPos3	+bbrf ICONSON_BIT, mouseOn, ChClkPos4
 		JMP ProcessClick
-ChClkPos4	LDA otherPressVec		;ecf6
+ChClkPos4	LDA otherPressVec
 		LDX otherPressVec+1
 		JMP CallRoutine
 
@@ -154,14 +154,14 @@ DoMouseFault	+bbrf MOUSEON_BIT, mouseOn, ChMsePs11
 		TAY
 		+bbsf 7, menuOptNumber, DoMseFlt1
 		LDX #SET_OFFLEFT
-DoMseFlt1	TXA				;ed20
+DoMseFlt1	TXA
 		AND faultData
 		BNE DoMseFlt2
 		TYA
 		+bbsf 6, menuOptNumber, ChMsePs11
 DoMseFlt2	jmp _DoPreviousMenu
 
-ResetMseRegion	LDA #NULL			;f179
+ResetMseRegion	LDA #NULL
 		STA mouseLeft
 		STA mouseLeft+1
 		STA mouseTop
@@ -169,27 +169,27 @@ ResetMseRegion	LDA #NULL			;f179
 		+LoadB mouseBottom, SC_PIX_HEIGHT-1
 		RTS
 
-_DoCheckButtons 				;fa56
+_DoCheckButtons
 		+bbrf INPUT_BIT, pressFlag, DoChkBtns1
 		+rmbf INPUT_BIT, pressFlag
 		LDA inputVector
 		LDX inputVector+1
 		JSR CallRoutine
-DoChkBtns1	+bbrf MOUSE_BIT, pressFlag, DoChkBtns2	;fa69
+DoChkBtns1	+bbrf MOUSE_BIT, pressFlag, DoChkBtns2
 		+rmbf MOUSE_BIT, pressFlag
 		LDA mouseVector
 		LDX mouseVector+1
 		JSR CallRoutine
-DoChkBtns2	+bbrf KEYPRESS_BIT, pressFlag, DoChkBtns3	;fa7e
+DoChkBtns2	+bbrf KEYPRESS_BIT, pressFlag, DoChkBtns3
 		JSR KbdScanHelp3
 		LDA keyVector
 		LDX keyVector+1
 		JSR CallRoutine
-DoChkBtns3	LDA faultData			;fa8e
+DoChkBtns3	LDA faultData
 		BEQ DoChkBtns4
 		LDA mouseFaultVec
 		LDX mouseFaultVec+1
 		JSR CallRoutine
 		LDA #NULL
 		STA faultData
-DoChkBtns4	RTS				;faa1
+DoChkBtns4	RTS
