@@ -2,6 +2,7 @@
 overall:
 + change sources names to 8.3
 - try to make under MS-DOS
+- remove REU reboot code from booter if there's no REU
 
 code purity:
 - throughoutly test it with various configurations
