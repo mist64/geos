@@ -10,3 +10,4 @@
 02.04.2000
 - added 1531 mouse driver in source
 27.07.2000
+- cleaned up IO_IN and friends stuff, updated kernal sources with these constants
