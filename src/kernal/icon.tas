@@ -1,0 +1,171 @@
+
+;GEOS Icons handler
+
+;17-8-99 - ACME port
+
+_DoIcons	+MoveW r0, IconDescVec		;f146
+	JSR Icons_1
+		JSR ResetMseRegion
+		LDA mouseOn
+		AND #SET_MSE_ON
+		BNE DoIcons1
+		LDA mouseOn
+		AND #%10111111
+		STA mouseOn
+DoIcons1	LDA mouseOn			;f160
+		ORA #SET_ICONSON
+		STA mouseOn
+		LDY #1
+		LDA (IconDescVec),y
+		STA r11L
+		INY
+		LDA (IconDescVec),y
+		STA r11H
+		INY
+		LDA (IconDescVec),y
+		TAY
+		SEC
+		JMP _StartMouseMode
+
+CalcIconDescTab ASL				;f194
+		ASL
+		ASL
+		CLC
+		ADC #4
+		TAY
+		RTS
+
+Icons_1 	+LoadB r10L, NULL		;f19c
+Icons_10	LDA r10L			;f1a0
+		JSR CalcIconDescTab
+		LDX #0
+Icons_11	LDA (IconDescVec),y		;f1a7
+		STA r0,x
+		INY
+		INX
+		CPX #6
+		BNE Icons_11
+		LDA r0L
+		ORA r0H
+		BEQ Icons_12
+		JSR _BitmapUp
+Icons_12	INC r10L			;f1ba
+		LDA r10L
+		LDY #0
+		CMP (IconDescVec),y
+		BNE Icons_10
+Icons_13	RTS
+
+ProcessClick	LDA IconDescVecH		;f1c5
+		BEQ ProcClk1
+		JSR FindClkIcon
+		BCS ProcClk2
+ProcClk1	LDA otherPressVec		;f1ce
+		LDX otherPressVec+1
+		JMP CallRoutine
+ProcClk2	LDA clkBoxTemp			;f1d7
+		BNE Icons_13
+		LDA r0L
+		STA clkBoxTemp2
+		STY clkBoxTemp
+		LDA #%11000000
+		BIT iconSelFlg
+		BEQ ProcClk5
+		BMI ProcClk3
+		BVS ProcClk4
+ProcClk3	JSR CalcIconCoords		;f1ef
+		JSR MenuDoInvert
+		+MoveB selectionFlash, r0L
+		+LoadB r0H, NULL
+		JSR _Sleep
+		+MoveB clkBoxTemp2, r0L
+		LDY clkBoxTemp
+ProcClk4	JSR CalcIconCoords		;f209
+		JSR MenuDoInvert
+ProcClk5	LDY #$1e			;f20f
+		LDX #FALSE
+		LDA dblClickCount
+		BEQ ProcClk6
+		LDX #TRUE
+		LDY #0
+ProcClk6	STY dblClickCount		;f21c
+		STX r0H
+		+MoveB clkBoxTemp2, r0L
+		LDY clkBoxTemp
+		LDX #0
+		STX clkBoxTemp
+		INY
+		INY
+		LDA (IconDescVec),y
+		TAX
+		DEY
+		LDA (IconDescVec),y
+		jmp CallRoutine
+
+FindClkIcon	+LoadB r0L, NULL		;f23a
+FndClkIcn1	LDA r0L 			;f23e
+		JSR CalcIconDescTab
+		LDA (IconDescVec),y
+		INY
+		ORA (IconDescVec),y
+		BEQ FndClkIcn2
+		INY
+		LDA mouseXPos+1
+		LSR
+		LDA mouseXPos
+		ROR
+		LSR
+		LSR
+		SEC
+		SBC (IconDescVec),y
+		BCC FndClkIcn2
+		INY
+		INY
+		CMP (IconDescVec),y
+		BCS FndClkIcn2
+		DEY
+		LDA mouseYPos
+		SEC
+		SBC (IconDescVec),y
+		BCC FndClkIcn2
+		INY
+		INY
+		CMP (IconDescVec),y
+		BCC FndClkIcn3
+FndClkIcn2	INC r0L 			;f26c
+		LDA r0L
+		LDY #0
+		CMP (IconDescVec),y
+		BNE FndClkIcn1
+		CLC
+		RTS
+FndClkIcn3	SEC				;f278
+		RTS
+
+CalcIconCoords	LDA (IconDescVec),y		;f27a
+		DEY
+		DEY
+		CLC
+		ADC (IconDescVec),y
+		+subv 1
+		STA r2H
+		LDA (IconDescVec),y
+		STA r2L
+		DEY
+		LDA (IconDescVec),y
+		STA r3L
+		INY
+		INY
+		CLC
+		ADC (IconDescVec),y
+		STA r4L
+		+LoadB r3H, 0
+		STA r4H
+		LDY #3
+		LDX #r3
+		JSR DShiftLeft
+		LDY #3
+		LDX #r4
+		JSR DShiftLeft
+		LDX #r4
+		jmp Ddec

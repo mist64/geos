@@ -1,0 +1,198 @@
+
+;various math routines
+
+;17-8-99 - ACME port
+
+_DShiftLeft					;cd32
+		DEY
+		BMI DShLf0
+		ASL zpage,X
+		ROL zpage+1,X
+		JMP _DShiftLeft
+DShLf0		RTS				;cd3c
+_DShiftRight					;cd3d
+		DEY
+		BMI DShRg0
+		LSR zpage+1,X
+		ROR zpage,X
+		JMP _DShiftRight
+DShRg0		RTS				;cd47
+
+_BBMult
+		LDA zpage,Y
+		STA r8H
+		STY r8L
+		LDY #8
+		LDA #0
+BBMul0		LSR r8H 			;cd53
+		BCC BBMul1
+		CLC
+		ADC zpage,X
+BBMul1		ROR				;cd5a
+		ROR r7L
+		DEY
+		BNE BBMul0
+		STA zpage+1,X
+		LDA r7L
+		STA zpage,X
+		LDY r8L
+		RTS
+
+_BMult						;cd69
+		LDA #0
+		STA zpage+1,Y
+_DMult		+LoadB r8L, 16			;cd6e
+		+LoadW r7, 0
+BMult0		LSR zpage+1,X			;cd78
+		ROR zpage,X
+		BCC BMult1
+		LDA r7L
+		CLC
+		ADC zpage,Y
+		STA r7L
+		LDA r7H
+		ADC zpage+1,Y
+BMult1		LSR				;cd8b
+		STA r7H
+		ROR r7L
+		ROR r6H
+		ROR r6L
+		DEC r8L
+		BNE BMult0
+		LDA r6L
+		STA zpage,X
+		LDA r6H
+		STA zpage+1,X
+		RTS
+
+_Ddiv						;cda1
+		+LoadW r8, 0
+		+LoadB r9L, 16
+Ddivl0		ASL zpage,X			;cdab
+		ROL zpage+1,X
+		ROL r8L
+		ROL r8H
+		LDA r8L
+		SEC
+		SBC zpage,Y
+		STA r9H
+		LDA r8H
+		SBC zpage+1,Y
+		BCC Ddivl1
+		INC zpage,X
+		STA r8H
+		LDA r9H
+		STA r8L
+Ddivl1		DEC r9L 			;cdca
+		BNE Ddivl0
+Ddivl2		RTS
+
+_DSDiv						;cdcf
+		LDA zpage+1,X
+		EOR zpage+1,Y
+		PHP
+		JSR _Dabs
+		STX r8L
+		TYA
+		TAX
+		JSR _Dabs
+		LDX r8L
+		JSR _Ddiv
+		PLP
+		BPL Ddivl1
+		jmp _Dnegate
+
+_Dabs						;cdeb
+		LDA zpage+1,X
+		BMI _Dnegate
+		RTS
+_Dnegate	LDA zpage+1,X			;cdf0
+		EOR #$FF
+		STA zpage+1,X
+		LDA zpage,X
+		EOR #$FF
+		STA zpage,X
+		INC zpage,X
+		BNE Dnegate1
+		INC zpage+1,X
+Dnegate1	RTS				;ce02
+
+_Ddec						;ce03
+		LDA zpage,X
+		BNE Ddecl0
+		DEC zpage+1,X
+Ddecl0		DEC zpage,X			;ce09
+		LDA zpage,X
+		ORA zpage+1,X
+		RTS
+
+_GetRandom					;ce10
+		INC random
+		BNE GRandl0
+		INC random+1
+GRandl0 	ASL random			;ce18
+		ROL random+1
+		BCC GRandl2
+		LDA #$0F
+		+add random
+		STA random
+		BCC GRandl1
+		INC random+1
+GRandl1 	RTS				;ce2e
+GRandl2 	+CmpBI random+1, $ff		;ce2f
+		BCC GRandl3
+		LDA random
+		+subv $f1
+		BCC GRandl3
+		STA random
+		LDA #0
+		STA random+1
+GRandl3 	RTS				;ce46
+
+_CRC						;e975
+		LDY #$ff
+		STY r2L
+		STY r2H
+		INY
+CRC1		LDA #$80			;e97c
+		STA r3L
+CRC2		ASL r2L 			;e980
+		ROL r2H
+		LDA (r0),y
+		AND r3L
+		BCC CRC3
+		EOR r3L
+CRC3		BEQ CRC4			;e98c
+		LDA r2L
+		EOR #$21
+		STA r2L
+		LDA r2H
+		EOR #$10
+		STA r2H
+CRC4		LSR r3L 			;e99a
+		BCC CRC2
+		INY
+		BNE CRC5
+		INC r0H
+CRC5		LDX #r1 			;e9a3
+		JSR Ddec
+		LDA r1L
+		ORA r1H
+		BNE CRC1
+		RTS
+
+ConvertBCD	PHA				;fe23
+		AND #%11110000
+		LSR
+		LSR
+		LSR
+		LSR
+		TAY
+		PLA
+		AND #%00001111
+		CLC
+CvtBCD1 	DEY				;fe2f
+		BMI CvtBCD2
+		ADC #10
+		BNE CvtBCD1
+CvtBCD2 	RTS				;fe36

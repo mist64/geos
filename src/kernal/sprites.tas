@@ -1,0 +1,75 @@
+
+;sprites-related functions, handles all sprites (including pointer and prompt)
+
+;17-8-99 - ACME port
+
+_DrawSprite					;cc9a
+		LDY r3L
+		LDA SprTabL,Y
+		STA r5L
+		LDA SprTabH,Y
+		STA r5H
+		LDY #63
+DSpr0		LDA (r4),Y			;cca8
+		STA (r5),Y
+		DEY
+		BPL DSpr0
+		RTS
+
+_PosSprite					;ccc0
+		+PushB CPU_DATA
+		+LoadB CPU_DATA, $35
+		LDA r3L
+		ASL
+		TAY
+		LDA r5L
+		+addv VIC_Y_POS_OFF
+		STA mob0ypos,Y
+		LDA r4L
+		+addv VIC_X_POS_OFF
+		STA r6L
+		LDA r4H
+		ADC #0
+		STA r6H
+		LDA r6L
+		STA mob0xpos,Y
+		LDX r3L
+		LDA BitMask2,X
+		EOR #$FF
+		AND msbxpos
+		TAY
+		LDA #1
+		AND r6H
+		BEQ PSpr0
+		TYA
+		ORA BitMask2,X
+		TAY
+PSpr0		STY msbxpos			;ccfb
+		+PopB CPU_DATA
+		RTS
+
+_EnablSprite					;cd02
+		LDX r3L
+		LDA BitMask2,X
+		TAX
+		+PushB CPU_DATA
+		+LoadB CPU_DATA, $35
+		TXA
+		ORA mobenble
+		STA mobenble
+		+PopB CPU_DATA
+		RTS
+
+_DisablSprite					;cd1a
+		LDX r3L
+		LDA BitMask2,X
+		EOR #$FF
+		PHA
+		LDX CPU_DATA
+		LDA #$35
+		STA CPU_DATA
+		PLA
+		AND mobenble
+		STA mobenble
+		STX CPU_DATA
+		RTS

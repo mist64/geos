@@ -1,0 +1,912 @@
+
+;graphical functions (lines, rectangles, points, bitmaps)
+
+;18-8-99 - ACME port
+
+ClrScr
+		+LoadW r0, SCREEN_BASE
+		+LoadW r1, BACK_SCR_BASE
+		LDX #$7D
+ClrScr1 	LDY #$3F			;c4ae
+ClrScr2 	LDA #backPattern1		;c4b0
+		STA (r0),Y
+		STA (r1),Y
+		DEY
+		LDA #backPattern2
+		STA (r0),Y
+		STA (r1),Y
+		DEY
+		BPL ClrScr2
+		+AddVW 64, r0
+		+AddVW 64, r1			;c4cb
+		DEX				;c4d6
+		BNE ClrScr1
+		RTS
+
+
+PrepareXCoord
+		LDX r11L			;c62b
+		JSR _GetScanLine
+		LDA r4L
+		AND #%00000111
+		TAX
+		LDA BitMask4,X
+		STA r8H
+		LDA r3L
+		AND #%00000111
+		TAX
+		LDA BitMask3,X
+		STA r8L
+		LDA r3L
+		AND #%11111000
+		STA r3L
+		LDA r4L
+		AND #%11111000
+		STA r4L
+		RTS
+
+_HorizontalLine 				;c651
+		STA r7L
+		+PushW r3
+		+PushW r4
+		JSR PrepareXCoord
+		LDY r3L
+		LDA r3H
+		BEQ HLin0
+		INC r5H
+		INC r6H
+HLin0		+CmpW r3, r4			;c66c
+HLin1		BEQ HLin4			;c676
+		+SubW r3, r4
+		LSR r4H
+		ROR r4L
+		LSR r4L
+		LSR r4L
+		LDA r8L
+		JSR HLineHelp
+HLin2		STA (r6),Y			;c692
+		STA (r5),Y
+		TYA
+		+addv 8
+		TAY
+		BCC HLin3
+		INC r5H
+		INC r6H
+HLin3		DEC r4L 			;c6a1
+		BEQ HLin5
+		LDA r7L
+		+bra HLin2
+HLin4		LDA r8L 			;c6aa
+		ORA r8H
+		+bra HLin6
+HLin5		LDA r8H 			;c6b1
+HLin6		JSR HLineHelp			;c6b3
+HLin7		STA (r6),Y			;c6b6
+		STA (r5),Y
+HLin8		+PopW r4			;c6ba
+		+PopW r3
+		RTS
+
+HLineHelp	STA r11H			;c6c7
+		AND (r6),Y
+		STA r7H
+		LDA r11H
+		EOR #$FF
+		AND r7L
+		ORA r7H
+		RTS
+_InvertLine					;c6d6
+		+PushW r3
+		+PushW r4
+		JSR PrepareXCoord
+		LDY r3L
+		LDA r3H
+		BEQ ILin0
+		INC r5H
+		INC r6H
+ILin0		+CmpW r3, r4			;c6ef
+ILin1		BEQ ILin4			;c6f9
+		+SubW r3, r4
+		LSR r4H
+		ROR r4L
+		LSR r4L
+		LSR r4L
+		LDA r8L
+		EOR (r5),Y
+ILin2		EOR #$FF			;c714
+		STA (r6),Y
+		STA (r5),Y
+		TYA
+		+addv 8
+		TAY
+		BCC ILin3
+		INC r5H
+		INC r6H
+ILin3		DEC r4L 			;c725
+		BEQ ILin5
+		LDA (r5),Y
+		+bra ILin2
+ILin4		LDA r8L 			;c72e
+		ORA r8H
+		+bra ILin6
+ILin5		LDA r8H 			;c735
+ILin6		EOR #$FF			;c737
+		EOR (r5),Y
+		JMP HLin7
+
+ILin7		+PushW r3			;c73e
+		+PushW r4
+		+PushB dispBufferOn
+		ORA #ST_WR_FORE | ST_WR_BACK
+		STA dispBufferOn
+		JSR PrepareXCoord
+		+PopB dispBufferOn
+		LDA r5L
+		LDY r6L
+		STA r6L
+		STY r5L
+		LDA r5H
+		LDY r6H
+		STA r6H
+		STY r5H
+		+bra RLin0
+
+_RecoverLine					;c76a
+		+PushW r3
+		+PushW r4
+		+PushB dispBufferOn
+		ORA #ST_WR_FORE | ST_WR_BACK
+		STA dispBufferOn
+		JSR PrepareXCoord
+		+PopB dispBufferOn
+
+RLin0		LDY r3L 			;c783
+		LDA r3H
+		BEQ RLin1
+		INC r5H
+		INC r6H
+RLin1		+CmpW r3, r4			;c78d
+RLin2		BEQ RLin5			;c797
+		+SubW r3, r4
+		LSR r4H
+		ROR r4L
+		LSR r4L
+		LSR r4L
+		LDA r8L
+		JSR RecLineHelp
+RLin3		TYA				;c7b3
+		+addv 8
+		TAY
+		BCC RLin4
+		INC r5H
+		INC r6H
+RLin4		DEC r4L 			;c7be
+		BEQ RLin6
+		LDA (r6),Y
+		STA (r5),Y
+		+bra RLin3
+RLin5		LDA r8L 			;c7c9
+		ORA r8H
+		+bra RLin7
+RLin6		LDA r8H 			;c7d0
+RLin7		JSR RecLineHelp 		;c7d2
+		JMP HLin8
+
+RecLineHelp	STA r7L 			;c7d8
+		AND (r5),Y
+		STA r7H
+		LDA r7L
+		EOR #$FF
+		AND (r6),Y
+		ORA r7H
+		STA (r5),Y
+		RTS
+
+_VerticalLine					;c7e9
+		STA r8L
+		+PushB r4L
+		AND #%00000111
+		TAX
+		LDA BitMask1,X
+		STA r7H
+		LDA r4L
+		AND #%11111000
+		STA r4L
+		LDY #0
+		LDX r3L
+VLin0		STX r7L 			;c800
+		JSR _GetScanLine
+		+AddW r4, r5
+		+AddW r4, r6
+		LDA r7L
+		AND #%00000111
+		TAX
+		LDA BitMask1,X
+		AND r8L
+		BNE VLin1
+		LDA r7H
+		EOR #$FF
+		AND (r6),Y
+		+bra VLin2
+VLin1		LDA r7H 			;c834
+		ORA (r6),Y
+VLin2		STA (r6),Y			;c838
+		STA (r5),Y
+		LDX r7L
+		INX
+		CPX r3H
+		BEQ VLin0
+		BCC VLin0
+		+PopB r4L
+		RTS
+
+_i_Rectangle
+		JSR GetInlineDrwParms		;c849
+		JSR _Rectangle
+		PHP
+		LDA #7
+		JMP DoInlineReturn
+
+_Rectangle
+		+MoveB r2L, r11L		;c855
+Rect1		LDA r11L			;c859
+		AND #$07
+		TAY
+		LDA (curPattern),Y
+		JSR _HorizontalLine
+		LDA r11L
+		INC r11L
+		CMP r2H
+		BNE Rect1
+		RTS
+
+_InvertRectangle				;c86c
+		+MoveB r2L, r11L
+IRect1		JSR _InvertLine 		;c870
+		LDA r11L
+		INC r11L
+		CMP r2H
+		BNE IRect1
+		RTS
+
+_i_RecoverRectangle				;c87c
+		JSR GetInlineDrwParms
+		JSR _RecoverRectangle
+		PHP
+		LDA #7
+		JMP DoInlineReturn
+
+_RecoverRectangle				;c888
+		+MoveB r2L, r11L
+RRect1		JSR _RecoverLine		;c88c
+		LDA r11L
+		INC r11L
+		CMP r2H
+		BNE RRect1
+		RTS
+
+_i_ImprintRectangle				;c898
+		JSR GetInlineDrwParms
+		JSR _ImprintRectangle
+		PHP
+		LDA #7
+		JMP DoInlineReturn
+
+_ImprintRectangle				;c8a4
+		+MoveB r2L, r11L
+ImRec1		JSR ILin7			;c8a8
+		LDA r11L
+		INC r11L
+		CMP r2H
+		BNE ImRec1
+		RTS
+
+_i_FrameRectangle				;c8b4
+		JSR GetInlineDrwParms
+		INY
+		LDA (returnAddress),Y
+		JSR _FrameRectangle
+		PHP
+		LDA #8
+		JMP DoInlineReturn
+
+_FrameRectangle 				;c8c3
+		STA r9H
+		LDY r2L
+		STY r11L
+		JSR _HorizontalLine
+		+MoveB r2H, r11L
+		LDA r9H
+		JSR _HorizontalLine
+		+PushW r3
+		+PushW r4
+		+MoveW r3, r4
+		+MoveW r2, r3
+		LDA r9H
+		JSR _VerticalLine
+		+PopW r4
+		LDA r9H
+		JSR _VerticalLine
+		+PopW r3
+		RTS
+
+GetInlineDrwParms				;c908
+		+PopW r5
+		+PopW returnAddress
+		LDY #1
+		LDA (returnAddress),Y
+		STA r2L
+		INY
+		LDA (returnAddress),Y
+		STA r2H
+		INY
+		LDA (returnAddress),Y
+		STA r3L
+		INY
+		LDA (returnAddress),Y
+		STA r3H
+		INY
+		LDA (returnAddress),Y
+		STA r4L
+		INY
+		LDA (returnAddress),Y
+		STA r4H
+		+PushW r5
+GtDrwPrmsEnd	RTS
+
+_i_GraphicsString				;c93a
+		+PopB r0L
+		PLA
+		INC r0L
+		BNE i_GStr0
+		+addv 1
+i_GStr0 	STA r0H 			;c945
+		JSR _GraphicsString
+		JMP (r0)
+
+_GraphicsString 				;c94d
+		JSR Getr0AndInc
+		BEQ GtDrwPrmsEnd
+		TAY
+		DEY
+		LDA GStrTL,Y
+		LDX GStrTH,Y
+		JSR CallRoutine
+		+bra _GraphicsString
+						;c961
+GStrTL		!byte <_DoMovePenTo, <_DoLineTo
+		!byte <_DoRectangleTo, <_DoNothing
+		!byte <_DoNewPattern, <_DoESC_PutString
+		!byte <_DoFrame_RecTo, <_DoPenXDelta
+		!byte <_DoPenYDelta, <_DoPenXYDelta
+						;c96b
+GStrTH		!byte >_DoMovePenTo, >_DoLineTo
+		!byte >_DoRectangleTo, >_DoNothing
+		!byte >_DoNewPattern, >_DoESC_PutString
+		!byte >_DoFrame_RecTo, >_DoPenXDelta
+		!byte >_DoPenYDelta, >_DoPenXYDelta
+
+_DoMovePenTo					;c975
+		JSR GetCoords
+		STA GraphPenY
+		STX GraphPenXL
+		STY GraphPenXH
+_DoNothing	RTS
+
+_DoLineTo					;c982
+		+MoveW GraphPenX, r3
+		+MoveB GraphPenY, r11L
+		JSR _DoMovePenTo
+		STA r11H
+		STX r4L
+		STY r4H
+		SEC
+		LDA #0
+		JMP _DrawLine
+
+_DoRectangleTo
+		JSR GrStSetCoords		;c9a0
+		JMP _Rectangle
+
+_DoNewPattern
+		JSR Getr0AndInc 		;c9a7
+		JMP _SetPattern
+
+_DoESC_PutString
+		JSR Getr0AndInc 		;c9ad
+		STA r11L
+		JSR Getr0AndInc
+		STA r11H
+		JSR Getr0AndInc
+		STA r1H
+		jmp _PutString
+
+_DoFrame_RecTo					;c9c0
+		JSR GrStSetCoords
+		LDA #$FF
+		JMP _FrameRectangle
+
+_DoPenXYDelta					;c9c8
+		LDX #1
+		BNE DPXD0
+_DoPenXDelta					;c9cc
+		LDX #0
+DPXD0		LDY #0				;c9ce
+		LDA (r0),Y
+		INY
+		+add GraphPenXL
+		STA GraphPenXL
+		LDA (r0),Y
+		INY
+		ADC GraphPenXH
+		STA GraphPenXH
+		+beqx DPYD1
+		BNE DPYD0
+_DoPenYDelta					;c9e8
+		LDY #0
+DPYD0		LDA (r0),Y			;c9ea
+		INY
+		+add GraphPenY
+		STA GraphPenY
+		INY
+DPYD1		TYA				;c9f5
+		+add r0L
+		STA r0L
+		BCC DPYD2
+		INC r0H
+DPYD2		RTS				;c9ff
+
+GrStSetCoords
+		JSR GetCoords			;ca00
+		CMP GraphPenY
+		BCS GSSC0
+		STA r2L
+		PHA
+		LDA GraphPenY
+		STA r2H
+		+bra GSSC1
+GSSC0		STA r2H 			;ca13
+		PHA
+		LDA GraphPenY
+		STA r2L
+GSSC1		+PopB GraphPenY 		;ca1b
+		CPY GraphPenXH
+		BEQ GSSC2
+		BCS GSSC4
+GSSC2		BCC GSSC3			;ca26
+		CPX GraphPenXL
+		BCS GSSC4
+GSSC3		STX r3L 			;ca2d
+		STY r3H
+		+MoveW GraphPenX, r4
+		+bra GSSC5
+GSSC4		STX r4L 			;ca3e
+		STY r4H
+		+MoveW GraphPenX, r3
+GSSC5		STX GraphPenXL			;ca4c
+		STY GraphPenXH
+		RTS
+_SetPattern
+		ASL				;ca53
+		ASL
+		ASL
+		ADC #<PatternTab
+		STA curPattern
+		LDA #0
+		ADC #>PatternTab
+		STA curPattern+1
+		RTS
+
+GetCoords	JSR Getr0AndInc 		;ca61
+		TAX
+		JSR Getr0AndInc
+		STA r2L
+		JSR Getr0AndInc
+		LDY r2L
+		RTS				;x/y - x, a - y
+
+Getr0AndInc	LDY #0				;ca70
+		LDA (r0),Y
+		INC r0L
+		BNE Gr0AI0
+		INC r0H
+Gr0AI0		CMP #0				;ca7a
+		RTS
+
+_GetScanLine					;ca7d
+		TXA
+		PHA
+		and #%00000111
+		sta r6H
+		txa
+		LSR
+		LSR
+		LSR
+		TAX
+		+bbrf 7, dispBufferOn, GSC2
+		+bbsf 6, dispBufferOn, GSC1
+		LDA LineTabL,X
+		ORA r6H
+		STA r5L
+		LDA LineTabH,X
+		STA r5H
+		+MoveW r5, r6
+		PLA
+		TAX
+		RTS
+
+GSC1		LDA LineTabL,X			;caa8
+		ORA r6H
+		STA r5L
+		STA r6L
+		LDA LineTabH,X
+		STA r5H
+		+subv 64
+		STA r6H
+		PLA
+		TAX
+		RTS
+
+GSC2		+bbrf 6, dispBufferOn, GSC3	;cabe
+		LDA LineTabL,X
+		ORA r6H
+		STA r6L
+		LDA LineTabH,X
+		+subv 64
+		STA r6H
+		+MoveW r6, r5
+		PLA
+		TAX
+		RTS
+
+GSC3		+LoadB r5L, 0			;cadc
+		STA r6L
+		+LoadB r5H, $AF
+		STA r6H
+		PLA
+		TAX
+		RTS
+
+
+
+_BitOtherClip					;e3a4
+		LDX #$ff
+		JMP BitmClp1
+_BitmapClip
+		LDX #0
+BitmClp1	STX r9H 			;e3ab
+		LDA #0
+		STA r3L
+		STA r4L
+BitmClp2	LDA r12L			;e3b3
+		ORA r12H
+		BEQ BitmClp4
+		LDA r11L
+		JSR BitmHelpClp
+		LDA r2L
+		JSR BitmHelpClp
+		LDA r11H
+		JSR BitmHelpClp
+		LDA r12L
+		BNE BitmClp3
+		DEC r12H
+BitmClp3	DEC r12L			;e3ce
+		+bra BitmClp2
+BitmClp4	LDA r11L			;e3d3
+		JSR BitmHelpClp
+		JSR BitmapUpHelp
+		LDA r11H
+		JSR BitmHelpClp
+		INC r1H
+		DEC r2H
+		BNE BitmClp4
+		RTS
+
+BitmHelpClp	CMP #0				;e3e7
+		BEQ BitmHClp1
+		PHA
+		JSR BitmapDecode
+		PLA
+		+subv 1
+		BNE BitmHelpClp
+BitmHClp1	RTS
+
+_i_BitmapUp					;e3f6
+		+PopW returnAddress
+		LDY #1
+		LDA (returnAddress),y
+		STA r0L
+		INY
+		LDA (returnAddress),y
+		STA r0H
+		INY
+		LDA (returnAddress),y
+		STA r1L
+		INY
+		LDA (returnAddress),y
+		STA r1H
+		INY
+		LDA (returnAddress),y
+		STA r2L
+		INY
+		LDA (returnAddress),y
+		STA r2H
+		JSR _BitmapUp
+		PHP
+		LDA #7
+		JMP DoInlineReturn
+
+_BitmapUp					;e424
+		+PushB r9H
+		+LoadB r9H, NULL
+		+LoadB r3L, NULL
+		STA r4L
+BitmUp1 	JSR BitmapUpHelp		;e431
+		INC r1H
+		DEC r2H
+		BNE BitmUp1
+		+PopB r9H
+		RTS
+
+BitmapUpHelp	LDX r1H 			;e43e
+		JSR _GetScanLine
+		+MoveB r2L, r3H
+		+CmpBI r1L, $20
+		BCC BitmUpH1
+		INC r5H
+		INC r6H
+BitmUpH1	ASL				;e451
+		ASL
+		ASL
+		TAY
+BitmUpH2	STY r9L 			;e455
+		JSR BitmapDecode
+		LDY r9L
+		STA (r5),y
+		STA (r6),y
+		TYA
+		+addv 8
+		BCC BitmUpH3
+		INC r5H
+		INC r6H
+BitmUpH3	TAY				;e46a
+		DEC r3H
+		BNE BitmUpH2
+		RTS
+
+BitmapDecode	LDA r3L 			;e470
+		AND #%01111111
+		BEQ BitmDe2
+		+bbrf 7, r3L, BitmDe1
+		JSR BitmapDecode2
+		DEC r3L
+		RTS
+BitmDe1 	LDA r7H 			;e480
+		DEC r3L
+		RTS
+BitmDe2 	LDA r4L 			;e485
+		BNE BitmDe3
+		+bbrf 7, r9H, BitmDe3
+		JSR IndirectR14
+BitmDe3 	JSR BitmapDecode2		;e490
+		STA r3L
+		CMP #$dc
+		BCC BitmDe4
+		SBC #$dc
+		STA r7L
+		STA r4H
+		JSR BitmapDecode2
+		+subv 1
+		STA r4L
+		+MoveW r0, r8
+		+bra BitmDe2
+BitmDe4 	CMP #$80			;e4b2
+		BCS BitmapDecode
+		JSR BitmapDecode2
+		STA r7H
+		+bra BitmapDecode
+
+BitmapDecode2	BIT r9H 			;e4be
+		BPL BitmDe21
+		JSR IndirectR13
+BitmDe21	LDY #0				;e4c5
+		LDA (r0),y
+		INC r0L
+		BNE *+4
+		INC r0H
+		LDX r4L
+		BEQ BitmDe22
+		DEC r4H
+		BNE BitmDe22
+		LDX r8H
+		STX r0H
+		LDX r8L
+		STX r0L
+		LDX r7L
+		STX r4H
+		DEC r4L
+BitmDe22	RTS				;e4e5
+
+IndirectR13	JMP (r13)			;e4e6
+
+IndirectR14	JMP (r14)			;e4e9
+
+_DrawLine					;e9af
+		PHP
+		+LoadB r7H, 0
+		LDA r11H
+		+sub r11L
+		STA r7L
+		BCS DrwLin1
+		LDA #0
+		+sub r7L
+		STA r7L
+DrwLin1 	LDA r4L 			;e9c4
+		+sub r3L
+		STA r12L
+		LDA r4H
+		SBC r3H
+		STA r12H
+		LDX #r12
+		JSR Dabs
+		+CmpW r12, r7
+		BCS DrwLin2
+		JMP DrawLine2
+DrwLin2 	LDA r7L 			;e9e5
+		ASL
+		STA r9L
+		LDA r7H
+		ROL
+		STA r9H
+		LDA r9L
+		+sub r12L
+		STA r8L
+		LDA r9H
+		SBC r12H
+		STA r8H
+		LDA r7L
+		+sub r12L
+		STA r10L
+		LDA r7H
+		SBC r12H
+		STA r10H
+		ASL r10L
+		ROL r10H
+		+LoadB r13L, $ff
+		+CmpW r3, r4
+		BCC DrwLin4
+		+CmpB r11L, r11H
+		BCC DrwLin3
+		+LoadB r13L, $01
+DrwLin3 	LDY r3H 			;ea27
+		LDX r3L
+		+MoveW r4, r3
+		STY r4H
+		STX r4L
+		+MoveB r11H, r11L
+		+bra DrwLin5
+DrwLin4 	LDY r11H			;ea3e
+		CPY r11L
+		BCC DrwLin5
+		+LoadB r13L, 1
+DrwLin5 	PLP				;ea48
+		PHP
+		JSR _DrawPoint
+		+CmpW r3, r4
+		BCS DrwLin7
+		INC r3L
+		BNE *+4
+		INC r3H
+		+bbrf 7, r8H, DrwLin6
+		+AddW r9, r8
+		+bra DrwLin5
+DrwLin6 	+AddB r13L, r11L		;ea73
+		+AddW r10, r8
+		+bra DrwLin5
+DrwLin7 	PLP				;ea8a
+		RTS
+
+DrawLine2	LDA r12L			;ea8c
+		ASL
+		STA r9L
+		LDA r12H
+		ROL
+		STA r9H
+		LDA r9L
+		+sub r7L
+		STA r8L
+		LDA r9H
+		SBC r7H
+		STA r8H
+		LDA r12L
+		+sub r7L
+		STA r10L
+		LDA r12H
+		SBC r7H
+		STA r10H
+		ASL r10L
+		ROL r10H
+		+LoadW r13, $ffff
+		+CmpB r11L, r11H
+		BCC Drw2Lin2
+		+CmpW r3, r4
+		BCC Drw2Lin1
+		+LoadW r13, $0001
+Drw2Lin1	+MoveW r4, r3			;ead4
+		LDX r11L
+		LDA r11H
+		STA r11L
+		STX r11H
+		+bra Drw2Lin3
+Drw2Lin2	+CmpW r3, r4
+		BCS Drw2Lin3
+		+LoadW r13, $0001
+Drw2Lin3	PLP				;eafb
+		PHP
+		JSR _DrawPoint
+		+CmpB r11L, r11H
+		BCS Drw2Lin5
+		INC r11L
+		+bbrf 7, r8H, Drw2Lin4
+		+AddW r9, r8
+		+bra Drw2Lin3
+Drw2Lin4	+AddW r13, r3			;eb1c
+		+AddW r10, r8
+		+bra Drw2Lin3
+Drw2Lin5	PLP				;eb39
+		RTS
+
+_DrawPoint					;eb3b
+		PHP
+		LDX r11L
+		JSR _GetScanLine
+		LDA r3L
+		AND #%11111000
+		TAY
+		LDA r3H
+		BEQ DrwPoi1
+		INC r5H
+		INC r6H
+DrwPoi1 	LDA r3L 			;eb4e
+		AND #%00000111
+		TAX
+		LDA BitMask1, x
+		PLP
+		BMI DrwPoi4
+		BCC DrwPoi2
+		ORA (r6),y
+		+bra DrwPoi3
+DrwPoi2 	EOR #$ff			;eb60
+		AND (r6),y
+DrwPoi3 	STA (r6),y			;eb64
+		STA (r5),y
+		RTS
+DrwPoi4 	PHA				;eb69
+		EOR #$ff
+		AND (r5),y
+		STA (r5),y
+		PLA
+		AND (r6),y
+		ORA (r5),y
+		STA (r5),y
+		RTS
+
+_TestPoint					;eb78
+		LDX r11L
+		JSR _GetScanLine
+		LDA r3L
+		AND #%11111000
+		TAY
+		LDA r3H
+		BEQ *+4
+		INC r6H
+		LDA r3L
+		AND #%00000111
+		TAX
+		LDA BitMask1,x
+		AND (r6),y
+		BEQ TestPoi1
+		SEC
+		RTS
+TestPoi1	CLC				;eb96
+		RTS

@@ -1,0 +1,416 @@
+
+;GEOS System KERNAL - lower part, placed after disk driver
+;reassembled by Maciej 'YTM/Alliance' Witkowiak
+;18-3-99, 3.4
+
+;4.4 - ram expansions read/write procs (+60K not tested)
+
+;17.8.99 - ACME port
+
+		;*=DISK_BASE + DISK_DRV_LGH
+
+LoKernal	+AddVW 2, r6			;9d80
+LoKern0 	RTS				;9d8b
+
+_ReadFile					;9d8c
+		JSR EnterTurbo
+		+bnex LoKern0
+		JSR InitForIO
+		+PushW r0
+		+LoadW r4, diskBlkBuf
+		+LoadB r5L, 2
+		+MoveW r1, fileTrScTab+2
+RdFile1 	JSR ReadBlock			;9db1
+		+bnex RdFile6
+		LDY #$fe
+		LDA diskBlkBuf
+		BNE RdFile2
+		LDY diskBlkBuf+1
+		DEY
+		BEQ RdFile5
+RdFile2 	LDA r2H 			;9dc4
+		BNE RdFile3
+		CPY r2L
+		BCC RdFile3
+		BEQ RdFile3
+		LDX #BFR_OVERFLOW
+		BNE RdFile6
+RdFile3 	STY r1L 			;9dd2
+		+LoadB CPU_DATA, $30
+RdFile4 	LDA diskBlkBuf+1,y		;9dd8
+		DEY
+		STA (r7),y
+		BNE RdFile4
+		+LoadB CPU_DATA, $36
+		+AddB r1L, r7L
+		BCC *+4
+		INC r7H
+		+SubB r1L, r2L
+		BCS *+4
+		DEC r2H
+RdFile5 	INC r5L 			;9dfa
+		INC r5L
+		LDY r5L
+		+MoveB diskBlkBuf+1, r1H
+		STA fileTrScTab+1,y
+		+MoveB diskBlkBuf, r1L
+		STA fileTrScTab,y
+		BNE RdFile1
+		LDX #0
+RdFile6 	+PopW r0			;9e14
+		JMP DoneWithIO
+
+FlaggedPutBlock LDA verifyFlag			;9e1d
+		BEQ FlggdPutBl1
+		JMP VerWriteBlock
+FlggdPutBl1	JMP WriteBlock			;9e25
+
+_WriteFile	JSR EnterTurbo			;9e28
+		+bnex DoWrFile3
+		STA verifyFlag
+		JSR InitForIO
+		+LoadW r4, diskBlkBuf
+		+PushW r6
+		+PushW r7
+		JSR DoWriteFile
+		+PopW r7
+		+PopW r6
+		+bnex WrFile1
+		DEC verifyFlag
+		JSR DoWriteFile
+WrFile1 	jmp DoneWithIO
+
+DoWriteFile	LDY #0				;9e64
+		LDA (r6),y
+		BEQ DoWrFile2
+		STA r1L
+		INY
+		LDA (r6),y
+		STA r1H
+		DEY
+		JSR LoKernal
+		LDA (r6),y
+		STA (r4),y
+		INY
+		LDA (r6),y
+		STA (r4),y
+		LDY #$fe
+		+LoadB CPU_DATA, $30
+DoWrFile1	DEY				;9e64
+		LDA (r7),y
+		STA diskBlkBuf+2,y
+		TYA
+		BNE DoWrFile1
+		+LoadB CPU_DATA, $36
+		JSR FlaggedPutBlock
+		+bnex DoWrFile3
+		+AddVW $fe, r7
+		+bra DoWriteFile
+DoWrFile2	TAX				;9ea5
+DoWrFile3	RTS				;9ea6
+
+	!if (REUPresent) {
+_VerifyRAM	LDY #$93			;9eaa
+		BNE _DoRAMOp
+_StashRAM	LDY #$90			;9eae
+		BNE _DoRAMOp
+_SwapRAM	LDY #$92			;9eb2
+		BNE _DoRAMOp
+_FetchRAM	LDY #$91			;9eb6
+_DoRAMOp	LDX #DEV_NOT_FOUND		;9eb8
+		LDA r3L
+		CMP ramExpSize
+		BCS DRAMOp2
+		LDX CPU_DATA
+		+LoadB CPU_DATA, $35
+		+MoveW r0, EXP_BASE+2
+		+MoveW r1, EXP_BASE+4
+		+MoveB r3L, EXP_BASE+6
+		+MoveW r2, EXP_BASE+7
+		LDA #0
+		STA EXP_BASE+9
+		STA EXP_BASE+10
+		STY EXP_BASE+1
+DRAMOp1 	LDA EXP_BASE			;9ef5
+		AND #%01100000
+		BEQ DRAMOp1
+		STX CPU_DATA
+		LDX #0
+DRAMOp2 	RTS				;9f00
+	}
+
+	!if (useRamExp) {
+RamExpSetStat	+LoadW r1, $0000
+		+LoadB r0H, (>diskBlkBuf)
+		+LoadB r2H, 0
+		sta r0L
+		rts
+RamExpGetStat	jsr RamExpSetStat
+		jmp RamExpRead
+RamExpPutStat	jsr RamExpSetStat
+		jmp RamExpWrite
+	}
+
+	!if (usePlus60K) {
+;r0 - c64 addy, r1 - exp page number (byte/word - RamCart 64/128), r2H - # of bytes (in pages)
+
+RamExpRead	+PushB r0H
+		+PushB r2H
+		+PushW r1
+		php
+		sei
+		ldy #0
+RamExRd_0	lda RamExpRdHlp,y
+		sta $02a0,y
+		iny
+		cpy #RamExpRdHlpEnd-RamExpRdHlp
+		bne RamExRd_0
+		jsr $02a0
+RamExpRdEnd	plp
+		+PopW r1
+		+PopB r2H
+		+PopB r0H
+		rts
+
+RamExpWrite	+PushB r0H
+		+PushB r2H
+		+PushW r1
+		php
+		sei
+		ldy #0
+RamExWr_0	lda RamExpWrHlp,y
+		sta $02a0,y
+		iny
+		cpy #RamExpWrHlpEnd-RamExpWrHlp
+		bne RamExWr_0
+		jsr $02a0
+		jmp RamExpRdEnd
+
+RamExpRdHlp	+PushB CPU_DATA
+		lda r1L
+		+addv $10
+		sta r1H
+		ldy #0
+		sty r1L
+		ldx #$35
+		stx CPU_DATA
+
+RamExRdH_1	ldx #$80
+		stx PLUS60K_CR
+		ldx #$30
+		stx CPU_DATA
+		lda (r1),y
+		ldx #$35
+		stx CPU_DATA
+		ldx #0
+		stx PLUS60K_CR
+		sta (r0),y
+		iny
+		bne RamExRdH_1
+		inc r0H
+		inc r1H
+		dec r2H
+		bpl RamExRdH_1
+		+PopB CPU_DATA
+		rts
+RamExpRdHlpEnd
+
+RamExpWrHlp	+PushB CPU_DATA
+		lda r1L
+		+addv $10
+		sta r1H
+		ldy #0
+		sty r1L
+
+RamExWrH_1	ldx #$35
+		stx CPU_DATA
+		ldx #0
+		stx PLUS60K_CR
+		lda (r0),y
+		ldx #$80
+		stx PLUS60K_CR
+		ldx #$30
+		stx CPU_DATA
+		sta (r1),y
+		iny
+		bne RamExWrH_1
+		inc r0H
+		inc r1H
+		dec r2H
+		bpl RamExWrH_1
+		+LoadB CPU_DATA, $35
+		+LoadB PLUS60K_CR, 0
+		+PopB CPU_DATA
+		rts
+RamExpWrHlpEnd
+	}
+
+
+	!if (useRamCart64) {
+RamExpRead	+PushB CPU_DATA
+		+LoadB CPU_DATA, $35
+		+PushB r1L
+		+PushB r0H
+		ldx r2H
+RamExRd_0	+MoveB r1L, RAMC_BASE
+		ldy #0
+RamExRd_1	lda RAMC_WINDOW,y
+		sta (r0),y
+		iny
+		bne RamExRd_1
+		inc r0H
+		inc r1L
+		dex
+		bpl RamExRd_0
+RamExRd_End	+PopB r0H
+		+PopB r1L
+		+PopB CPU_DATA
+		rts
+
+RamExpWrite	+PushB CPU_DATA
+		+LoadB CPU_DATA, $35
+ 		+PushB r1L
+		+PushB r0H
+		ldx r2H
+RamExWr_0	+MoveB r1L, RAMC_BASE
+		ldy #0
+RamExWr_1	lda (r0),y
+		sta RAMC_WINDOW,y
+		iny
+		bne RamExWr_1
+		inc r0H
+		inc r1L
+		dex
+		bpl RamExWr_0
+		jmp RamExRd_End
+	}
+
+	!if (useRamCart128) {
+RamExpRead	+PushB CPU_DATA
+		+LoadB CPU_DATA, $35
+ 		+PushW r1
+		+PushB r0H
+		ldx r2H
+RamExRd_0	+MoveW r1, RAMC_BASE
+		ldy #0
+RamExRd_1	lda RAMC_WINDOW,y
+		sta (r0),y
+		iny
+		bne RamExRd_1
+		inc r0H
+		inc r1L
+		bne *+4
+		inc r1H
+		dex
+		bpl RamExRd_0
+RamExRd_End	+PopB r0H
+		+PopW r1
+		+PopB CPU_DATA
+		rts
+
+RamExpWrite	+PushB CPU_DATA
+		+LoadB CPU_DATA, $35
+ 		+PushW r1
+		+PushB r0H
+		ldx r2H
+RamExWr_0	+MoveW r1, RAMC_BASE
+		ldy #0
+RamExWr_1	lda (r0),y
+		sta RAMC_WINDOW,y
+		iny
+		bne RamExWr_1
+		inc r0H
+		inc r1L
+		bne *+4
+		inc r1H
+		dex
+		bpl RamExWr_0
+		jmp RamExRd_End
+	}
+
+	!if (removeToBASIC) {
+	} else {
+LoKernalBuf					;9f01
+		!byte 0, 0, 0, 0, 0, 0, 0, 0
+		!byte 0, 0, 0, 0, 0, 0, 0, 0
+		!byte 0, 0, 0, 0, 0, 0, 0, 0
+		!byte 0, 0, 0, 0, 0, 0, 0, 0
+		!byte 0, 0, 0, 0, 0, 0, 0, 0
+LKIntTimer	!byte 0 			;9f29
+LKSaveBASIC	!byte 0, 0, 0			;9f2a
+LKSaveR7	!byte 0, 0			;9f2d
+
+LoKernal1	SEI				;9f2f
+		+LoadB CPU_DATA, $36
+		LDY #2
+LKernal1	LDA BASICspace,y		;9f36
+		STA LKSaveBASIC,y
+		DEY
+		BPL LKernal1
+		+MoveW r7, LKSaveR7
+		INC CPU_DATA
+		LDX #$ff
+		TXS
+		+LoadB grcntrl2, 0
+		JSR KERNALCIAInit
+		LDX curDevice
+		LDA #0
+		TAY
+LKernal2	STA zpage+2,y			;9f5b
+		STA zpage+$0200, y
+		STA zpage+$0300, y
+		INY
+		BNE LKernal2
+		STX curDevice
+		+LoadB BASICMemTop, $a0
+		+LoadW tapeBuffVec, $03c3
+		+LoadB BASICMemBot, $08
+		LSR
+		STA scrAddyHi
+		JSR Init_KRNLVec
+		JSR KERNALVICInit
+		LDA #>execBASIC
+		STA nmivec+1
+		LDA #<execBASIC
+		STA nmivec
+		+LoadB LKIntTimer, 6
+		LDA cia2base+13
+		+LoadB cia2base+4, $ff
+		STA cia2base+5
+		+LoadB cia2base+13, $81
+		+LoadB cia2base+14, $01
+		JMP (BASIC_START)
+
+execBASIC	PHA				;9fac
+		TYA
+		PHA
+		LDA cia2base+13
+		DEC LKIntTimer
+		BNE exeBAS4
+		+LoadB cia2base+13, $7f
+		+LoadW nmivec, OS_ROM
+		LDY #2
+exeBAS1 	LDA LKSaveBASIC, y		;9fc8
+		STA BASICspace, y
+		DEY
+		BPL exeBAS1
+		+MoveW LKSaveR7, cardDataPntr+1
+		INY
+exeBAS2 	LDA LoKernalBuf,y		;9fdc
+		BEQ exeBAS3
+		STA (curScrLine),y
+		LDA #14
+		STA curScrLineColor,y
+		INY
+		BNE exeBAS2
+exeBAS3 	TYA				;9feb
+		BEQ exeBAS4
+		+LoadB curPos, $28
+		+LoadB kbdQuePos, 1
+		+LoadB kbdQue, CR
+exeBAS4 	PLA				;9ffb
+		TAY
+		PLA
+		RTI
+	}
+;a000

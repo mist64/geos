@@ -1,0 +1,172 @@
+
+;memory handling functions (copy, compare, move, fill)
+
+;17-8-99 - ACME port
+
+_CopyString					;ce47
+		LDA #0
+_CopyFString	STX CSSource			;ce49
+		STY CSDest
+		TAX
+		LDY #0
+CSSource	= *+1
+CStril0 	LDA (zpage),Y			;ce52
+CSDest		= *+1
+		STA (zpage),Y
+		BNE CStril1
+		+beqx CStril2
+CStril1 	INY				;ce5b
+		BEQ CStril2
+		+beqx CStril0
+		DEX
+		BNE CStril0
+CStril2 	RTS				;ce64
+
+_i_MoveData					;ce65
+		+PopW returnAddress
+		JSR GetMDataDatas
+		INY
+		LDA (returnAddress),Y
+		STA r2H
+		JSR _MoveData
+		PHP
+		LDA #7
+		JMP DoInlineReturn
+
+GetMDataDatas
+		LDY #1				;ce7c
+		LDA (returnAddress),Y
+		STA r0L
+		INY
+		LDA (returnAddress),Y
+		STA r0H
+		INY
+		LDA (returnAddress),Y
+		STA r1L
+		INY
+		LDA (returnAddress),Y
+		STA r1H
+		INY
+		LDA (returnAddress),Y
+		STA r2L
+		RTS
+
+_MoveData					;ce97
+		LDA r2L
+		ORA r2H
+		BEQ MData6
+		+PushW r0
+		+PushB r1H
+		+PushB r2H
+		+PushB r3L
+	!if (REUPresent) {
+		LDA sysRAMFlg
+		BPL MData0
+		+PushB r1H
+		+LoadB r1H, 0
+		STA r3L
+		JSR StashRAM
+		+PopB r0H
+		+MoveB r1L, r0L
+		JSR FetchRAM
+		+bra MData5
+	}
+MData0		+CmpW r0, r1			;ceca
+MData1		BCS MData2			;ced4
+		BCC MData7
+MData2		LDY #0				;ced8
+		LDA r2H
+		BEQ MData4
+MData3		LDA (r0),Y			;cede
+		STA (r1),Y
+		INY
+		BNE MData3
+		INC r0H
+		INC r1H
+		DEC r2H
+		BNE MData3
+MData4		CPY r2L 			;ceed
+		BEQ MData5
+		LDA (r0),Y
+		STA (r1),Y
+		INY
+		+bra MData4
+MData5		+PopB r3L			;cef9
+		+PopB r2H
+		+PopB r1H
+		+PopW r0
+MData6		RTS				;cf08
+
+MData7		+AddB r2H, r0H			;cf09
+		+AddB r2H, r1H
+		LDY r2L
+		BEQ MData9
+MData8		DEY				;cf1b
+		LDA (r0),Y
+		STA (r1),Y
+		TYA
+		BNE MData8
+MData9		DEC r0H 			;cf23
+		DEC r1H
+		LDA r2H
+		BEQ MData5
+MData10 	DEY				;cf2b
+		LDA (r0),Y
+		STA (r1),Y
+		TYA
+		BNE MData10
+		DEC r2H
+		+bra MData9
+
+_CmpString					;cf38
+		LDA #0
+_CmpFString	STX CMSSource			;cf3a
+		STY CMSDest
+		TAX
+		LDY #0
+CMSSource	= *+1
+CMStrl0 	LDA (zpage),Y			;cf43
+CMSDest 	= *+1
+		CMP (zpage),Y
+		BNE CMStrl2
+		CMP #0
+		BNE CMStrl1
+		+beqx CMStrl2
+CMStrl1 	INY				;cf50
+		BEQ CMStrl2
+		+beqx CMStrl0
+		DEX
+		BNE CMStrl0
+		LDA #0
+CMStrl2 	RTS				;cf5b
+
+_ClearRam					;c541
+		+LoadB r2L, NULL
+_FillRam	LDA r0H 			;c545
+		BEQ CRam2
+		LDA r2L
+		LDY #0
+CRam1		STA (r1),Y			;c54d
+		DEY
+		BNE CRam1
+		INC r1H
+		DEC r0H
+		BNE CRam1
+CRam2		LDA r2L 			;c558
+		LDY r0L
+		BEQ CRam4
+		DEY
+CRam3		STA (r1),Y			;c55f
+		DEY
+		CPY #$FF
+		BNE CRam3
+CRam4		RTS				;c566
+
+_i_FillRam					;d4f8
+		+PopW returnAddress
+		JSR GetMDataDatas
+		JSR _FillRam
+		PHP
+		LDA #6
+		JMP DoInlineReturn
+

@@ -1,0 +1,15 @@
+
+overall:
++ change sources names to 8.3
+- try to make under MS-DOS
+
+code purity:
+- throughoutly test it with various configurations
+- cleanup code using !zone's
+- remove ;xxxx from code
+- don't install REU cache code (drv1541.tas) if there's no REU
+
+code extensions:
+- upgrade DlgBox to use more than 16 files
+- allow to use +60K and RamCart simultaneousy
+- allow to swap Kernal modules to/from expansion
