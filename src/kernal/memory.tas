@@ -3,26 +3,26 @@
 
 ;17-8-99 - ACME port
 
-_CopyString					;ce47
+_CopyString
 		LDA #0
-_CopyFString	STX CSSource			;ce49
+_CopyFString	STX CSSource
 		STY CSDest
 		TAX
 		LDY #0
 CSSource	= *+1
-CStril0 	LDA (zpage),Y			;ce52
+CStril0 	LDA (zpage),Y
 CSDest		= *+1
 		STA (zpage),Y
 		BNE CStril1
 		+beqx CStril2
-CStril1 	INY				;ce5b
+CStril1 	INY
 		BEQ CStril2
 		+beqx CStril0
 		DEX
 		BNE CStril0
-CStril2 	RTS				;ce64
+CStril2 	RTS
 
-_i_MoveData					;ce65
+_i_MoveData
 		+PopW returnAddress
 		JSR GetMDataDatas
 		INY
@@ -34,7 +34,7 @@ _i_MoveData					;ce65
 		JMP DoInlineReturn
 
 GetMDataDatas
-		LDY #1				;ce7c
+		LDY #1
 		LDA (returnAddress),Y
 		STA r0L
 		INY
@@ -51,7 +51,7 @@ GetMDataDatas
 		STA r2L
 		RTS
 
-_MoveData					;ce97
+_MoveData
 		LDA r2L
 		ORA r2H
 		BEQ MData6
@@ -71,13 +71,13 @@ _MoveData					;ce97
 		JSR FetchRAM
 		+bra MData5
 	}
-MData0		+CmpW r0, r1			;ceca
-MData1		BCS MData2			;ced4
+MData0		+CmpW r0, r1
+MData1		BCS MData2
 		BCC MData7
-MData2		LDY #0				;ced8
+MData2		LDY #0
 		LDA r2H
 		BEQ MData4
-MData3		LDA (r0),Y			;cede
+MData3		LDA (r0),Y
 		STA (r1),Y
 		INY
 		BNE MData3
@@ -85,32 +85,32 @@ MData3		LDA (r0),Y			;cede
 		INC r1H
 		DEC r2H
 		BNE MData3
-MData4		CPY r2L 			;ceed
+MData4		CPY r2L
 		BEQ MData5
 		LDA (r0),Y
 		STA (r1),Y
 		INY
 		+bra MData4
-MData5		+PopB r3L			;cef9
+MData5		+PopB r3L
 		+PopB r2H
 		+PopB r1H
 		+PopW r0
-MData6		RTS				;cf08
+MData6		RTS
 
-MData7		+AddB r2H, r0H			;cf09
+MData7		+AddB r2H, r0H
 		+AddB r2H, r1H
 		LDY r2L
 		BEQ MData9
-MData8		DEY				;cf1b
+MData8		DEY
 		LDA (r0),Y
 		STA (r1),Y
 		TYA
 		BNE MData8
-MData9		DEC r0H 			;cf23
+MData9		DEC r0H
 		DEC r1H
 		LDA r2H
 		BEQ MData5
-MData10 	DEY				;cf2b
+MData10 	DEY
 		LDA (r0),Y
 		STA (r1),Y
 		TYA
@@ -118,55 +118,54 @@ MData10 	DEY				;cf2b
 		DEC r2H
 		+bra MData9
 
-_CmpString					;cf38
+_CmpString
 		LDA #0
-_CmpFString	STX CMSSource			;cf3a
+_CmpFString	STX CMSSource
 		STY CMSDest
 		TAX
 		LDY #0
 CMSSource	= *+1
-CMStrl0 	LDA (zpage),Y			;cf43
+CMStrl0 	LDA (zpage),Y
 CMSDest 	= *+1
 		CMP (zpage),Y
 		BNE CMStrl2
 		CMP #0
 		BNE CMStrl1
 		+beqx CMStrl2
-CMStrl1 	INY				;cf50
+CMStrl1 	INY
 		BEQ CMStrl2
 		+beqx CMStrl0
 		DEX
 		BNE CMStrl0
 		LDA #0
-CMStrl2 	RTS				;cf5b
+CMStrl2 	RTS
 
-_ClearRam					;c541
+_ClearRam
 		+LoadB r2L, NULL
-_FillRam	LDA r0H 			;c545
+_FillRam	LDA r0H
 		BEQ CRam2
 		LDA r2L
 		LDY #0
-CRam1		STA (r1),Y			;c54d
+CRam1		STA (r1),Y
 		DEY
 		BNE CRam1
 		INC r1H
 		DEC r0H
 		BNE CRam1
-CRam2		LDA r2L 			;c558
+CRam2		LDA r2L
 		LDY r0L
 		BEQ CRam4
 		DEY
-CRam3		STA (r1),Y			;c55f
+CRam3		STA (r1),Y
 		DEY
 		CPY #$FF
 		BNE CRam3
-CRam4		RTS				;c566
+CRam4		RTS
 
-_i_FillRam					;d4f8
+_i_FillRam
 		+PopW returnAddress
 		JSR GetMDataDatas
 		JSR _FillRam
 		PHP
 		LDA #6
 		JMP DoInlineReturn
-

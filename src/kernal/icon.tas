@@ -3,8 +3,8 @@
 
 ;17-8-99 - ACME port
 
-_DoIcons	+MoveW r0, IconDescVec		;f146
-	JSR Icons_1
+_DoIcons	+MoveW r0, IconDescVec
+		JSR Icons_1
 		JSR ResetMseRegion
 		LDA mouseOn
 		AND #SET_MSE_ON
@@ -12,7 +12,7 @@ _DoIcons	+MoveW r0, IconDescVec		;f146
 		LDA mouseOn
 		AND #%10111111
 		STA mouseOn
-DoIcons1	LDA mouseOn			;f160
+DoIcons1	LDA mouseOn
 		ORA #SET_ICONSON
 		STA mouseOn
 		LDY #1
@@ -27,7 +27,7 @@ DoIcons1	LDA mouseOn			;f160
 		SEC
 		JMP _StartMouseMode
 
-CalcIconDescTab ASL				;f194
+CalcIconDescTab ASL
 		ASL
 		ASL
 		CLC
@@ -35,11 +35,11 @@ CalcIconDescTab ASL				;f194
 		TAY
 		RTS
 
-Icons_1 	+LoadB r10L, NULL		;f19c
-Icons_10	LDA r10L			;f1a0
+Icons_1 	+LoadB r10L, NULL
+Icons_10	LDA r10L
 		JSR CalcIconDescTab
 		LDX #0
-Icons_11	LDA (IconDescVec),y		;f1a7
+Icons_11	LDA (IconDescVec),y
 		STA r0,x
 		INY
 		INX
@@ -49,21 +49,21 @@ Icons_11	LDA (IconDescVec),y		;f1a7
 		ORA r0H
 		BEQ Icons_12
 		JSR _BitmapUp
-Icons_12	INC r10L			;f1ba
+Icons_12	INC r10L
 		LDA r10L
 		LDY #0
 		CMP (IconDescVec),y
 		BNE Icons_10
 Icons_13	RTS
 
-ProcessClick	LDA IconDescVecH		;f1c5
+ProcessClick	LDA IconDescVecH
 		BEQ ProcClk1
 		JSR FindClkIcon
 		BCS ProcClk2
-ProcClk1	LDA otherPressVec		;f1ce
+ProcClk1	LDA otherPressVec
 		LDX otherPressVec+1
 		JMP CallRoutine
-ProcClk2	LDA clkBoxTemp			;f1d7
+ProcClk2	LDA clkBoxTemp
 		BNE Icons_13
 		LDA r0L
 		STA clkBoxTemp2
@@ -73,22 +73,22 @@ ProcClk2	LDA clkBoxTemp			;f1d7
 		BEQ ProcClk5
 		BMI ProcClk3
 		BVS ProcClk4
-ProcClk3	JSR CalcIconCoords		;f1ef
+ProcClk3	JSR CalcIconCoords
 		JSR MenuDoInvert
 		+MoveB selectionFlash, r0L
 		+LoadB r0H, NULL
 		JSR _Sleep
 		+MoveB clkBoxTemp2, r0L
 		LDY clkBoxTemp
-ProcClk4	JSR CalcIconCoords		;f209
+ProcClk4	JSR CalcIconCoords
 		JSR MenuDoInvert
-ProcClk5	LDY #$1e			;f20f
+ProcClk5	LDY #$1e
 		LDX #FALSE
 		LDA dblClickCount
 		BEQ ProcClk6
 		LDX #TRUE
 		LDY #0
-ProcClk6	STY dblClickCount		;f21c
+ProcClk6	STY dblClickCount
 		STX r0H
 		+MoveB clkBoxTemp2, r0L
 		LDY clkBoxTemp
@@ -102,8 +102,8 @@ ProcClk6	STY dblClickCount		;f21c
 		LDA (IconDescVec),y
 		jmp CallRoutine
 
-FindClkIcon	+LoadB r0L, NULL		;f23a
-FndClkIcn1	LDA r0L 			;f23e
+FindClkIcon	+LoadB r0L, NULL
+FndClkIcn1	LDA r0L
 		JSR CalcIconDescTab
 		LDA (IconDescVec),y
 		INY
@@ -132,17 +132,17 @@ FndClkIcn1	LDA r0L 			;f23e
 		INY
 		CMP (IconDescVec),y
 		BCC FndClkIcn3
-FndClkIcn2	INC r0L 			;f26c
+FndClkIcn2	INC r0L
 		LDA r0L
 		LDY #0
 		CMP (IconDescVec),y
 		BNE FndClkIcn1
 		CLC
 		RTS
-FndClkIcn3	SEC				;f278
+FndClkIcn3	SEC
 		RTS
 
-CalcIconCoords	LDA (IconDescVec),y		;f27a
+CalcIconCoords	LDA (IconDescVec),y
 		DEY
 		DEY
 		CLC

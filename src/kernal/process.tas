@@ -3,18 +3,18 @@
 
 ;17-8-99 - ACME port
 
-_InitProcesses					;cb1d
+_InitProcesses
 		LDX #0
 		STX NumTimers
 		STA r1L
 		STA r1H
 		TAX
 		LDA #SET_FROZEN
-IProc0		STA TimersCMDs-1,X		;cb29
+IProc0		STA TimersCMDs-1,X
 		DEX
 		BNE IProc0
 		LDY #0
-IProc1		LDA (r0),Y			;cb31
+IProc1		LDA (r0),Y
 		STA TimersRtns,X
 		INY
 		LDA (r0),Y
@@ -34,10 +34,10 @@ IProc1		LDA (r0),Y			;cb31
 		RTS
 
 _ExecuteProcesses
-		LDX NumTimers			;cb55
+		LDX NumTimers
 		BEQ EProc2
 		DEX
-EProc0		LDA TimersCMDs,X		;cb5b
+EProc0		LDA TimersCMDs,X
 		BPL EProc1
 		AND #SET_BLOCKED
 		BNE EProc1
@@ -55,19 +55,19 @@ EProc0		LDA TimersCMDs,X		;cb5b
 		JSR _DoExecProcess
 		PLA
 		TAX
-EProc1		DEX				;cb7f
+EProc1		DEX
 		BPL EProc0
-EProc2		RTS				;cb82
+EProc2		RTS
 _DoExecProcess
 		JMP (r0)
 
 _ProcessTimers
-		LDA #0				;cb86
+		LDA #0
 		TAY
 		TAX
 		CMP NumTimers
 		BEQ PTime3
-PTime0		LDA TimersCMDs,X		;cb8f
+PTime0		LDA TimersCMDs,X
 		AND #SET_FROZEN | SET_NOTIMER
 		BNE PTime2
 		LDA TimersTab,Y
@@ -77,7 +77,7 @@ PTime0		LDA TimersCMDs,X		;cb8f
 		+subv 1
 		STA TimersTab+1,Y
 		PLA
-PTime1		+subv 1 			;cba6
+PTime1		+subv 1
 		STA TimersTab,Y
 		ORA TimersTab+1,Y
 		BNE PTime2
@@ -85,18 +85,18 @@ PTime1		+subv 1 			;cba6
 		LDA TimersCMDs,X
 		ORA #SET_RUNABLE
 		STA TimersCMDs,X
-PTime2		INY				;cbbc
+PTime2		INY
 		INY
 		INX
 		CPX NumTimers
 		BNE PTime0
-PTime3		RTS				;cbc4
+PTime3		RTS
 
-_RestartProcess 				;cbc5
+_RestartProcess
 		LDA TimersCMDs,X
 		AND #(SET_BLOCKED | SET_FROZEN) XOR $ff
 		STA TimersCMDs,X
-RProc0		TXA				;cbcd
+RProc0		TXA
 		PHA
 		ASL
 		TAX
@@ -108,49 +108,49 @@ RProc0		TXA				;cbcd
 		TAX
 		RTS
 
-_EnableProcess					;cbe0
+_EnableProcess
 		LDA TimersCMDs,X
 		ORA #SET_RUNABLE
-EnProc0 	STA TimersCMDs,X		;cbe5
+EnProc0 	STA TimersCMDs,X
 		RTS
 
-_BlockProcess					;cbe9
+_BlockProcess
 		LDA TimersCMDs,X
 		ORA #SET_BLOCKED
-		+bra EnProc0
-_UnBlockProcess 				;cbf1
+		bne EnProc0
+_UnBlockProcess
 		LDA TimersCMDs,X
 		AND #SET_BLOCKED XOR $ff
 		+bra EnProc0
-_FreezeProcess					;cbf9
+_FreezeProcess
 		LDA TimersCMDs,X
 		ORA #SET_FROZEN
-		+bra EnProc0
-_UnFreezeProcess				;cc01
+		bne EnProc0
+_UnFreezeProcess
 		LDA TimersCMDs,X
 		AND #SET_FROZEN XOR $ff
 		+bra EnProc0
 
 _ProcessDelays
-		LDX DelaySP			;cc09
+		LDX DelaySP
 		BEQ ProcDel3
 		DEX
-ProcDel0	LDA DelayValL,X 		;cc0f
+ProcDel0	LDA DelayValL,X
 		BNE ProcDel1
 		ORA DelayValH,X
 		BEQ ProcDel2
 		DEC DelayValH,X
-ProcDel1	DEC DelayValL,X 		;cc1c
-ProcDel2	DEX				;cc1f
+ProcDel1	DEC DelayValL,X
+ProcDel2	DEX
 		BPL ProcDel0
 ProcDel3	RTS
 
 
 _DoCheckDelays
-		LDX DelaySP			;cc23
+		LDX DelaySP
 		BEQ DChDl2
 		DEX
-DChDl0		LDA DelayValL,X 		;cc29
+DChDl0		LDA DelayValL,X
 		ORA DelayValH,X
 		BNE DChDl1
 		LDA DelayRtnsH,X
@@ -163,20 +163,20 @@ DChDl0		LDA DelayValL,X 		;cc29
 		JSR _DoExecDelay
 		PLA
 		TAX
-DChDl1		DEX				;cc45
+DChDl1		DEX
 		BPL DChDl0
-DChDl2		RTS				;cc48
+DChDl2		RTS
 
-_DoExecDelay					;cc49
+_DoExecDelay
 		INC r0L
 		BNE DEDe0
 		INC r0H
 DEDe0		JMP (r0)
 
-_RemoveDelay					;cc52
+_RemoveDelay
 		PHP
 		SEI
-RDel0		INX				;cc54
+RDel0		INX
 		CPX DelaySP
 		BEQ RDel1
 		LDA DelayValL,X
@@ -188,11 +188,11 @@ RDel0		INX				;cc54
 		LDA DelayRtnsH,X
 		STA DelayRtnsH-1,X
 		+bra RDel0
-RDel1		DEC DelaySP			;cc75
+RDel1		DEC DelaySP
 		PLP
 		RTS
 
-_Sleep		PHP				;cc7a
+_Sleep		PHP
 		PLA
 		TAY
 		SEI
