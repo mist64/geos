@@ -3,7 +3,7 @@
 
 ;18-8-99 - ACME port
 
-_GetFile					;d50a
+_GetFile
 	JSR UNK_5
 		JSR FindFile
 		+bnex GFile5
@@ -16,9 +16,9 @@ GFile0		CMP #APPLICATION
 		BEQ GFile1
 		CMP #AUTO_EXEC
 		BNE _LdFile
-GFile1		JMP LdApplic			;d530
+GFile1		JMP LdApplic
 
-_LdFile 					;d533
+_LdFile
 		JSR GetFHdrInfo
 		+bnex GFile5
 		+CmpBI fileHeader + O_GHSTR_TYPE, VLIR
@@ -39,16 +39,16 @@ _LdFile 					;d533
 		STA r1H
 GFile3	+bbrf 0, A885E, GFile4
 	+MoveW A885F, r7
-GFile4		+LoadW r2, $ffff		;d570
+GFile4		+LoadW r2, $ffff
 		JSR ReadFile
-GFile5		RTS				;d579
+GFile5		RTS
 
-_FollowChain					;d57a
+_FollowChain
 		PHP
 		SEI
 		+PushB r3H
 		LDY #0
-FChain0 	LDA r1L 			;d581
+FChain0 	LDA r1L
 		STA (r3),y
 		INY
 		LDA r1H
@@ -56,7 +56,7 @@ FChain0 	LDA r1L 			;d581
 		INY
 		BNE FChain1
 		INC r3H
-FChain1 	LDA r1L 			;d58f
+FChain1 	LDA r1L
 		BEQ FChain2
 		TYA
 		PHA
@@ -66,12 +66,12 @@ FChain1 	LDA r1L 			;d58f
 		+bnex FChain3
 		+MoveW diskBlkBuf, r1
 		+bra FChain0
-FChain2 	LDX #0				;d5aa
+FChain2 	LDX #0
 FChain3 	+PopB r3H
 		PLP
 FChain4 	RTS
 
-_FindFTypes					;d5b1
+_FindFTypes
 	!if (useRamExp) {
 		+CmpWI r7, ($0100+SYSTEM)
 		bne FFTypesStart
@@ -105,7 +105,7 @@ FFTypesStart
 		+SubVW 3, r6
 		JSR Get1stDirEntry
 		+bnex FFTypes5
-FFTypes1	LDY #OFF_CFILE_TYPE		;d5fc
+FFTypes1	LDY #OFF_CFILE_TYPE
 		LDA (r5),y
 		BEQ FFTypes4
 		LDY #OFF_GFILE_TYPE
@@ -117,74 +117,74 @@ FFTypes1	LDY #OFF_CFILE_TYPE		;d5fc
 		TYA
 		BNE FFTypes4
 		LDY #OFF_FNAME
-FFTypes2	LDA (r5),y			;d615
+FFTypes2	LDA (r5),y
 		CMP #$a0
 		BEQ FFTypes3
 		STA (r6),y
 		INY
 		CPY #OFF_FNAME + $10
 		BNE FFTypes2
-FFTypes3	LDA #NULL			;d622
+FFTypes3	LDA #NULL
 		STA (r6),y
 		+AddVW $11, r6
 		DEC r7H
 		BEQ FFTypes5
-FFTypes4	JSR GetNxtDirEntry		;d635
+FFTypes4	JSR GetNxtDirEntry
 		+bnex FFTypes5
 		TYA
 		BEQ FFTypes1
-FFTypes5	PLP				;d63e
+FFTypes5	PLP
 		RTS
 
-SetBufTSVector	+LoadW r6, fileTrScTab		;d640
+SetBufTSVector	+LoadW r6, fileTrScTab
 		RTS
 
-GetStartHAddy					;d649
+GetStartHAddy
 		+MoveW fileHeader + O_GHST_ADDR, r7
 		RTS
 
-SetFHeadVector	+LoadW r4, fileHeader		;d654
+SetFHeadVector	+LoadW r4, fileHeader
 		RTS
 
-_FindFile					;d65d
+_FindFile
 		PHP
 		SEI
 		+SubVW 3, r6
 		JSR Get1stDirEntry
 		+bnex FFile7
-FFile1		LDY #OFF_CFILE_TYPE		;d672
+FFile1		LDY #OFF_CFILE_TYPE
 		LDA (r5),y
 		BEQ FFile4
 		LDY #OFF_FNAME
-FFile2		LDA (r6),y			;d67a
+FFile2		LDA (r6),y
 		BEQ FFile3
 		CMP (r5),y
 		BNE FFile4
 		INY
 		BNE FFile2
-FFile3		CPY #OFF_FNAME + $10		;d685
+FFile3		CPY #OFF_FNAME + $10
 		BEQ FFile5
 		LDA (r5),y
 		INY
 		CMP #$a0
 		BEQ FFile3
-FFile4		JSR GetNxtDirEntry		;d690
+FFile4		JSR GetNxtDirEntry
 		+bnex FFile7
 		TYA
 		BEQ FFile1
 		LDX #FILE_NOT_FOUND
 		BNE FFile7
-FFile5		LDY #0				;d69d
-FFile6		LDA (r5),y			;d69f
+FFile5		LDY #0
+FFile6		LDA (r5),y
 		STA dirEntryBuf,y
 		INY
 		CPY #$1e
 		BNE FFile6
 		LDX #NULL
-FFile7		PLP				;d6ab
+FFile7		PLP
 		RTS
 
-_SetDevice					;d6ad
+_SetDevice
 		CMP curDevice
 		BEQ SetDev2
 		PHA
@@ -213,12 +213,12 @@ SetDev2 	CMP #8
 		JSR PrepForFetch
 		JSR FetchRAM
 		JSR PrepForFetch
-SetDev3 	LDX #NULL			;d6f4
+SetDev3 	LDX #NULL
 		RTS
 
-PrepForFetch					;d6f7
+PrepForFetch
 		LDY #6
-PFFet1		LDA r0,y			;d6f9
+PFFet1		LDA r0,y
 		TAX
 		LDA SetDevTab,y
 		STA r0,y
@@ -228,24 +228,24 @@ PFFet1		LDA r0,y			;d6f9
 		BPL PFFet1
 		RTS
 
-SetDevTab					;d70b
+SetDevTab
 		!word DISK_BASE
 		!word $0000
 		!word DISK_DRV_LGH
 		!byte $00
 
-SetDevDrivesTabL				;d712
+SetDevDrivesTabL
 		!byte <REUDskDrvSPC+(0*DISK_DRV_LGH)
 		!byte <REUDskDrvSPC+(1*DISK_DRV_LGH)
 		!byte <REUDskDrvSPC+(2*DISK_DRV_LGH)
 		!byte <REUDskDrvSPC+(3*DISK_DRV_LGH)
-SetDevDrivesTabH				;d716
+SetDevDrivesTabH
 		!byte >REUDskDrvSPC+(0*DISK_DRV_LGH)
 		!byte >REUDskDrvSPC+(1*DISK_DRV_LGH)
 		!byte >REUDskDrvSPC+(2*DISK_DRV_LGH)
 		!byte >REUDskDrvSPC+(3*DISK_DRV_LGH)
 
-_GetFHdrInfo					;d71a
+_GetFHdrInfo
 		LDY #OFF_GHDR_PTR
 		LDA (r9),y
 		STA r1L
@@ -264,7 +264,7 @@ _GetFHdrInfo					;d71a
 		STA r1H
 		jmp GetStartHAddy
 
-GetHeaderFileName				;d747
+GetHeaderFileName
 		LDX #0
 		LDA r10L
 		ORA r10H
@@ -279,18 +279,18 @@ GetHeaderFileName				;d747
 		JSR GetBlock
 		+bnex GFHName4
 		TAY
-GFHName1	LDA (r10),y			;d764
+GFHName1	LDA (r10),y
 		BEQ GFHName2
 		CMP fileHeader+O_GHFNAME,y
 		BNE GFHName3
 		INY
 		BNE GFHName1
-GFHName2	LDY #0				;d770
+GFHName2	LDY #0
 		RTS
-GFHName3	LDY #$ff			;d773
-GFHName4	RTS				;d775
+GFHName3	LDY #$ff
+GFHName4	RTS
 
-_LdDeskAcc					;d776
+_LdDeskAcc
 	+MoveB r10L, A885D
 		JSR GetFHdrInfo
 		+bnex LDAcc1
@@ -329,9 +329,9 @@ _LdDeskAcc					;d776
 		LDA fileHeader+O_GHST_VEC
 		JMP _MNLP
 		+PopW r1
-LDAcc1		RTS				;d7cb
+LDAcc1		RTS
 
-_RstrAppl					;d7cc
+_RstrAppl
 	!if (useRamExp) {
 		jsr RamExpGetStat
 		+MoveW diskBlkBuf+DACC_ST_ADDR, r0
@@ -358,13 +358,13 @@ _RstrAppl					;d7cc
 		JSR FastDelFile
 		TXA
 	}		
-RsApp1		LDX DeskAccSP			;d7f5
+RsApp1		LDX DeskAccSP
 		TXS
 		TAX
 		+PushW DeskAccPC
 RsApp2		RTS
 
-_LdApplic					;d803
+_LdApplic
 	JSR UNK_5
 		JSR LdFile
 		+bnex RsApp1
@@ -375,18 +375,18 @@ _LdApplic					;d803
 
 	!if (useRamExp) {
 	} else {
-SwapFileName					;d824
+SwapFileName
 		!text $1b,"Swap File", NULL
 
-SaveSwapFile					;d830
+SaveSwapFile
 		+LoadB fileHeader+O_GHGEOS_TYPE, TEMPORARY
 		+LoadW fileHeader, SwapFileName
 		+LoadW r9, fileHeader
 		+LoadB r10L, NULL
 	}
 	
-_SaveFile	LDY #0				;d84b
-SSwFile1	LDA (r9),y			;d84d
+_SaveFile	LDY #0
+SSwFile1	LDA (r9),y
 		STA fileHeader,y
 		INY
 		BNE SSwFile1
@@ -411,7 +411,7 @@ SSwFile1	LDA (r9),y			;d84d
 		JSR GetStartHAddy
 		jmp WriteFile
 
-GetDAccLength					;d899
+GetDAccLength
 		LDA fileHeader+O_GHEND_ADDR
 		+sub fileHeader+O_GHST_ADDR
 		STA r2L
@@ -422,23 +422,23 @@ GetDAccLength					;d899
 		+CmpBI fileHeader+O_GHSTR_TYPE, VLIR
 		BNE GDAL2
 GDAL1		+AddVW $fe, r2
-GDAL2		RTS				;d8bf
+GDAL2		RTS
 
-ClearNWrite					;d8c0
+ClearNWrite
 		LDX #0
 		+CmpBI dirEntryBuf+OFF_GSTRUC_TYPE, VLIR
 		BNE GDAL2
 		+MoveW dirEntryBuf+OFF_DE_TR_SC, r1
 		TXA
 		TAY
-CNWri1		STA diskBlkBuf,y		;d8d5
+CNWri1		STA diskBlkBuf,y
 		INY
 		BNE CNWri1
 		DEY
 		STY diskBlkBuf+1
 		jmp WriteBuff
 
-_SetGDirEntry					;d8e3
+_SetGDirEntry
 		JSR BldGDirEntry
 		JSR GetFreeDirBlk
 		+bnex SGDEnt2
@@ -449,25 +449,25 @@ _SetGDirEntry					;d8e3
 		ADC #0
 		STA r5H
 		LDY #$1d
-SGDEnt1 	LDA dirEntryBuf,y		;d8fa
+SGDEnt1 	LDA dirEntryBuf,y
 		STA (r5),y
 		DEY
 		BPL SGDEnt1
 		JSR SGDCopyDate
 		JMP WriteBuff
 
-SGDCopyDate	LDY #$17			;d908
-SGDCDat1	LDA dirEntryBuf+$ff,y		;d90a
+SGDCopyDate	LDY #$17
+SGDCDat1	LDA dirEntryBuf+$ff,y
 		STA (r5),y
 		INY
 		CPY #$1c
 		BNE SGDCDat1
-SGDEnt2 	RTS				;d914
+SGDEnt2 	RTS
 
-_BldGDirEntry					;d915
+_BldGDirEntry
 		LDY #$1d
 		LDA #NULL
-BGDEnt1 	STA dirEntryBuf,y		;d919
+BGDEnt1 	STA dirEntryBuf,y
 		DEY
 		BPL BGDEnt1
 		TAY
@@ -479,11 +479,11 @@ BGDEnt1 	STA dirEntryBuf,y		;d919
 		STY r1H
 		DEY
 		LDX #OFF_FNAME
-BGDEnt2 	LDA (r3),y			;d92e
+BGDEnt2 	LDA (r3),y
 		BNE BGDEnt4
 		STA r1H
-BGDEnt3 	LDA #$a0			;d934
-BGDEnt4 	STA dirEntryBuf,x		;d936
+BGDEnt3 	LDA #$a0
+BGDEnt4 	STA dirEntryBuf,x
 		INX
 		INY
 		CPY #16
@@ -507,17 +507,17 @@ BGDEnt5 	LDY #O_GHCMDR_TYPE
 		+CmpBI dirEntryBuf+OFF_GSTRUC_TYPE, VLIR
 		BNE BGDEnt6
 		JSR LoKernal
-BGDEnt6 	LDY #O_GHGEOS_TYPE		;d981
+BGDEnt6 	LDY #O_GHGEOS_TYPE
 		LDA (r9),y
 		STA dirEntryBuf+OFF_GFILE_TYPE
 		+MoveW r2, dirEntryBuf+OFF_SIZE
 BGDEnt7 	RTS
 
-_DeleteFile					;d993
+_DeleteFile
 		JSR FindNDelete
 		+bnex BGDEnt7
-DelFile1	+LoadW r9, dirEntryBuf		;d99a
-_FreeFile	PHP				;d9a2
+DelFile1	+LoadW r9, dirEntryBuf
+_FreeFile	PHP
 		SEI
 		JSR GetDirHead
 		+bnex DelFile4
@@ -530,7 +530,7 @@ _FreeFile	PHP				;d9a2
 		STA r1H
 		JSR FreeBlockChain
 		+bnex DelFile4
-DelFile2	LDY #OFF_DE_TR_SC		;d9bd
+DelFile2	LDY #OFF_DE_TR_SC
 		LDA (r9),y
 		STA r1L
 		INY
@@ -548,18 +548,18 @@ DelFile2	LDY #OFF_DE_TR_SC		;d9bd
 	}
 		JSR DeleteVlirChains
 		+bnex DelFile4
-DelFile3	JSR PutDirHead			;d9dc
-DelFile4	PLP				;d9df
+DelFile3	JSR PutDirHead
+DelFile4	PLP
 		RTS
 
-DeleteVlirChains				;d9e1
+DeleteVlirChains
 		LDY #0
-DelVlirC1	LDA diskBlkBuf,y		;d9e3
+DelVlirC1	LDA diskBlkBuf,y
 		STA fileHeader,y
 		INY
 		BNE DelVlirC1
 		LDY #2
-DelVlirC2	TYA				;d9ee
+DelVlirC2	TYA
 		BEQ DelVlirC3
 		LDA fileHeader,y
 		STA r1L
@@ -575,9 +575,9 @@ DelVlirC2	TYA				;d9ee
 		PLA
 		TAY
 		+beqx DelVlirC2
-DelVlirC3	RTS				;da0b
+DelVlirC3	RTS
 
-FreeBlockChain					;da0c
+FreeBlockChain
 		+MoveW r1, r6
 		+LoadW r2, 0
 FreeBlC1	JSR FreeBlock
@@ -585,7 +585,7 @@ FreeBlC1	JSR FreeBlock
 		INC r2L
 		BNE FreeBlC2
 		INC r2H
-FreeBlC2	+PushW r2			;da26
+FreeBlC2	+PushW r2
 		+MoveW r6, r1
 		JSR ReadBuff
 		+PopW r2
@@ -597,9 +597,9 @@ FreeBlC2	+PushW r2			;da26
 		STA r6H
 		+bra FreeBlC1
 FreeBlC3	LDX #NULL
-FreeBlC4	RTS				;da51
+FreeBlC4	RTS
 
-FindNDelete					;da52
+FindNDelete
 		+MoveW r0, r6
 		JSR FindFile
 		+bnex FreeBlC4
@@ -608,17 +608,17 @@ FindNDelete					;da52
 		STA (r5),y
 		jmp WriteBuff
 
-_FastDelFile					;da69
+_FastDelFile
 		+PushW r3
 		JSR FindNDelete
 		+PopW r3
 		+bnex FreeBlC4
 
-FreeChainByTab					;da7f
+FreeChainByTab
 		+PushW r3
 		JSR GetDirHead
 		+PopW r3
-FCByTab1	LDY #0				;da8e
+FCByTab1	LDY #0
 		LDA (r3),y
 		BEQ FCByTab2
 		STA r6L
@@ -631,28 +631,28 @@ FCByTab1	LDY #0				;da8e
 		+bra FCByTab1
 FCByTab2	jmp PutDirHead
 
-_RenameFile					;dab3
+_RenameFile
 		+PushW r0
 		JSR FindFile
 		+PopW r0
-		+bnex FreeBlC4 ;RenFile4
+		+bnex FreeBlC4 ;->RTS
 		+AddVW OFF_FNAME, r5
 		LDY #0
-RenFile1	LDA (r0),y			;dad2
+RenFile1	LDA (r0),y
 		BEQ RenFile2
 		STA (r5),y
 		INY
 		CPY #16
 		BCC RenFile1
 		BCS RenFile3
-RenFile2	LDA #$a0			;dadf
+RenFile2	LDA #$a0
 		STA (r5),y
 		INY
 		CPY #16
 		BCC RenFile2
 RenFile3	jmp WriteBuff
 
-_OpenRecordFile 				;daec
+_OpenRecordFile
 	!if (useRamExp) {
 		lda DeskTopOpen
 		bmi OpRFile1
@@ -696,29 +696,29 @@ OpRFile1	+LoadB DeskTopOpen,0
 		+bnex OpRecFile4
 		STA usedRecords
 		LDY #2
-OpRecFile1	LDA fileHeader,y		;db46
+OpRecFile1	LDA fileHeader,y
 		ORA fileHeader+1,y
 		BEQ OpRecFile2
 		INC usedRecords
 		INY
 		INY
 		BNE OpRecFile1
-OpRecFile2	LDY #0				;db55
+OpRecFile2	LDY #0
 		LDA usedRecords
 		BNE OpRecFile3
 		DEY
-OpRecFile3	STY curRecord			;db5d
+OpRecFile3	STY curRecord
 		LDX #NULL
 		STX fileWritten
 		RTS
 
-_CloseRecordFile				;db66
+_CloseRecordFile
 		JSR _UpdateRecordFile
-OpRecFile4					;db69
+OpRecFile4
 		+LoadB RecordTableTS, NULL
 		RTS
 
-_UpdateRecordFile				;db6f
+_UpdateRecordFile
 		LDX #0
 		LDA fileWritten
 		BEQ URecFile1
@@ -740,14 +740,14 @@ _UpdateRecordFile				;db6f
 		JSR PutDirHead
 		LDA #NULL
 		STA fileWritten
-URecFile1	RTS				;dbb4
+URecFile1	RTS
 
 	!if (useRamExp) {
-_NextRecord					;dbb5
+_NextRecord
 		LDA curRecord
 		+addv 1
 		+bra _PointRcrdSt
-_PreviousRecord 				;dbbe
+_PreviousRecord
 		LDA curRecord
 		+subv 1
 		+bra _PointRcrdSt
@@ -759,14 +759,14 @@ _PointRecord	ldx DeskTopOpen
 		rts
 _PointRcrdSt
 	} else {
-_NextRecord					;dbb5
+_NextRecord
 		LDA curRecord
 		+addv 1
 		+bra _PointRecord
-_PreviousRecord 				;dbbe
+_PreviousRecord
 		LDA curRecord
 		+subv 1
-_PointRecord					;dbc4
+_PointRecord
 	}
 
 		TAX
@@ -778,11 +778,11 @@ _PointRecord					;dbc4
 		LDY r1L
 		LDX #0
 		BEQ PoiRecord2
-PoiRecord1	LDX #INV_RECORD 		;dbd8
-PoiRecord2	LDA curRecord			;dbda
+PoiRecord1	LDX #INV_RECORD
+PoiRecord2	LDA curRecord
 		RTS
 
-_DeleteRecord					;dbde
+_DeleteRecord
 		LDX #INV_RECORD
 		LDA curRecord
 		BMI DelRecord3
@@ -795,7 +795,7 @@ _DeleteRecord					;dbde
 		+CmpB curRecord, usedRecords
 		BCC DelRecord1
 		DEC curRecord
-DelRecord1	LDX #NULL			;dc04
+DelRecord1	LDX #NULL
 		LDA r1L
 		BEQ DelRecord3
 		JSR FreeBlockChain
@@ -803,10 +803,10 @@ DelRecord1	LDX #NULL			;dc04
 		+SubB r2L, fileSize
 		BCS DelRecord2
 		DEC fileSize+1
-DelRecord2	LDX #NULL			;dc1e
-DelRecord3	RTS				;dc20
+DelRecord2	LDX #NULL
+DelRecord3	RTS
 
-_InsertRecord					;dc21
+_InsertRecord
 		LDX #INV_RECORD
 		LDA curRecord
 		BMI DelRecord3
@@ -816,7 +816,7 @@ _InsertRecord					;dc21
 		STA r0L
 		jmp MoveForwVLIRTab
 
-_AppendRecord					;dc37
+_AppendRecord
 		JSR ReadyForUpdVLIR
 		+bnex AppRecord1
 		LDA curRecord
@@ -825,9 +825,9 @@ _AppendRecord					;dc37
 		JSR MoveForwVLIRTab
 		+bnex AppRecord1
 		+MoveB r0L, curRecord
-AppRecord1	RTS				;dc50
+AppRecord1	RTS
 
-_ReadRecord					;dc51
+_ReadRecord
 	!if (useRamExp) {
 		ldx DeskTopOpen
 		beq ReaRec0
@@ -854,9 +854,9 @@ ReaRec0
 		BEQ ReaRecord1
 		JSR ReadFile
 		LDA #$ff
-ReaRecord1	RTS				;dc65
+ReaRecord1	RTS
 
-_WriteRecord					;dc66
+_WriteRecord
 		LDX #INV_RECORD
 		LDA curRecord
 		BMI ReaRecord1
@@ -872,7 +872,7 @@ _WriteRecord					;dc66
 		ORA r2H
 		BEQ ReaRecord1
 		BNE WriRecord3
-WriRecord1	+PushW r2			;dc90
+WriRecord1	+PushW r2
 		+PushW r7
 		JSR FreeBlockChain
 		+MoveB r2L, r0L
@@ -882,27 +882,27 @@ WriRecord1	+PushW r2			;dc90
 		+SubB r0L, fileSize
 		BCS WriRecord2
 		DEC fileSize+1
-WriRecord2	LDA r2L 			;dcc0
+WriRecord2	LDA r2L
 		ORA r2H
 		BEQ WriRecord4
-WriRecord3	JMP WriteVLIRChain		;dcc6
-WriRecord4	LDY #$FF			;dcc9
+WriRecord3	JMP WriteVLIRChain
+WriRecord4	LDY #$FF
 		STY r1H
 		INY
 		STY r1L
 		jmp PutVLIRChainTS
 
-GetVLIRTab					;dcd4
+GetVLIRTab
 		JSR SetVLIRTable
 		+bnex SVLIRTab1
 		jmp GetBlock
 
-PutVLIRTab					;dcde
+PutVLIRTab
 		JSR SetVLIRTable
 		+bnex SVLIRTab1
 		jmp PutBlock
 
-SetVLIRTable	LDX #UNOPENED_VLIR		;dce8
+SetVLIRTable	LDX #UNOPENED_VLIR
 		LDA RecordTableTS
 		BEQ SVLIRTab1
 		STA r1L
@@ -910,9 +910,9 @@ SetVLIRTable	LDX #UNOPENED_VLIR		;dce8
 		STA r1H
 		JSR SetFHeadVector
 		LDX #NULL
-SVLIRTab1	RTS				;dcfb
+SVLIRTab1	RTS
 
-MoveBackVLIRTab 				;dcfc
+MoveBackVLIRTab
 		LDX #INV_RECORD
 		LDA r0L
 		BMI MBVLIRTab3
@@ -923,17 +923,17 @@ MoveBackVLIRTab 				;dcfc
 		ASL
 		TAX
 		BEQ MBVLIRTab2
-MBVLIRTab1	LDA fileHeader+4,y		;dd0d
+MBVLIRTab1	LDA fileHeader+4,y
 		STA fileHeader+2,y
 		INY
 		DEX
 		BNE MBVLIRTab1
-MBVLIRTab2	STX fileHeader+$fe		;dd17
+MBVLIRTab2	STX fileHeader+$fe
 		STX fileHeader+$ff
 		DEC usedRecords
-MBVLIRTab3	RTS				;dd20
+MBVLIRTab3	RTS
 
-MoveForwVLIRTab 				;dd21
+MoveForwVLIRTab
 		LDX #OUT_OF_RECORDS
 		+CmpBI usedRecords, $7f
 		BCS MFVLIRTab3
@@ -946,19 +946,19 @@ MoveForwVLIRTab 				;dd21
 		ASL
 		TAX
 		BEQ MFVLIRTab2
-MFVLIRTab1	LDA fileHeader-1,y		;dd3b
+MFVLIRTab1	LDA fileHeader-1,y
 		STA fileHeader+1,y
 		DEY
 		DEX
 		BNE MFVLIRTab1
-MFVLIRTab2	TXA				;dd45
+MFVLIRTab2	TXA
 		STA fileHeader,y
 		LDA #$ff
 		STA fileHeader+1,y
 		INC usedRecords
-MFVLIRTab3	RTS				;dd51
+MFVLIRTab3	RTS
 
-GetVLIRChainTS					;dd52
+GetVLIRChainTS
 		LDA curRecord
 		ASL
 		TAY
@@ -968,7 +968,7 @@ GetVLIRChainTS					;dd52
 		STA r1H
 		RTS
 
-PutVLIRChainTS					;dd62
+PutVLIRChainTS
 		LDA curRecord
 		ASL
 		TAY
@@ -978,7 +978,7 @@ PutVLIRChainTS					;dd62
 		STA fileHeader+3,y
 		RTS
 
-WriteVLIRChain					;dd72
+WriteVLIRChain
 		JSR SetBufTSVector
 		+PushW r7
 		JSR BlkAlloc
@@ -995,9 +995,9 @@ WriteVLIRChain					;dd72
 		+AddB r2L, fileSize
 		BCC WVLIRChain1
 		INC fileSize+1
-WVLIRChain1	RTS				;ddb4
+WVLIRChain1	RTS
 
-ReadyForUpdVLIR 				;ddb5
+ReadyForUpdVLIR
 		LDX #NULL
 		LDA fileWritten
 		BNE RFUpdVLIR1
@@ -1005,16 +1005,16 @@ ReadyForUpdVLIR 				;ddb5
 		+bnex RFUpdVLIR1
 		LDA #TRUE
 		STA fileWritten
-RFUpdVLIR1	RTS				;ddc7
+RFUpdVLIR1	RTS
 
-_ReadByte					;ddc8
+_ReadByte
 		LDY r5H
 		CPY r5L
 		BEQ ReadByt2
 		LDA (r4),y
 		INC r5H
 		LDX #NULL
-ReadByt1	RTS				;ddd4
+ReadByt1	RTS
 ReadByt2	LDX #BFR_OVERFLOW
 		LDA r1L
 		BEQ ReadByt1
@@ -1035,7 +1035,7 @@ ReadByt3	INX
 		STX r5L
 		+bra _ReadByte
 
-_GetPtrCurDkNm					;c305
+_GetPtrCurDkNm
 		LDY curDrive
 		LDA DkNmTab-8,Y
 		STA zpage,X
