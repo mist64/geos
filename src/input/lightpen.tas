@@ -53,7 +53,7 @@ _calibrate_gs	!byte NEWPATTERN, 1
 		!byte NULL
 
 _DoCalibLP
-		+bbsf 7, mouseData, DCLP_END
+		+bbsf MOUSEON_BIT, mouseData, DCLP_END
 		ldx CPU_DATA
 		+LoadB CPU_DATA, IO_IN
 		lda lpxpos
@@ -62,7 +62,7 @@ _DoCalibLP
 		stx CPU_DATA
 DCLP_END	rts
 
-_UpdateMouse	+bbsf 7, mouseOn, UM_1
+_UpdateMouse	+bbsf MOUSEON_BIT, mouseOn, UM_1
 		jmp UM_END
 
 UM_1		+PushB CPU_DATA
@@ -82,7 +82,7 @@ UM_1		+PushB CPU_DATA
 		asl
 		asl
 		sta mouseData
-		+smbf 5, pressFlag
+		+smbf MOUSE_BIT, pressFlag
 
 UM_2		lda menuNumber
 		beq UM_3
