@@ -7,6 +7,7 @@
 ;20.4 - DB if DeskTop not found (no DT reboot - bug somewhere)
 
 ;17.8 - ACME port
+;21.8.2000 - fixed directory position bug (bootTr2)
 
 		SEI
 		CLD
