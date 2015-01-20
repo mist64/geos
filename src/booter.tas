@@ -207,13 +207,13 @@ Boot13		LDA diskBlkBuf+2,y
 		STA EnterDeskTop+2
 		LDA #<_BootEnterDeskTop
 		STA EnterDeskTop+1
-		LDA #>_EnterDeskTop-1
+		LDA #>(_EnterDeskTop-1)
 		PHA
-		LDA #<_EnterDeskTop-1
+		LDA #<(_EnterDeskTop-1)
 		PHA
-		LDA #>_FirstInit-1
+		LDA #>(_FirstInit-1)
 		PHA
-		LDA #<_FirstInit-1
+		LDA #<(_FirstInit-1)
 		PHA
 		JMP LdApplic
 

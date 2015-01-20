@@ -115,9 +115,9 @@ DrwDlgSpd0	;1st: right,right+8,top+8,bottom
 		LDY #0
 		LDA (DBoxDesc),y
 		BPL DrwDlgSpd1
-		LDA #>DBDefinedPos-1
+		LDA #>(DBDefinedPos-1)
 		STA DBoxDescH
-		LDA #<DBDefinedPos-1
+		LDA #<(DBDefinedPos-1)
 		STA DBoxDesc
 DrwDlgSpd1	LDY #1
 		LDA (DBoxDesc),y
@@ -200,9 +200,9 @@ ClcDlgCoor1	STA r1H
 		LDY #0
 		LDA (DBoxDesc),y
 		BPL ClcDlgCoor2
-		LDA #>DBDefinedPos-1
+		LDA #>(DBDefinedPos-1)
 		STA DBoxDescH
-		LDA #<DBDefinedPos-1
+		LDA #<(DBDefinedPos-1)
 		STA DBoxDesc
 ClcDlgCoor2	LDX #0
 		LDY #1

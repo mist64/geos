@@ -974,7 +974,7 @@ DOSErrTab	.byte $01, $05, $02, $08	;98b0
 
 DriveCode					;98bb
 .segment "drv1541_drivecode"
-		.org DriveAddy
+;		.org DriveAddy
 
 DNibbleTab	.byte $0f, $07, $0d, $05	;0300
 		.byte $0b, $03, $09, $01
