@@ -42,14 +42,10 @@
 		LDY curDevice
 	.if (use1541)
 		LDA #DRV_1541
-	.else
-	.if (use1571)
+	.elseif (use1571)
 		LDA #DRV_1571
-	.else
-	.if (use1581)
+	.elseif (use1581)
 		LDA #DRV_1581
-	.endif
-	.endif
 	.endif
 		STA _driveType,y
 		STY curDrive

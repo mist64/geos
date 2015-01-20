@@ -19,5 +19,9 @@
 ~/Documents/cc65/bin/ca65 -I ../inc/ kernal/sprites.tas &&
 ~/Documents/cc65/bin/ca65 -I ../inc/ kernal/system.tas &&
 ~/Documents/cc65/bin/ca65 -I ../inc/ drv/drv1541.tas &&
+#~/Documents/cc65/bin/ca65 -I ../inc/ drv/drv1571.tas &&
+#~/Documents/cc65/bin/ca65 -I ../inc/ drv/drv1581.tas &&
 ~/Documents/cc65/bin/ca65 -I ../inc/ input/joydrv.tas &&
 ~/Documents/cc65/bin/ld65 -C kernal.cfg kernal/*.o drv/drv1541.o input/joydrv.o *.o -o kernal.bin
+#~/Documents/cc65/bin/ld65 -C kernal.cfg kernal/*.o drv/drv1571.o input/joydrv.o *.o -o kernal.bin
+#~/Documents/cc65/bin/ld65 -C kernal.cfg kernal/*.o drv/drv1581.o input/joydrv.o *.o -o kernal.bin
