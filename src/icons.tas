@@ -5,6 +5,7 @@
 .include "equ.inc"
 .include "kernal.inc"
 .global DBIcPicCANCEL, DBIcPicOK, InitMsePic, DBIcPicCANCEL, DBIcPicOK, InitMsePic, DBIcPicCANCEL, DBIcPicOK, InitMsePic, DBIcPicCANCEL, DBIcPicOK, InitMsePic, DBIcPicCANCEL, DBIcPicOK, InitMsePic
+.segment "icons"
 
 ;GEOS System - lower part with some gfx data
 ;reassembled and decoded by Maciej 'YTM/Alliance' Witkowiak

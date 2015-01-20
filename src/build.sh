@@ -1,3 +1,6 @@
+~/Documents/cc65/bin/ca65 -I ../inc/ patterns.tas &&
+~/Documents/cc65/bin/ca65 -I ../inc/ bswfont.tas &&
+~/Documents/cc65/bin/ca65 -I ../inc/ unknown.tas &&
 ~/Documents/cc65/bin/ca65 -I ../inc/ booter.tas &&
 ~/Documents/cc65/bin/ca65 -I ../inc/ icons.tas &&
 ~/Documents/cc65/bin/ca65 -I ../inc/ lokernal.tas &&
@@ -17,4 +20,4 @@
 ~/Documents/cc65/bin/ca65 -I ../inc/ kernal/system.tas &&
 ~/Documents/cc65/bin/ca65 -I ../inc/ drv/drv1541.tas &&
 ~/Documents/cc65/bin/ca65 -I ../inc/ input/mse1531.tas &&
-~/Documents/cc65/bin/cl65 -L ~/Documents/cc65/lib -C kernal.cfg kernal/*.o drv/*.o input/*.o *.o -o kernal.bin
+~/Documents/cc65/bin/ld65 -C kernal.cfg kernal/*.o drv/*.o input/*.o *.o -o kernal.bin

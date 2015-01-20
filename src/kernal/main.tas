@@ -15,7 +15,7 @@
 .import _DoIcons, _RecoverAllMenus, _RecoverMenu, _DoMenu, _StartMouseMode, _UseSystemFont, _PutString, _PutChar, _BitmapUp, _TestPoint, _GetScanLine, _SetPattern, _GraphicsString, _DrawPoint, _DrawLine, _RecoverRectangle
 .import _InvertRectangle, _FrameRectangle, _Rectangle, _VerticalLine, _RecoverLine, _InvertLine, _HorizontalLine, _UnFreezeProcess, _FreezeProcess, _UnBlockProcess, _BlockProcess, _EnableProcess, _RestartProcess, _InitProcesses, DoPLAINTEXT, DoOUTLINEON
 .import DoITALICON, DoBOLDON, DoNEWCARDSET, DoGOTOXY, DoGOTOY, DoGOTOX, DoREV_OFF, DoREV_ON, DoESC_RULER, DoESC_GRAPHICS, DoULINEOFF, DoULINEON, DoCR, DoUPLINE, DoHOME, DoLF
-.import DoTAB, DoBACKSPACE, true: zeropage
+.import DoTAB, DoBACKSPACE
 .global BBMult, BitMask1, BitMask2, BitMask3, BitMask4, BldGDirEntry, BlkAlloc, CalcBlksFree, CallRoutine, ChkDkGEOS, ClearRam, CopyFString, CopyString, DBIcPicDISK, DBIcPicNO, DBIcPicOPEN, DBIcPicYES
 .global DShiftLeft, Dabs, DecTabH, DecTabL, DkNmTab, DoInlineReturn, DoneWithIO, DrawSprite, EnablSprite, EnterTurbo, ExitTurbo, FastDelFile, FindBAMBit, FindFTypes, FindFile, FontTVar1
 .global FontTVar2, FrameRectangle, GetBlock, GetDirHead, GetFHdrInfo, GetFile, GetFreeDirBlk, GetPtrCurDkNm, GetRealSize, GetScanLine, GetString, GraphicsString, HorizontalLine, InitForIO, InitGEOEnv, InvertRectangle
