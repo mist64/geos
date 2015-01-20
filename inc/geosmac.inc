@@ -13,7 +13,7 @@
 	
 	.macro LoadW dest, value
 	    LoadB dest+1, >(value)
-	    .if .const(value) .and (>(value))<>(<value)
+	    .if (.not .const(value)) .or (>(value))<>(<(value))
 		lda #<(value)
 	    .endif
 	    sta dest+0
