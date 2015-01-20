@@ -163,14 +163,14 @@
 	
 	.macro rmb bitN, dest
 	    pha
-	    lda #(1 << bitN) .XOR $ff
+	    lda #(1 << bitN) ^ $ff
 	    and dest
 	    sta dest
 	    pla
 	.endmacro
 	
 	.macro rmbf bitN, dest
-	    lda #(1 << bitN) .XOR $ff
+	    lda #(1 << bitN) ^ $ff
 	    and dest
 	    sta dest
 	.endmacro

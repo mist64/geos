@@ -51,7 +51,7 @@ EProc0		LDA TimersCMDs,X
 		AND #SET_BLOCKED
 		BNE EProc1
 		LDA TimersCMDs,X
-		AND #SET_RUNABLE .XOR $ff
+		AND #SET_RUNABLE ^ $ff
 		STA TimersCMDs,X
 		TXA
 		PHA
@@ -103,7 +103,7 @@ PTime3		RTS
 
 _RestartProcess
 		LDA TimersCMDs,X
-		AND #(SET_BLOCKED | SET_FROZEN) .XOR $ff
+		AND #(SET_BLOCKED | SET_FROZEN) ^ $ff
 		STA TimersCMDs,X
 RProc0		TXA
 		PHA
@@ -129,7 +129,7 @@ _BlockProcess
 		bne EnProc0
 _UnBlockProcess
 		LDA TimersCMDs,X
-		AND #SET_BLOCKED .XOR $ff
+		AND #SET_BLOCKED ^ $ff
 		bra EnProc0
 _FreezeProcess
 		LDA TimersCMDs,X
@@ -137,7 +137,7 @@ _FreezeProcess
 		bne EnProc0
 _UnFreezeProcess
 		LDA TimersCMDs,X
-		AND #SET_FROZEN .XOR $ff
+		AND #SET_FROZEN ^ $ff
 		bra EnProc0
 
 _ProcessDelays
