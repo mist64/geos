@@ -21,7 +21,7 @@
 .global FontTVar2, FrameRectangle, GetBlock, GetDirHead, GetFHdrInfo, GetFile, GetFreeDirBlk, GetPtrCurDkNm, GetRealSize, GetScanLine, GetString, GraphicsString, HorizontalLine, InitForIO, InitGEOEnv, InvertRectangle
 .global IsMseInRegion, LdApplic, LdDeskAcc, LdFile, LineTabH, LineTabL, MainLoop, MouseUp, NewDisk, PosSprite, PutBlock, PutCharTabH, PutCharTabL, PutDirHead, PutString, ReadBlock
 .global ReadFile, Rectangle, RstrFrmDialogue, SetDevice, SetGDirEntry, SetNextFree, SetPattern, SprTabH, SprTabL, StartAppl, UNK_4, UNK_5, UseSystemFont, VerWriteBlock, WriteBlock, WriteFile, _MNLP, dateCopy, daysTab
-.global i_FillRam, EnterDeskTop, _DoFirstInitIO, _FirstInit, FirstInit, OpenDisk, _DoFirstInitIO, _FirstInit, Ddec, Ddiv, DoIcons, FreeBlock, PutChar, _EnterDeskTop, StashRAM, DoRAMOp, FetchRAM, Dnegate, PurgeTurbo, SaveFile
+.global i_FillRam, EnterDeskTop, _DoFirstInitIO, _FirstInit, FirstInit, OpenDisk, _DoFirstInitIO, _FirstInit, Ddec, Ddiv, DoIcons, FreeBlock, PutChar, _EnterDeskTop, StashRAM, DoRAMOp, FetchRAM, Dnegate, PurgeTurbo, SaveFile, DoDlgBox
 
 .segment "main"
 

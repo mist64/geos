@@ -1,3 +1,12 @@
+.feature labels_without_colons
+.include "const.inc"
+.include "geossym.inc"
+.include "geosmac.inc"
+.include "equ.inc"
+.include "kernal.inc"
+.import GraphicsString, DoDlgBox
+.global SlowMouse, UpdateMouse
+.segment "lightpen"
 
 ; this is lightpen driver for GEOS
 ; reassembled by Maciej 'YTM/Elysium' Witkowiak
@@ -8,19 +17,19 @@ SlowMouse	jmp _SlowMouse
 UpdateMouse	jmp _UpdateMouse
 SetMouse
 
-calibMark	!byte 0
-xDelta		!byte 0
-tmpFire		!byte 0
-lphalfx		!byte 0
-lpy		!byte 0
-EFE8E		!byte 0					;fe8e
+calibMark	.byte 0
+xDelta		.byte 0
+tmpFire		.byte 0
+lphalfx		.byte 0
+lpy		.byte 0
+EFE8E		.byte 0					;fe8e
 
-_MouseInit	+LoadB mouseXPos, 8
+_MouseInit	LoadB mouseXPos, 8
 		sta mouseYPos
-		+LoadB mouseXPos+1, 0
-		+bbsf 7, calibMark, _SlowMouse
+		LoadB mouseXPos+1, 0
+		bbsf 7, calibMark, _SlowMouse
 		sta menuNumber
-		+LoadB calibMark, $ff
+		LoadB calibMark, $ff
 		lda #>_calibrate_db
 		sta r0H
 		lda #<_calibrate_db
@@ -36,40 +45,40 @@ _DrawLine	;+LoadW r0, _calbrate_gs
 		sta r0L
 		jmp GraphicsString
 
-_calibrate_gs	!byte NEWPATTERN, 1
-		!byte MOVEPENTO
-		!word $0082
-		!byte $3c
-		!byte RECTANGLETO
-		!word $00be
-		!byte $64
-		!byte NEWPATTERN, 0
-		!byte MOVEPENTO
-		!word $00a0
-		!byte $3e
-		!byte RECTANGLETO
-		!word $00a0
-		!byte $62
-		!byte NULL
+_calibrate_gs	.byte NEWPATTERN, 1
+		.byte MOVEPENTO
+		.word $0082
+		.byte $3c
+		.byte RECTANGLETO
+		.word $00be
+		.byte $64
+		.byte NEWPATTERN, 0
+		.byte MOVEPENTO
+		.word $00a0
+		.byte $3e
+		.byte RECTANGLETO
+		.word $00a0
+		.byte $62
+		.byte NULL
 
 _DoCalibLP
-		+bbsf MOUSEON_BIT, mouseData, DCLP_END
+		bbsf MOUSEON_BIT, mouseData, DCLP_END
 		ldx CPU_DATA
-		+LoadB CPU_DATA, IO_IN
+		LoadB CPU_DATA, IO_IN
 		lda lpxpos
-		+subv $5c
+		subv $5c
 		sta xDelta
 		stx CPU_DATA
 DCLP_END	rts
 
-_UpdateMouse	+bbsf MOUSEON_BIT, mouseOn, UM_1
+_UpdateMouse	bbsf MOUSEON_BIT, mouseOn, UM_1
 		jmp UM_END
 
-UM_1		+PushB CPU_DATA
-		+LoadB CPU_DATA, IO_IN
-		+PushW cia1base+2
-		+PushB cia1base+0
-		+LoadW cia1base+2, 0
+UM_1		PushB CPU_DATA
+		LoadB CPU_DATA, IO_IN
+		PushW cia1base+2
+		PushB cia1base+0
+		LoadW cia1base+2, 0
 
 		lda cia1base+1
 		and #$04
@@ -82,11 +91,11 @@ UM_1		+PushB CPU_DATA
 		asl
 		asl
 		sta mouseData
-		+smbf MOUSE_BIT, pressFlag
+		smbf MOUSE_BIT, pressFlag
 
 UM_2		lda menuNumber
 		beq UM_3
-		+MoveB mouseXPos+1, r0L
+		MoveB mouseXPos+1, r0L
 		lda mouseXPos
 		ror r0L
 		ror
@@ -94,11 +103,11 @@ UM_2		lda menuNumber
 		adc #12
 		sta lphalfx
 		lda mouseYPos
-		+addv $32
+		addv $32
 		sta lpy
-UM_3		+LoadB EFE8E, 0
+UM_3		LoadB EFE8E, 0
 		lda lpxpos
-		+sub xDelta
+		sub xDelta
 		ldx lphalfx
 		jsr LPosNormalize
 		stx lphalfx
@@ -119,23 +128,23 @@ UM_3		+LoadB EFE8E, 0
 		inx
 UM_4		stx mouseXPos+1
 		sta mouseXPos
-		+SubVW $18, mouseXPos
+		SubVW $18, mouseXPos
 		lda lpy
-		+subv $32
+		subv $32
 		sta mouseYPos
 
-UM_END_POP	+PopB cia1base
-		+PopW cia1base+2
-		+PopB CPU_DATA
+UM_END_POP	PopB cia1base
+		PopW cia1base+2
+		PopB CPU_DATA
 UM_END		rts
 
 LPosNormalize
 		stx r0L
 		tax
-		+sub r0L
+		sub r0L
 		bpl LPN_1
 		eor #$ff
-		+addv 1
+		addv 1
 LPN_1		cmp #6
 		beq LPN_2
 		bcs LPN_END
@@ -143,16 +152,16 @@ LPN_2		lda #0
 LPN_END		rts
 
 _calibrate_db
-		!byte DEF_DB_POS | 1
-		!byte DBTXTSTR, $26, TXT_LN_1_Y
-		!word _calibrate_db_txt
-		!byte DB_USR_ROUT
-		!word _DrawLine
-		!byte DBOPVEC
-		!word _DoCalibLP
-		!byte OK, DBI_X_2, DBI_Y_2
-		!byte NULL
+		.byte DEF_DB_POS | 1
+		.byte DBTXTSTR, $26, TXT_LN_1_Y
+		.word _calibrate_db_txt
+		.byte DB_USR_ROUT
+		.word _DrawLine
+		.byte DBOPVEC
+		.word _DoCalibLP
+		.byte OK, DBI_X_2, DBI_Y_2
+		.byte NULL
 
 _calibrate_db_txt
-		!text "Click on white vertical line"
-		!byte NULL
+		.byte "Click on white vertical line"
+		.byte NULL

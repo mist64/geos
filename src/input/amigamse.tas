@@ -1,3 +1,11 @@
+.feature labels_without_colons
+.include "const.inc"
+.include "geossym.inc"
+.include "geosmac.inc"
+.include "equ.inc"
+.include "kernal.inc"
+.segment "amigamse"
+.global SlowMouse, UpdateMouse
 
 ;GEOS Amiga style mouse input driver
 ;reassembled by Maciej 'YTM/Elysium' Witkowiak
@@ -9,16 +17,16 @@ MouseJMP	JMP _MouseInit
 SlowMouse	JMP _SlowMouse
 UpdateMouse	JMP _UpdateMouse
 
-acceleration	!byte 3
+acceleration	.byte 3
 
-fireLast	!byte 0
+fireLast	.byte 0
 
-lastO		!byte 1
-lastY		!byte 1
-lastX		!byte 1
+lastO		.byte 1
+lastY		.byte 1
+lastX		.byte 1
 
-goingUp		!byte $01,$03,$02
-goingDown	!byte $00,$02,$03,$01
+goingUp		.byte $01,$03,$02
+goingDown	.byte $00,$02,$03,$01
 
 
 _MouseInit	LDA #8
@@ -29,18 +37,18 @@ _MouseInit	LDA #8
 		STA menuNumber
 _SlowMouse	RTS
 
-_UpdateMouse	+bbrf MOUSEON_BIT, mouseOn, _SlowMouse
-		+PushB CPU_DATA
-		+LoadB CPU_DATA, IO_IN
-		+PushB cia1base+3
-		+PushB cia1base+1
+_UpdateMouse	bbrf MOUSEON_BIT, mouseOn, _SlowMouse
+		PushB CPU_DATA
+		LoadB CPU_DATA, IO_IN
+		PushB cia1base+3
+		PushB cia1base+1
 		LDA mouseAccel
 		LSR
 		LSR
 		LSR
 		LSR
 		STA acceleration
-		+LoadB cia1base+3, $ff
+		LoadB cia1base+3, $ff
 		LDA cia1base+1
 		AND #%00010000
 		CMP fireLast
@@ -49,7 +57,7 @@ _UpdateMouse	+bbrf MOUSEON_BIT, mouseOn, _SlowMouse
 		LDA cia1base+1
 		AND #%00010000
 		BNE cont
-		+smbf MOUSE_BIT, pressFlag
+		smbf MOUSE_BIT, pressFlag
 		ASL
 		ASL
 		ASL
@@ -76,7 +84,7 @@ cont		LDA cia1base+1
 goUp		TXA
 		PHA
 		LDA mouseYPos
-		+sub acceleration
+		sub acceleration
 		CMP #200
 		BCC hophop1
 		LDA #0
@@ -85,7 +93,7 @@ goUp		TXA
 goDown		TXA
 		PHA
 		LDA mouseYPos
-		+add acceleration
+		add acceleration
 		CMP #200
 		BCC hophop1
 		LDA #199
@@ -94,7 +102,7 @@ hophop1		STA mouseYPos
 		PLA
 		TAX
 
-hop1		+PopB lastY
+hop1		PopB lastY
 
 ;OUSE_LR
 		TYA
@@ -117,7 +125,7 @@ hop1		+PopB lastY
 		BNE hop2
 
 goDown2		LDA mouseXPos
-		+add acceleration
+		add acceleration
 		STA mouseXPos
 		LDA mouseXPos+1
 		ADC #0
@@ -131,16 +139,16 @@ goDown2		LDA mouseXPos
 		JMP hop2
 
 goUp2		LDA mouseXPos
-		+sub acceleration
+		sub acceleration
 		STA mouseXPos
 		LDA mouseXPos+1
 		SBC #0
 		STA mouseXPos+1
 		BPL hop2
-		+LoadW mouseXPos, 0
+		LoadW mouseXPos, 0
 
-hop2		+PopB lastX
-		+PopB cia1base+1
-		+PopB cia1base+3
-		+PopB CPU_DATA
+hop2		PopB lastX
+		PopB cia1base+1
+		PopB cia1base+3
+		PopB CPU_DATA
 		RTS
