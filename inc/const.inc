@@ -8,8 +8,8 @@ FALSE			=	0
 TRUE			=	$ff
 
 ;18-8-99 - ACME port
-!set false	=	0
-!set true	=	$ff
+;!set false	=	0
+;!set true	=	$ff
 
 MOUSE_SPRNUM		=	0
 

@@ -1,3 +1,13 @@
+.feature labels_without_colons
+.include "const.inc"
+.include "geossym.inc"
+.include "geosmac.inc"
+.include "equ.inc"
+.include "kernal.inc"
+.import KbdScanHelp3, _DoPreviousMenu, CallRoutine, ProcessClick, Menu_5, EnablSprite, PosSprite, DrawSprite, UpdateMouse, _DisablSprite, MouseUp, SlowMouse, false: zeropage, true: zeropage
+.global ProcessMouse, ResetMseRegion, _ClearMouseMode, _DoCheckButtons, _IsMseInRegion, _MouseOff, _MouseUp, _StartMouseMode
+
+.segment "mouseio"
 
 ;almost all about mouse, menu & icon mouse handling is elsewhere
 
@@ -34,7 +44,7 @@ _StartMouseMode
 		LDA r11L
 		ORA r11H
 		BEQ SMousMd1
-		+MoveW r11, mouseXPos
+		MoveW r11, mouseXPos
 		STY mouseYPos
 		JSR SlowMouse
 SMousMd1	LDA #>CheckClickPos
@@ -45,28 +55,28 @@ SMousMd1	LDA #>CheckClickPos
 		STA mouseFaultVec+1
 		LDA #<DoMouseFault
 		STA mouseFaultVec
-		+LoadB faultData, NULL
+		LoadB faultData, NULL
 		JMP MouseUp
 
 _ClearMouseMode
-		+LoadB mouseOn, NULL
-CMousMd1	+LoadB r3L, NULL
+		LoadB mouseOn, NULL
+CMousMd1	LoadB r3L, NULL
 		JMP _DisablSprite
 
-_MouseOff	+rmbf MOUSEON_BIT, mouseOn
+_MouseOff	rmbf MOUSEON_BIT, mouseOn
 		JMP CMousMd1
 
-_MouseUp	+smbf MOUSEON_BIT, mouseOn
+_MouseUp	smbf MOUSEON_BIT, mouseOn
 MseUp1		RTS
 
 ProcessMouse	JSR UpdateMouse
-		+bbrf MOUSEON_BIT, mouseOn, MseUp1
+		bbrf MOUSEON_BIT, mouseOn, MseUp1
 		JSR CheckMsePos
-		+LoadB r3L, 0
-		+MoveW msePicPtr, r4
+		LoadB r3L, 0
+		MoveW msePicPtr, r4
 		JSR DrawSprite
-		+MoveW mouseXPos, r4
-		+MoveB mouseYPos, r5L
+		MoveW mouseXPos, r4
+		MoveB mouseYPos, r5L
 		JSR PosSprite
 		jmp EnablSprite
 
@@ -79,7 +89,7 @@ CheckMsePos	LDY mouseLeft
 		CPY mouseXPos
 ChMsePs1	BCC ChMsePs3
 		BEQ ChMsePs3
-ChMsePs2	+smbf OFFLEFT_BIT, faultData
+ChMsePs2	smbf OFFLEFT_BIT, faultData
 		STY mouseXPos
 		STX mouseXPos+1
 ChMsePs3	LDY mouseRight
@@ -88,35 +98,35 @@ ChMsePs3	LDY mouseRight
 		BNE ChMsePs4
 		CPY mouseXPos
 ChMsePs4	BCS ChMsePs5
-		+smbf OFFRIGHT_BIT, faultData
+		smbf OFFRIGHT_BIT, faultData
 		STY mouseXPos
 		STX mouseXPos+1
 ChMsePs5	LDY mouseTop
-		+CmpBI mouseYPos, 228
+		CmpBI mouseYPos, 228
 		BCS ChMsePs6
 		CPY mouseYPos
 		BCC ChMsePs7
 		BEQ ChMsePs7
-ChMsePs6	+smbf OFFTOP_BIT, faultData
+ChMsePs6	smbf OFFTOP_BIT, faultData
 		STY mouseYPos
 ChMsePs7	LDY mouseBottom
 		CPY mouseYPos
 		BCS ChMsePs8
-		+smbf OFFBOTTOM_BIT, faultData
+		smbf OFFBOTTOM_BIT, faultData
 		STY mouseYPos
-ChMsePs8	+bbrf MENUON_BIT, mouseOn, ChMsePs11
+ChMsePs8	bbrf MENUON_BIT, mouseOn, ChMsePs11
 		LDA mouseYPos
 		CMP menuTop
 		BCC ChMsePs10
 		CMP menuBottom
 		BEQ ChMsePs9
 		BCS ChMsePs10
-ChMsePs9	+CmpW mouseXPos, menuLeft
+ChMsePs9	CmpW mouseXPos, menuLeft
 		BCC ChMsePs10
-		+CmpW mouseXPos, menuRight
+		CmpW mouseXPos, menuRight
 		BCC ChMsePs11
 		BEQ ChMsePs11
-ChMsePs10	+smbf OFFMENU_BIT, faultData
+ChMsePs10	smbf OFFMENU_BIT, faultData
 ChMsePs11	RTS
 
 CheckClickPos	LDA mouseData
@@ -127,60 +137,60 @@ CheckClickPos	LDA mouseData
 		LDA mouseOn
 		AND #SET_MENUON
 		BEQ ChClkPos3
-		+CmpB mouseYPos, menuTop
+		CmpB mouseYPos, menuTop
 		BCC ChClkPos3
 		CMP menuBottom
 		BEQ ChClkPos1
 		BCS ChClkPos3
-ChClkPos1	+CmpW mouseXPos, menuLeft
+ChClkPos1	CmpW mouseXPos, menuLeft
 		BCC ChClkPos3
-		+CmpW mouseXPos, menuRight
+		CmpW mouseXPos, menuRight
 		BEQ ChClkPos2
 		BCS ChClkPos3
 ChClkPos2 JMP Menu_5
-ChClkPos3	+bbrf ICONSON_BIT, mouseOn, ChClkPos4
+ChClkPos3	bbrf ICONSON_BIT, mouseOn, ChClkPos4
 		JMP ProcessClick
 ChClkPos4	LDA otherPressVec
 		LDX otherPressVec+1
 		JMP CallRoutine
 
-DoMouseFault	+bbrf MOUSEON_BIT, mouseOn, ChMsePs11
+DoMouseFault	bbrf MOUSEON_BIT, mouseOn, ChMsePs11
 		BVC ChMsePs11
 		LDA menuNumber
 		BEQ ChMsePs11
-		+bbsf OFFMENU_BIT, faultData, DoMseFlt2
+		bbsf OFFMENU_BIT, faultData, DoMseFlt2
 		LDX #SET_OFFTOP
 		LDA #$C0
 		TAY
-		+bbsf 7, menuOptNumber, DoMseFlt1
+		bbsf 7, menuOptNumber, DoMseFlt1
 		LDX #SET_OFFLEFT
 DoMseFlt1	TXA
 		AND faultData
 		BNE DoMseFlt2
 		TYA
-		+bbsf 6, menuOptNumber, ChMsePs11
+		bbsf 6, menuOptNumber, ChMsePs11
 DoMseFlt2	jmp _DoPreviousMenu
 
 ResetMseRegion	LDA #NULL
 		STA mouseLeft
 		STA mouseLeft+1
 		STA mouseTop
-		+LoadW mouseRight, SC_PIX_WIDTH-1
-		+LoadB mouseBottom, SC_PIX_HEIGHT-1
+		LoadW mouseRight, SC_PIX_WIDTH-1
+		LoadB mouseBottom, SC_PIX_HEIGHT-1
 		RTS
 
 _DoCheckButtons
-		+bbrf INPUT_BIT, pressFlag, DoChkBtns1
-		+rmbf INPUT_BIT, pressFlag
+		bbrf INPUT_BIT, pressFlag, DoChkBtns1
+		rmbf INPUT_BIT, pressFlag
 		LDA inputVector
 		LDX inputVector+1
 		JSR CallRoutine
-DoChkBtns1	+bbrf MOUSE_BIT, pressFlag, DoChkBtns2
-		+rmbf MOUSE_BIT, pressFlag
+DoChkBtns1	bbrf MOUSE_BIT, pressFlag, DoChkBtns2
+		rmbf MOUSE_BIT, pressFlag
 		LDA mouseVector
 		LDX mouseVector+1
 		JSR CallRoutine
-DoChkBtns2	+bbrf KEYPRESS_BIT, pressFlag, DoChkBtns3
+DoChkBtns2	bbrf KEYPRESS_BIT, pressFlag, DoChkBtns3
 		JSR KbdScanHelp3
 		LDA keyVector
 		LDX keyVector+1

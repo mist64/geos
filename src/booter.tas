@@ -1,3 +1,10 @@
+.feature labels_without_colons
+.include "const.inc"
+.include "geossym.inc"
+.include "geosmac.inc"
+.include "equ.inc"
+.include "kernal.inc"
+.import ClrScr, EnterDeskTop, FirstInit, GetBlock, GetDirHead, InitGEOEnv, LdApplic, OpenDisk, PutDirHead, _DoFirstInitIO, _EnterDeskTop, _FirstInit, _IRQHandler, _NMIHandler, i_FillRam
 
 ;GEOS Kernal - booter code
 ;reassembled by Maciej 'YTM/Alliance' Witkowiak
@@ -14,7 +21,7 @@
 		CLD
 		LDX #$ff
 		TXS
-		+LoadB CPU_DATA, RAM_64K
+		LoadB CPU_DATA, RAM_64K
 		LDA #<_NMIHandler
 		STA $fffa
 		STA $fffc
@@ -25,25 +32,27 @@
 		STA $ffff
 		JSR ClrScr
 		JSR i_FillRam
-		!word $0500
-		!word dirEntryBuf
-		!byte 0
+		.word $0500
+		.word dirEntryBuf
+		.byte 0
 		JSR FirstInit
 		JSR MOUSE_JMP
-		+LoadB interleave, currentInterleave
+		LoadB interleave, currentInterleave
 		LDY curDevice
-	!if (use1541) {
+	.if (use1541)
 		LDA #DRV_1541
-	} else {
-	!if (use1571) {
+	.else
+	.if (use1571)
 		LDA #DRV_1571
-	} else {
-	!if (use1581) {
+	.else
+	.if (use1581)
 		LDA #DRV_1581
-	}}}
+	.endif
+	.endif
+	.endif
 		STA _driveType,y
 		STY curDrive
-	!if (REUPresent) {
+	.if (REUPresent)
 		LDX #0
 		LDA $5f0f
 		CMP #$13
@@ -54,73 +63,73 @@ Boot1		LDA $5f06,y
 		BNE Boot2
 		DEY
 		BPL Boot1
-	}
+	.endif
 		LDX #$80
 Boot2		TXA
 		STA firstBoot
 		BEQ Boot4
-	!if (REUPresent) {
+	.if (REUPresent)
 		LDY #2
 Boot3		LDA $5f18,y
 		STA year,y
 		DEY
 		BPL Boot3
-		+MoveB $5f12, sysRAMFlg
-		+bra Boot6
-	}
-Boot4		+LoadB CPU_DATA, IO_IN
+		MoveB $5f12, sysRAMFlg
+		bra Boot6
+	.endif
+Boot4		LoadB CPU_DATA, IO_IN
 		LDA cia1base+15
 		AND #%01111111
 		STA cia1base+15
-		+LoadB cia1base+11, currentHour | (AMPM << 7)
-		+LoadB cia1base+10, currentMinute
-		+LoadW cia1base+8, 0
-		+LoadB CPU_DATA, $30
-		+LoadB year, currentYear
-		+LoadB month, currentMonth
-		+LoadB day, currentDay
+		LoadB cia1base+11, currentHour | (AMPM << 7)
+		LoadB cia1base+10, currentMinute
+		LoadW cia1base+8, 0
+		LoadB CPU_DATA, $30
+		LoadB year, currentYear
+		LoadB month, currentMonth
+		LoadB day, currentDay
 		LDX #7
 		LDA #$bb
 Boot5		STA A8FE8,x
 		DEX
 		BPL Boot5
-		+LoadB A8FF0, $bf
+		LoadB A8FF0, $bf
 Boot6		LDA #>_IRQHandler
 		STA $ffff
 		LDA #<_IRQHandler
 		STA $fffe
-	!if (use2MHz) {
-		+LoadB rasreg, $fc
-	}
-	!if (useRamCart64 | useRamCart128) {
-		+LoadB CPU_DATA, IO_IN
-		+LoadW RAMC_BASE, 0
+	.if (use2MHz)
+		LoadB rasreg, $fc
+	.endif
+	.if (useRamCart64 | useRamCart128)
+		LoadB CPU_DATA, IO_IN
+		LoadW RAMC_BASE, 0
 		ldx RAMC_WINDOW
 		ldy RAMC_WINDOW+$80
-		lda #"M"
+		lda #'M'
 		sta RAMC_WINDOW
-		lda #"W"
+		lda #'W'
 		sta RAMC_WINDOW+$80
 		cmp RAMC_WINDOW+$80
 		bne BootNotRC
 		lda RAMC_WINDOW
-		cmp #"M"
+		cmp #'M'
 		bne BootNotRC
 		stx RAMC_WINDOW
 		sty RAMC_WINDOW
 		jmp BootRC_OK
-BootNotRC	+LoadB CPU_DATA, $30
+BootNotRC	LoadB CPU_DATA, $30
 		lda #>ExpFaultDB
 		sta r0H
 		lda #<ExpFaultDB
 		sta r0L
 		jsr DoDlgBox
 		jmp ToBASIC
-BootRC_OK	+LoadB CPU_DATA, $30
-	}
+BootRC_OK	LoadB CPU_DATA, $30
+	.endif
 
-	!if (usePlus60K) {
-		+LoadB CPU_DATA, IO_IN
+	.if (usePlus60K)
+		LoadB CPU_DATA, IO_IN
 		ldx #0
 BootP6K_1	lda Plus60KTest,x
 		sta $0400,x
@@ -129,32 +138,32 @@ BootP6K_1	lda Plus60KTest,x
 		bne BootP6K_1
 		jsr $0400
 		bne BootP6K_OK
-		+LoadB CPU_DATA, $30
+		LoadB CPU_DATA, $30
 		lda #>ExpFaultDB
 		sta r0H
 		lda #<ExpFaultDB
 		sta r0L
 		jsr DoDlgBox
 		jmp ToBASIC
-BootP6K_OK	+LoadB CPU_DATA, $30
-	}
+BootP6K_OK	LoadB CPU_DATA, $30
+	.endif
 
 BootCont	JSR OpenDisk
 		JSR GetDirHead
-		+bnex Boot7
-		LDA #"K"
+		bnex Boot7
+		LDA #'K'
 		CMP curDirHead+OFF_GS_DTYPE
 		BEQ Boot7
 		STA curDirHead+OFF_GS_DTYPE
 		JSR PutDirHead
-Boot7		+MoveB curDirHead+0, bootTr2
-		+MoveB curDirHead+1, bootSec2
-		+MoveB bootSec, r1H
-		+MoveB bootTr, r1L
-		+AddVB 32, bootOffs
+Boot7		MoveB curDirHead+0, bootTr2
+		MoveB curDirHead+1, bootSec2
+		MoveB bootSec, r1H
+		MoveB bootTr, r1L
+		AddVB 32, bootOffs
 		BNE Boot10
-Boot8		+MoveB bootSec2, r1H
-		+MoveB bootTr2, r1L
+Boot8		MoveB bootSec2, r1H
+		MoveB bootTr2, r1L
 		BNE Boot10
 		LDA NUMDRV
 		BNE Boot9
@@ -163,25 +172,25 @@ Boot9		LDA #>_EnterDeskTop
 		STA EnterDeskTop+2
 		LDA #<_EnterDeskTop
 		STA EnterDeskTop+1
-	!if (useRamExp) {
+	.if (useRamExp)
 		jsr LoadDeskTop
-	}
+	.endif
 		JMP _EnterDeskTop
 
-Boot10		+MoveB r1H, bootSec
-		+MoveB r1L, bootTr
-		+LoadW r4, diskBlkBuf
+Boot10		MoveB r1H, bootSec
+		MoveB r1L, bootTr
+		LoadW r4, diskBlkBuf
 		JSR GetBlock
-		+bnex Boot9
-		+MoveB diskBlkBuf+1, bootSec2
-		+MoveB diskBlkBuf, bootTr2
+		bnex Boot9
+		MoveB diskBlkBuf+1, bootSec2
+		MoveB diskBlkBuf, bootTr2
 Boot101 	LDY bootOffs
 		LDA diskBlkBuf+2,y
 		BEQ Boot11
 		LDA diskBlkBuf+$18,y
 		CMP #AUTO_EXEC
 		BEQ Boot12
-Boot11		+AddVB 32, bootOffs
+Boot11		AddVB 32, bootOffs
 		BNE Boot101
 		BEQ Boot8
 Boot12		LDX #0
@@ -191,8 +200,8 @@ Boot13		LDA diskBlkBuf+2,y
 		INX
 		CPX #30
 		BNE Boot13
-		+LoadW r9, dirEntryBuf
-		+LoadB r0, 0
+		LoadW r9, dirEntryBuf
+		LoadB r0, 0
 		LDA #>_BootEnterDeskTop
 		STA EnterDeskTop+2
 		LDA #<_BootEnterDeskTop
@@ -216,30 +225,30 @@ _BootEnterDeskTop
 		JSR InitGEOEnv
 		JMP Boot8
 
-	!if (usePlus60K) {
+	.if (usePlus60K)
 Plus60KTest
 		ldx #0
 		stx PLUS60K_CR
 		ldy $1180
-		+LoadB $1180, ("M")
-		+LoadB PLUS60K_CR, $80
+		LoadB $1180, ('M')
+		LoadB PLUS60K_CR, $80
 		lda $1180
 		stx PLUS60K_CR
 		sty $1180
-		cmp #"M"
+		cmp #'M'
 		rts
 Plus60KTestEnd
-	}
+	.endif
 
-	!if (useRamExp) {
-LoadDeskTop	+LoadB a0L, NULL
-		+LoadB BVChainTab, 1	;1 - first free
+	.if (useRamExp)
+LoadDeskTop	LoadB a0L, NULL
+		LoadB BVChainTab, 1	;1 - first free
 LoadDTLp	lda #>DeskTopName
 		sta r6H
 		lda #<DeskTopName
 		sta r6L
 		jsr FindFile
-		+beqx LoadDTCont
+		beqx LoadDTCont
 		lda #>LoadDT_DB
 		sta r0H
 		lda #<LoadDT_DB
@@ -257,7 +266,7 @@ LoadDTCont	jsr GetFHdrInfo
 		lda fileHeader+O_GHST_VEC
 		sta DeskTopExec
 
-		+LoadB DeskTopOpen, $88
+		LoadB DeskTopOpen, $88
 		lda #>DeskTopName
 		sta r0H
 		lda #<DeskTopName
@@ -266,13 +275,13 @@ LoadDTCont	jsr GetFHdrInfo
 
 BLoadDTop	lda a0L
 		jsr PointRecord
-		+bnex BVLast
-		+LoadW r2, $ffff
-		+LoadW r7, BVBuff
+		bnex BVLast
+		LoadW r2, $ffff
+		LoadW r7, BVBuff
 		jsr ReadRecord
 
 		lda r7H
-		+subv (>BVBuff)
+		subv (>BVBuff)
 		tay
 		ldx a0L
 		bne BLoadDTop_1
@@ -283,20 +292,20 @@ BLoadDTop_1	clc
 		sta BVChainTab+1,x
 		inc a0L
 
-		+LoadB r1H, 0
+		LoadB r1H, 0
 		lda BVChainTab,x
 		sta r1L
-		+LoadW r0, BVBuff
+		LoadW r0, BVBuff
 		sty r2H
 		jsr RamExpWrite
 
-		+LoadB CPU_DATA, IO_IN
+		LoadB CPU_DATA, IO_IN
 		inc $d020
-		+LoadB CPU_DATA, $30
+		LoadB CPU_DATA, $30
 		jmp BLoadDTop
 
 BVLast		jsr RamExpGetStat
-		+MoveB a0L, diskBlkBuf+DTOP_CHNUM
+		MoveB a0L, diskBlkBuf+DTOP_CHNUM
 		inc a0L
 		ldx #0
 BVLast_1	lda BVChainTab,x
@@ -305,49 +314,49 @@ BVLast_1	lda BVChainTab,x
 		cpx a0L
 		bne BVLast_1
 		sta diskBlkBuf+RAM_EXP_1STFREE
-		+LoadB DeskTopOpen, 0
+		LoadB DeskTopOpen, 0
 		jmp RamExpPutStat
-	}
+	.endif
 
-bootTr		!byte 0
-bootSec 	!byte 0
-bootTr2 	!byte DIR_TRACK
-bootSec2	!byte 1
-bootOffs	!byte $e0
+bootTr		.byte 0
+bootSec 	.byte 0
+bootTr2 	.byte DIR_TRACK
+bootSec2	.byte 1
+bootOffs	.byte $e0
 
-bootTest	!text "GEOS"
+bootTest	.byte "GEOS"
 
-	!if (useRamExp) {
+	.if (useRamExp)
 LoadDT_DB
-		!byte DEF_DB_POS | 1
-		!byte DBTXTSTR, TXT_LN_X, TXT_LN_1_Y+6
-		!word LoadDT_Str0
-		!byte DBTXTSTR, TXT_LN_X, TXT_LN_2_Y+6
-		!word LoadDT_Str1
-		!byte OK, DBI_X_2, DBI_Y_2
-		!byte NULL
+		.byte DEF_DB_POS | 1
+		.byte DBTXTSTR, TXT_LN_X, TXT_LN_1_Y+6
+		.word LoadDT_Str0
+		.byte DBTXTSTR, TXT_LN_X, TXT_LN_2_Y+6
+		.word LoadDT_Str1
+		.byte OK, DBI_X_2, DBI_Y_2
+		.byte NULL
 
-LoadDT_Str0	!text BOLDON, "Please insert a disk", NULL
-LoadDT_Str1	!text "with deskTop V1.5 or higher", NULL
+LoadDT_Str0	.byte BOLDON, "Please insert a disk", NULL
+LoadDT_Str1	.byte "with deskTop V1.5 or higher", NULL
 
-ExpFaultDB	!byte DEF_DB_POS | 1
-		!byte DBTXTSTR, TXT_LN_X, TXT_LN_1_Y
-		!word ExpFaultStr
-		!byte DBTXTSTR, TXT_LN_X, TXT_LN_2_Y
-		!word ExpFaultStr2
-		!byte OK, DBI_X_1, DBI_Y_2
-		!byte NULL
+ExpFaultDB	.byte DEF_DB_POS | 1
+		.byte DBTXTSTR, TXT_LN_X, TXT_LN_1_Y
+		.word ExpFaultStr
+		.byte DBTXTSTR, TXT_LN_X, TXT_LN_2_Y
+		.word ExpFaultStr2
+		.byte OK, DBI_X_1, DBI_Y_2
+		.byte NULL
 
-ExpFaultStr	!byte BOLDON
-		!text "This version of GEOS works", NULL
+ExpFaultStr	.byte BOLDON
+		.byte "This version of GEOS works", NULL
 ExpFaultStr2	
-	!if (useRamCart64 | useRamCart128) {
-		!text "only with RamCart expansion.", NULL
-	}
-	!if (usePlus60K) {
-		!text "only with +60K expansion.", NULL
-	}
+	.if (useRamCart64 | useRamCart128)
+		.byte "only with RamCart expansion.", NULL
+	.endif
+	.if (usePlus60K)
+		.byte "only with +60K expansion.", NULL
+	.endif
 
-	}
+	.endif
 
 BVChainTab

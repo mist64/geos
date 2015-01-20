@@ -1,3 +1,29 @@
+.feature labels_without_colons
+.include "const.inc"
+.include "geossym.inc"
+.include "geosmac.inc"
+.include "equ.inc"
+.include "kernal.inc"
+.import InitMsePic, ClrScr, _DoUpdateTime, _DoCheckDelays, _ExecuteProcesses, _DoCheckButtons, ResetMseRegion, ProcessCursor, _ProcessDelays, _ProcessTimers, ProcessMouse, _DoRAMOp, _VerifyRAM, _SwapRAM, _FetchRAM, _StashRAM
+.import _BitOtherClip, _RstrFrmDialogue, _ChangeDiskDevice, _FreeBlock, _ReadByte, _IsMseInRegion, _SetDevice, _FindBAMBit, _BitmapClip, _GetNextChar, _OpenDisk, _PromptOff, _PromptOn, _GetPtrCurDkNm, _UpdateRecordFile, _SetNextFree
+.import _WriteRecord, _ReadRecord, _AppendRecord, _InsertRecord, _DeleteRecord, _PointRecord, _PreviousRecord, _NextRecord, _CloseRecordFile, _OpenRecordFile, _CmpFString, _CmpString, _CopyFString, _CopyString, _DShiftRight, _DoneWithIO
+.import _InitForIO, _RenameFile, _DoDlgBox, _i_ImprintRectangle, _ImprintRectangle, _NxtBlkAlloc, _PutDirHead, _GetDirHead, _FastDelFile, _RstrAppl, _FindFTypes, _DeleteFile, _PurgeTurbo, _ExitTurbo, _GetFHdrInfo, _FreeFile
+.import _VerWriteBlock, _WriteBlock, _LdApplic, _ReadBlock, _LdDeskAcc, _EnterTurbo, _LdFile, _CRC, _FindFile, _GetFile, _FollowChain, _SmallPutChar, _ReadFile, _BlkAlloc, _WriteFile
+.import _GetFreeDirBlk, _BldGDirEntry, _SetGDirEntry, _SaveFile, _SetGEOSDisk, _PutBlock, _GetBlock, _NewDisk, _ChkDkGEOS, _CalcBlksFree, _DisablSprite, _EnablSprite, _PosSprite, _LoadCharSet, _GetCharWidth, _DrawSprite
+.import _InitTextPrompt, _GotoFirstMenu, _GetString, _i_MoveData, _i_FillRam, _GetRealSize, _i_PutString, _i_BitmapUp, _i_GraphicsString, _i_RecoverRectangle, _i_FrameRectangle, _i_Rectangle, _ClearMouseMode, _Sleep, _ReDoMenu, _DoPreviousMenu
+.import _MouseOff, _MouseUp, _GetRandom, _PutDecimal, _MoveData, _FillRam, _ClearRam, _Ddec, _Dnegate, _Dabs, _DSDiv, _Ddiv, _DMult, _BMult, _BBMult, _DShiftLeft
+.import _DoIcons, _RecoverAllMenus, _RecoverMenu, _DoMenu, _StartMouseMode, _UseSystemFont, _PutString, _PutChar, _BitmapUp, _TestPoint, _GetScanLine, _SetPattern, _GraphicsString, _DrawPoint, _DrawLine, _RecoverRectangle
+.import _InvertRectangle, _FrameRectangle, _Rectangle, _VerticalLine, _RecoverLine, _InvertLine, _HorizontalLine, _UnFreezeProcess, _FreezeProcess, _UnBlockProcess, _BlockProcess, _EnableProcess, _RestartProcess, _InitProcesses, DoPLAINTEXT, DoOUTLINEON
+.import DoITALICON, DoBOLDON, DoNEWCARDSET, DoGOTOXY, DoGOTOY, DoGOTOX, DoREV_OFF, DoREV_ON, DoESC_RULER, DoESC_GRAPHICS, DoULINEOFF, DoULINEON, DoCR, DoUPLINE, DoHOME, DoLF
+.import DoTAB, DoBACKSPACE, true: zeropage
+.global BBMult, BitMask1, BitMask2, BitMask3, BitMask4, BldGDirEntry, BlkAlloc, CalcBlksFree, CallRoutine, ChkDkGEOS, ClearRam, CopyFString, CopyString, DBIcPicDISK, DBIcPicNO, DBIcPicOPEN, DBIcPicYES
+.global DShiftLeft, Dabs, DecTabH, DecTabL, DkNmTab, DoInlineReturn, DoneWithIO, DrawSprite, EnablSprite, EnterTurbo, ExitTurbo, FastDelFile, FindBAMBit, FindFTypes, FindFile, FontTVar1
+.global FontTVar2, FrameRectangle, GetBlock, GetDirHead, GetFHdrInfo, GetFile, GetFreeDirBlk, GetPtrCurDkNm, GetRealSize, GetScanLine, GetString, GraphicsString, HorizontalLine, InitForIO, InitGEOEnv, InvertRectangle
+.global IsMseInRegion, LdApplic, LdDeskAcc, LdFile, LineTabH, LineTabL, MainLoop, MouseUp, NewDisk, PosSprite, PutBlock, PutCharTabH, PutCharTabL, PutDirHead, PutString, ReadBlock
+.global ReadFile, Rectangle, RstrFrmDialogue, SetDevice, SetGDirEntry, SetNextFree, SetPattern, SprTabH, SprTabL, StartAppl, UNK_4, UNK_5, UseSystemFont, VerWriteBlock, WriteBlock, WriteFile, _MNLP, dateCopy, daysTab
+.global i_FillRam, EnterDeskTop, _DoFirstInitIO, _FirstInit, FirstInit, OpenDisk, _DoFirstInitIO, _FirstInit, Ddec, Ddiv, DoIcons, FreeBlock, PutChar, _EnterDeskTop, StashRAM, DoRAMOp, FetchRAM
+
+.segment "main"
 
 ;26.6.99 - modularized source, seems to work flawlessly
 ;this file:system core - all address-aligned data (for compatibility), core (EnterDeskTop) and init stuff
@@ -22,92 +48,92 @@
 		JMP BootKernal			;C01B
 		JMP InitKernal			;5000
 
-bootName	!text "GEOS BOOT"		;c006
-version 	!byte $20			;c00f
-nationality	!byte $00,$00
-sysFlgCopy	!byte $00			;c012
-c128Flag	!byte $00
-		!byte $05,$00,$00,$00
-dateCopy	!byte 88,4,20			;c018
+bootName	.byte "GEOS BOOT"		;c006
+version 	.byte $20			;c00f
+nationality	.byte $00,$00
+sysFlgCopy	.byte $00			;c012
+c128Flag	.byte $00
+		.byte $05,$00,$00,$00
+dateCopy	.byte 88,4,20			;c018
 
 
 ;--------------------------------------------
 
-BitMask1	!byte $80, $40, $20, $10, $08, $04, $02
-BitMask2	!byte $01, $02, $04, $08, $10, $20, $40, $80
-BitMask3	!byte $00, $80, $c0, $e0, $f0, $f8, $fc, $fe
-BitMask4	!byte $7f, $3f, $1f, $0f, $07, $03, $01, $00
+BitMask1	.byte $80, $40, $20, $10, $08, $04, $02
+BitMask2	.byte $01, $02, $04, $08, $10, $20, $40, $80
+BitMask3	.byte $00, $80, $c0, $e0, $f0, $f8, $fc, $fe
+BitMask4	.byte $7f, $3f, $1f, $0f, $07, $03, $01, $00
 
 						;c418
-VIC_IniTbl	!byte $00, $00, $00, $00, $00, $00, $00, $00
-		!byte $00, $00, $00, $00, $00, $00, $00, $00
-		!byte $f8, $3b, $fb, $aa, $aa, $01, $08, $00
-		!byte $38, $0f, $01, $00, $00, $00
+VIC_IniTbl	.byte $00, $00, $00, $00, $00, $00, $00, $00
+		.byte $00, $00, $00, $00, $00, $00, $00, $00
+		.byte $f8, $3b, $fb, $aa, $aa, $01, $08, $00
+		.byte $38, $0f, $01, $00, $00, $00
 
 						;caeb
-LineTabL	!byte $00, $40, $80, $c0, $00, $40, $80, $c0
-		!byte $00, $40, $80, $c0, $00, $40, $80, $c0
-		!byte $00, $40, $80, $c0, $00, $40, $80, $c0
-		!byte $00
+LineTabL	.byte $00, $40, $80, $c0, $00, $40, $80, $c0
+		.byte $00, $40, $80, $c0, $00, $40, $80, $c0
+		.byte $00, $40, $80, $c0, $00, $40, $80, $c0
+		.byte $00
 						;cb04
-LineTabH	!byte $a0, $a1, $a2, $a3, $a5, $a6, $a7, $a8
-		!byte $aa, $ab, $ac, $ad, $af, $b0, $b1, $b2
-		!byte $b4, $b5, $b6, $b7, $b9, $ba, $bb, $bc
-		!byte $be
+LineTabH	.byte $a0, $a1, $a2, $a3, $a5, $a6, $a7, $a8
+		.byte $aa, $ab, $ac, $ad, $af, $b0, $b1, $b2
+		.byte $b4, $b5, $b6, $b7, $b9, $ba, $bb, $bc
+		.byte $be
 
 _PanicDB_DT					;cfd3
-		!byte DEF_DB_POS | 1
-		!byte DBTXTSTR, TXT_LN_X, TXT_LN_1_Y
-		!word _PanicDB_Str
-		!byte NULL
+		.byte DEF_DB_POS | 1
+		.byte DBTXTSTR, TXT_LN_X, TXT_LN_1_Y
+		.word _PanicDB_Str
+		.byte NULL
 
 _PanicDB_Str					;cfda
-		!byte BOLDON
-		!text "System error near $"
-_PanicAddy	!text "xxxx"			;cfee
-		!byte NULL
+		.byte BOLDON
+		.byte "System error near $"
+_PanicAddy	.byte "xxxx"			;cfee
+		.byte NULL
 
-FontTVar1	!byte 0 			;e391
-FontTVar2	!word 0 			;e392
+FontTVar1	.byte 0 			;e391
+FontTVar2	.word 0 			;e392
 						;ccb0
-SprTabL 	!byte <spr0pic, <spr1pic, <spr2pic, <spr3pic
-		!byte <spr4pic, <spr5pic, <spr6pic, <spr7pic
+SprTabL 	.byte <spr0pic, <spr1pic, <spr2pic, <spr3pic
+		.byte <spr4pic, <spr5pic, <spr6pic, <spr7pic
 						;ccb8
-SprTabH 	!byte >spr0pic, >spr1pic, >spr2pic, >spr3pic
-		!byte >spr4pic, >spr5pic, >spr6pic, >spr7pic
+SprTabH 	.byte >spr0pic, >spr1pic, >spr2pic, >spr3pic
+		.byte >spr4pic, >spr5pic, >spr6pic, >spr7pic
 
-PutCharTabL	!byte <DoBACKSPACE, <DoTAB	;e54b
-		!byte <DoLF, <DoHOME
-		!byte <DoUPLINE, <DoCR
-		!byte <DoULINEON, <DoULINEOFF
-		!byte <DoESC_GRAPHICS, <DoESC_RULER
-		!byte <DoREV_ON, <DoREV_OFF
-		!byte <DoGOTOX, <DoGOTOY
-		!byte <DoGOTOXY, <DoNEWCARDSET
-		!byte <DoBOLDON, <DoITALICON
-		!byte <DoOUTLINEON, <DoPLAINTEXT
+PutCharTabL	.byte <DoBACKSPACE, <DoTAB	;e54b
+		.byte <DoLF, <DoHOME
+		.byte <DoUPLINE, <DoCR
+		.byte <DoULINEON, <DoULINEOFF
+		.byte <DoESC_GRAPHICS, <DoESC_RULER
+		.byte <DoREV_ON, <DoREV_OFF
+		.byte <DoGOTOX, <DoGOTOY
+		.byte <DoGOTOXY, <DoNEWCARDSET
+		.byte <DoBOLDON, <DoITALICON
+		.byte <DoOUTLINEON, <DoPLAINTEXT
 
-PutCharTabH	!byte >DoBACKSPACE, >DoTAB	;e55f
-		!byte >DoLF, >DoHOME
-		!byte >DoUPLINE, >DoCR
-		!byte >DoULINEON, >DoULINEOFF
-		!byte >DoESC_GRAPHICS, >DoESC_RULER
-		!byte >DoREV_ON, >DoREV_OFF
-		!byte >DoGOTOX, >DoGOTOY
-		!byte >DoGOTOXY, >DoNEWCARDSET
-		!byte >DoBOLDON, >DoITALICON
-		!byte >DoOUTLINEON, >DoPLAINTEXT
+PutCharTabH	.byte >DoBACKSPACE, >DoTAB	;e55f
+		.byte >DoLF, >DoHOME
+		.byte >DoUPLINE, >DoCR
+		.byte >DoULINEON, >DoULINEOFF
+		.byte >DoESC_GRAPHICS, >DoESC_RULER
+		.byte >DoREV_ON, >DoREV_OFF
+		.byte >DoGOTOX, >DoGOTOY
+		.byte >DoGOTOXY, >DoNEWCARDSET
+		.byte >DoBOLDON, >DoITALICON
+		.byte >DoOUTLINEON, >DoPLAINTEXT
 
-DecTabL 	!byte <1, <10, <100, <1000, <10000 ;e941
-DecTabH 	!byte >1, >10, >100, >1000, >10000 ;e946
+DecTabL 	.byte <1, <10, <100, <1000, <10000 ;e941
+DecTabH 	.byte >1, >10, >100, >1000, >10000 ;e946
 
 daysTab 					;fe17
-		!byte 31, 28, 31, 30, 31, 30
-		!byte 31, 31, 30, 31, 30, 31
+		.byte 31, 28, 31, 30, 31, 30
+		.byte 31, 31, 30, 31, 30, 31
 
-DeskTopOpen	!byte 0 			;these two bytes are here just
-DeskTopRecord	!byte 0 			;to keep OS_JUMPTAB at $c100
-		!byte 0,0,0			;three really unused
+DeskTopOpen	.byte 0 			;these two bytes are here just
+DeskTopRecord	.byte 0 			;to keep OS_JUMPTAB at $c100
+		.byte 0,0,0			;three really unused
 ;--------------------------------------------
 ;here the JumpTable begins, DO NOT CHANGE!!!
 ;		*= OS_JUMPTAB
@@ -264,13 +290,13 @@ ChangeDiskDevice	JMP (_ChangeDiskDevice) ;c2bc
 RstrFrmDialogue 	JMP _RstrFrmDialogue	;c2bf
 Panic			JMP _Panic		;c2c2
 BitOtherClip		JMP _BitOtherClip	;c2c5
-	!if (REUPresent) {
+	.if (REUPresent)
 StashRAM		JMP _StashRAM		;c2c8
 FetchRAM		JMP _FetchRAM		;c2cb
 SwapRAM 		JMP _SwapRAM		;c2ce
 VerifyRAM		JMP _VerifyRAM		;c2d1
 DoRAMOp 		JMP _DoRAMOp		;c2d4
-	} else {
+	.else
 StashRAM		LDX #DEV_NOT_FOUND	;c2c8
 			RTS
 FetchRAM		LDX #DEV_NOT_FOUND	;c2cb
@@ -281,14 +307,14 @@ VerifyRAM		LDX #DEV_NOT_FOUND	;c2d1
 			RTS
 DoRAMOp 		LDX #DEV_NOT_FOUND	;c2d4
 			RTS
-	}
+	.endif
 ;here the JumpTable ends
 ;--------------------------------------------
 
-DkNmTab 	!byte <DrACurDkNm, <DrBCurDkNm
-		!byte <DrCCurDkNm, <DrDCurDkNm
-		!byte >DrACurDkNm, >DrBCurDkNm
-		!byte >DrCCurDkNm, >DrDCurDkNm
+DkNmTab 	.byte <DrACurDkNm, <DrBCurDkNm
+		.byte <DrCCurDkNm, <DrDCurDkNm
+		.byte >DrACurDkNm, >DrBCurDkNm
+		.byte >DrCCurDkNm, >DrDCurDkNm
 
 _InterruptMain
 		JSR ProcessMouse		;c2d7
@@ -308,7 +334,7 @@ CRou1		STA CallRLo			;c5a7
 CRou2		RTS				;c5ae
 
 _DoInlineReturn 				;c5af
-		+add returnAddress
+		add returnAddress
 		STA returnAddress
 		BCC DILR1
 		INC returnAddress+1
@@ -352,11 +378,11 @@ IRam1		TXA				;c58a
 		DEC r2L
 		BNE IRam0
 		TYA
-		+add r0L
+		add r0L
 		STA r0L
 		BCC IRam2
 		INC r0H
-IRam2		+bra _InitRam			;c59b
+IRam2		bra _InitRam			;c59b
 IRam3		RTS				;c59e
 
 InitGEOS	JSR _DoFirstInitIO		;c40a ;UNK_1
@@ -367,8 +393,8 @@ InitGEOEnv	LDA #>InitRamTab		;c40d ;UNK_1_1
 		JMP _InitRam
 
 _DoFirstInitIO
-		+LoadB CPU_DDR, $2f		;c436
-		+LoadB CPU_DATA, KRNL_IO_IN
+		LoadB CPU_DDR, $2f		;c436
+		LoadB CPU_DATA, KRNL_IO_IN
 		LDX #7
 		LDA #true
 DFIIO0		STA KbdDMltTab,X		;c442
@@ -392,21 +418,21 @@ DFIIO1		STX cia1base+14 		;c468
 		AND #%00110000
 		ORA #%00000101
 		STA cia2base
-		+LoadB cia2base+2, $3f
-		+LoadB cia1base+13, $7f
+		LoadB cia2base+2, $3f
+		LoadB cia1base+13, $7f
 		STA cia2base+13
-		+LoadW r0, VIC_IniTbl
+		LoadW r0, VIC_IniTbl
 		LDY #30
 		JSR SetVICRegs
 		JSR Init_KRNLVec
-		+LoadB CPU_DATA, RAM_64K
+		LoadB CPU_DATA, RAM_64K
 		JMP ResetMseRegion
 
-DeskTopStart	!word 0 	;these are for ensuring compatibility with
-DeskTopExec	!word 0 	;DeskTop replacements - filename of desktop
-DeskTopLgh	!byte 0 	;have to be at $c3cf		.IDLE
+DeskTopStart	.word 0 	;these are for ensuring compatibility with
+DeskTopExec	.word 0 	;DeskTop replacements - filename of desktop
+DeskTopLgh	.byte 0 	;have to be at $c3cf		.IDLE
 
-DeskTopName	!text "DESK TOP", NULL		;c3cf
+DeskTopName	.byte "DESK TOP", NULL		;c3cf
 
 ;--------------------------------------------
 ;IMPORTANT! FROM NOW ON YOU CAN CHANGE THE CODE UNTIL FURTHER NOTICES.
@@ -422,14 +448,14 @@ _MNLP		JSR CallRoutine 		;c0f1
 		CLI
 
 _MainLoop2	LDX CPU_DATA			;c313
-		+LoadB CPU_DATA, IO_IN
+		LoadB CPU_DATA, IO_IN
 		LDA grcntrl1
 		AND #%01111111
 		STA grcntrl1
 		STX CPU_DATA
 		JMP _MainLoop
 
-BootKernal	+bbsf 5, sysFlgCopy, BootREU
+BootKernal	bbsf 5, sysFlgCopy, BootREU
 		JSR $FF90
 		LDA #version-bootName
 		LDX #<bootName
@@ -452,19 +478,19 @@ BootREU2	DEY				;c04c
 		BNE BootREU2
 _RunREU 	JMP RunREU			;c04f
 BootREUTab
-		!word $0091
-		!word $0060
-		!word $007e
-		!word $0500
-		!word $0000
+		.word $0091
+		.word $0060
+		.word $007e
+		.word $0500
+		.word $0000
 
-	!if (removeToBASIC) {
+	.if (removeToBASIC)
 _ToBASIC	sei
 		jsr PurgeTurbo
-		+LoadB CPU_DATA, KRNL_BAS_IO_IN
-		+LoadB $DE00, 0
+		LoadB CPU_DATA, KRNL_BAS_IO_IN
+		LoadB $DE00, 0
 		jmp $fce2
-	} else {
+	.else
 _ToBASIC	LDY #39 			;c05c
 TB1		LDA (r0),Y			;c05e
 		CMP #"A"
@@ -482,21 +508,21 @@ TB2		STA LoKernalBuf,Y		;c06a
 TB3		STA BASICspace,Y		;c076
 		INY
 		BNE TB3
-		+SubVW $0002,r7
+		SubVW $0002,r7
 		LDA (r7),Y
 		PHA
 		INY
 		LDA (r7),Y
 		PHA
-		+PushW r7
+		PushW r7
 		LDA (r5),Y
 		STA r1L
 		INY
 		LDA (r5),Y
 		STA r1H
-		+LoadW r2, $ffff
+		LoadW r2, $ffff
 		JSR _ReadFile
-		+PopW r0
+		PopW r0
 		LDY #1
 		PLA
 		STA (r0),Y
@@ -517,13 +543,13 @@ TB5		LDA ToBASICTab,Y		;c0c9
 		JSR StashRAM
 TB6		JMP LoKernal1			;c0d5
 ToBASICTab
-		!word dirEntryBuf
-		!word REUOsVarBackup
-		!word OS_VARS_LGH
-		!byte $00
-	}
+		.word dirEntryBuf
+		.word REUOsVarBackup
+		.word OS_VARS_LGH
+		.byte $00
+	.endif
 
-	!if (useRamExp) {
+	.if (useRamExp)
 _EnterDeskTop					;c326
 		SEI
 		CLD
@@ -532,26 +558,26 @@ _EnterDeskTop					;c326
 		TXS
 		JSR ClrScr
 		JSR InitGEOS
-		+MoveW DeskTopStart, r0
-		+MoveB DeskTopLgh, r2H
-		+LoadW r1, 1
+		MoveW DeskTopStart, r0
+		MoveB DeskTopLgh, r2H
+		LoadW r1, 1
 		jsr RamExpRead
-		+LoadB r0L, NULL
-		+MoveW DeskTopExec, r7
-	} else {
+		LoadB r0L, NULL
+		MoveW DeskTopExec, r7
+	.else
 _EnterDT_DB					;c3c0
-		!byte DEF_DB_POS | 1
-		!byte DBTXTSTR, TXT_LN_X, TXT_LN_1_Y+6
-		!word _EnterDT_Str0
-		!byte DBTXTSTR, TXT_LN_X, TXT_LN_2_Y+6
-		!word _EnterDT_Str1
-		!byte OK, DBI_X_2, DBI_Y_2
-		!byte NULL
+		.byte DEF_DB_POS | 1
+		.byte DBTXTSTR, TXT_LN_X, TXT_LN_1_Y+6
+		.word _EnterDT_Str0
+		.byte DBTXTSTR, TXT_LN_X, TXT_LN_2_Y+6
+		.word _EnterDT_Str1
+		.byte OK, DBI_X_2, DBI_Y_2
+		.byte NULL
 
 _EnterDT_Str0					;c3d8
-		!text BOLDON, "Please insert a disk", NULL
+		.byte BOLDON, "Please insert a disk", NULL
 _EnterDT_Str1					;c3ee
-		!text "with deskTop V1.5 or higher", NULL
+		.byte "with deskTop V1.5 or higher", NULL
 
 _EnterDeskTop					;c326
 		SEI
@@ -561,7 +587,7 @@ _EnterDeskTop					;c326
 		TXS
 		JSR ClrScr
 		JSR InitGEOS
-		+MoveB curDrive, TempCurDrive
+		MoveB curDrive, TempCurDrive
 		EOR #1
 		TAY
 		LDA _driveType,Y
@@ -577,30 +603,30 @@ EDT1		JSR EDT3			;c348
 		LDA curDrive
 		EOR #1
 		JSR EDT3
-EDT2		+LoadW r0, _EnterDT_DB		;c35a
+EDT2		LoadW r0, _EnterDT_DB		;c35a
 		JSR DoDlgBox
 		LDA TempCurDrive
 		BNE EDT1
 EDT3		JSR SetDevice			;c36a
 		JSR OpenDisk
-		+beqx EDT5
+		beqx EDT5
 EDT4		RTS				;c373
 EDT5		STA r0L 			;c374
-		+LoadW r6, DeskTopName
+		LoadW r6, DeskTopName
 		JSR GetFile
-		+bnex EDT4
+		bnex EDT4
 		LDA fileHeader+O_GHFNAME+13
-		CMP #"1"
+		CMP #'1'
 		BCC EDT4
 		BNE EDT6
 		LDA fileHeader+O_GHFNAME+15
-		CMP #"5"
+		CMP #'5'
 		BCC EDT4
 EDT6		LDA TempCurDrive		;c394
 		JSR SetDevice
-		+LoadB r0L, NULL
-		+MoveW fileHeader+O_GHST_VEC, r7
-	}
+		LoadB r0L, NULL
+		MoveW fileHeader+O_GHST_VEC, r7
+	.endif
 _StartAppl	SEI				;c3a8
 		CLD
 		LDX #$FF
@@ -613,19 +639,19 @@ _StartAppl	SEI				;c3a8
 		LDA r7L
 		JMP _MNLP
 
-UNK_4	+MoveB A885D, r10L			;c5cf
-	+MoveB A885E, r0L
+UNK_4	MoveB A885D, r10L			;c5cf
+	MoveB A885E, r0L
 		AND #1
 		BEQ U_40
-	+MoveW A885F, r7
-U_40		+LoadW r2, dataDiskName 	;c5e7
-		+LoadW r3, dataFileName
+	MoveW A885F, r7
+U_40		LoadW r2, dataDiskName 	;c5e7
+		LoadW r3, dataFileName
 U_41		RTS
 
 
-UNK_5	+MoveW r7, A885F
-	+MoveB r10L, A885D
-	+MoveB r0L, A885E
+UNK_5	MoveW r7, A885F
+	MoveB r10L, A885D
+	MoveB r0L, A885E
 		AND #%11000000
 		BEQ U_41
 		LDY #>dataDiskName
@@ -653,25 +679,25 @@ _FirstInit					;c4e6
 		SEI
 		CLD
 		JSR InitGEOS
-		+LoadW EnterDeskTop+1, _EnterDeskTop
-		+LoadB maxMouseSpeed, iniMaxMouseSpeed
-		!if (iniMaxMouseSpeed=iniMouseAccel) {
+		LoadW EnterDeskTop+1, _EnterDeskTop
+		LoadB maxMouseSpeed, iniMaxMouseSpeed
+		.if (iniMaxMouseSpeed=iniMouseAccel)
 		sta mouseAccel
-		} else {
-		+LoadB mouseAccel, iniMouseAccel
-		}
-		+LoadB minMouseSpeed, iniMinMouseSpeed
-		+LoadB screencolors, (DKGREY << 4)+LTGREY
+		.else
+		LoadB mouseAccel, iniMouseAccel
+		.endif
+		LoadB minMouseSpeed, iniMinMouseSpeed
+		LoadB screencolors, (DKGREY << 4)+LTGREY
 		STA FItempColor
 		JSR i_FillRam
-		!word 1000
-		!word COLOR_MATRIX
-FItempColor	!byte (DKGREY << 4)+LTGREY
+		.word 1000
+		.word COLOR_MATRIX
+FItempColor	.byte (DKGREY << 4)+LTGREY
 		LDX CPU_DATA
-		+LoadB CPU_DATA, IO_IN
-		+LoadB mob0clr, BLUE
+		LoadB CPU_DATA, IO_IN
+		LoadB mob0clr, BLUE
 		STA mob1clr
-		+LoadB extclr, BLACK
+		LoadB extclr, BLACK
 		STX CPU_DATA
 		LDY #62
 FI1		LDA #0				;c52b
@@ -687,19 +713,19 @@ FI2		LDA InitMsePic-1,X		;c535
 
 
 _GetSerialNumber
-		+LoadW r0, SerialNumber
+		LoadW r0, SerialNumber
 		rts
 ;d000
 
 _Panic						;cf88
-		+PopW r0
-		+SubVW 2, r0
+		PopW r0
+		SubVW 2, r0
 		LDA r0H
 		LDX #0
 		JSR Panil0
 		LDA r0L
 		JSR Panil0
-		+LoadW r0, _PanicDB_DT
+		LoadW r0, _PanicDB_DT
 		JSR DoDlgBox
 Panil0		PHA				;cfb2
 		LSR
@@ -715,45 +741,45 @@ Panil0		PHA				;cfb2
 		RTS
 Panil1		CMP #10 			;cfc3
 		BCS Panil2
-		+addv ("0")
+		addv ('0')
 		BNE Panil3
-Panil2		+addv ("0"+7)			;cfcc
+Panil2		addv ('0'+7)			;cfcc
 Panil3		STA _PanicAddy,X		;cfcf
 		RTS
 
 
 InitRamTab					;ddfa
-		!word currentMode
-		!byte 12
-		!byte NULL
-		!byte ST_WR_FORE | ST_WR_BACK
-		!byte NULL
-		!word mousePicData
-		!byte NULL, SC_PIX_HEIGHT-1
-		!word NULL, SC_PIX_WIDTH-1
-		!byte NULL
-		!word appMain
-		!byte 28
-		!word NULL, _InterruptMain
-		!word NULL, NULL, NULL, NULL
-		!word NULL, NULL, NULL, NULL
-		!word _Panic, _RecoverRectangle
-		!byte SelectFlashDelay, NULL
-		!byte ST_FLASH, NULL
-		!word NumTimers
-		!byte 2
-		!byte NULL, NULL
-		!word clkBoxTemp
-		!byte 1
-		!byte NULL
-		!word IconDescVecH
-		!byte 1
-		!byte NULL
-		!word obj0Pointer
-		!byte 8
-		!byte $28, $29, $2a, $2b
-		!byte $2c, $2d, $2e, $2f
-		!word NULL
+		.word currentMode
+		.byte 12
+		.byte NULL
+		.byte ST_WR_FORE | ST_WR_BACK
+		.byte NULL
+		.word mousePicData
+		.byte NULL, SC_PIX_HEIGHT-1
+		.word NULL, SC_PIX_WIDTH-1
+		.byte NULL
+		.word appMain
+		.byte 28
+		.word NULL, _InterruptMain
+		.word NULL, NULL, NULL, NULL
+		.word NULL, NULL, NULL, NULL
+		.word _Panic, _RecoverRectangle
+		.byte SelectFlashDelay, NULL
+		.byte ST_FLASH, NULL
+		.word NumTimers
+		.byte 2
+		.byte NULL, NULL
+		.word clkBoxTemp
+		.byte 1
+		.byte NULL
+		.word IconDescVecH
+		.byte 1
+		.byte NULL
+		.word obj0Pointer
+		.byte 8
+		.byte $28, $29, $2a, $2b
+		.byte $2c, $2d, $2e, $2f
+		.word NULL
 
 
 UNK_6		LDA #$bf			;e393
@@ -766,83 +792,83 @@ UNK_61	STA A8FE8,x				;e39d
 		RTS
 
 DBIcPicNO					;f914
-	!byte 5, %########, $80+1, %#######., $db+8, 2, $80+6
-	     ;%########, %########, %########, %########, %########, %#######.
-	!byte %#......., %........, %........, %........, %........, %......##, $80+12
-	     ;%#......., %........, %........, %........, %........, %......##
-	!byte %#......., %.......#, %##..##.., %.#####.., %........, %......##
-	!byte %#......., %.......#, %##..##.., %##...##., %........, %......##, $db+8, 2, $80+6
-	!byte %#......., %.......#, %###.##.., %##...##., %........, %......##, $db+8, 2, $80+6
-	     ;%#......., %.......#, %###.##.., %##...##., %........, %......##
-	!byte %#......., %.......#, %#.####.., %##...##., %........, %......##, $db+8, 2, $80+6
-	     ;%#......., %.......#, %#.####.., %##...##., %........, %......##
-	!byte %#......., %.......#, %#..###.., %##...##., %........, %......##, $80+6
-	     ;%#......., %.......#, %#..###.., %##...##., %........, %......##
-	!byte %#......., %.......#, %#...##.., %.#####.., %........, %......##, $db+8, 2, $80+6
-	!byte %#......., %........, %........, %........, %........, %......##
-	     ;%#......., %........, %........, %........, %........, %......##
-	     ;%########, %########, %########, %########, %########, %########
-	     ;%.#######, %########, %########, %########, %########, %########
-	!byte 6, %########, $80+1, %.#######, 5, %########
+	.byte 5, %11111111, $80+1, %11111110, $db+8, 2, $80+6
+	     ;%11111111, %11111111, %11111111, %11111111, %11111111, %11111110
+	.byte %10000000, %00000000, %00000000, %00000000, %00000000, %00000011, $80+12
+	     ;%10000000, %00000000, %00000000, %00000000, %00000000, %00000011
+	.byte %10000000, %00000001, %11001100, %01111100, %00000000, %00000011
+	.byte %10000000, %00000001, %11001100, %11000110, %00000000, %00000011, $db+8, 2, $80+6
+	.byte %10000000, %00000001, %11101100, %11000110, %00000000, %00000011, $db+8, 2, $80+6
+	     ;%10000000, %00000001, %11101100, %11000110, %00000000, %00000011
+	.byte %10000000, %00000001, %10111100, %11000110, %00000000, %00000011, $db+8, 2, $80+6
+	     ;%10000000, %00000001, %10111100, %11000110, %00000000, %00000011
+	.byte %10000000, %00000001, %10011100, %11000110, %00000000, %00000011, $80+6
+	     ;%10000000, %00000001, %10011100, %11000110, %00000000, %00000011
+	.byte %10000000, %00000001, %10001100, %01111100, %00000000, %00000011, $db+8, 2, $80+6
+	.byte %10000000, %00000000, %00000000, %00000000, %00000000, %00000011
+	     ;%10000000, %00000000, %00000000, %00000000, %00000000, %00000011
+	     ;%11111111, %11111111, %11111111, %11111111, %11111111, %11111111
+	     ;%01111111, %11111111, %11111111, %11111111, %11111111, %11111111
+	.byte 6, %11111111, $80+1, %01111111, 5, %11111111
 
 DBIcPicYES					;f95f
-	!byte 5, %########, $80+1, %#######., $db+8, 2, $80+6
-	     ;%########, %########, %########, %########, %########, %#######.
-	!byte %#......., %........, %........, %........, %........, %......##, $80+(5*6)
-	     ;%#......., %........, %........, %........, %........, %......##
-	!byte %#......., %....##.., %##..####, %##...###, %##......, %......## ;1
-	!byte %#......., %....##.., %##..##.., %....##.., %.##....., %......## ;2
-	!byte %#......., %....##.., %##..##.., %....##.., %........, %......## ;3
-	!byte %#......., %.....###, %#...##.., %....##.., %........, %......## ;4
-	!byte %#......., %.....###, %#...####, %#....###, %##......, %......##, $db+8, 2, $80+6
-	!byte %#......., %......##, %....##.., %........, %.##....., %......##, $80+12
-	     ;%#......., %......##, %....##.., %........, %.##....., %......##
-	!byte %#......., %......##, %....##.., %....##.., %.##....., %......##
-	!byte %#......., %......##, %....####, %##...###, %##......, %......##, $db+8, 2, $80+6
-	!byte %#......., %........, %........, %........, %........, %......##
-	     ;%#......., %........, %........, %........, %........, %......##
-	     ;%########, %########, %########, %########, %########, %########
-	     ;%.#######, %########, %########, %########, %########, %########
-	!byte 6, %########, $80+1, %.#######, 5, %########
+	.byte 5, %11111111, $80+1, %11111110, $db+8, 2, $80+6
+	     ;%11111111, %11111111, %11111111, %11111111, %11111111, %11111110
+	.byte %10000000, %00000000, %00000000, %00000000, %00000000, %00000011, $80+(5*6)
+	     ;%10000000, %00000000, %00000000, %00000000, %00000000, %00000011
+	.byte %10000000, %00001100, %11001111, %11000111, %11000000, %00000011 ;1
+	.byte %10000000, %00001100, %11001100, %00001100, %01100000, %00000011 ;2
+	.byte %10000000, %00001100, %11001100, %00001100, %00000000, %00000011 ;3
+	.byte %10000000, %00000111, %10001100, %00001100, %00000000, %00000011 ;4
+	.byte %10000000, %00000111, %10001111, %10000111, %11000000, %00000011, $db+8, 2, $80+6
+	.byte %10000000, %00000011, %00001100, %00000000, %01100000, %00000011, $80+12
+	     ;%10000000, %00000011, %00001100, %00000000, %01100000, %00000011
+	.byte %10000000, %00000011, %00001100, %00001100, %01100000, %00000011
+	.byte %10000000, %00000011, %00001111, %11000111, %11000000, %00000011, $db+8, 2, $80+6
+	.byte %10000000, %00000000, %00000000, %00000000, %00000000, %00000011
+	     ;%10000000, %00000000, %00000000, %00000000, %00000000, %00000011
+	     ;%11111111, %11111111, %11111111, %11111111, %11111111, %11111111
+	     ;%01111111, %11111111, %11111111, %11111111, %11111111, %11111111
+	.byte 6, %11111111, $80+1, %01111111, 5, %11111111
 
 DBIcPicOPEN					;f9b0
-	!byte 5, %########, $80+1, %#######., $db+8, 2, $80+6
-	     ;%########, %########, %########, %########, %########, %#######.
-	!byte %#......., %........, %........, %........, %........, %......##, $80+(9*6)
-	     ;%#......., %........, %........, %........, %........, %......##
-	!byte %#......., %..#####., %........, %........, %........, %......## ;1
-	!byte %#......., %.##...##, %........, %........, %........, %......## ;2
-	!byte %#......., %.##...##, %.#####.., %.####..#, %####...., %......## ;3
-	!byte %#......., %.##...##, %.##..##., %##..##.#, %##.##..., %......## ;4
-	!byte %#......., %.##...##, %.##..##., %##..##.#, %#..##..., %......## ;5
-	!byte %#......., %.##...##, %.##..##., %######.#, %#..##..., %......## ;6
-	!byte %#......., %.##...##, %.##..##., %##.....#, %#..##..., %......## ;7
-	!byte %#......., %.##...##, %.##..##., %##..##.#, %#..##..., %......## ;8
-	!byte %#......., %..#####., %.#####.., %.####..#, %#..##..., %......##, $db+8, 2, $80+6
-	!byte %#......., %........, %.##....., %........, %........, %......##
-	     ;%#......., %........, %.##....., %........, %........, %......##
-	     ;%########, %########, %########, %########, %########, %########
-	     ;%.#######, %########, %########, %########, %########, %########
-	!byte 6, %########, $80+1, %.#######, 5, %########
+	.byte 5, %11111111, $80+1, %11111110, $db+8, 2, $80+6
+	     ;%11111111, %11111111, %11111111, %11111111, %11111111, %11111110
+	.byte %10000000, %00000000, %00000000, %00000000, %00000000, %00000011, $80+(9*6)
+	     ;%10000000, %00000000, %00000000, %00000000, %00000000, %00000011
+	.byte %10000000, %00111110, %00000000, %00000000, %00000000, %00000011 ;1
+	.byte %10000000, %01100011, %00000000, %00000000, %00000000, %00000011 ;2
+	.byte %10000000, %01100011, %01111100, %01111001, %11110000, %00000011 ;3
+	.byte %10000000, %01100011, %01100110, %11001101, %11011000, %00000011 ;4
+	.byte %10000000, %01100011, %01100110, %11001101, %10011000, %00000011 ;5
+	.byte %10000000, %01100011, %01100110, %11111101, %10011000, %00000011 ;6
+	.byte %10000000, %01100011, %01100110, %11000001, %10011000, %00000011 ;7
+	.byte %10000000, %01100011, %01100110, %11001101, %10011000, %00000011 ;8
+	.byte %10000000, %00111110, %01111100, %01111001, %10011000, %00000011, $db+8, 2, $80+6
+	.byte %10000000, %00000000, %01100000, %00000000, %00000000, %00000011
+	     ;%10000000, %00000000, %01100000, %00000000, %00000000, %00000011
+	     ;%11111111, %11111111, %11111111, %11111111, %11111111, %11111111
+	     ;%01111111, %11111111, %11111111, %11111111, %11111111, %11111111
+	.byte 6, %11111111, $80+1, %01111111, 5, %11111111
 
 DBIcPicDISK					;fa03
-	!byte 5, %########, $80+1, %#######., $db+8, 2, $80+6
-	     ;%########, %########, %########, %########, %########, %#######.
-	!byte %#......., %........, %........, %........, %........, %......##, $80+(9*6)
-	     ;%#......., %........, %........, %........, %........, %......##
-	!byte %#......., %...#####, %....##.., %......##, %........, %......## ;1
-	!byte %#......., %...##..#, %#......., %......##, %........, %......## ;2
-	!byte %#......., %...##..., %##.###.., %####..##, %..##...., %......## ;3
-	!byte %#......., %...##..., %##..##.#, %#..##.##, %.##....., %......## ;4
-	!byte %#......., %...##..., %##..##.#, %#.....##, %##......, %......## ;5
-	!byte %#......., %...##..., %##..##.., %####..##, %#......., %......## ;6
-	!byte %#......., %...##..., %##..##.., %...##.##, %##......, %......## ;7
-	!byte %#......., %...##..#, %#...##.#, %#..##.##, %.##....., %......## ;8
-	!byte %#......., %...#####, %....##.., %####..##, %..##...., %......##, $db+8, 2, $80+6
-	!byte %#......., %........, %........, %........, %........, %......##
-	     ;%#......., %........, %........, %........, %........, %......##
-	     ;%########, %########, %########, %########, %########, %########
-	     ;%.#######, %########, %########, %########, %########, %########
-	!byte 6, %########, $80+1, %.#######, 5, %########
+	.byte 5, %11111111, $80+1, %11111110, $db+8, 2, $80+6
+	     ;%11111111, %11111111, %11111111, %11111111, %11111111, %11111110
+	.byte %10000000, %00000000, %00000000, %00000000, %00000000, %00000011, $80+(9*6)
+	     ;%10000000, %00000000, %00000000, %00000000, %00000000, %00000011
+	.byte %10000000, %00011111, %00001100, %00000011, %00000000, %00000011 ;1
+	.byte %10000000, %00011001, %10000000, %00000011, %00000000, %00000011 ;2
+	.byte %10000000, %00011000, %11011100, %11110011, %00110000, %00000011 ;3
+	.byte %10000000, %00011000, %11001101, %10011011, %01100000, %00000011 ;4
+	.byte %10000000, %00011000, %11001101, %10000011, %11000000, %00000011 ;5
+	.byte %10000000, %00011000, %11001100, %11110011, %10000000, %00000011 ;6
+	.byte %10000000, %00011000, %11001100, %00011011, %11000000, %00000011 ;7
+	.byte %10000000, %00011001, %10001101, %10011011, %01100000, %00000011 ;8
+	.byte %10000000, %00011111, %00001100, %11110011, %00110000, %00000011, $db+8, 2, $80+6
+	.byte %10000000, %00000000, %00000000, %00000000, %00000000, %00000011
+	     ;%10000000, %00000000, %00000000, %00000000, %00000000, %00000011
+	     ;%11111111, %11111111, %11111111, %11111111, %11111111, %11111111
+	     ;%01111111, %11111111, %11111111, %11111111, %11111111, %11111111
+	.byte 6, %11111111, $80+1, %01111111, 5, %11111111
 
 ;fa56

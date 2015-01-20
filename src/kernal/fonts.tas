@@ -1,10 +1,19 @@
+.feature labels_without_colons
+.include "const.inc"
+.include "geossym.inc"
+.include "geosmac.inc"
+.include "equ.inc"
+.include "kernal.inc"
+.import ID100, BitMask2, FontTVar1, GetScanLine, FontTVar2, BitMask4, BitMask3, GetRealSize, GetChWdth1
+.global _GetRealSize, Font_10
+.segment "fonts"
 
 ;font handling functions, mostly for internal (Kernal) use
 
 ;17-8-99 - ACME port
 
 _GetRealSize
-		+subv 32
+		subv 32
 		JSR GetChWdth1
 		TAY
 		TXA
@@ -21,7 +30,7 @@ GReSiz1 	PLA
 		INY
 		INY
 		LDA baselineOffset
-		+addv 2
+		addv 2
 		RTS
 GReSiz2 	LDA baselineOffset
 		RTS
@@ -32,7 +41,7 @@ Font_1
 	STY E87FE
 		STA r5L
 		LDX #0
-		+addv 32
+		addv 32
 		JSR GetRealSize
 		TYA
 		PHA
@@ -50,7 +59,7 @@ Font_1
 		LDA (curIndexTable),y
 		STA r2H
 		PLA
-		+add r2L
+		add r2L
 		STA r6H
 		CLC
 		SBC r3L
@@ -73,7 +82,7 @@ Font_11 	LDA Font_tabL,x
 		ROR
 		LSR r2H
 		ROR
-		+add cardDataPntr
+		add cardDataPntr
 		STA r2L
 		LDA r2H
 		ADC cardDataPntr+1
@@ -97,16 +106,16 @@ Font_11 	LDA Font_tabL,x
 		LDA #$80
 Font_12 	STA r8H
 		LDA r5L
-		+addv 32
+		addv 32
 		JSR GetRealSize
 		STA r5H
-		+SubB r5H, r1H
+		SubB r5H, r1H
 		STX r10H
 		TYA
 		PHA
 		LDA r11H
 		BMI Font_13
-		+CmpW rightMargin, r11
+		CmpW rightMargin, r11
 		BCC Font_16
 Font_13 	LDA currentMode
 		AND #SET_ITALIC
@@ -115,19 +124,19 @@ Font_13 	LDA currentMode
 Font_14 	TXA
 		LSR
 		STA r3L
-		+add r11L
+		add r11L
 		STA FontTVar2
 		LDA r11H
 		ADC #0
 		STA FontTVar2+1
-		+PopB PrvCharWidth
-		+add FontTVar2
+		PopB PrvCharWidth
+		add FontTVar2
 		STA r11L
 		LDA #0
 		ADC FontTVar2+1
 		STA r11H
 		BMI Font_17
-		+CmpW leftMargin, r11
+		CmpW leftMargin, r11
 		BCS Font_17
 	JSR Font_2
 		LDX #0
@@ -140,22 +149,22 @@ Font_15 	STX r10L
 		RTS
 
 Font_16
-		+PopB PrvCharWidth
-		+add r11L
+		PopB PrvCharWidth
+		add r11L
 		STA r11L
 		BCC Font_18
 		INC r11H
 		SEC
 		RTS
 Font_17
-		+SubB r3L, r11L
+		SubB r3L, r11L
 		BCS Font_18
 		DEC r11H
 Font_18 	SEC
 		RTS
 
-Font_tabL	!byte <FontGt1, <FontGt2, <FontGt3, <FontGt4
-Font_tabH	!byte >FontGt1, >FontGt2, >FontGt3, >FontGt4
+Font_tabL	.byte <FontGt1, <FontGt2, <FontGt3, <FontGt4
+Font_tabH	.byte >FontGt1, >FontGt2, >FontGt3, >FontGt4
 
 Font_2
 		LDX r1H
@@ -176,16 +185,16 @@ Font_23 	PHA
 		BNE Font_24
 		CMP #$c0
 		BCC Font_26
-Font_24 	+subv $80
+Font_24 	subv $80
 		PHA
-		+AddVB $80, r5L
+		AddVB $80, r5L
 		STA r6L
 		BCC Font_25
 		INC r5H
 		INC r6H
 Font_25 	PLA
 Font_26 	STA r1L
-		+MoveB FontTVar2+1, r3L
+		MoveB FontTVar2+1, r3L
 		LSR r3L
 		LDA FontTVar2
 		ROR
@@ -200,7 +209,7 @@ Font_26 	STA r1L
 		ROR
 		LSR
 		LSR
-		+sub r7L
+		sub r7L
 		BPL Font_27
 		LDA #0
 Font_27 	STA FontTVar1
@@ -231,13 +240,13 @@ Font_29 	TYA
 		EOR #$ff
 		STA r9H
 		TYA
-		+sub r4L
+		sub r4L
 		BPL Font_210
 		LDA #0
 Font_210	LSR
 		LSR
 		LSR
-		+add FontTVar1
+		add FontTVar1
 		STA r8L
 		CMP r3H
 		BCS Font_211
@@ -253,12 +262,12 @@ Font_212	ASL
 		ASL
 		STA r12L
 		LDA r7L
-	+sub E87FD
-		+addv 8
-		+add r12L
+	sub E87FD
+		addv 8
+		add r12L
 		TAX
 		LDA Font_tab2,x
-		+addv <FontSH1
+		addv <FontSH1
 		TAY
 		LDA #0
 		ADC #>FontSH1
@@ -271,38 +280,38 @@ Font_215	CLC
 		RTS
 
 Font_tab2
-		!byte <(FntSh56-FontSH1)
-		!byte <(FontSH3-FontSH1+0)
-		!byte <(FontSH3-FontSH1+1)
-		!byte <(FontSH3-FontSH1+2)
-		!byte <(FontSH3-FontSH1+3)
-		!byte <(FontSH3-FontSH1+4)
-		!byte <(FontSH3-FontSH1+5)
-		!byte <(FontSH3-FontSH1+6)
-		!byte <(FontSH1-FontSH1+7)
-		!byte <(FontSH1-FontSH1+6)
-		!byte <(FontSH1-FontSH1+5)
-		!byte <(FontSH1-FontSH1+4)
-		!byte <(FontSH1-FontSH1+3)
-		!byte <(FontSH1-FontSH1+2)
-		!byte <(FontSH1-FontSH1+1)
-		!byte <(FontSH1-FontSH1+0)
-		!byte <(FntSh56-FontSH1)
-		!byte <(FontSH4-FontSH1+0)
-		!byte <(FontSH4-FontSH1+5)
-		!byte <(FontSH4-FontSH1+10)
-		!byte <(FontSH4-FontSH1+15)
-		!byte <(FontSH4-FontSH1+20)
-		!byte <(FontSH4-FontSH1+25)
-		!byte <(FontSH4-FontSH1+30)
-		!byte <(FontSH2-FontSH1+35)
-		!byte <(FontSH2-FontSH1+30)
-		!byte <(FontSH2-FontSH1+25)
-		!byte <(FontSH2-FontSH1+20)
-		!byte <(FontSH2-FontSH1+15)
-		!byte <(FontSH2-FontSH1+10)
-		!byte <(FontSH2-FontSH1+5)
-		!byte <(FontSH2-FontSH1+0)
+		.byte <(FntSh56-FontSH1)
+		.byte <(FontSH3-FontSH1+0)
+		.byte <(FontSH3-FontSH1+1)
+		.byte <(FontSH3-FontSH1+2)
+		.byte <(FontSH3-FontSH1+3)
+		.byte <(FontSH3-FontSH1+4)
+		.byte <(FontSH3-FontSH1+5)
+		.byte <(FontSH3-FontSH1+6)
+		.byte <(FontSH1-FontSH1+7)
+		.byte <(FontSH1-FontSH1+6)
+		.byte <(FontSH1-FontSH1+5)
+		.byte <(FontSH1-FontSH1+4)
+		.byte <(FontSH1-FontSH1+3)
+		.byte <(FontSH1-FontSH1+2)
+		.byte <(FontSH1-FontSH1+1)
+		.byte <(FontSH1-FontSH1+0)
+		.byte <(FntSh56-FontSH1)
+		.byte <(FontSH4-FontSH1+0)
+		.byte <(FontSH4-FontSH1+5)
+		.byte <(FontSH4-FontSH1+10)
+		.byte <(FontSH4-FontSH1+15)
+		.byte <(FontSH4-FontSH1+20)
+		.byte <(FontSH4-FontSH1+25)
+		.byte <(FontSH4-FontSH1+30)
+		.byte <(FontSH2-FontSH1+35)
+		.byte <(FontSH2-FontSH1+30)
+		.byte <(FontSH2-FontSH1+25)
+		.byte <(FontSH2-FontSH1+20)
+		.byte <(FontSH2-FontSH1+15)
+		.byte <(FontSH2-FontSH1+10)
+		.byte <(FontSH2-FontSH1+5)
+		.byte <(FontSH2-FontSH1+0)
 
 Font_3		LDA currentMode
 		BPL Font_32
@@ -315,7 +324,7 @@ Font_3		LDA currentMode
 Font_31 	LDA r10L
 		EOR #$ff
 		STA r10L
-Font_32 	+bbrf ITALIC_BIT, currentMode, Font_215
+Font_32 	bbrf ITALIC_BIT, currentMode, Font_215
 		LDA r10H
 		LSR
 		BCS Font_35
@@ -330,9 +339,9 @@ Font_33 	DEX
 Font_34 	DEX
 		STX r11L
 	JSR Font_2
-Font_35 	+CmpW rightMargin, FontTVar2
+Font_35 	CmpW rightMargin, FontTVar2
 		BCC Font_36
-		+CmpW leftMargin, r11
+		CmpW leftMargin, r11
 		RTS
 Font_36 	SEC
 		RTS
@@ -353,7 +362,7 @@ Font4_B1 = *+1
 		STA (r6),y
 		STA (r5),y
 Font_41 	TYA
-		+addv 8
+		addv 8
 		TAY
 		INX
 		CPX r8L
@@ -362,7 +371,7 @@ Font_41 	TYA
 		EOR r10L
 		STA (r6),y
 		STA (r5),y
-		+bra Font_41
+		bra Font_41
 Font_42 	LDA Z45,x
 		EOR r10L
 		AND r9H
@@ -420,13 +429,13 @@ Font_54 	CMP #1
 Font_55 JSR Font_6
 		JSR FntIndirectJMP
 	JSR Font_8
-		+SubW curSetWidth, r2
+		SubW curSetWidth, r2
 Font_56 	JSR FntIndirectJMP
 	JSR Font_8
 	JSR Font_7
-		+bra Font_52_2
+		bra Font_52_2
 
-Font_6		+AddW curSetWidth, r2
+Font_6		AddW curSetWidth, r2
 		RTS
 
 Font_7		LDY #$ff
@@ -494,7 +503,7 @@ Font_9		LSR Z45
 
 Font_10 
 		TAY
-		+PushB r1H
+		PushB r1H
 		TYA
 	JSR Font_1
 		BCS Font_108
@@ -506,9 +515,9 @@ Font_100	CLC
 Font_101	PHP
 		BCS Font_102
 		JSR FntIndirectJMP
-Font_102	+bbrf 7, r8H, Font_103
+Font_102	bbrf 7, r8H, Font_103
 	JSR Font_5
-		+bra Font_104
+		bra Font_104
 Font_103 JSR Font_6
 Font_104	PLP
 		BCS Font_106
@@ -526,7 +535,7 @@ Font_106	INC r5L
 		BNE Font_107
 		INC r5H
 		INC r6H
-		+AddVB $38, r5L
+		AddVB $38, r5L
 		STA r6L
 		BCC Font_107
 		INC r5H
@@ -534,7 +543,7 @@ Font_106	INC r5L
 Font_107	INC r1H 
 		DEC r10H
 		BNE Font_100
-Font_108	+PopB r1H
+Font_108	PopB r1H
 		RTS
 
 ;procedures indexed from Font_Tab2, DO NOT CHANGE!
@@ -601,7 +610,7 @@ FontSH4 	ASL Z47
 		JMP FntShJump
 FontSH5 	STA Z45
 		LDA r7L
-	+sub E87FD
+	sub E87FD
 		BEQ FntSh52
 		BCC FntSh53
 		TAY
@@ -611,7 +620,7 @@ FntSh51 JSR Font_9
 FntSh52 	LDA Z45
 		JMP FntShJump
 FntSh53 LDA E87FD
-		+sub r7L
+		sub r7L
 		TAY
 FntSh54 	ASL Z45+7
 		ROL Z45+6
@@ -625,7 +634,7 @@ FntSh54 	ASL Z45+7
 		BNE FntSh54
 		LDA Z45
 FntShJump	STA Z45
-		+bbrf BOLD_BIT, currentMode, FntSh56
+		bbrf BOLD_BIT, currentMode, FntSh56
 		LDA #0
 		PHA
 		LDY #$ff
@@ -680,7 +689,7 @@ FontGt3 	STY Z45+3
 		LDA (r2),y
 		AND r7H
 		STA Z45+2
-		+bra FontGt2_1
+		bra FontGt2_1
 
 FontGt4 	LDA (r2),y
 	AND E87FC
@@ -690,7 +699,7 @@ FontGt4_1	INY
 		BEQ FontGt4_2
 		LDA (r2),y
 		STA Z45,y
-		+bra FontGt4_1
+		bra FontGt4_1
 FontGt4_2	LDA (r2),y
 		AND r7H
 		STA Z45,y

@@ -1,3 +1,12 @@
+.feature labels_without_colons
+.include "const.inc"
+.include "geossym.inc"
+.include "geosmac.inc"
+.include "equ.inc"
+.include "kernal.inc"
+.import DoRAMOp, StashRAM, ExitTurbo, SetDevice, PutDirHead, FindBAMBit, SetNextFree, CalcBlksFree, Ddiv, CopyFString, GetPtrCurDkNm, ChkDkGEOS, GetDirHead, NewDisk, VerWriteBlock, WriteBlock, DoneWithIO, ReadBlock, InitForIO, EnterTurbo
+.global _InitForIO, _DoneWithIO, _ExitTurbo, _PurgeTurbo, _EnterTurbo, _ChangeDiskDevice, _NewDisk, _ReadBlock, _WriteBlock, _VerWriteBlock, _OpenDisk, _GetBlock, _PutBlock, _GetDirHead, _PutDirHead, _GetFreeDirBlk, _CalcBlksFree, _FreeBlock, _SetNextFree, _FindBAMBit, _NxtBlkAlloc, _BlkAlloc, _ChkDkGEOS, _SetGEOSDisk, WriteBuff, ReadBuff, Get1stDirEntry, GetNxtDirEntry
+.segment "drv1541"
 
 ;GEOS 1541 disk driver
 ;reassembled by Maciej 'YTM/Alliance' Witkowiak
@@ -9,30 +18,30 @@
 
 DriveAddy = $0300
 
-_InitForIO		!word __InitForIO		;9000
-_DoneWithIO		!word __DoneWithIO		;9002
-_ExitTurbo		!word __ExitTurbo		;9004
-_PurgeTurbo		!word __PurgeTurbo		;9006
-_EnterTurbo		!word __EnterTurbo		;9008
-_ChangeDiskDevice	!word __ChangeDiskDevice	;900a
-_NewDisk		!word __NewDisk 		;900c
-_ReadBlock		!word __ReadBlock		;900e
-_WriteBlock		!word __WriteBlock		;9010
-_VerWriteBlock		!word __VerWriteBlock		;9012
-_OpenDisk		!word __OpenDisk		;9014
-_GetBlock		!word __GetBlock		;9016
-_PutBlock		!word __PutBlock		;9018
-_GetDirHead		!word __GetDirHead		;901a
-_PutDirHead		!word __PutDirHead		;901c
-_GetFreeDirBlk		!word __GetFreeDirBlk		;901e
-_CalcBlksFree		!word __CalcBlksFree		;9020
-_FreeBlock		!word __FreeBlock		;9022
-_SetNextFree		!word __SetNextFree		;9024
-_FindBAMBit		!word __FindBAMBit		;9026
-_NxtBlkAlloc		!word __NxtBlkAlloc		;9028
-_BlkAlloc		!word __BlkAlloc		;902a
-_ChkDkGEOS		!word __ChkDkGEOS		;902c
-_SetGEOSDisk		!word __SetGEOSDisk		;902e
+_InitForIO		.word __InitForIO		;9000
+_DoneWithIO		.word __DoneWithIO		;9002
+_ExitTurbo		.word __ExitTurbo		;9004
+_PurgeTurbo		.word __PurgeTurbo		;9006
+_EnterTurbo		.word __EnterTurbo		;9008
+_ChangeDiskDevice	.word __ChangeDiskDevice	;900a
+_NewDisk		.word __NewDisk 		;900c
+_ReadBlock		.word __ReadBlock		;900e
+_WriteBlock		.word __WriteBlock		;9010
+_VerWriteBlock		.word __VerWriteBlock		;9012
+_OpenDisk		.word __OpenDisk		;9014
+_GetBlock		.word __GetBlock		;9016
+_PutBlock		.word __PutBlock		;9018
+_GetDirHead		.word __GetDirHead		;901a
+_PutDirHead		.word __PutDirHead		;901c
+_GetFreeDirBlk		.word __GetFreeDirBlk		;901e
+_CalcBlksFree		.word __CalcBlksFree		;9020
+_FreeBlock		.word __FreeBlock		;9022
+_SetNextFree		.word __SetNextFree		;9024
+_FindBAMBit		.word __FindBAMBit		;9026
+_NxtBlkAlloc		.word __NxtBlkAlloc		;9028
+_BlkAlloc		.word __BlkAlloc		;902a
+_ChkDkGEOS		.word __ChkDkGEOS		;902c
+_SetGEOSDisk		.word __SetGEOSDisk		;902e
 
 Get1stDirEntry		JMP _Get1stDirEntry		;9030
 GetNxtDirEntry		JMP _GetNxtDirEntry		;9033
@@ -48,9 +57,9 @@ ReadLink		JMP _ReadLink			;904b
 __GetDirHead					;904e
 		JSR SetDirHead
 		BNE __GetBlock
-_ReadBuff	+LoadW r4, diskBlkBuf		;9053
+_ReadBuff	LoadW r4, diskBlkBuf		;9053
 __GetBlock	JSR EnterTurbo			;905b
-		+bnex GetBlk0
+		bnex GetBlk0
 		JSR InitForIO
 		JSR ReadBlock
 		JSR DoneWithIO
@@ -59,23 +68,23 @@ GetBlk0 	RTS				;906a
 __PutDirHead					;906b
 		JSR SetDirHead
 		BNE __PutBlock
-_WriteBuff	+LoadW r4, diskBlkBuf		;9070
+_WriteBuff	LoadW r4, diskBlkBuf		;9070
 __PutBlock	JSR EnterTurbo			;9078
-		+bnex PutBlk1
+		bnex PutBlk1
 		JSR InitForIO
 		JSR WriteBlock
-		+bnex PutBlk0
+		bnex PutBlk0
 		JSR VerWriteBlock
 PutBlk0 	JSR DoneWithIO			;908a
 PutBlk1 	RTS				;908d
 
-SetDirHead	+LoadB r1L, DIR_TRACK		;908e
-		+LoadB r1H, 0
+SetDirHead	LoadB r1L, DIR_TRACK		;908e
+		LoadB r1H, 0
 		STA r4L
-		+LoadB r4H, (>curDirHead)
+		LoadB r4H, (>curDirHead)
 		RTS
 
-CheckParams	+bbrf 6, curType, CheckParams_1	;909d
+CheckParams	bbrf 6, curType, CheckParams_1	;909d
 		JSR DoCacheVerify
 		BEQ CheckParams_2
 CheckParams_1 	LDA #0				;90a7
@@ -97,18 +106,18 @@ __OpenDisk					;90ba
 		AND #%10111111
 		STA _driveType,y
 		JSR NewDisk
-		+bnex OpenDsk1
+		bnex OpenDsk1
 		JSR GetDirHead
-		+bnex OpenDsk1
-		+bbrf 6, tmpDriveType, OpenDsk0
+		bnex OpenDsk1
+		bbrf 6, tmpDriveType, OpenDsk0
 		JSR DoCacheVerify
 		BEQ OpenDsk0
 		JSR DoClearCache
 		JSR SetDirHead
 		JSR DoCacheWrite
-OpenDsk0	+LoadW r5, curDirHead		;90e7
+OpenDsk0	LoadW r5, curDirHead		;90e7
 		JSR ChkDkGEOS
-		+LoadW r4, curDirHead+OFF_DISK_NAME
+		LoadW r4, curDirHead+OFF_DISK_NAME
 		LDX #r5
 		JSR GetPtrCurDkNm
 		LDX #r4
@@ -120,16 +129,16 @@ OpenDsk1	LDA tmpDriveType		;910a
 		LDY curDrive
 		STA _driveType,y
 		RTS
-tmpDriveType	!byte 0 			;9114
+tmpDriveType	.byte 0 			;9114
 
 __BlkAlloc					;9115
 		LDY #1
 		STY r3L
 		DEY
 		STY r3H
-__NxtBlkAlloc	+PushW r9			;911c
-		+PushW r3
-		+LoadW r3, $00fe
+__NxtBlkAlloc	PushW r9			;911c
+		PushW r3
+		LoadW r3, $00fe
 		LDX #r2
 		LDY #r3
 		JSR Ddiv
@@ -138,24 +147,24 @@ __NxtBlkAlloc	+PushW r9			;911c
 		INC r2L
 		BNE *+4
 		INC r2H
-BlkAlc0 	+LoadW r5, curDirHead		;9141
+BlkAlc0 	LoadW r5, curDirHead		;9141
 		JSR CalcBlksFree
-		+PopW r3
+		PopW r3
 		LDX #INSUFF_SPACE
-		+CmpW r2, r4
+		CmpW r2, r4
 		BEQ BlkAlc1
 		BCS BlkAlc4
-BlkAlc1 	+MoveW r6, r4			;9162
-		+MoveW r2, r5
+BlkAlc1 	MoveW r6, r4			;9162
+		MoveW r2, r5
 BlkAlc2 	JSR SetNextFree 		;9172
-		+bnex BlkAlc4
+		bnex BlkAlc4
 		LDY #0
 		LDA r3L
 		STA (r4),y
 		INY
 		LDA r3H
 		STA (r4),y
-		+AddVW 2, r4
+		AddVW 2, r4
 		LDA r5L
 		BNE *+4
 		DEC r5H
@@ -174,14 +183,14 @@ BlkAlc3 	CLC				;91a8
 		ADC #1
 		STA (r4),y
 		LDX #0
-BlkAlc4 	+PopW r9			;91af
+BlkAlc4 	PopW r9			;91af
 		RTS
 
 _Get1stDirEntry 				;91b6
-		+LoadB r1L, DIR_TRACK
-		+LoadB r1H, 1
+		LoadB r1L, DIR_TRACK
+		LoadB r1H, 1
 		JSR ReadBuff
-		+LoadW r5, diskBlkBuf+FRST_FILE_ENTRY
+		LoadW r5, diskBlkBuf+FRST_FILE_ENTRY
 		LDA #0
 		STA borderFlag
 		RTS
@@ -189,34 +198,34 @@ _Get1stDirEntry 				;91b6
 _GetNxtDirEntry 				;91cf
 		LDX #0
 		LDY #0
-		+AddVW $20, r5
-		+CmpWI r5, diskBlkBuf+$ff
+		AddVW $20, r5
+		CmpWI r5, diskBlkBuf+$ff
 		BCC GNDirEntry1
 		LDY #$ff
-		+MoveW diskBlkBuf, r1
+		MoveW diskBlkBuf, r1
 		BNE GNDirEntry0
 		LDA borderFlag
 		BNE GNDirEntry1
 		LDA #$ff
 		STA borderFlag
 		JSR GetBorder
-		+bnex GNDirEntry1
+		bnex GNDirEntry1
 		TYA
 		BNE GNDirEntry1
 GNDirEntry0	JSR ReadBuff			;920b
 		LDY #0
-		+LoadW r5, diskBlkBuf+FRST_FILE_ENTRY
+		LoadW r5, diskBlkBuf+FRST_FILE_ENTRY
 GNDirEntry1	RTS				;9218
 
 _GetBorder					;9219
 		JSR GetDirHead
-		+bnex GetBord2
-		+LoadW r5, curDirHead
+		bnex GetBord2
+		LoadW r5, curDirHead
 		JSR ChkDkGEOS
 		BNE GetBord0
 		LDY #$ff
 		BNE GetBord1
-GetBord0	+MoveW curDirHead+OFF_OP_TR_SC, r1	;9230
+GetBord0	MoveW curDirHead+OFF_OP_TR_SC, r1	;9230
 		LDY #0
 GetBord1	LDX #0				;923c
 GetBord2	RTS				;923e
@@ -224,7 +233,7 @@ GetBord2	RTS				;923e
 __ChkDkGEOS					;923f
 		LDY #OFF_GS_ID
 		LDX #0
-		+LoadB isGEOS, FALSE
+		LoadB isGEOS, FALSE
 ChkDkG0 	LDA (r5),y			;9248
 		CMP GEOSDiskID,x
 		BNE ChkDkG1
@@ -232,67 +241,67 @@ ChkDkG0 	LDA (r5),y			;9248
 		INX
 		CPX #11
 		BNE ChkDkG0
-		+LoadB isGEOS, $ff
+		LoadB isGEOS, $ff
 ChkDkG1 	LDA isGEOS			;925a
 		RTS
 
-GEOSDiskID	!text "GEOS format V1.0",NULL	;925e
+GEOSDiskID	.byte "GEOS format V1.0",NULL	;925e
 
 __GetFreeDirBlk 				;926f
 		PHP
 		SEI
-		+PushB r6L
-		+PushW r2
+		PushB r6L
+		PushW r2
 		LDX r10L
 		INX
 		STX r6L
-		+LoadB r1L, DIR_TRACK
-		+LoadB r1H, 1
+		LoadB r1L, DIR_TRACK
+		LoadB r1H, 1
 GFDirBlk0	JSR ReadBuff			;9287
-GFDirBlk1	+bnex GFDirBlk5 		;928a
+GFDirBlk1	bnex GFDirBlk5 		;928a
 		DEC r6L
 		BEQ GFDirBlk3
 GFDirBlk11	LDA diskBlkBuf			;9291
 		BNE GFDirBlk2
 		JSR AddDirBlock
-		+bra GFDirBlk1
+		bra GFDirBlk1
 GFDirBlk2	STA r1L 			;929c
-		+MoveB diskBlkBuf+1, r1H
-		+bra GFDirBlk0
+		MoveB diskBlkBuf+1, r1H
+		bra GFDirBlk0
 GFDirBlk3	LDY #FRST_FILE_ENTRY		;92a6
 		LDX #0
 GFDirBlk4	LDA diskBlkBuf,y		;92aa
 		BEQ GFDirBlk5
 		TYA
-		+addv $20
+		addv $20
 		TAY
 		BCC GFDirBlk4
-		+LoadB r6L, 1
+		LoadB r6L, 1
 		LDX #FULL_DIRECTORY
 		LDY r10L
 		INY
 		STY r10L
 		CPY #$12
 		BCC GFDirBlk11
-GFDirBlk5	+PopW r2			;92c5
-		+PopB r6L
+GFDirBlk5	PopW r2			;92c5
+		PopB r6L
 		PLP
 		RTS
 
 _AddDirBlock					;92d0
-		+PushW r6
+		PushW r6
 		LDY #$48
 		LDX #FULL_DIRECTORY
 		LDA curDirHead,y
 		BEQ ADirBlk0
-		+MoveW r1, r3
+		MoveW r1, r3
 		JSR SetNextFree
-		+MoveW r3, diskBlkBuf
+		MoveW r3, diskBlkBuf
 		JSR WriteBuff
-		+bnex ADirBlk0
-		+MoveW r3, r1
+		bnex ADirBlk0
+		MoveW r3, r1
 		JSR ClearAndWrite
-ADirBlk0	+PopW r6			;9305
+ADirBlk0	PopW r6			;9305
 		RTS
 
 ClearAndWrite	LDA #0				;930c
@@ -306,9 +315,9 @@ CAndWr0 	STA diskBlkBuf,y		;930f
 
 __SetNextFree					;931c
 		LDA r3H
-		+add interleave
+		add interleave
 		STA r6H
-		+MoveB r3L, r6L
+		MoveB r3L, r6L
 		CMP #25
 		BCC SNxtFree0
 		DEC r6H
@@ -333,16 +342,16 @@ SNxtFree2	JSR SNxtFreeHelp2		;934b
 		DEY
 		BNE SNxtFree2
 SNxtFree3	INC r6L 			;9355
-		+CmpBI r6L, N_TRACKS+1
+		CmpBI r6L, N_TRACKS+1
 		BCS SNxtFree5
-		+sub r3L
+		sub r3L
 		STA r6H
 		ASL
 		ADC #4
 		ADC interleave
 		STA r6H
-		+bra SNxtFree00
-SNxtFree4	+MoveW r6, r3			;936d
+		bra SNxtFree00
+SNxtFree4	MoveW r6, r3			;936d
 		LDX #0
 		RTS
 SNxtFree5	LDX #INSUFF_SPACE		;9378
@@ -355,14 +364,14 @@ SNFHlp0 	CMP SecTrTab,x			;937d
 		BNE SNFHlp0
 SNFHlp1 	RTS				;9385
 
-SecTrTab	!byte 18, 25, 31, 36		;9386
-SecScTab	!byte 21, 19, 18, 17		;938a
+SecTrTab	.byte 18, 25, 31, 36		;9386
+SecScTab	.byte 21, 19, 18, 17		;938a
 
 SNxtFreeHelp2	LDA r6H 			;938e
 SNFHlp2_1	CMP r7L 			;9390
 		BCC SNFHlp2_2
-		+sub r7L
-		+bra SNFHlp2_1
+		sub r7L
+		bra SNFHlp2_1
 SNFHlp2_2	STA r6H 			;939a
 
 _AllocateBlock	JSR FindBAMBit			;939c
@@ -399,8 +408,8 @@ __FindBAMBit					;93b6
 		AND r8H
 		RTS
 
-FBBBitTab	!byte $01, $02, $04, $08	;93d5
-		!byte $10, $20, $40, $80
+FBBBitTab	.byte $01, $02, $04, $08	;93d5
+		.byte $10, $20, $40, $80
 
 __FreeBlock					;93dd
 		JSR FindBAMBit
@@ -416,10 +425,10 @@ FreeBlk0	LDX #BAD_BAM			;93f2
 		RTS
 
 __CalcBlksFree					;93f5
-		+LoadW r4, 0
+		LoadW r4, 0
 		LDY #OFF_TO_BAM
 CBlksFre0	LDA (r5),y			;93fd
-		+add r4L
+		add r4L
 		STA r4L
 		BCC *+4
 		INC r4H
@@ -431,29 +440,29 @@ CBlksFre1	TYA				;94f8
 		BEQ CBlksFre1
 		CPY #$90
 		BNE CBlksFre0
-		+LoadW r3, $0298
+		LoadW r3, $0298
 		RTS
 
 __SetGEOSDisk					;941e
 		JSR GetDirHead
-		+bnex SetGDisk2
-		+LoadW r5, curDirHead
+		bnex SetGDisk2
+		LoadW r5, curDirHead
 		JSR CalcBlksFree
 		LDX #INSUFF_SPACE
 		LDA r4L
 		ORA r4H
 		BEQ SetGDisk2
-		+LoadB r3L, DIR_TRACK+1
-		+LoadB r3H, 0
+		LoadB r3L, DIR_TRACK+1
+		LoadB r3H, 0
 		JSR SetNextFree
-		+beqx SetGDisk0
-		+LoadB r3L, 1
+		beqx SetGDisk0
+		LoadB r3L, 1
 		JSR SetNextFree
-		+bnex SetGDisk2
-SetGDisk0	+MoveW r3, r1			;944f
+		bnex SetGDisk2
+SetGDisk0	MoveW r3, r1			;944f
 		JSR ClearAndWrite
-		+bnex SetGDisk2
-		+MoveW r1, curDirHead+OFF_OP_TR_SC
+		bnex SetGDisk2
+		MoveW r1, curDirHead+OFF_OP_TR_SC
 		LDY #OFF_GS_ID+15
 		LDX #15
 SetGDisk1	LDA GEOSDiskID,x		;946b
@@ -471,7 +480,7 @@ __InitForIO					;9479
 		SEI
 		LDA CPU_DATA
 		STA tmpCPU_DATA
-		+LoadB CPU_DATA, KRNL_IO_IN
+		LoadB CPU_DATA, KRNL_IO_IN
 		LDA grirqen
 		STA tmpgrirqen
 		LDA clkreg
@@ -499,8 +508,8 @@ __InitForIO					;9479
 		STY cia2base+5
 		INY
 		STY cia2base+4
-		+LoadB cia2base+13, %10000001
-		+LoadB cia2base+14, %00001001
+		LoadB cia2base+13, %10000001
+		LoadB cia2base+14, %00001001
 		LDY #$2c
 IniForIO0	LDA rasreg			;94dc
 		CMP TURBO_DD00_CPY
@@ -531,7 +540,7 @@ __DoneWithIO	SEI				;9504
 		STA clkreg
 		LDA tmpmobenble
 		STA mobenble
-		+LoadB cia2base+13, %01111111
+		LoadB cia2base+13, %01111111
 		LDA cia2base+13
 		LDA tmpgrirqen
 		STA grirqen
@@ -542,11 +551,11 @@ __DoneWithIO	SEI				;9504
 		PLP
 		RTS
 ;952a
-NibbleTab	!byte $0f, $07, $0d, $05, $0b, $03, $09, $01
-		!byte $0e, $06, $0c, $04, $0a, $02, $08
-NibbleTab2	!byte $00			;9539
-		!byte $80, $20, $a0, $40, $c0, $60, $e0, $10
-		!byte $90, $30, $b0, $50, $d0, $70, $f0
+NibbleTab	.byte $0f, $07, $0d, $05, $0b, $03, $09, $01
+		.byte $0e, $06, $0c, $04, $0a, $02, $08
+NibbleTab2	.byte $00			;9539
+		.byte $80, $20, $a0, $40, $c0, $60, $e0, $10
+		.byte $90, $30, $b0, $50, $d0, $70, $f0
 
 Hst_RecvByte	JSR GetSync			;9549
 		PHA
@@ -560,9 +569,9 @@ Hst_RecvByte_1	LDA rasreg			;9553
 		BCC Hst_RecvByte_2
 		AND #6
 		BEQ Hst_RecvByte_1
-Hst_RecvByte_2	+MoveB TURBO_DD00_CPY, cia2base ;955e
+Hst_RecvByte_2	MoveB TURBO_DD00_CPY, cia2base ;955e
 		LDA z8b
-		+MoveB TURBO_DD00, cia2base
+		MoveB TURBO_DD00, cia2base
 		DEC z8d
 		NOP
 		NOP
@@ -640,13 +649,13 @@ Hst_SendByte_2	TXA				;95c0
 
 SendDOSCmd	STX z8c 			;95f2
 		STA z8b
-		+LoadB STATUS, 0
+		LoadB STATUS, 0
 		LDA curDrive
 		JSR $ffb1
-		+bbsf 7, STATUS, SndDOSCmd1
+		bbsf 7, STATUS, SndDOSCmd1
 		LDA #$ff
 		JSR $ff93
-		+bbsf 7, STATUS, SndDOSCmd1
+		bbsf 7, STATUS, SndDOSCmd1
 		LDY #0
 SndDOSCmd0	LDA (z8b),y			;960f
 		JSR $ffa8
@@ -690,8 +699,8 @@ DUNK5		LDY #1				;964f
 		RTS
 
 GetSync 	SEI				;965c
-		+MoveB TURBO_DD00, cia2base
-GetSync0	+bbrf 7, cia2base, GetSync0
+		MoveB TURBO_DD00, cia2base
+GetSync0	bbrf 7, cia2base, GetSync0
 		RTS
 
 __EnterTurbo					;9668
@@ -701,7 +710,7 @@ __EnterTurbo					;9668
 		LDA _turboFlags,x
 		BMI EntTur0
 		JSR SendCODE
-		+bnex EntTur5
+		bnex EntTur5
 		LDX curDrive
 		LDA #%10000000
 		STA _turboFlags,x
@@ -711,14 +720,14 @@ EntTur0 	AND #%01000000			;9684
 		LDX #>EnterCommand
 		LDA #<EnterCommand
 		JSR SendDOSCmd
-		+bnex EntTur4
+		bnex EntTur4
 		JSR $ffae
 		SEI
 		LDY #$21
 EntTur1 	DEY				;969b
 		BNE EntTur1
 		JSR Hst_RecvByte_3
-EntTur2 	+bbsf 7, cia2base, EntTur2	;96a1
+EntTur2 	bbsf 7, cia2base, EntTur2	;96a1
 		JSR DoneWithIO
 		LDX curDrive
 		LDA _turboFlags,x
@@ -729,8 +738,8 @@ EntTur3 	LDX #0				;96b4
 EntTur4 	JSR DoneWithIO			;96b8
 EntTur5 	RTS				;96bb
 
-EnterCommand	!text "M-E"			;96bc
-		!word DriveStart
+EnterCommand	.byte "M-E"			;96bc
+		.word DriveStart
 
 SendExitTurbo	JSR InitForIO			;96c1
 		LDX #>Drv_ExitTurbo
@@ -753,9 +762,9 @@ SendCODE	JSR InitForIO			;96df
 		STA WriteAddy+1
 		LDA #<DriveAddy
 		STA WriteAddy
-	+LoadB z8f, $1b
+	LoadB z8f, $1b
 SndCDE0 	JSR SendCHUNK			;96f8
-		+bnex SndCDE1
+		bnex SndCDE1
 		CLC
 		LDA #$20
 		ADC z8d
@@ -778,7 +787,7 @@ SendCHUNK	LDA z8f 			;971e
 		LDX #>WriteCommand
 		LDA #<WriteCommand
 		JSR SendDOSCmd
-		+bnex SndCHNK2
+		bnex SndCHNK2
 		LDA #$20
 		JSR $ffa8
 		LDY #0
@@ -791,8 +800,8 @@ SndCHNK0	LDA (z8d),y			;9736
 SndCHNK1	LDX #0				;9743
 SndCHNK2	RTS				;9745
 
-WriteCommand	!text "M-W"			;9746
-WriteAddy	!word $0300			;9749
+WriteCommand	.byte "M-W"			;9746
+WriteAddy	.word $0300			;9749
 
 __ExitTurbo					;974b
 		TXA
@@ -820,7 +829,7 @@ PurTur0 	LDY curDrive			;976e
 
 __NewDisk					;9777
 		JSR EnterTurbo
-		+bnex NewDsk2
+		bnex NewDsk2
 		JSR ClearCache
 		JSR InitForIO
 		LDA #0
@@ -842,7 +851,7 @@ NewDsk2 	RTS				;97a5
 __ChangeDiskDevice				;97a6
 		PHA
 		JSR EnterTurbo
-		+bnex ChngDskDv0
+		bnex ChngDskDv0
 		PLA
 		PHA
 		ORA #%00100000
@@ -868,7 +877,7 @@ __ReadBlock					;97d4
 _ReadLink
 		JSR CheckParams_1
 		BCC RdBlock2
-		+bbrf 6, curType, RdBlock0
+		bbrf 6, curType, RdBlock0
 		JSR DoCacheRead
 		BNE RdBlock2
 RdBlock0	LDX #>Drv_ReadSec		;97e3
@@ -877,19 +886,19 @@ RdBlock0	LDX #>Drv_ReadSec		;97e3
 		LDX #>Drv_SendByte
 		LDA #<Drv_SendByte
 		JSR DUNK4
-		+MoveW r4, z8b
+		MoveW r4, z8b
 		LDY #0
 		JSR Hst_RecvByte
 		JSR GetDError
-		+beqx RdBlock1
+		beqx RdBlock1
 		INC errCount
 		CPY errCount
 		BEQ RdBlock1
 		BCS RdBlock0
-RdBlock1	+bnex RdBlock2			;980e
-		+bbrf 6, curType, RdBlock2
+RdBlock1	bnex RdBlock2			;980e
+		bbrf 6, curType, RdBlock2
 		JSR DoCacheWrite
-		+bra RdBlock2
+		bra RdBlock2
 RdBlock2	LDY #0				;981c
 		RTS
 
@@ -899,7 +908,7 @@ __WriteBlock					;981f
 WrBlock1	LDX #>Drv_WriteSec		;9824
 		LDA #<Drv_WriteSec
 		JSR DUNK4_1
-		+MoveW r4, z8b
+		MoveW r4, z8b
 		LDY #0
 		JSR Hst_SendByte
 		JSR GetDOSError
@@ -919,7 +928,7 @@ VWrBlock1	LDX #>Drv_ReadSec		;9852
 		LDA #<Drv_ReadSec
 		JSR DUNK4_1
 		JSR GetDOSError
-		+beqx VWrBlock2
+		beqx VWrBlock2
 		DEC tryCount
 		BNE VWrBlock1
 		LDX #$25
@@ -931,9 +940,9 @@ VWrBlock1	LDX #>Drv_ReadSec		;9852
 		JSR WriteBlock
 		PLA
 		STA errCount
-		+beqx VWrBlock0
-VWrBlock2	+bnex VWrBlock3 		;987b
-		+bbrf 6, curType, VWrBlock3
+		beqx VWrBlock0
+VWrBlock2	bnex VWrBlock3 		;987b
+		bbrf 6, curType, VWrBlock3
 		JMP DoCacheWrite
 VWrBlock3	RTS				;9886
 
@@ -953,28 +962,29 @@ GetDError	LDA #>errStore			;988e
 		PLA
 		CMP #1
 		BEQ GetDErr1
-		+addv $1e
+		addv $1e
 		BNE GetDErr2
 GetDErr1	LDA #0				;98ac
 GetDErr2	TAX				;98ae
 		RTS
 
-DOSErrTab	!byte $01, $05, $02, $08	;98b0
-		!byte $08, $01, $05, $01
-		!byte $05, $05, $05
+DOSErrTab	.byte $01, $05, $02, $08	;98b0
+		.byte $08, $01, $05, $01
+		.byte $05, $05, $05
 
 DriveCode					;98bb
-		!pseudopc DriveAddy
+.segment "drv1541_drivecode"
+		.org DriveAddy
 
-DNibbleTab	!byte $0f, $07, $0d, $05	;0300
-		!byte $0b, $03, $09, $01
-		!byte $0e, $06, $0c, $04
-		!byte $0a, $02, $08, $00
+DNibbleTab	.byte $0f, $07, $0d, $05	;0300
+		.byte $0b, $03, $09, $01
+		.byte $0e, $06, $0c, $04
+		.byte $0a, $02, $08, $00
 						;0310
-DNibbleTab2	!byte $00, $80, $20, $a0
-		!byte $40, $c0, $60, $e0
-		!byte $10, $90, $30, $b0
-		!byte $50, $d0, $70, $f0
+DNibbleTab2	.byte $00, $80, $20, $a0
+		.byte $40, $c0, $60, $e0
+		.byte $10, $90, $30, $b0
+		.byte $50, $d0, $70, $f0
 						;0320
 Drv_SendByte	LDY #0
 		JSR Drv_SendByte_1
@@ -1070,17 +1080,17 @@ Drv_RecvByte_2	LDX #2				;03be
 D_DUNK4 	DEC $48 			;03c4
 		BNE D_DUNK4_1
 		JSR D_DUNK8_2
-D_DUNK4_1	+LoadB $1805, $c0		;03cb
-D_DUNK4_2	+bbrf 7, $1805, D_DUNK4 	;03d0
+D_DUNK4_1	LoadB $1805, $c0		;03cb
+D_DUNK4_2	bbrf 7, $1805, D_DUNK4 	;03d0
 		LDA #4
 		BIT $1800
 		BNE D_DUNK4_2
-		+LoadB $1800, 0
+		LoadB $1800, 0
 		RTS
 
 DriveStart	PHP				;03e2
 		SEI
-		+PushB $49
+		PushB $49
 		LDA $180f
 		AND #%11011111
 		STA $180f
@@ -1098,7 +1108,7 @@ DriveLoop	JSR D_DUNK8			;03fe
 		STA $73
 		JSR Drv_RecvWord
 		JSR D_DUNK8_1
-		+LoadW $73, $0700
+		LoadW $73, $0700
 		LDA #>(DriveLoop-1)
 		PHA
 		LDA #<(DriveLoop-1)
@@ -1106,13 +1116,13 @@ DriveLoop	JSR D_DUNK8			;03fe
 		JMP (DExecAddy)
 
 Drv_ExitTurbo	JSR D_DUNK4_1			;0420
-		+LoadB $33, 0
+		LoadB $33, 0
 		STA $1800
 		JSR $f98f
-		+LoadB $1c0c, $ec
+		LoadB $1c0c, $ec
 		PLA
 		PLA
-		+PopB $49
+		PopB $49
 		PLP
 		RTS
 
@@ -1128,12 +1138,12 @@ D_DUNK5 	JSR D_DUNK12			;0443
 		LDX $00
 		DEX
 		BEQ D_DUNK5_2
-D_DUNK5_1	+PushB $12			;044f
-		+PushB $13
+D_DUNK5_1	PushB $12			;044f
+		PushB $13
 		JSR Drv_NewDisk_1
-		+PopB $13
+		PopB $13
 		TAX
-		+PopB $12
+		PopB $12
 		LDY $00
 		CPY #$01
 		BNE D_DUNK5_41
@@ -1158,7 +1168,7 @@ D_DUNK5_3	JSR D_DUNK6			;0482
 		JSR Drv_NewDisk_6
 D_DUNK5_4	PLA				;048d
 D_DUNK5_41	RTS				;048e
-D_DUNK5_5	+LoadB $00, $0b 		;048f
+D_DUNK5_5	LoadB $00, $0b 		;048f
 		RTS
 
 D_DUNK6 	STX $4a 			;0494
@@ -1170,7 +1180,7 @@ D_DUNK6 	STX $4a 			;0494
 		LDA #$1e
 		STA $71
 D_DUNK6_1	LDA $70 			;04a3
-		+add $4a
+		add $4a
 		EOR $70
 		AND #%00000011
 		EOR $70
@@ -1209,7 +1219,7 @@ Drv_NewDisk_1	LDX $00 			;04df
 		JSR D_DUNK6
 		LDA #$ff
 		JSR D_DUNK6_4
-Drv_NewDisk_2	+LoadB $70, $04 		;04f6
+Drv_NewDisk_2	LoadB $70, $04 		;04f6
 Drv_NewDisk_3	JSR D_DUNK11			;04fa
 		LDX $18
 		STX $22
@@ -1222,7 +1232,7 @@ Drv_NewDisk_3	JSR D_DUNK11			;04fa
 		JSR Drv_NewDisk_7
 		SEC
 		BCS Drv_NewDisk_3
-Drv_NewDisk_4	+LoadB $22, 0			;0512
+Drv_NewDisk_4	LoadB $22, 0			;0512
 		RTS
 Drv_NewDisk_5	TXA				;0517
 Drv_NewDisk_6	JSR $f24b			;0518
@@ -1238,18 +1248,18 @@ D_DUNK8 	LDA #$f7			;0529
 D_DUNK8_1	LDA #$08			;052d
 		ORA $1c00
 		BNE Drv_NewDisk_8
-D_DUNK8_2	+LoadB $20, 0			;0534
-		+LoadB $3e, $ff
+D_DUNK8_2	LoadB $20, 0			;0534
+		LoadB $3e, $ff
 		LDA #$fb
 D_DUNK8_3	AND $1c00			;053e
 		JMP Drv_NewDisk_8
 
-DTrackTab	!byte $00, $20, $40, $60	;0544
+DTrackTab	.byte $00, $20, $40, $60	;0544
 
 D_DUNK9 	TAX				;0548
-		+bbrf 7, $20, D_DUNK9_0
+		bbrf 7, $20, D_DUNK9_0
 		JSR D_DUNK12_1
-		+LoadB $20, $20
+		LoadB $20, $20
 		LDX #0
 D_DUNK9_0	CPX $22 			;0556
 		BEQ D_DUNK9_1
@@ -1262,8 +1272,8 @@ D_DUNK9_0	CPX $22 			;0556
 		BCC *+4
 		LDY #0
 		STY $19
-		+LoadB $45, 0
-		+LoadW $32, $0018
+		LoadB $45, 0
+		LoadW $32, $0018
 		JSR D_DUNK11_1
 D_DUNK9_1	RTS				;057b
 
@@ -1288,14 +1298,14 @@ D_DUNK11_0	STA $45 			;059b
 		STA $33
 		LDA #<DDatas
 		STA $32
-D_DUNK11_1	+LoadB $31, 7			;05a5
+D_DUNK11_1	LoadB $31, 7			;05a5
 		TSX
 		STX $49
 		LDX #1
 		STX $00
 		DEX
 		STX $3f
-		+LoadB $1c0c, $ee
+		LoadB $1c0c, $ee
 		LDA $45
 		CMP #$10
 		BEQ D_DUNK11_3
@@ -1348,7 +1358,7 @@ D_DUNK11_8	LDA ($30),y			;0611
 		LDA $1c0c
 		ORA #$e0
 		STA $1c0c
-		+LoadB $1c03, 0
+		LoadB $1c03, 0
 		STA $50
 		LDA #1
 D_DUNK11_9	STA $00 			;062f
@@ -1364,19 +1374,19 @@ D_DUNK12_2	DEX				;063d
 		DEY
 		BNE D_DUNK12_2
 		STY $3e
-D_DUNK12_3	+LoadB $48, $ff 		;0645
+D_DUNK12_3	LoadB $48, $ff 		;0645
 		RTS
 
-DExecAddy	!word 0 			;064a
-DDatas		;!word 0 			;064c
+DExecAddy	.word 0 			;064a
+DDatas		;.word 0 			;064c
 ;064c
-		!realpc
+		.segment "drv1541_b"
 
-ClrCacheDat	!word 0				;9c07
+ClrCacheDat	.word 0				;9c07
 
-ClearCache	+bbsf 6, curType, DoClearCache	;9c09
+ClearCache	bbsf 6, curType, DoClearCache	;9c09
 		RTS
-DoClearCache	+LoadW r0, ClrCacheDat		;9c0f
+DoClearCache	LoadW r0, ClrCacheDat		;9c0f
 		LDY #0
 		STY r1L
 		STY r1H
@@ -1414,16 +1424,16 @@ DoCacheVerify	LDY #%10010011			;9c4c
 		RTS
 
 DoCacheWrite	LDY #%10010000			;9c54
-DoCacheDisk	+PushW r0			;9c56
-		+PushW r1
-		+PushW r2
-		+PushB r3L
+DoCacheDisk	PushW r0			;9c56
+		PushW r1
+		PushW r2
+		PushB r3L
 		TYA
 		PHA
 		LDY r1L
 		DEY
 		LDA CacheTabL,y
-		+add r1H
+		add r1H
 		STA r1H
 		LDA CacheTabH,y
 		LDY curDrive
@@ -1434,43 +1444,43 @@ DoCacheDisk	+PushW r0			;9c56
 		STY r2L
 		INY
 		STY r2H
-		+MoveW r4, r0
+		MoveW r4, r0
 		PLA
 		TAY
 		JSR DoRAMOp
 		TAX
-		+PopB r3L
-		+PopW r2
-		+PopW r1
-		+PopW r0
+		PopB r3L
+		PopW r2
+		PopW r1
+		PopW r0
 		TXA
 		LDX #0
 		RTS
 
 CacheTabL					;9cb3
-		!byte $00, $15, $2a, $3f, $54, $69, $7e, $93
-		!byte $a8, $bd, $d2, $e7, $fc, $11, $26, $3b
-		!byte $50, $65, $78, $8b, $9e, $b1, $c4, $d7
-		!byte $ea, $fc, $0e, $20, $32, $44, $56, $67
-		!byte $78, $89, $9a, $ab
+		.byte $00, $15, $2a, $3f, $54, $69, $7e, $93
+		.byte $a8, $bd, $d2, $e7, $fc, $11, $26, $3b
+		.byte $50, $65, $78, $8b, $9e, $b1, $c4, $d7
+		.byte $ea, $fc, $0e, $20, $32, $44, $56, $67
+		.byte $78, $89, $9a, $ab
 CacheTabH					;9cd7
-		!byte $00, $00, $00, $00, $00, $00, $00, $00
-		!byte $00, $00, $00, $00, $00, $01, $01, $01
-		!byte $01, $01, $01, $01, $01, $01, $01, $01
-		!byte $01, $01, $02, $02, $02, $02, $02, $02
-		!byte $02, $02, $02, $02
+		.byte $00, $00, $00, $00, $00, $00, $00, $00
+		.byte $00, $00, $00, $00, $00, $01, $01, $01
+		.byte $01, $01, $01, $01, $01, $01, $01, $01
+		.byte $01, $01, $02, $02, $02, $02, $02, $02
+		.byte $02, $02, $02, $02
 
-tmpclkreg	!byte 0				;9cfb
-tmpPS		!byte 0				;9cfc
-tmpgrirqen	!byte 0				;9cfd
-tmpCPU_DATA	!byte 0				;9cfe
-tmpmobenble	!byte 0				;9cff
-		!byte 0				;9d00
-DExeProc	!word 0				;9d01
-DTrkSec		!word 0				;9d03
-tmpDD00		!byte 0				;9d05
-tmpDD00_2	!byte 0				;9d06
-errCount	!byte 0				;9d07
-errStore	!byte 0				;9d08
-tryCount	!byte 0				;9d09
-borderFlag	!byte 0				;9d0a
+tmpclkreg	.byte 0				;9cfb
+tmpPS		.byte 0				;9cfc
+tmpgrirqen	.byte 0				;9cfd
+tmpCPU_DATA	.byte 0				;9cfe
+tmpmobenble	.byte 0				;9cff
+		.byte 0				;9d00
+DExeProc	.word 0				;9d01
+DTrkSec		.word 0				;9d03
+tmpDD00		.byte 0				;9d05
+tmpDD00_2	.byte 0				;9d06
+errCount	.byte 0				;9d07
+errStore	.byte 0				;9d08
+tryCount	.byte 0				;9d09
+borderFlag	.byte 0				;9d0a

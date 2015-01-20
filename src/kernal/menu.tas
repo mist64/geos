@@ -1,3 +1,13 @@
+.feature labels_without_colons
+.include "const.inc"
+.include "geossym.inc"
+.include "geosmac.inc"
+.include "equ.inc"
+.include "kernal.inc"
+.import _InvertRectangle, _Sleep, _HorizontalLine, Ddec, _VerticalLine, Rectangle, SetPattern, _PutString, _UseSystemFont, ResetMseRegion, _MouseOff, _StartMouseMode, _FrameRectangle, _Rectangle, _SetPattern
+.global MenuDoInvert, RcvrMnu0, _DoMenu, _DoPreviousMenu, _GotoFirstMenu, _ReDoMenu, _RecoverAllMenus, _RecoverMenu, Menu_5
+
+.segment "menu"
 
 ;GEOS menu handler
 
@@ -18,29 +28,29 @@ DoMenu1 	LDA r0L
 		JSR GetMenuDesc
 		SEC
 DoMenu1_1	PHP
-		+PushB dispBufferOn
-		+LoadB dispBufferOn, ST_WR_FORE
-		+PushW r11
+		PushB dispBufferOn
+		LoadB dispBufferOn, ST_WR_FORE
+		PushW r11
 		JSR CopyMenuCoords
-		+PushW curPattern
+		PushW curPattern
 		LDA #0
 		JSR _SetPattern
 		JSR _Rectangle
-		+PopW curPattern
+		PopW curPattern
 		LDA #$ff
 		JSR _FrameRectangle
-		+PopW r11
+		PopW r11
 	JSR Menu_1
-	!if ((menuVSeparator | menuHSeparator)!=0) {
+	.if ((menuVSeparator | menuHSeparator)<>0)
 		JSR DrawMenu
-	}
-		+PopB dispBufferOn
+	.endif
+		PopB dispBufferOn
 		PLP
-		+bbsf 6, menuOptNumber, DoMenu2
+		bbsf 6, menuOptNumber, DoMenu2
 		BCC DoMenu5
 DoMenu2 	LDX menuNumber
 		LDY menuOptionTab,x
-		+bbsf 7, menuOptNumber, DoMenu3
+		bbsf 7, menuOptNumber, DoMenu3
 		LDA menuLimitTabL,y
 		STA r11L
 		LDA menuLimitTabH,y
@@ -56,10 +66,10 @@ DoMenu2 	LDX menuNumber
 		ROR r11H
 		ROR r11L
 		LDA menuTop
-		+add menuBottom
+		add menuBottom
 		ROR
 		TAY
-		+bra DoMenu4
+		bra DoMenu4
 DoMenu3 	LDA menuLimitTabL,y
 		INY
 		CLC
@@ -67,7 +77,7 @@ DoMenu3 	LDA menuLimitTabL,y
 		LSR
 		TAY
 		LDA menuLeft
-		+add menuRight
+		add menuRight
 		STA r11L
 		LDA menuLeft+1
 		ADC menuRight+1
@@ -75,9 +85,9 @@ DoMenu3 	LDA menuLimitTabL,y
 		LSR r11H
 		ROR r11L
 DoMenu4 	SEC
-DoMenu5 	+bbrf MOUSEON_BIT, mouseOn, DoMenu6
-		+smbf ICONSON_BIT, mouseOn
-DoMenu6 	+smbf MENUON_BIT, mouseOn
+DoMenu5 	bbrf MOUSEON_BIT, mouseOn, DoMenu6
+		smbf ICONSON_BIT, mouseOn
+DoMenu6 	smbf MENUON_BIT, mouseOn
 		JMP _StartMouseMode
 
 _ReDoMenu
@@ -87,10 +97,10 @@ _ReDoMenu
 _GotoFirstMenu
 		PHP
 		SEI
-GFrstMenu1	+CmpBI menuNumber, 0
+GFrstMenu1	CmpBI menuNumber, 0
 		BEQ GFrstMenu2
 		JSR _DoPreviousMenu
-		+bra GFrstMenu1
+		bra GFrstMenu1
 GFrstMenu2	PLP
 		RTS
 
@@ -108,7 +118,7 @@ Menu_0		PHA
 		STA r0L
 		LDA menuStackH,y
 		STA r0H
-		+PopB r8L
+		PopB r8L
 		ASL
 		ASL
 		ADC r8L
@@ -130,14 +140,14 @@ GetMnuDsc1	LDA (r0),y
 		STA menuTop,y
 		DEY
 		BPL GetMnuDsc1
-		+MoveW menuLeft, r11
-		+MoveB menuTop, r1H
-		+bbsf 6, menuOptNumber, Menu_01
+		MoveW menuLeft, r11
+		MoveB menuTop, r1H
+		bbsf 6, menuOptNumber, Menu_01
 		jmp ResetMseRegion
 
 Menu_1		JSR MenuStoreFont
 		JSR _UseSystemFont
-		+LoadB r10H, 0
+		LoadB r10H, 0
 		STA currentMode
 		SEC
 	JSR Menu_4
@@ -147,15 +157,15 @@ Menu_11 JSR Menu_3
 	JSR Menu_2
 		CLC
 	JSR Menu_4
-		+bbrf 7, menuOptNumber, Menu_12
+		bbrf 7, menuOptNumber, Menu_12
 		LDA r1H
 		SEC
 		ADC curHeight
 		STA r1H
-		+MoveW menuLeft, r11
+		MoveW menuLeft, r11
 		SEC
 	JSR Menu_4
-Menu_12 	+AddVB 1, r10H
+Menu_12 	AddVB 1, r10H
 		LDA menuOptNumber
 		AND #%00011111
 		CMP r10H
@@ -163,7 +173,7 @@ Menu_12 	+AddVB 1, r10H
 		JSR MenuRestoreFont
 	JMP Menu_3
 
-Menu_2		+PushW r10
+Menu_2		PushW r10
 		LDA r10H
 	JSR Menu_0
 		LDA (r0),y
@@ -172,10 +182,10 @@ Menu_2		+PushW r10
 		LDA (r0),y
 		STA r0H
 		STX r0L
-		+PushW leftMargin
-		+PushW rightMargin
-		+PushW StringFaultVec
-		+LoadW leftMargin, 0
+		PushW leftMargin
+		PushW rightMargin
+		PushW StringFaultVec
+		LoadW leftMargin, 0
 		SEC
 		LDA menuRight
 		SBC #1
@@ -187,23 +197,23 @@ Menu_2		+PushW r10
 		STA StringFaultVec+1
 		LDA #<MenuStringFault
 		STA StringFaultVec
-		+PushB r1H
-		+AddB baselineOffset, r1H
+		PushB r1H
+		AddB baselineOffset, r1H
 		INC r1H
 		JSR _PutString
-		+PopB r1H
-		+PopW StringFaultVec
-		+PopW rightMargin
-		+PopW leftMargin
-		+PopW r10
+		PopB r1H
+		PopW StringFaultVec
+		PopW rightMargin
+		PopW leftMargin
+		PopW r10
 		RTS
 
-MenuStringFault +MoveW mouseRight, r11
+MenuStringFault	MoveW mouseRight, r11
 		RTS
 
 Menu_3		LDY r10H
 		LDX r1H
-		+bbsf 7, menuOptNumber, Menu_31
+		bbsf 7, menuOptNumber, Menu_31
 		LDA r11H
 		STA menuLimitTabH,y
 		LDX r11L
@@ -212,12 +222,12 @@ Menu_31 	TXA
 		RTS
 
 Menu_4		BCC Menu_41
-		+bbrf 7, menuOptNumber, Menu_42
-		+bra Menu_43
-Menu_41 	+bbrf 7, menuOptNumber, Menu_43
-Menu_42 	+AddVB 2, r1H
+		bbrf 7, menuOptNumber, Menu_42
+		bra Menu_43
+Menu_41 	bbrf 7, menuOptNumber, Menu_43
+Menu_42 	AddVB 2, r1H
 		RTS
-Menu_43 	+AddVW 4, r11
+Menu_43 	AddVW 4, r11
 		RTS
 
 _RecoverAllMenus
@@ -238,19 +248,19 @@ RcvrMnu0	LDA RecoverVector
 		JMP Rectangle
 RcvrMnu1	JMP (RecoverVector)
 
-	!if ((menuVSeparator | menuHSeparator)!=0) {
+	.if ((menuVSeparator | menuHSeparator)<>0)
 DrawMenu	LDA menuOptNumber
 		AND #%00011111
-		+subv 1
+		subv 1
 		BEQ DrawMenu4
 		STA r2L
-		+bbsf 7, menuOptNumber, DrawMenu2
-	!if (menuVSeparator!=0) {
+		bbsf 7, menuOptNumber, DrawMenu2
+	.if (menuVSeparator<>0)
 		LDA menuTop
-		+addv 1
+		addv 1
 		STA r3L
 		LDA menuBottom
-		+subv 1
+		subv 1
 		STA r3H
 DrawMenu1	LDX r2L
 		LDA menuLimitTabL,x
@@ -261,17 +271,17 @@ DrawMenu1	LDX r2L
 		JSR _VerticalLine
 		DEC r2L
 		BNE DrawMenu1
-	}
-	!if (menuHSeparator!=0) {
+	.endif
+	.if (menuHSeparator<>0)
 		RTS
-	}
+	.endif
 DrawMenu2
-	!if (menuHSeparator!=0) {
-		+MoveW menuLeft, r3
+	.if (menuHSeparator<>0)
+		MoveW menuLeft, r3
 		INC r3L
 		BNE *+4
 		INC r3H
-		+MoveW menuRight, r4
+		MoveW menuRight, r4
 		LDX #r4
 		JSR Ddec
 DrawMenu3	LDX r2L
@@ -281,9 +291,9 @@ DrawMenu3	LDX r2L
 		JSR _HorizontalLine
 		DEC r2L
 		BNE DrawMenu3
-	}
+	.endif
 DrawMenu4	RTS
-	}
+	.endif
 
 CopyMenuCoords	LDX #6
 CpyMnuCrds1	LDA menuTop-1,x
@@ -292,7 +302,7 @@ CpyMnuCrds1	LDA menuTop-1,x
 		BNE CpyMnuCrds1
 		RTS
 
-	!if (oldMenu_5) {
+	.if (oldMenu_5)
 Menu_5		JSR _MouseOff
 		JSR Menu_7
 		JSR MenuDoInvert
@@ -300,20 +310,20 @@ Menu_5		JSR _MouseOff
 		LDX menuNumber
 		STA menuOptionTab,x
 		JSR Menu_8
-		+bbsf 7, r1L, Menu_52
+		bbsf 7, r1L, Menu_52
 		BVS Menu_51
-		+MoveB selectionFlash, r0L
-		+LoadB r0H, NULL
+		MoveB selectionFlash, r0L
+		LoadB r0H, NULL
 		JSR _Sleep
 		JSR Menu_7
 		JSR MenuDoInvert
-		+MoveB selectionFlash, r0L
-		+LoadB r0H, NULL
+		MoveB selectionFlash, r0L
+		LoadB r0H, NULL
 		JSR _Sleep
 		JSR Menu_7
-	} else {
-Menu_5Help	+MoveB selectionFlash, r0L
-		+LoadB r0H, NULL
+	.else
+Menu_5Help	MoveB selectionFlash, r0L
+		LoadB r0H, NULL
 		JSR _Sleep
 		JMP Menu_7
 
@@ -324,12 +334,12 @@ Menu_5		JSR _MouseOff
 		LDX menuNumber
 		STA menuOptionTab,x
 		JSR Menu_8
-		+bbsf 7, r1L, Menu_52
+		bbsf 7, r1L, Menu_52
 		BVS Menu_51
 		JSR Menu_5Help
 		JSR MenuDoInvert
 		JSR Menu_5Help
-	}
+	.endif
 		JSR MenuDoInvert
 	JSR Menu_7
 		LDX menuNumber
@@ -403,11 +413,11 @@ Menu_75 	DEY
 		CPY #0
 		BNE Menu_76
 		INC r2L
-Menu_76 	+MoveW menuLeft, r3
+Menu_76 	MoveW menuLeft, r3
 		INC r3L
 		BNE *+4
 		INC r3H
-		+MoveW menuRight, r4
+		MoveW menuRight, r4
 		LDX #r4
 		jmp Ddec
 
@@ -425,10 +435,10 @@ Menu_8	JSR Menu_0
 		STX r0L
 		RTS
 
-MenuDoInvert	+PushB dispBufferOn
-		+LoadB dispBufferOn, ST_WR_FORE
+MenuDoInvert	PushB dispBufferOn
+		LoadB dispBufferOn, ST_WR_FORE
 		JSR _InvertRectangle
-		+PopB dispBufferOn
+		PopB dispBufferOn
 		RTS
 
 MenuStoreFont	LDX #9

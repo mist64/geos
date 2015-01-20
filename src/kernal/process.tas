@@ -1,3 +1,12 @@
+.feature labels_without_colons
+.include "const.inc"
+.include "geossym.inc"
+.include "geosmac.inc"
+.include "equ.inc"
+.include "kernal.inc"
+.global _BlockProcess, _DoCheckDelays, _EnableProcess, _ExecuteProcesses, _FreezeProcess, _InitProcesses, _ProcessDelays, _ProcessTimers, _RestartProcess, _Sleep, _UnBlockProcess, _UnFreezeProcess
+
+.segment "process"
 
 ;multitasking functions (processes, sleep, delays)
 
@@ -30,7 +39,7 @@ IProc1		LDA (r0),Y
 		INX
 		DEC r1H
 		BNE IProc1
-		+MoveB r1L, NumTimers
+		MoveB r1L, NumTimers
 		RTS
 
 _ExecuteProcesses
@@ -42,7 +51,7 @@ EProc0		LDA TimersCMDs,X
 		AND #SET_BLOCKED
 		BNE EProc1
 		LDA TimersCMDs,X
-		AND #SET_RUNABLE XOR $ff
+		AND #SET_RUNABLE .XOR $ff
 		STA TimersCMDs,X
 		TXA
 		PHA
@@ -74,10 +83,10 @@ PTime0		LDA TimersCMDs,X
 		BNE PTime1
 		PHA
 		LDA TimersTab+1,Y
-		+subv 1
+		subv 1
 		STA TimersTab+1,Y
 		PLA
-PTime1		+subv 1
+PTime1		subv 1
 		STA TimersTab,Y
 		ORA TimersTab+1,Y
 		BNE PTime2
@@ -94,7 +103,7 @@ PTime3		RTS
 
 _RestartProcess
 		LDA TimersCMDs,X
-		AND #(SET_BLOCKED | SET_FROZEN) XOR $ff
+		AND #(SET_BLOCKED | SET_FROZEN) .XOR $ff
 		STA TimersCMDs,X
 RProc0		TXA
 		PHA
@@ -120,16 +129,16 @@ _BlockProcess
 		bne EnProc0
 _UnBlockProcess
 		LDA TimersCMDs,X
-		AND #SET_BLOCKED XOR $ff
-		+bra EnProc0
+		AND #SET_BLOCKED .XOR $ff
+		bra EnProc0
 _FreezeProcess
 		LDA TimersCMDs,X
 		ORA #SET_FROZEN
 		bne EnProc0
 _UnFreezeProcess
 		LDA TimersCMDs,X
-		AND #SET_FROZEN XOR $ff
-		+bra EnProc0
+		AND #SET_FROZEN .XOR $ff
+		bra EnProc0
 
 _ProcessDelays
 		LDX DelaySP
@@ -187,7 +196,7 @@ RDel0		INX
 		STA DelayRtnsL-1,X
 		LDA DelayRtnsH,X
 		STA DelayRtnsH-1,X
-		+bra RDel0
+		bra RDel0
 RDel1		DEC DelaySP
 		PLP
 		RTS

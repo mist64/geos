@@ -1,3 +1,11 @@
+.feature labels_without_colons
+.include "const.inc"
+.include "geossym.inc"
+.include "geosmac.inc"
+.include "equ.inc"
+.include "kernal.inc"
+.import DoneWithIO, EnterTurbo, InitForIO, ReadBlock, VerWriteBlock, WriteBlock
+.global _DoRAMOp, _FetchRAM, _ReadFile, _StashRAM, _SwapRAM, _VerifyRAM, _WriteFile, _DoRAMOp, _FetchRAM, _ReadFile, _StashRAM, _SwapRAM, _VerifyRAM, _WriteFile, _DoRAMOp, _FetchRAM, _ReadFile, _StashRAM, _SwapRAM, _VerifyRAM, _WriteFile, _DoRAMOp, _FetchRAM, _ReadFile, _StashRAM, _SwapRAM, _VerifyRAM, _WriteFile, LoKernal
 
 ;GEOS System KERNAL - lower part, placed after disk driver
 ;reassembled by Maciej 'YTM/Alliance' Witkowiak
@@ -9,19 +17,19 @@
 
 		;*=DISK_BASE + DISK_DRV_LGH
 
-LoKernal	+AddVW 2, r6
+LoKernal	AddVW 2, r6
 LoKern0 	RTS
 
 _ReadFile
 		JSR EnterTurbo
-		+bnex LoKern0
+		bnex LoKern0
 		JSR InitForIO
-		+PushW r0
-		+LoadW r4, diskBlkBuf
-		+LoadB r5L, 2
-		+MoveW r1, fileTrScTab+2
+		PushW r0
+		LoadW r4, diskBlkBuf
+		LoadB r5L, 2
+		MoveW r1, fileTrScTab+2
 RdFile1 	JSR ReadBlock
-		+bnex RdFile6
+		bnex RdFile6
 		LDY #$fe
 		LDA diskBlkBuf
 		BNE RdFile2
@@ -36,28 +44,28 @@ RdFile2 	LDA r2H
 		LDX #BFR_OVERFLOW
 		BNE RdFile6
 RdFile3 	STY r1L
-		+LoadB CPU_DATA, RAM_64K
+		LoadB CPU_DATA, RAM_64K
 RdFile4 	LDA diskBlkBuf+1,y
 		DEY
 		STA (r7),y
 		BNE RdFile4
-		+LoadB CPU_DATA, KRNL_IO_IN
-		+AddB r1L, r7L
+		LoadB CPU_DATA, KRNL_IO_IN
+		AddB r1L, r7L
 		BCC *+4
 		INC r7H
-		+SubB r1L, r2L
+		SubB r1L, r2L
 		BCS *+4
 		DEC r2H
 RdFile5 	INC r5L
 		INC r5L
 		LDY r5L
-		+MoveB diskBlkBuf+1, r1H
+		MoveB diskBlkBuf+1, r1H
 		STA fileTrScTab+1,y
-		+MoveB diskBlkBuf, r1L
+		MoveB diskBlkBuf, r1L
 		STA fileTrScTab,y
 		BNE RdFile1
 		LDX #0
-RdFile6 	+PopW r0
+RdFile6 	PopW r0
 		JMP DoneWithIO
 
 FlaggedPutBlock LDA verifyFlag
@@ -66,16 +74,16 @@ FlaggedPutBlock LDA verifyFlag
 FlggdPutBl1	JMP WriteBlock
 
 _WriteFile	JSR EnterTurbo
-		+bnex DoWrFile3
+		bnex DoWrFile3
 		STA verifyFlag
 		JSR InitForIO
-		+LoadW r4, diskBlkBuf
-		+PushW r6
-		+PushW r7
+		LoadW r4, diskBlkBuf
+		PushW r6
+		PushW r7
 		JSR DoWriteFile
-		+PopW r7
-		+PopW r6
-		+bnex WrFile1
+		PopW r7
+		PopW r6
+		bnex WrFile1
 		DEC verifyFlag
 		JSR DoWriteFile
 WrFile1 	jmp DoneWithIO
@@ -95,21 +103,21 @@ DoWriteFile	LDY #0
 		LDA (r6),y
 		STA (r4),y
 		LDY #$fe
-		+LoadB CPU_DATA, RAM_64K
+		LoadB CPU_DATA, RAM_64K
 DoWrFile1	DEY
 		LDA (r7),y
 		STA diskBlkBuf+2,y
 		TYA
 		BNE DoWrFile1
-		+LoadB CPU_DATA, KRNL_IO_IN
+		LoadB CPU_DATA, KRNL_IO_IN
 		JSR FlaggedPutBlock
-		+bnex DoWrFile3
-		+AddVW $fe, r7
-		+bra DoWriteFile
+		bnex DoWrFile3
+		AddVW $fe, r7
+		bra DoWriteFile
 DoWrFile2	TAX
 DoWrFile3	RTS
 
-	!if (REUPresent) {
+	.if (REUPresent)
 _VerifyRAM	LDY #$93
 		BNE _DoRAMOp
 _StashRAM	LDY #$90
@@ -122,11 +130,11 @@ _DoRAMOp	LDX #DEV_NOT_FOUND
 		CMP ramExpSize
 		BCS DRAMOp2
 		LDX CPU_DATA
-		+LoadB CPU_DATA, IO_IN
-		+MoveW r0, EXP_BASE+2
-		+MoveW r1, EXP_BASE+4
-		+MoveB r3L, EXP_BASE+6
-		+MoveW r2, EXP_BASE+7
+		LoadB CPU_DATA, IO_IN
+		MoveW r0, EXP_BASE+2
+		MoveW r1, EXP_BASE+4
+		MoveB r3L, EXP_BASE+6
+		MoveW r2, EXP_BASE+7
 		LDA #0
 		STA EXP_BASE+9
 		STA EXP_BASE+10
@@ -137,26 +145,26 @@ DRAMOp1 	LDA EXP_BASE
 		STX CPU_DATA
 		LDX #0
 DRAMOp2 	RTS
-	}
+	.endif
 
-	!if (useRamExp) {
-RamExpSetStat	+LoadW r1, $0000
-		+LoadB r0H, (>diskBlkBuf)
-		+LoadB r2H, 0
+	.if (useRamExp)
+RamExpSetStat	LoadW r1, $0000
+		LoadB r0H, (>diskBlkBuf)
+		LoadB r2H, 0
 		sta r0L
 		rts
 RamExpGetStat	jsr RamExpSetStat
 		jmp RamExpRead
 RamExpPutStat	jsr RamExpSetStat
 		jmp RamExpWrite
-	}
+	.endif
 
-	!if (usePlus60K) {
+	.if (usePlus60K)
 ;r0 - c64 addy, r1 - exp page number (byte/word - RamCart 64/128), r2H - # of bytes (in pages)
 
-RamExpRead	+PushB r0H
-		+PushB r2H
-		+PushW r1
+RamExpRead	PushB r0H
+		PushB r2H
+		PushW r1
 		php
 		sei
 		ldy #0
@@ -167,14 +175,14 @@ RamExRd_0	lda RamExpRdHlp,y
 		bne RamExRd_0
 		jsr $02a0
 RamExpRdEnd	plp
-		+PopW r1
-		+PopB r2H
-		+PopB r0H
+		PopW r1
+		PopB r2H
+		PopB r0H
 		rts
 
-RamExpWrite	+PushB r0H
-		+PushB r2H
-		+PushW r1
+RamExpWrite	PushB r0H
+		PushB r2H
+		PushW r1
 		php
 		sei
 		ldy #0
@@ -186,9 +194,9 @@ RamExWr_0	lda RamExpWrHlp,y
 		jsr $02a0
 		jmp RamExpRdEnd
 
-RamExpRdHlp	+PushB CPU_DATA
+RamExpRdHlp	PushB CPU_DATA
 		lda r1L
-		+addv $10
+		addv $10
 		sta r1H
 		ldy #0
 		sty r1L
@@ -211,13 +219,13 @@ RamExRdH_1	ldx #$80
 		inc r1H
 		dec r2H
 		bpl RamExRdH_1
-		+PopB CPU_DATA
+		PopB CPU_DATA
 		rts
 RamExpRdHlpEnd
 
-RamExpWrHlp	+PushB CPU_DATA
+RamExpWrHlp	PushB CPU_DATA
 		lda r1L
-		+addv $10
+		addv $10
 		sta r1H
 		ldy #0
 		sty r1L
@@ -238,21 +246,21 @@ RamExWrH_1	ldx #IO_IN
 		inc r1H
 		dec r2H
 		bpl RamExWrH_1
-		+LoadB CPU_DATA, IO_IN
-		+LoadB PLUS60K_CR, 0
-		+PopB CPU_DATA
+		LoadB CPU_DATA, IO_IN
+		LoadB PLUS60K_CR, 0
+		PopB CPU_DATA
 		rts
 RamExpWrHlpEnd
-	}
+	.endif
 
 
-	!if (useRamCart64) {
-RamExpRead	+PushB CPU_DATA
-		+LoadB CPU_DATA, IO_IN
-		+PushB r1L
-		+PushB r0H
+	.if (useRamCart64)
+RamExpRead	PushB CPU_DATA
+		LoadB CPU_DATA, IO_IN
+		PushB r1L
+		PushB r0H
 		ldx r2H
-RamExRd_0	+MoveB r1L, RAMC_BASE
+RamExRd_0	MoveB r1L, RAMC_BASE
 		ldy #0
 RamExRd_1	lda RAMC_WINDOW,y
 		sta (r0),y
@@ -262,17 +270,17 @@ RamExRd_1	lda RAMC_WINDOW,y
 		inc r1L
 		dex
 		bpl RamExRd_0
-RamExRd_End	+PopB r0H
-		+PopB r1L
-		+PopB CPU_DATA
+RamExRd_End	PopB r0H
+		PopB r1L
+		PopB CPU_DATA
 		rts
 
-RamExpWrite	+PushB CPU_DATA
-		+LoadB CPU_DATA, IO_IN
- 		+PushB r1L
-		+PushB r0H
+RamExpWrite	PushB CPU_DATA
+		LoadB CPU_DATA, IO_IN
+ 		PushB r1L
+		PushB r0H
 		ldx r2H
-RamExWr_0	+MoveB r1L, RAMC_BASE
+RamExWr_0	MoveB r1L, RAMC_BASE
 		ldy #0
 RamExWr_1	lda (r0),y
 		sta RAMC_WINDOW,y
@@ -283,15 +291,15 @@ RamExWr_1	lda (r0),y
 		dex
 		bpl RamExWr_0
 		jmp RamExRd_End
-	}
+	.endif
 
-	!if (useRamCart128) {
-RamExpRead	+PushB CPU_DATA
-		+LoadB CPU_DATA, IO_IN
- 		+PushW r1
-		+PushB r0H
+	.if (useRamCart128)
+RamExpRead	PushB CPU_DATA
+		LoadB CPU_DATA, IO_IN
+ 		PushW r1
+		PushB r0H
 		ldx r2H
-RamExRd_0	+MoveW r1, RAMC_BASE
+RamExRd_0	MoveW r1, RAMC_BASE
 		ldy #0
 RamExRd_1	lda RAMC_WINDOW,y
 		sta (r0),y
@@ -303,17 +311,17 @@ RamExRd_1	lda RAMC_WINDOW,y
 		inc r1H
 		dex
 		bpl RamExRd_0
-RamExRd_End	+PopB r0H
-		+PopW r1
-		+PopB CPU_DATA
+RamExRd_End	PopB r0H
+		PopW r1
+		PopB CPU_DATA
 		rts
 
-RamExpWrite	+PushB CPU_DATA
-		+LoadB CPU_DATA, IO_IN
- 		+PushW r1
-		+PushB r0H
+RamExpWrite	PushB CPU_DATA
+		LoadB CPU_DATA, IO_IN
+ 		PushW r1
+		PushB r0H
 		ldx r2H
-RamExWr_0	+MoveW r1, RAMC_BASE
+RamExWr_0	MoveW r1, RAMC_BASE
 		ldy #0
 RamExWr_1	lda (r0),y
 		sta RAMC_WINDOW,y
@@ -326,10 +334,10 @@ RamExWr_1	lda (r0),y
 		dex
 		bpl RamExWr_0
 		jmp RamExRd_End
-	}
+	.endif
 
-	!if (removeToBASIC) {
-	} else {
+	.if (removeToBASIC)
+	.else
 LoKernalBuf
 		!byte 0, 0, 0, 0, 0, 0, 0, 0
 		!byte 0, 0, 0, 0, 0, 0, 0, 0
@@ -341,17 +349,17 @@ LKSaveBASIC	!byte 0, 0, 0
 LKSaveR7	!byte 0, 0
 
 LoKernal1	SEI
-		+LoadB CPU_DATA, KRNL_IO_IN
+		LoadB CPU_DATA, KRNL_IO_IN
 		LDY #2
 LKernal1	LDA BASICspace,y
 		STA LKSaveBASIC,y
 		DEY
 		BPL LKernal1
-		+MoveW r7, LKSaveR7
+		MoveW r7, LKSaveR7
 		INC CPU_DATA
 		LDX #$ff
 		TXS
-		+LoadB grcntrl2, 0
+		LoadB grcntrl2, 0
 		JSR KERNALCIAInit
 		LDX curDevice
 		LDA #0
@@ -362,9 +370,9 @@ LKernal2	STA zpage+2,y
 		INY
 		BNE LKernal2
 		STX curDevice
-		+LoadB BASICMemTop, $a0
-		+LoadW tapeBuffVec, $03c3
-		+LoadB BASICMemBot, $08
+		LoadB BASICMemTop, $a0
+		LoadW tapeBuffVec, $03c3
+		LoadB BASICMemBot, $08
 		LSR
 		STA scrAddyHi
 		JSR Init_KRNLVec
@@ -373,12 +381,12 @@ LKernal2	STA zpage+2,y
 		STA nmivec+1
 		LDA #<execBASIC
 		STA nmivec
-		+LoadB LKIntTimer, 6
+		LoadB LKIntTimer, 6
 		LDA cia2base+13
-		+LoadB cia2base+4, $ff
+		LoadB cia2base+4, $ff
 		STA cia2base+5
-		+LoadB cia2base+13, $81
-		+LoadB cia2base+14, $01
+		LoadB cia2base+13, $81
+		LoadB cia2base+14, $01
 		JMP (BASIC_START)
 
 execBASIC	PHA
@@ -387,14 +395,14 @@ execBASIC	PHA
 		LDA cia2base+13
 		DEC LKIntTimer
 		BNE exeBAS4
-		+LoadB cia2base+13, $7f
-		+LoadW nmivec, OS_ROM
+		LoadB cia2base+13, $7f
+		LoadW nmivec, OS_ROM
 		LDY #2
 exeBAS1 	LDA LKSaveBASIC, y
 		STA BASICspace, y
 		DEY
 		BPL exeBAS1
-		+MoveW LKSaveR7, cardDataPntr+1
+		MoveW LKSaveR7, cardDataPntr+1
 		INY
 exeBAS2 	LDA LoKernalBuf,y
 		BEQ exeBAS3
@@ -405,12 +413,12 @@ exeBAS2 	LDA LoKernalBuf,y
 		BNE exeBAS2
 exeBAS3 	TYA
 		BEQ exeBAS4
-		+LoadB curPos, $28
-		+LoadB kbdQuePos, 1
-		+LoadB kbdQue, CR
+		LoadB curPos, $28
+		LoadB kbdQuePos, 1
+		LoadB kbdQue, CR
 exeBAS4 	PLA
 		TAY
 		PLA
 		RTI
-	}
+	.endif
 ;a000

@@ -1,9 +1,19 @@
+.feature labels_without_colons
+.include "const.inc"
+.include "geossym.inc"
+.include "geosmac.inc"
+.include "equ.inc"
+.include "kernal.inc"
+.import Ddec, DShiftLeft, _Sleep, MenuDoInvert, CallRoutine, _BitmapUp, _StartMouseMode, ResetMseRegion
+.global CalcIconDescTab, ProcessClick, _DoIcons
+
+.segment "icon"
 
 ;GEOS Icons handler
 
 ;17-8-99 - ACME port
 
-_DoIcons	+MoveW r0, IconDescVec
+_DoIcons	MoveW r0, IconDescVec
 		JSR Icons_1
 		JSR ResetMseRegion
 		LDA mouseOn
@@ -35,7 +45,7 @@ CalcIconDescTab ASL
 		TAY
 		RTS
 
-Icons_1 	+LoadB r10L, NULL
+Icons_1 	LoadB r10L, NULL
 Icons_10	LDA r10L
 		JSR CalcIconDescTab
 		LDX #0
@@ -75,10 +85,10 @@ ProcClk2	LDA clkBoxTemp
 		BVS ProcClk4
 ProcClk3	JSR CalcIconCoords
 		JSR MenuDoInvert
-		+MoveB selectionFlash, r0L
-		+LoadB r0H, NULL
+		MoveB selectionFlash, r0L
+		LoadB r0H, NULL
 		JSR _Sleep
-		+MoveB clkBoxTemp2, r0L
+		MoveB clkBoxTemp2, r0L
 		LDY clkBoxTemp
 ProcClk4	JSR CalcIconCoords
 		JSR MenuDoInvert
@@ -90,7 +100,7 @@ ProcClk5	LDY #$1e
 		LDY #0
 ProcClk6	STY dblClickCount
 		STX r0H
-		+MoveB clkBoxTemp2, r0L
+		MoveB clkBoxTemp2, r0L
 		LDY clkBoxTemp
 		LDX #0
 		STX clkBoxTemp
@@ -102,7 +112,7 @@ ProcClk6	STY dblClickCount
 		LDA (IconDescVec),y
 		jmp CallRoutine
 
-FindClkIcon	+LoadB r0L, NULL
+FindClkIcon	LoadB r0L, NULL
 FndClkIcn1	LDA r0L
 		JSR CalcIconDescTab
 		LDA (IconDescVec),y
@@ -147,7 +157,7 @@ CalcIconCoords	LDA (IconDescVec),y
 		DEY
 		CLC
 		ADC (IconDescVec),y
-		+subv 1
+		subv 1
 		STA r2H
 		LDA (IconDescVec),y
 		STA r2L
@@ -159,7 +169,7 @@ CalcIconCoords	LDA (IconDescVec),y
 		CLC
 		ADC (IconDescVec),y
 		STA r4L
-		+LoadB r3H, 0
+		LoadB r3H, 0
 		STA r4H
 		LDY #3
 		LDX #r3

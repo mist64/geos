@@ -1,3 +1,13 @@
+.feature labels_without_colons
+.include "const.inc"
+.include "geossym.inc"
+.include "geosmac.inc"
+;.include "equ.inc"
+;.include "kernal.inc"
+.import BitMask2, SprTabH, SprTabL
+.global _DisablSprite, _DrawSprite, _EnablSprite, _PosSprite
+
+.segment "sprites"
 
 ;sprites-related functions, handles all sprites (including pointer and prompt)
 
@@ -17,16 +27,16 @@ DSpr0		LDA (r4),Y
 		RTS
 
 _PosSprite
-		+PushB CPU_DATA
-		+LoadB CPU_DATA, IO_IN
+		PushB CPU_DATA
+		LoadB CPU_DATA, IO_IN
 		LDA r3L
 		ASL
 		TAY
 		LDA r5L
-		+addv VIC_Y_POS_OFF
+		addv VIC_Y_POS_OFF
 		STA mob0ypos,Y
 		LDA r4L
-		+addv VIC_X_POS_OFF
+		addv VIC_X_POS_OFF
 		STA r6L
 		LDA r4H
 		ADC #0
@@ -45,19 +55,19 @@ _PosSprite
 		ORA BitMask2,X
 		TAY
 PSpr0		STY msbxpos
-		+PopB CPU_DATA
+		PopB CPU_DATA
 		RTS
 
 _EnablSprite
 		LDX r3L
 		LDA BitMask2,X
 		TAX
-		+PushB CPU_DATA
-		+LoadB CPU_DATA, IO_IN
+		PushB CPU_DATA
+		LoadB CPU_DATA, IO_IN
 		TXA
 		ORA mobenble
 		STA mobenble
-		+PopB CPU_DATA
+		PopB CPU_DATA
 		RTS
 
 _DisablSprite
@@ -66,7 +76,7 @@ _DisablSprite
 		EOR #$FF
 		PHA
 		LDX CPU_DATA
-		+LoadB CPU_DATA, IO_IN
+		LoadB CPU_DATA, IO_IN
 		PLA
 		AND mobenble
 		STA mobenble

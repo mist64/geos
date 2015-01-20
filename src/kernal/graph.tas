@@ -1,11 +1,21 @@
+.feature labels_without_colons
+.include "const.inc"
+.include "geossym.inc"
+.include "geosmac.inc"
+.include "equ.inc"
+.include "kernal.inc"
+.import Dabs, LineTabH, LineTabL, PatternTab, _PutString, CallRoutine, DoInlineReturn, BitMask1, BitMask3, BitMask4
+.global _BitOtherClip, _BitmapClip, _BitmapUp, _DrawPoint, _FrameRectangle, _GetScanLine, _GraphicsString, _HorizontalLine, _ImprintRectangle, _InvertLine, _InvertRectangle, _RecoverLine, _RecoverRectangle, _Rectangle, _SetPattern, _TestPoint, _VerticalLine, _i_BitmapUp, _i_FrameRectangle, _i_GraphicsString, _i_ImprintRectangle, _i_RecoverRectangle, _i_Rectangle, ClrScr, _DrawLine
+
+.segment "graph"
 
 ;graphical functions (lines, rectangles, points, bitmaps)
 
 ;18-8-99 - ACME port
 
 ClrScr
-		+LoadW r0, SCREEN_BASE
-		+LoadW r1, BACK_SCR_BASE
+		LoadW r0, SCREEN_BASE
+		LoadW r1, BACK_SCR_BASE
 		LDX #$7D
 ClrScr1 	LDY #$3F
 ClrScr2 	LDA #backPattern1
@@ -17,8 +27,8 @@ ClrScr2 	LDA #backPattern1
 		STA (r1),Y
 		DEY
 		BPL ClrScr2
-		+AddVW 64, r0
-		+AddVW 64, r1
+		AddVW 64, r0
+		AddVW 64, r1
 		DEX
 		BNE ClrScr1
 		RTS
@@ -47,17 +57,17 @@ PrepareXCoord
 
 _HorizontalLine
 		STA r7L
-		+PushW r3
-		+PushW r4
+		PushW r3
+		PushW r4
 		JSR PrepareXCoord
 		LDY r3L
 		LDA r3H
 		BEQ HLin0
 		INC r5H
 		INC r6H
-HLin0		+CmpW r3, r4
+HLin0		CmpW r3, r4
 HLin1		BEQ HLin4
-		+SubW r3, r4
+		SubW r3, r4
 		LSR r4H
 		ROR r4L
 		LSR r4L
@@ -67,7 +77,7 @@ HLin1		BEQ HLin4
 HLin2		STA (r6),Y
 		STA (r5),Y
 		TYA
-		+addv 8
+		addv 8
 		TAY
 		BCC HLin3
 		INC r5H
@@ -75,16 +85,16 @@ HLin2		STA (r6),Y
 HLin3		DEC r4L
 		BEQ HLin5
 		LDA r7L
-		+bra HLin2
+		bra HLin2
 HLin4		LDA r8L
 		ORA r8H
-		+bra HLin6
+		bra HLin6
 HLin5		LDA r8H
 HLin6		JSR HLineHelp
 HLin7		STA (r6),Y
 		STA (r5),Y
-HLin8		+PopW r4
-		+PopW r3
+HLin8		PopW r4
+		PopW r3
 		RTS
 
 HLineHelp	STA r11H
@@ -96,17 +106,17 @@ HLineHelp	STA r11H
 		ORA r7H
 		RTS
 _InvertLine
-		+PushW r3
-		+PushW r4
+		PushW r3
+		PushW r4
 		JSR PrepareXCoord
 		LDY r3L
 		LDA r3H
 		BEQ ILin0
 		INC r5H
 		INC r6H
-ILin0		+CmpW r3, r4
+ILin0		CmpW r3, r4
 ILin1		BEQ ILin4
-		+SubW r3, r4
+		SubW r3, r4
 		LSR r4H
 		ROR r4L
 		LSR r4L
@@ -117,7 +127,7 @@ ILin2		EOR #$FF
 		STA (r6),Y
 		STA (r5),Y
 		TYA
-		+addv 8
+		addv 8
 		TAY
 		BCC ILin3
 		INC r5H
@@ -125,22 +135,22 @@ ILin2		EOR #$FF
 ILin3		DEC r4L
 		BEQ ILin5
 		LDA (r5),Y
-		+bra ILin2
+		bra ILin2
 ILin4		LDA r8L
 		ORA r8H
-		+bra ILin6
+		bra ILin6
 ILin5		LDA r8H
 ILin6		EOR #$FF
 		EOR (r5),Y
 		JMP HLin7
 
-ImprintLine	+PushW r3
-		+PushW r4
-		+PushB dispBufferOn
+ImprintLine	PushW r3
+		PushW r4
+		PushB dispBufferOn
 		ORA #ST_WR_FORE | ST_WR_BACK
 		STA dispBufferOn
 		JSR PrepareXCoord
-		+PopB dispBufferOn
+		PopB dispBufferOn
 		LDA r5L
 		LDY r6L
 		STA r6L
@@ -149,25 +159,25 @@ ImprintLine	+PushW r3
 		LDY r6H
 		STA r6H
 		STY r5H
-		+bra RLin0
+		bra RLin0
 
 _RecoverLine
-		+PushW r3
-		+PushW r4
-		+PushB dispBufferOn
+		PushW r3
+		PushW r4
+		PushB dispBufferOn
 		ORA #ST_WR_FORE | ST_WR_BACK
 		STA dispBufferOn
 		JSR PrepareXCoord
-		+PopB dispBufferOn
+		PopB dispBufferOn
 
 RLin0		LDY r3L
 		LDA r3H
 		BEQ RLin1
 		INC r5H
 		INC r6H
-RLin1		+CmpW r3, r4
+RLin1		CmpW r3, r4
 RLin2		BEQ RLin5
-		+SubW r3, r4
+		SubW r3, r4
 		LSR r4H
 		ROR r4L
 		LSR r4L
@@ -175,7 +185,7 @@ RLin2		BEQ RLin5
 		LDA r8L
 		JSR RecLineHelp
 RLin3		TYA
-		+addv 8
+		addv 8
 		TAY
 		BCC RLin4
 		INC r5H
@@ -184,10 +194,10 @@ RLin4		DEC r4L
 		BEQ RLin6
 		LDA (r6),Y
 		STA (r5),Y
-		+bra RLin3
+		bra RLin3
 RLin5		LDA r8L
 		ORA r8H
-		+bra RLin7
+		bra RLin7
 RLin6		LDA r8H
 RLin7		JSR RecLineHelp
 		JMP HLin8
@@ -204,7 +214,7 @@ RecLineHelp	STA r7L
 
 _VerticalLine
 		STA r8L
-		+PushB r4L
+		PushB r4L
 		AND #%00000111
 		TAX
 		LDA BitMask1,X
@@ -216,8 +226,8 @@ _VerticalLine
 		LDX r3L
 VLin0		STX r7L
 		JSR _GetScanLine
-		+AddW r4, r5
-		+AddW r4, r6
+		AddW r4, r5
+		AddW r4, r6
 		LDA r7L
 		AND #%00000111
 		TAX
@@ -227,7 +237,7 @@ VLin0		STX r7L
 		LDA r7H
 		EOR #$FF
 		AND (r6),Y
-		+bra VLin2
+		bra VLin2
 VLin1		LDA r7H
 		ORA (r6),Y
 VLin2		STA (r6),Y
@@ -237,7 +247,7 @@ VLin2		STA (r6),Y
 		CPX r3H
 		BEQ VLin0
 		BCC VLin0
-		+PopB r4L
+		PopB r4L
 		RTS
 
 _i_Rectangle
@@ -248,7 +258,7 @@ _i_Rectangle
 		JMP DoInlineReturn
 
 _Rectangle
-		+MoveB r2L, r11L
+		MoveB r2L, r11L
 Rect1		LDA r11L
 		AND #$07
 		TAY
@@ -261,7 +271,7 @@ Rect1		LDA r11L
 		RTS
 
 _InvertRectangle
-		+MoveB r2L, r11L
+		MoveB r2L, r11L
 IRect1		JSR _InvertLine
 		LDA r11L
 		INC r11L
@@ -277,7 +287,7 @@ _i_RecoverRectangle
 		JMP DoInlineReturn
 
 _RecoverRectangle
-		+MoveB r2L, r11L
+		MoveB r2L, r11L
 RRect1		JSR _RecoverLine
 		LDA r11L
 		INC r11L
@@ -293,7 +303,7 @@ _i_ImprintRectangle
 		JMP DoInlineReturn
 
 _ImprintRectangle
-		+MoveB r2L, r11L
+		MoveB r2L, r11L
 ImRec1		JSR ImprintLine
 		LDA r11L
 		INC r11L
@@ -315,24 +325,24 @@ _FrameRectangle
 		LDY r2L
 		STY r11L
 		JSR _HorizontalLine
-		+MoveB r2H, r11L
+		MoveB r2H, r11L
 		LDA r9H
 		JSR _HorizontalLine
-		+PushW r3
-		+PushW r4
-		+MoveW r3, r4
-		+MoveW r2, r3
+		PushW r3
+		PushW r4
+		MoveW r3, r4
+		MoveW r2, r3
 		LDA r9H
 		JSR _VerticalLine
-		+PopW r4
+		PopW r4
 		LDA r9H
 		JSR _VerticalLine
-		+PopW r3
+		PopW r3
 		RTS
 
 GetInlineDrwParms
-		+PopW r5
-		+PopW returnAddress
+		PopW r5
+		PopW returnAddress
 		LDY #1
 		LDA (returnAddress),Y
 		STA r2L
@@ -351,15 +361,15 @@ GetInlineDrwParms
 		INY
 		LDA (returnAddress),Y
 		STA r4H
-		+PushW r5
+		PushW r5
 GtDrwPrmsEnd	RTS
 
 _i_GraphicsString
-		+PopB r0L
+		PopB r0L
 		PLA
 		INC r0L
 		BNE i_GStr0
-		+addv 1
+		addv 1
 i_GStr0 	STA r0H
 		JSR _GraphicsString
 		JMP (r0)
@@ -372,19 +382,19 @@ _GraphicsString
 		LDA GStrTL,Y
 		LDX GStrTH,Y
 		JSR CallRoutine
-		+bra _GraphicsString
+		bra _GraphicsString
 
-GStrTL		!byte <_DoMovePenTo, <_DoLineTo
-		!byte <_DoRectangleTo, <_DoNothing
-		!byte <_DoNewPattern, <_DoESC_PutString
-		!byte <_DoFrame_RecTo, <_DoPenXDelta
-		!byte <_DoPenYDelta, <_DoPenXYDelta
+GStrTL		.byte <_DoMovePenTo, <_DoLineTo
+		.byte <_DoRectangleTo, <_DoNothing
+		.byte <_DoNewPattern, <_DoESC_PutString
+		.byte <_DoFrame_RecTo, <_DoPenXDelta
+		.byte <_DoPenYDelta, <_DoPenXYDelta
 
-GStrTH		!byte >_DoMovePenTo, >_DoLineTo
-		!byte >_DoRectangleTo, >_DoNothing
-		!byte >_DoNewPattern, >_DoESC_PutString
-		!byte >_DoFrame_RecTo, >_DoPenXDelta
-		!byte >_DoPenYDelta, >_DoPenXYDelta
+GStrTH		.byte >_DoMovePenTo, >_DoLineTo
+		.byte >_DoRectangleTo, >_DoNothing
+		.byte >_DoNewPattern, >_DoESC_PutString
+		.byte >_DoFrame_RecTo, >_DoPenXDelta
+		.byte >_DoPenYDelta, >_DoPenXYDelta
 
 _DoMovePenTo
 		JSR GetCoords
@@ -394,8 +404,8 @@ _DoMovePenTo
 _DoNothing	RTS
 
 _DoLineTo
-		+MoveW GraphPenX, r3
-		+MoveB GraphPenY, r11L
+		MoveW GraphPenX, r3
+		MoveB GraphPenY, r11L
 		JSR _DoMovePenTo
 		STA r11H
 		STX r4L
@@ -434,23 +444,23 @@ _DoPenXDelta
 DPXD0		LDY #0
 		LDA (r0),Y
 		INY
-		+add GraphPenXL
+		add GraphPenXL
 		STA GraphPenXL
 		LDA (r0),Y
 		INY
 		ADC GraphPenXH
 		STA GraphPenXH
-		+beqx DPYD1
+		beqx DPYD1
 		BNE DPYD0
 _DoPenYDelta
 		LDY #0
 DPYD0		LDA (r0),Y
 		INY
-		+add GraphPenY
+		add GraphPenY
 		STA GraphPenY
 		INY
 DPYD1		TYA
-		+add r0L
+		add r0L
 		STA r0L
 		BCC DPYD2
 		INC r0H
@@ -464,12 +474,12 @@ GrStSetCoords
 		PHA
 		LDA GraphPenY
 		STA r2H
-		+bra GSSC1
+		bra GSSC1
 GSSC0		STA r2H
 		PHA
 		LDA GraphPenY
 		STA r2L
-GSSC1		+PopB GraphPenY
+GSSC1		PopB GraphPenY
 		CPY GraphPenXH
 		BEQ GSSC2
 		BCS GSSC4
@@ -478,11 +488,11 @@ GSSC2		BCC GSSC3
 		BCS GSSC4
 GSSC3		STX r3L
 		STY r3H
-		+MoveW GraphPenX, r4
-		+bra GSSC5
+		MoveW GraphPenX, r4
+		bra GSSC5
 GSSC4		STX r4L
 		STY r4H
-		+MoveW GraphPenX, r3
+		MoveW GraphPenX, r3
 GSSC5		STX GraphPenXL
 		STY GraphPenXH
 		RTS
@@ -523,14 +533,14 @@ _GetScanLine
 		LSR
 		LSR
 		TAX
-		+bbrf 7, dispBufferOn, GSC2
+		bbrf 7, dispBufferOn, GSC2
 		bvs GSC1
 		LDA LineTabL,X
 		ORA r6H
 		STA r5L
 		LDA LineTabH,X
 		STA r5H
-		+MoveW r5, r6
+		MoveW r5, r6
 		PLA
 		TAX
 		RTS
@@ -541,27 +551,27 @@ GSC1		LDA LineTabL,X
 		STA r6L
 		LDA LineTabH,X
 		STA r5H
-		+subv 64
+		subv 64
 		STA r6H
 		PLA
 		TAX
 		RTS
 
-GSC2		+bbrf 6, dispBufferOn, GSC3
+GSC2		bbrf 6, dispBufferOn, GSC3
 		LDA LineTabL,X
 		ORA r6H
 		STA r6L
 		LDA LineTabH,X
-		+subv 64
+		subv 64
 		STA r6H
-		+MoveW r6, r5
+		MoveW r6, r5
 		PLA
 		TAX
 		RTS
 
-GSC3		+LoadB r5L, 0
+GSC3		LoadB r5L, 0
 		STA r6L
-		+LoadB r5H, $AF
+		LoadB r5H, $AF
 		STA r6H
 		PLA
 		TAX
@@ -590,7 +600,7 @@ BitmClp2	LDA r12L
 		BNE BitmClp3
 		DEC r12H
 BitmClp3	DEC r12L
-		+bra BitmClp2
+		bra BitmClp2
 BitmClp4	LDA r11L
 		JSR BitmHelpClp
 		JSR BitmapUpHelp
@@ -606,12 +616,12 @@ BitmHelpClp	CMP #0
 		PHA
 		JSR BitmapDecode
 		PLA
-		+subv 1
+		subv 1
 		BNE BitmHelpClp
 BitmHClp1	RTS
 
 _i_BitmapUp
-		+PopW returnAddress
+		PopW returnAddress
 		LDY #1
 		LDA (returnAddress),y
 		STA r0L
@@ -636,21 +646,21 @@ _i_BitmapUp
 		JMP DoInlineReturn
 
 _BitmapUp
-		+PushB r9H
-		+LoadB r9H, NULL
+		PushB r9H
+		LoadB r9H, NULL
 		STA r3L
 		STA r4L
 BitmUp1 	JSR BitmapUpHelp
 		INC r1H
 		DEC r2H
 		BNE BitmUp1
-		+PopB r9H
+		PopB r9H
 		RTS
 
 BitmapUpHelp	LDX r1H
 		JSR _GetScanLine
-		+MoveB r2L, r3H
-		+CmpBI r1L, $20
+		MoveB r2L, r3H
+		CmpBI r1L, $20
 		BCC BitmUpH1
 		INC r5H
 		INC r6H
@@ -664,7 +674,7 @@ BitmUpH2	STY r9L
 		STA (r5),y
 		STA (r6),y
 		TYA
-		+addv 8
+		addv 8
 		BCC BitmUpH3
 		INC r5H
 		INC r6H
@@ -676,7 +686,7 @@ BitmUpH3	TAY
 BitmapDecode	LDA r3L
 		AND #%01111111
 		BEQ BitmDe2
-		+bbrf 7, r3L, BitmDe1
+		bbrf 7, r3L, BitmDe1
 		JSR BitmapDecode2
 		DEC r3L
 		RTS
@@ -685,7 +695,7 @@ BitmDe1 	LDA r7H
 		RTS
 BitmDe2 	LDA r4L
 		BNE BitmDe3
-		+bbrf 7, r9H, BitmDe3
+		bbrf 7, r9H, BitmDe3
 		JSR IndirectR14
 BitmDe3 	JSR BitmapDecode2
 		STA r3L
@@ -695,15 +705,15 @@ BitmDe3 	JSR BitmapDecode2
 		STA r7L
 		STA r4H
 		JSR BitmapDecode2
-		+subv 1
+		subv 1
 		STA r4L
-		+MoveW r0, r8
-		+bra BitmDe2
+		MoveW r0, r8
+		bra BitmDe2
 BitmDe4 	CMP #$80
 		BCS BitmapDecode
 		JSR BitmapDecode2
 		STA r7H
-		+bra BitmapDecode
+		bra BitmapDecode
 
 BitmapDecode2	BIT r9H
 		BPL BitmDe21
@@ -732,23 +742,23 @@ IndirectR14	JMP (r14)
 
 _DrawLine
 		PHP
-		+LoadB r7H, 0
+		LoadB r7H, 0
 		LDA r11H
-		+sub r11L
+		sub r11L
 		STA r7L
 		BCS DrwLin1
 		LDA #0
-		+sub r7L
+		sub r7L
 		STA r7L
 DrwLin1 	LDA r4L
-		+sub r3L
+		sub r3L
 		STA r12L
 		LDA r4H
 		SBC r3H
 		STA r12H
 		LDX #r12
 		JSR Dabs
-		+CmpW r12, r7
+		CmpW r12, r7
 		BCS DrwLin2
 		JMP DrawLine2
 DrwLin2 	LDA r7L
@@ -758,50 +768,50 @@ DrwLin2 	LDA r7L
 		ROL
 		STA r9H
 		LDA r9L
-		+sub r12L
+		sub r12L
 		STA r8L
 		LDA r9H
 		SBC r12H
 		STA r8H
 		LDA r7L
-		+sub r12L
+		sub r12L
 		STA r10L
 		LDA r7H
 		SBC r12H
 		STA r10H
 		ASL r10L
 		ROL r10H
-		+LoadB r13L, $ff
-		+CmpW r3, r4
+		LoadB r13L, $ff
+		CmpW r3, r4
 		BCC DrwLin4
-		+CmpB r11L, r11H
+		CmpB r11L, r11H
 		BCC DrwLin3
-		+LoadB r13L, $01
+		LoadB r13L, $01
 DrwLin3 	LDY r3H
 		LDX r3L
-		+MoveW r4, r3
+		MoveW r4, r3
 		STY r4H
 		STX r4L
-		+MoveB r11H, r11L
-		+bra DrwLin5
+		MoveB r11H, r11L
+		bra DrwLin5
 DrwLin4 	LDY r11H
 		CPY r11L
 		BCC DrwLin5
-		+LoadB r13L, 1
+		LoadB r13L, 1
 DrwLin5 	PLP
 		PHP
 		JSR _DrawPoint
-		+CmpW r3, r4
+		CmpW r3, r4
 		BCS DrwLin7
 		INC r3L
 		BNE *+4
 		INC r3H
-		+bbrf 7, r8H, DrwLin6
-		+AddW r9, r8
-		+bra DrwLin5
-DrwLin6 	+AddB r13L, r11L
-		+AddW r10, r8
-		+bra DrwLin5
+		bbrf 7, r8H, DrwLin6
+		AddW r9, r8
+		bra DrwLin5
+DrwLin6 	AddB r13L, r11L
+		AddW r10, r8
+		bra DrwLin5
 DrwLin7 	PLP
 		RTS
 
@@ -812,46 +822,46 @@ DrawLine2	LDA r12L
 		ROL
 		STA r9H
 		LDA r9L
-		+sub r7L
+		sub r7L
 		STA r8L
 		LDA r9H
 		SBC r7H
 		STA r8H
 		LDA r12L
-		+sub r7L
+		sub r7L
 		STA r10L
 		LDA r12H
 		SBC r7H
 		STA r10H
 		ASL r10L
 		ROL r10H
-		+LoadW r13, $ffff
-		+CmpB r11L, r11H
+		LoadW r13, $ffff
+		CmpB r11L, r11H
 		BCC Drw2Lin2
-		+CmpW r3, r4
+		CmpW r3, r4
 		BCC Drw2Lin1
-		+LoadW r13, $0001
-Drw2Lin1	+MoveW r4, r3
+		LoadW r13, $0001
+Drw2Lin1	MoveW r4, r3
 		LDX r11L
 		LDA r11H
 		STA r11L
 		STX r11H
-		+bra Drw2Lin3
-Drw2Lin2	+CmpW r3, r4
+		bra Drw2Lin3
+Drw2Lin2	CmpW r3, r4
 		BCS Drw2Lin3
-		+LoadW r13, $0001
+		LoadW r13, $0001
 Drw2Lin3	PLP
 		PHP
 		JSR _DrawPoint
-		+CmpB r11L, r11H
+		CmpB r11L, r11H
 		BCS Drw2Lin5
 		INC r11L
-		+bbrf 7, r8H, Drw2Lin4
-		+AddW r9, r8
-		+bra Drw2Lin3
-Drw2Lin4	+AddW r13, r3
-		+AddW r10, r8
-		+bra Drw2Lin3
+		bbrf 7, r8H, Drw2Lin4
+		AddW r9, r8
+		bra Drw2Lin3
+Drw2Lin4	AddW r13, r3
+		AddW r10, r8
+		bra Drw2Lin3
 Drw2Lin5	PLP
 		RTS
 
@@ -874,7 +884,7 @@ DrwPoi1 	LDA r3L
 		BMI DrwPoi4
 		BCC DrwPoi2
 		ORA (r6),y
-		+bra DrwPoi3
+		bra DrwPoi3
 DrwPoi2 	EOR #$ff
 		AND (r6),y
 DrwPoi3 	STA (r6),y

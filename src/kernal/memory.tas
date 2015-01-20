@@ -1,3 +1,13 @@
+.feature labels_without_colons
+.include "const.inc"
+.include "geossym.inc"
+.include "geosmac.inc"
+.include "equ.inc"
+.include "kernal.inc"
+.import FetchRAM, StashRAM, DoInlineReturn
+.global _ClearRam, _CmpFString, _CmpString, _CopyFString, _CopyString, _FillRam, _MoveData, _i_FillRam, _i_MoveData
+
+.segment "memory"
 
 ;memory handling functions (copy, compare, move, fill)
 
@@ -14,16 +24,16 @@ CStril0 	LDA (zpage),Y
 CSDest		= *+1
 		STA (zpage),Y
 		BNE CStril1
-		+beqx CStril2
+		beqx CStril2
 CStril1 	INY
 		BEQ CStril2
-		+beqx CStril0
+		beqx CStril0
 		DEX
 		BNE CStril0
 CStril2 	RTS
 
 _i_MoveData
-		+PopW returnAddress
+		PopW returnAddress
 		JSR GetMDataDatas
 		INY
 		LDA (returnAddress),Y
@@ -55,23 +65,23 @@ _MoveData
 		LDA r2L
 		ORA r2H
 		BEQ MData6
-		+PushW r0
-		+PushB r1H
-		+PushB r2H
-		+PushB r3L
-	!if (REUPresent) {
+		PushW r0
+		PushB r1H
+		PushB r2H
+		PushB r3L
+	.if (REUPresent)
 		LDA sysRAMFlg
 		BPL MData0
-		+PushB r1H
-		+LoadB r1H, 0
+		PushB r1H
+		LoadB r1H, 0
 		STA r3L
 		JSR StashRAM
-		+PopB r0H
-		+MoveB r1L, r0L
+		PopB r0H
+		MoveB r1L, r0L
 		JSR FetchRAM
-		+bra MData5
-	}
-MData0		+CmpW r0, r1
+		bra MData5
+	.endif
+MData0		CmpW r0, r1
 MData1		BCS MData2
 		BCC MData7
 MData2		LDY #0
@@ -90,15 +100,15 @@ MData4		CPY r2L
 		LDA (r0),Y
 		STA (r1),Y
 		INY
-		+bra MData4
-MData5		+PopB r3L
-		+PopB r2H
-		+PopB r1H
-		+PopW r0
+		bra MData4
+MData5		PopB r3L
+		PopB r2H
+		PopB r1H
+		PopW r0
 MData6		RTS
 
-MData7		+AddB r2H, r0H
-		+AddB r2H, r1H
+MData7		AddB r2H, r0H
+		AddB r2H, r1H
 		LDY r2L
 		BEQ MData9
 MData8		DEY
@@ -116,7 +126,7 @@ MData10 	DEY
 		TYA
 		BNE MData10
 		DEC r2H
-		+bra MData9
+		bra MData9
 
 _CmpString
 		LDA #0
@@ -131,17 +141,17 @@ CMSDest 	= *+1
 		BNE CMStrl2
 		CMP #0
 		BNE CMStrl1
-		+beqx CMStrl2
+		beqx CMStrl2
 CMStrl1 	INY
 		BEQ CMStrl2
-		+beqx CMStrl0
+		beqx CMStrl0
 		DEX
 		BNE CMStrl0
 		LDA #0
 CMStrl2 	RTS
 
 _ClearRam
-		+LoadB r2L, NULL
+		LoadB r2L, NULL
 _FillRam	LDA r0H
 		BEQ CRam2
 		LDA r2L
@@ -163,7 +173,7 @@ CRam3		STA (r1),Y
 CRam4		RTS
 
 _i_FillRam
-		+PopW returnAddress
+		PopW returnAddress
 		JSR GetMDataDatas
 		JSR _FillRam
 		PHP

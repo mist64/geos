@@ -1,3 +1,13 @@
+.feature labels_without_colons
+.include "const.inc"
+.include "geossym.inc"
+.include "geosmac.inc"
+.include "equ.inc"
+.include "kernal.inc"
+.import Ddec
+.global ConvertBCD, _BBMult, _BMult, _CRC, _DMult, _DSDiv, _DShiftLeft, _DShiftRight, _Dabs, _Ddec, _Ddiv, _Dnegate, _GetRandom
+
+.segment "math"
 
 ;various math routines
 
@@ -41,8 +51,8 @@ BBMul1		ROR
 _BMult
 		LDA #0
 		STA zpage+1,Y
-_DMult		+LoadB r8L, 16
-		+LoadW r7, 0
+_DMult		LoadB r8L, 16
+		LoadW r7, 0
 BMult0		LSR zpage+1,X
 		ROR zpage,X
 		BCC BMult1
@@ -66,8 +76,8 @@ BMult1		LSR
 		RTS
 
 _Ddiv
-		+LoadW r8, 0
-		+LoadB r9L, 16
+		LoadW r8, 0
+		LoadB r9L, 16
 Ddivl0		ASL zpage,X
 		ROL zpage+1,X
 		ROL r8L
@@ -134,15 +144,15 @@ GRandl0 	ASL random
 		ROL random+1
 		BCC GRandl2
 		LDA #$0F
-		+add random
+		add random
 		STA random
 		BCC GRandl1
 		INC random+1
 GRandl1 	RTS
-GRandl2 	+CmpBI random+1, $ff
+GRandl2 	CmpBI random+1, $ff
 		BCC GRandl3
 		LDA random
-		+subv $f1
+		subv $f1
 		BCC GRandl3
 		STA random
 		LDA #0

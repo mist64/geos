@@ -1,3 +1,10 @@
+.feature labels_without_colons
+.include "const.inc"
+.include "geossym.inc"
+.include "geosmac.inc"
+.include "equ.inc"
+.include "kernal.inc"
+.global SlowMouse, UpdateMouse
 
 ; this is 1531 mouse driver for GEOS
 ; reassembled by Maciej 'YTM/Elysium' Witkowiak
@@ -9,22 +16,22 @@ UpdateMouse	jmp _UpdateMouse
 SetMouse
 
 ;fe89
-tmpFire		!byte 0
-mseX		!byte 0
-mseY		!byte 0
+tmpFire		.byte 0
+mseX		.byte 0
+mseY		.byte 0
 
-_MouseInit	+LoadW mouseXPos, 8
-		+LoadB mouseYPos, 8
+_MouseInit	LoadW mouseXPos, 8
+		LoadB mouseYPos, 8
 _SlowMouse	rts
 
-_UpdateMouse	+bbsf MOUSEON_BIT, mouseOn, UM_1
+_UpdateMouse	bbsf MOUSEON_BIT, mouseOn, UM_1
 		jmp UM_END
 
-UM_1		+PushB CPU_DATA
-		+LoadB CPU_DATA, IO_IN
-		+PushW cia1base+2
-		+PushB cia1base+0
-		+LoadW cia1base+2, 0
+UM_1		PushB CPU_DATA
+		LoadB CPU_DATA, IO_IN
+		PushW cia1base+2
+		PushB cia1base+0
+		LoadW cia1base+2, 0
 
 		lda cia1base+1
 		and #$10
@@ -35,10 +42,10 @@ UM_1		+PushB CPU_DATA
 		asl
 		asl
 		sta mouseData
-		+smbf MOUSE_BIT, pressFlag
+		smbf MOUSE_BIT, pressFlag
 
-UM_2		+LoadB cia1base+2, $ff
-		+LoadB cia1base+0, $40
+UM_2		LoadB cia1base+2, $ff
+		LoadB cia1base+0, $40
 		ldx #$66
 UM_3		nop
 		nop
@@ -60,7 +67,7 @@ UM_3		nop
 UM_4		ora r1L
 		sta r1L
 		pla
-UM_5		+add mouseXPos+0
+UM_5		add mouseXPos+0
 		sta mouseXPos+0
 		txa
 		adc mouseXPos+1
@@ -87,16 +94,16 @@ UM_7		sec
 		adc mouseYPos
 		sta mouseYPos
 		php
-		+CmpBI mouseYPos, 199
+		CmpBI mouseYPos, 199
 		bcc UM_8
-		+LoadB mouseYPos, 199
+		LoadB mouseYPos, 199
 UM_8		plp
 		txa
 		eor #$ff
 		adc #0
 		cmp #$ff
 		bne UM_9
-		+LoadB mouseYPos, 0
+		LoadB mouseYPos, 0
 UM_9		lda r1L
 		lsr
 		lsr
@@ -105,13 +112,13 @@ UM_9		lda r1L
 		tax
 		lda mseDirTab,x
 		sta inputData
-		+PopB cia1base
-		+PopW cia1base+2
-		+PopB CPU_DATA
+		PopB cia1base
+		PopW cia1base+2
+		PopB CPU_DATA
 UM_END		rts
 
-mseDirTab	!byte $ff, $06, $02, $ff, $00, $07, $01, $ff
-		!byte $04, $05, $03, $ff, $ff, $ff, $ff, $ff
+mseDirTab	.byte $ff, $06, $02, $ff, $00, $07, $01, $ff
+		.byte $04, $05, $03, $ff, $ff, $ff, $ff, $ff
 
 CountDelta	sty r0L
 		sta r0H
@@ -144,7 +151,7 @@ deltaNegative	ora #$c0
 deltaZero	lda #0
 		rts
 
-deltaTab	!byte $01, $01, $02, $02, $03, $04, $06, $08
-		!byte $09, $0b, $0d, $0f, $11, $13, $15, $19
-		!byte $1d, $20, $23, $26, $29, $2c, $2f, $32
-		!byte $35, $38, $3c, $41, $4b, $50, $5a, $64
+deltaTab	.byte $01, $01, $02, $02, $03, $04, $06, $08
+		.byte $09, $0b, $0d, $0f, $11, $13, $15, $19
+		.byte $1d, $20, $23, $26, $29, $2c, $2f, $32
+		.byte $35, $38, $3c, $41, $4b, $50, $5a, $64

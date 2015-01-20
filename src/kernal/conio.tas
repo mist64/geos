@@ -1,4 +1,14 @@
+;BSWFont := $d210
+.feature labels_without_colons
+.include "const.inc"
+.include "geossym.inc"
+.include "geosmac.inc"
+.include "equ.inc"
+.include "kernal.inc"
+.import KbdScanHelp3, DecTabH, DecTabL, _DisablSprite, _EnablSprite, _PosSprite, PutChar, PutString, Ddec, _GraphicsString, Font_10, _GetRealSize, CallRoutine, PutCharTabH, PutCharTabL, BSWFont
+.global DoBACKSPACE, DoBOLDON, DoCR, DoESC_GRAPHICS, DoESC_RULER, DoGOTOXY, DoGOTOY, DoHOME, DoITALICON, DoLF, DoNEWCARDSET, DoOUTLINEON, DoPLAINTEXT, DoREV_OFF, DoREV_ON, DoTAB, DoULINEOFF, DoULINEON, DoUPLINE, GetChWdth1, ProcessCursor, _GetCharWidth, _GetNextChar, _GetString, _InitTextPrompt, _LoadCharSet, _PromptOff, _PromptOn, _PutChar, _PutDecimal, _PutString, _SmallPutChar, _UseSystemFont, _i_PutString, DoGOTOX
 
+.segment "conio"
 ;simply console I/O
 
 ;17-8-99 - ACME port
@@ -19,21 +29,21 @@ PutChar1	PHA
 		JSR _GetRealSize
 		DEY
 		TYA
-		+add r13L
+		add r13L
 		STA r13L
 		BCC *+4
 		INC r13H
-		+CmpW rightMargin, r13
+		CmpW rightMargin, r13
 		BCC PutChar4
-		+CmpW leftMargin, r11
+		CmpW leftMargin, r11
 		BEQ PutChar2
 		BCS PutChar3
 PutChar2	PLA
 _SmallPutChar
-		+subv $20
+		subv $20
 		JMP Font_10
 PutChar3	LDA r13L
-		+addv 1
+		addv 1
 		STA r11L
 		LDA r13H
 		ADC #0
@@ -44,7 +54,7 @@ PutChar4	PLA
 		JMP CallRoutine
 
 DoTAB		LDA #0
-		+add r11L
+		add r11L
 		STA r11L
 		BCC *+4
 		INC r11H
@@ -56,26 +66,26 @@ DoLF		LDA r1H
 		STA r1H
 		RTS
 
-DoHOME		+LoadW r11, 0
+DoHOME		LoadW r11, 0
 		STA r1H
 DoESC_RULER	RTS
 
-DoUPLINE	+SubB curHeight, r1H
+DoUPLINE	SubB curHeight, r1H
 		RTS
 
-DoCR		+MoveW leftMargin, r11
+DoCR		MoveW leftMargin, r11
 		JMP DoLF
 
-DoULINEON	+smbf UNDERLINE_BIT, currentMode
+DoULINEON	smbf UNDERLINE_BIT, currentMode
 		RTS
 
-DoULINEOFF	+rmbf UNDERLINE_BIT, currentMode
+DoULINEOFF	rmbf UNDERLINE_BIT, currentMode
 		RTS
 
-DoREV_ON	+smbf REVERSE_BIT, currentMode
+DoREV_ON	smbf REVERSE_BIT, currentMode
 		RTS
 
-DoREV_OFF	+rmbf REVERSE_BIT, currentMode
+DoREV_OFF	rmbf REVERSE_BIT, currentMode
 		RTS
 
 DoGOTOX 	INC r0L
@@ -102,31 +112,31 @@ DoGOTOY 	INC r0L
 DoGOTOXY	JSR DoGOTOX
 		JMP DoGOTOY
 
-DoNEWCARDSET	+AddVW 3, r0
+DoNEWCARDSET	AddVW 3, r0
 		RTS
 
-DoBOLDON	+smbf BOLD_BIT, currentMode
+DoBOLDON	smbf BOLD_BIT, currentMode
 		RTS
 
-DoITALICON	+smbf ITALIC_BIT, currentMode
+DoITALICON	smbf ITALIC_BIT, currentMode
 		RTS
 
-DoOUTLINEON	+smbf OUTLINE_BIT, currentMode
+DoOUTLINEON	smbf OUTLINE_BIT, currentMode
 		RTS
 
-DoPLAINTEXT	+LoadB currentMode, NULL
+DoPLAINTEXT	LoadB currentMode, NULL
 		RTS
 
 DoBACKSPC	LDX currentMode
 		JSR _GetRealSize
 		STY PrvCharWidth
-DoBACKSPACE	+SubB PrvCharWidth, r11L
+DoBACKSPACE	SubB PrvCharWidth, r11L
 		BCS *+4
 		DEC r11H
-		+PushW r11
+		PushW r11
 		LDA #$5f
 		JSR Font_10
-		+PopW r11
+		PopW r11
 		RTS
 
 DoESC_GRAPHICS	INC r0L
@@ -138,11 +148,11 @@ DoESC_GRAPHICS	INC r0L
 		LDX #r0
 		jmp Ddec
 
-_i_PutString	+PopB r0L
+_i_PutString	PopB r0L
 		PLA
 		INC r0L
 		BNE iPutSt1
-		+addv 1
+		addv 1
 iPutSt1 	STA r0H
 		LDY #0
 		LDA (r0),y
@@ -174,23 +184,23 @@ _PutString
 		INC r0L
 		BNE *+4
 		INC r0H
-		+bra _PutString
+		bra _PutString
 PutStr1 	RTS
 
 _UseSystemFont
-		+LoadW r0, BSWFont
+		LoadW r0, BSWFont
 _LoadCharSet	LDY #0
 UseSysFnt1	LDA (r0),y
 		STA baselineOffset,y
 		INY
 		CPY #8
 		BNE UseSysFnt1
-		+AddW r0, curIndexTable
-		+AddW r0, cardDataPntr
+		AddW r0, curIndexTable
+		AddW r0, cardDataPntr
 		rts
 
 _GetCharWidth
-		+subv $20
+		subv $20
 		BCS GetChWdth1
 		LDA #0
 		RTS
@@ -210,23 +220,23 @@ GetChWdth2	ASL
 		RTS
 
 _GetString
-		+MoveW r0, string
-		+MoveB r1L, stringMargCtrl
-		+MoveB r1H, stringY
-		+MoveB r2L, stringMaxLen
-		+PushB r1H
+		MoveW r0, string
+		MoveB r1L, stringMargCtrl
+		MoveB r1H, stringY
+		MoveB r2L, stringMaxLen
+		PushB r1H
 		CLC
 		LDA baselineOffset
 		ADC r1H
 		STA r1H
 		JSR PutString
-		+PopB r1H
+		PopB r1H
 		SEC
 		LDA r0L
 		SBC string
 		STA stringLen
-		+MoveW r11, stringX
-		+MoveW keyVector, tmpKeyVector
+		MoveW r11, stringX
+		MoveW keyVector, tmpKeyVector
 		LDA #>GSSkeyVector
 		STA keyVector+1
 		LDA #<GSSkeyVector
@@ -235,13 +245,13 @@ _GetString
 		STA StringFaultVec+1
 		LDA #<GSStringFault
 		STA StringFaultVec
-		+bbrf 7, stringMargCtrl, GetStr1
-		+MoveW r4, StringFaultVec
+		bbrf 7, stringMargCtrl, GetStr1
+		MoveW r4, StringFaultVec
 GetStr1 	LDA curHeight
 		JSR _InitTextPrompt
 		JMP _PromptOn
 
-GSStringFault	+MoveB stringLen, stringMaxLen
+GSStringFault	MoveB stringLen, stringMaxLen
 		DEC stringLen
 GSStrFltEnd	RTS
 
@@ -251,14 +261,14 @@ ProcessCursor	LDA alphaFlag
 		LDA alphaFlag
 		AND #$3f
 		BNE GSStrFltEnd
-		+bbrf 6, alphaFlag, ProcCur1
+		bbrf 6, alphaFlag, ProcCur1
 		JMP _PromptOff
 ProcCur1	JMP _PromptOn
 
 GSSkeyVector
 		JSR _PromptOff
-		+MoveW stringX, r11
-		+MoveB stringY, r1H
+		MoveW stringX, r11
+		MoveB stringY, r1H
 		LDY stringLen
 		LDA keyData
 		BPL GSSkeyVec2
@@ -273,31 +283,31 @@ GSSkeyVec2	CMP #CR
 		BEQ GSSkeyVec3
 		CMP #KEY_RIGHT
 		BEQ GSSkeyVec3
-		CMP #" "
+		CMP #' '
 		BCC GSSkeyVec1
 		CPY stringMaxLen
 		BEQ GSSkeyVec4
 		STA (string),y
-		+PushB dispBufferOn
-		+bbrf 5, dispBufferOn, GSSkeyVec21
-		+LoadB dispBufferOn, (ST_WR_FORE | ST_WRGS_FORE)
-GSSkeyVec21	+PushB r1H
+		PushB dispBufferOn
+		bbrf 5, dispBufferOn, GSSkeyVec21
+		LoadB dispBufferOn, (ST_WR_FORE | ST_WRGS_FORE)
+GSSkeyVec21	PushB r1H
 		CLC
 		LDA baselineOffset
 		ADC r1H
 		STA r1H
 		LDA (string),y
 		JSR PutChar
-		+PopB r1H
-		+PopB dispBufferOn
+		PopB r1H
+		PopB dispBufferOn
 		INC stringLen
 		LDX r11H
 		STX stringX+1
 		LDX r11L
 		STX stringX
-		+bra GSSkeyVec4
+		bra GSSkeyVec4
 GSSkeyVec3	JSR GSHelp1
-		+bra GSSkeyVec4
+		bra GSSkeyVec4
 GSSkeyVec4	JMP _PromptOn
 GSSkeyVec5	SEI
 		JSR _PromptOff
@@ -307,7 +317,7 @@ GSSkeyVec5	SEI
 		CLI
 		LDA #0
 		STA (string),y
-		+MoveW tmpKeyVector, r0
+		MoveW tmpKeyVector, r0
 		LDA #0
 		STA keyVector
 		STA keyVector+1
@@ -320,19 +330,19 @@ GSHelp1 	CPY #0
 		BEQ GSHelp12
 		DEY
 		STY stringLen
-		+PushB dispBufferOn
-		+bbrf 5, dispBufferOn, GSHelp11
-		+LoadB dispBufferOn, (ST_WR_FORE | ST_WRGS_FORE)
-GSHelp11	+PushB r1H
+		PushB dispBufferOn
+		bbrf 5, dispBufferOn, GSHelp11
+		LoadB dispBufferOn, (ST_WR_FORE | ST_WRGS_FORE)
+GSHelp11	PushB r1H
 		CLC
 		LDA baselineOffset
 		ADC r1H
 		STA r1H
 		LDA (string),y
 		JSR DoBACKSPC
-		+PopB r1H
+		PopB r1H
 		LDY stringLen
-		+PopB dispBufferOn
+		PopB dispBufferOn
 		LDX r11H
 		STX stringX+1
 		LDX r11L
@@ -346,18 +356,18 @@ _PromptOn
 		LDA #%01000000
 		ORA alphaFlag
 		STA alphaFlag
-		+LoadB r3L, 1
-		+MoveW stringX, r4
-		+MoveB stringY, r5L
+		LoadB r3L, 1
+		MoveW stringX, r4
+		MoveB stringY, r5L
 		JSR _PosSprite
 		JSR _EnablSprite
-		+bra PrmptOff1
+		bra PrmptOff1
 
 _PromptOff
 		LDA #%10111111
 		AND alphaFlag
 		STA alphaFlag
-		+LoadB r3L, 1
+		LoadB r3L, 1
 		JSR _DisablSprite
 PrmptOff1	LDA alphaFlag
 		AND #%11000000
@@ -367,15 +377,15 @@ PrmptOff1	LDA alphaFlag
 
 _InitTextPrompt
 		TAY
-		+PushB CPU_DATA
-		+LoadB CPU_DATA, IO_IN
-		+MoveB mob0clr, mob1clr
+		PushB CPU_DATA
+		LoadB CPU_DATA, IO_IN
+		MoveB mob0clr, mob1clr
 		LDA moby2
 		AND #%11111101
 		STA moby2
 		TYA
 		PHA
-		+LoadB alphaFlag, %10000011
+		LoadB alphaFlag, %10000011
 		LDX #64
 		LDA #0
 IniTxPrm1	STA spr1pic-1,x
@@ -399,12 +409,12 @@ IniTxPrm3	STA spr1pic,x
 		INX
 		DEY
 		BPL IniTxPrm3
-		+PopB CPU_DATA
+		PopB CPU_DATA
 		RTS
 
 CalcDecimal	STA r2L
-		+LoadB r2H, 4
-		+LoadW r3, 0
+		LoadB r2H, 4
+		LoadW r3, 0
 CalcDec0	LDY #0
 		LDX r2H
 CalcDec1	LDA r0L
@@ -416,7 +426,7 @@ CalcDec1	LDA r0L
 		BCC CalcDec2
 		STA r0H
 		INY
-		+bra CalcDec1
+		bra CalcDec1
 CalcDec2	LDA r0L
 		ADC DecTabL,x
 		STA r0L
@@ -424,14 +434,14 @@ CalcDec2	LDA r0L
 		BNE CalcDec3
 		CPX #0
 		BEQ CalcDec3
-		+bbsf 6, r2L, CalcDec4
+		bbsf 6, r2L, CalcDec4
 CalcDec3	ORA #%00110000
 		LDX r3L
 		STA Z45,x
 		LDX currentMode
 		JSR _GetRealSize
 		TYA
-		+add r3H
+		add r3H
 		STA r3H
 		INC r3L
 		LDA #%10111111
@@ -443,11 +453,11 @@ CalcDec4	DEC r2H
 
 _PutDecimal
 		JSR CalcDecimal
-		+bbsf 7, r2L, PutDec1
+		bbsf 7, r2L, PutDec1
 		LDA r2L
 		AND #$3f
-		+sub r3H
-		+add r11L
+		sub r3H
+		add r11L
 		STA r11L
 		BCC *+4
 		INC r11H
@@ -464,7 +474,7 @@ PutDec3 	PLA
 		RTS
 
 _GetNextChar
-		+bbrf KEYPRESS_BIT, pressFlag, GetNxtChar1
+		bbrf KEYPRESS_BIT, pressFlag, GetNxtChar1
 		JMP KbdScanHelp3
 GetNxtChar1	LDA #0
 		RTS
