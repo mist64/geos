@@ -29,10 +29,20 @@ DEPS=inc/const.inc inc/diskdrv.inc inc/equ.inc inc/geosmac.inc inc/geossym.inc i
 
 KERNAL_OBJECTS=$(KERNAL_SOURCES:.s=.o)
 
-all: kernal.bin drv1541.bin drv1571.bin drv1581.bin amigamse.bin joydrv.bin lightpen.bin mse1531.bin
+ALL_BINS=kernal.bin drv1541.bin drv1571.bin drv1581.bin amigamse.bin joydrv.bin lightpen.bin mse1531.bin
+
+all: combined.prg
 
 clean:
-	rm -f $(KERNAL_OBJECTS) kernal.bin drv1541.bin drv1571.bin drv1581.bin amigamse.bin joydrv.bin lightpen.bin mse1531.bin
+	rm -f $(KERNAL_OBJECTS) $(ALL_BINS) combined.prg
+
+combined.prg: $(ALL_BINS)
+	printf "\x00\x50" > tmp.bin
+	dd if=kernal.bin bs=1 count=16384 >> tmp.bin
+	cat drv1541.bin /dev/zero | dd bs=1 count=3456 >> tmp.bin
+	cat kernal.bin /dev/zero | dd bs=1 skip=19840 count=24832 >> tmp.bin
+	cat joydrv.bin >> tmp.bin
+	mv tmp.bin combined.prg
 
 kernal.bin: $(KERNAL_OBJECTS) src/kernal/kernal.cfg
 	$(LD) -C src/kernal/kernal.cfg $(KERNAL_OBJECTS) -o $@
