@@ -3,7 +3,7 @@
 .include "const.inc"
 .include "geossym.inc"
 .include "geosmac.inc"
-.include "equ.inc"
+.include "config.inc"
 .import FetchRAM, StashRAM, DoInlineReturn
 .global _ClearRam, _CmpFString, _CmpString, _CopyFString, _CopyString, _FillRam, _MoveData, _i_FillRam, _i_MoveData
 

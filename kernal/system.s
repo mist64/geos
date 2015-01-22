@@ -3,7 +3,7 @@
 .include "const.inc"
 .include "geossym.inc"
 .include "geosmac.inc"
-.include "equ.inc"
+.include "config.inc"
 .include "kernal.inc"
 .import daysTab, dateCopy, ConvertBCD, BitMask2, CallRoutine
 .global KbdScanHelp3, _DoUpdateTime, _IRQHandler, _NMIHandler

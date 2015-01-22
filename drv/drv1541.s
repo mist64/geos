@@ -4,7 +4,7 @@
 .include "const.inc"
 .include "geossym.inc"
 .include "geosmac.inc"
-.include "equ.inc"
+.include "config.inc"
 .include "kernal.inc"
 .include "jumptab.inc"
 

@@ -3,7 +3,7 @@
 .include "const.inc"
 .include "geossym.inc"
 .include "geosmac.inc"
-.include "equ.inc"
+.include "config.inc"
 .include "kernal.inc"
 .include "diskdrv.inc"
 .import DkNmTab, FreeBlock, LoKernal, GetFreeDirBlk, BldGDirEntry, WriteFile, PutBlock, PutDirHead, SetGDirEntry, BlkAlloc, GetDirHead, StartAppl, LdFile, FastDelFile, Dialog_2, GetFile, _MNLP, InitGEOEnv, UseSystemFont, DlgBoxPrep, GetBlock, FetchRAM, ExitTurbo, ClearRam, ReadFile, GetFHdrInfo, LdApplic, LdDeskAcc, UNK_4, FindFile, UNK_5

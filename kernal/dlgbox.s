@@ -3,7 +3,7 @@
 .include "const.inc"
 .include "geossym.inc"
 .include "geosmac.inc"
-.include "equ.inc"
+.include "config.inc"
 .include "kernal.inc"
 .import Ddec, InvertRectangle, BBMult, CopyString, Ddiv, IsMseInRegion, FindFTypes, HorizontalLine, GetString, PutString, GraphicsString, RstrFrmDialogue, DBIcPicDISK, DBIcPicOPEN, DBIcPicNO, DBIcPicYES, DBIcPicCANCEL, DBIcPicOK, CalcIconDescTab, RcvrMnu0, FrameRectangle, Rectangle, SetPattern, InitGEOEnv, MainLoop, DoIcons, CallRoutine, _UseSystemFont, _StartMouseMode
 .global Dialog_2, DlgBoxPrep, _DoDlgBox, _RstrFrmDialogue

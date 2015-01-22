@@ -1,7 +1,7 @@
-AS=~/Documents/cc65/bin/ca65
-LD=~/Documents/cc65/bin/ld65
+AS=ca65
+LD=ld65
 
-ASFLAGS=--include-dir inc
+ASFLAGS=-I inc -I .
 
 KERNAL_SOURCES= \
 kernal/init.s \

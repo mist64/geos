@@ -1,4 +1,4 @@
-; GEOS System various equates
+; GEOS System build configuration
 ; by Maciej 'YTM/Elysium' Witkowiak
 
 ; select the driver for the boot drive from the list:
