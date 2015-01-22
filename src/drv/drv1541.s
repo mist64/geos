@@ -6,8 +6,7 @@
 .include "geosmac.i"
 .include "equ.i"
 .include "kernal.i"
-.import DoRAMOp, StashRAM, ExitTurbo, SetDevice, PutDirHead, FindBAMBit, SetNextFree, CalcBlksFree, Ddiv, CopyFString, GetPtrCurDkNm, ChkDkGEOS, GetDirHead, NewDisk, VerWriteBlock, WriteBlock, DoneWithIO, ReadBlock, InitForIO, EnterTurbo
-.global _InitForIO, _DoneWithIO, _ExitTurbo, _PurgeTurbo, _EnterTurbo, _ChangeDiskDevice, _NewDisk, _ReadBlock, _WriteBlock, _VerWriteBlock, _OpenDisk, _GetBlock, _PutBlock, _GetDirHead, _PutDirHead, _GetFreeDirBlk, _CalcBlksFree, _FreeBlock, _SetNextFree, _FindBAMBit, _NxtBlkAlloc, _BlkAlloc, _ChkDkGEOS, _SetGEOSDisk, WriteBuff, ReadBuff, Get1stDirEntry, GetNxtDirEntry
+.include "jumptab.inc"
 
 .segment "drv1541"
 

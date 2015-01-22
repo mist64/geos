@@ -7,12 +7,13 @@
 .include "geosmac.i"
 .include "equ.i"
 .include "kernal.i"
+.include "diskdrv.i"
 .import InitMsePic, ClrScr, _DoUpdateTime, _DoCheckDelays, _ExecuteProcesses, _DoCheckButtons, ResetMseRegion, ProcessCursor, _ProcessDelays, _ProcessTimers, ProcessMouse, _DoRAMOp, _VerifyRAM, _SwapRAM, _FetchRAM, _StashRAM
-.import _BitOtherClip, _RstrFrmDialogue, _ChangeDiskDevice, _FreeBlock, _ReadByte, _IsMseInRegion, _SetDevice, _FindBAMBit, _BitmapClip, _GetNextChar, _OpenDisk, _PromptOff, _PromptOn, _GetPtrCurDkNm, _UpdateRecordFile, _SetNextFree
-.import _WriteRecord, _ReadRecord, _AppendRecord, _InsertRecord, _DeleteRecord, _PointRecord, _PreviousRecord, _NextRecord, _CloseRecordFile, _OpenRecordFile, _CmpFString, _CmpString, _CopyFString, _CopyString, _DShiftRight, _DoneWithIO
-.import _InitForIO, _RenameFile, _DoDlgBox, _i_ImprintRectangle, _ImprintRectangle, _NxtBlkAlloc, _PutDirHead, _GetDirHead, _FastDelFile, _RstrAppl, _FindFTypes, _DeleteFile, _PurgeTurbo, _ExitTurbo, _GetFHdrInfo, _FreeFile
-.import _VerWriteBlock, _WriteBlock, _LdApplic, _ReadBlock, _LdDeskAcc, _EnterTurbo, _LdFile, _CRC, _FindFile, _GetFile, _FollowChain, _SmallPutChar, _ReadFile, _BlkAlloc, _WriteFile
-.import _GetFreeDirBlk, _BldGDirEntry, _SetGDirEntry, _SaveFile, _SetGEOSDisk, _PutBlock, _GetBlock, _NewDisk, _ChkDkGEOS, _CalcBlksFree, _DisablSprite, _EnablSprite, _PosSprite, _LoadCharSet, _GetCharWidth, _DrawSprite
+.import _BitOtherClip, _RstrFrmDialogue, _ReadByte, _IsMseInRegion, _SetDevice, _BitmapClip, _GetNextChar, _PromptOff, _PromptOn, _GetPtrCurDkNm, _UpdateRecordFile
+.import _WriteRecord, _ReadRecord, _AppendRecord, _InsertRecord, _DeleteRecord, _PointRecord, _PreviousRecord, _NextRecord, _CloseRecordFile, _OpenRecordFile, _CmpFString, _CmpString, _CopyFString, _CopyString, _DShiftRight
+.import _RenameFile, _DoDlgBox, _i_ImprintRectangle, _ImprintRectangle, _FastDelFile, _RstrAppl, _FindFTypes, _DeleteFile, _GetFHdrInfo, _FreeFile
+.import _LdApplic, _LdDeskAcc, _LdFile, _CRC, _FindFile, _GetFile, _FollowChain, _SmallPutChar, _ReadFile, _WriteFile
+.import _BldGDirEntry, _SetGDirEntry, _SaveFile, _DisablSprite, _EnablSprite, _PosSprite, _LoadCharSet, _GetCharWidth, _DrawSprite
 .import _InitTextPrompt, _GotoFirstMenu, _GetString, _i_MoveData, _i_FillRam, _GetRealSize, _i_PutString, _i_BitmapUp, _i_GraphicsString, _i_RecoverRectangle, _i_FrameRectangle, _i_Rectangle, _ClearMouseMode, _Sleep, _ReDoMenu, _DoPreviousMenu
 .import _MouseOff, _MouseUp, _GetRandom, _PutDecimal, _MoveData, _FillRam, _ClearRam, _Ddec, _Dnegate, _Dabs, _DSDiv, _Ddiv, _DMult, _BMult, _BBMult, _DShiftLeft
 .import _DoIcons, _RecoverAllMenus, _RecoverMenu, _DoMenu, _StartMouseMode, _UseSystemFont, _PutString, _PutChar, _BitmapUp, _TestPoint, _GetScanLine, _SetPattern, _GraphicsString, _DrawPoint, _DrawLine, _RecoverRectangle
