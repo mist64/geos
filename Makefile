@@ -29,7 +29,7 @@ DEPS=inc/const.inc inc/diskdrv.inc inc/equ.inc inc/geosmac.inc inc/geossym.inc i
 
 KERNAL_OBJECTS=$(KERNAL_SOURCES:.s=.o)
 
-ALL_BINS=kernal.bin drv1541.bin drv1571.bin drv1581.bin amigamse.bin joydrv.bin lightpen.bin mse1531.bin combined.prg compressed.prg geos.d64
+ALL_BINS=kernal.bin drv1541.bin drv1571.bin drv1581.bin amigamse.bin joydrv.bin lightpen.bin mse1531.bin koalapad.bin pcanalog.bin combined.prg compressed.prg geos.d64
 
 all: geos.d64
 
@@ -73,6 +73,12 @@ lightpen.bin: input/lightpen.o input/lightpen.cfg
 
 mse1531.bin: input/mse1531.o input/mse1531.cfg
 	$(LD) -C input/mse1531.cfg input/mse1531.o -o $@
+
+koalapad.bin: input/koalapad.o input/koalapad.cfg
+	$(LD) -C input/koalapad.cfg input/koalapad.o -o $@
+
+pcanalog.bin: input/pcanalog.o input/pcanalog.cfg
+	$(LD) -C input/pcanalog.cfg input/pcanalog.o -o $@
 
 %.o: %.s $(DEPS)
 	$(AS) $(ASFLAGS) $< -o $@
