@@ -4,26 +4,26 @@ LD=~/Documents/cc65/bin/ld65
 ASFLAGS=--include-dir inc
 
 KERNAL_SOURCES= \
-src/kernal/init.s \
-src/kernal/bswfont.s \
-src/kernal/icons.s \
-src/kernal/lokernal.s \
-src/kernal/patterns.s \
-src/kernal/unknown.s \
-src/kernal/conio.s \
-src/kernal/dlgbox.s \
-src/kernal/files.s \
-src/kernal/fonts.s \
-src/kernal/graph.s \
-src/kernal/icon.s \
-src/kernal/main.s \
-src/kernal/math.s \
-src/kernal/memory.s \
-src/kernal/menu.s \
-src/kernal/mouseio.s \
-src/kernal/process.s \
-src/kernal/sprites.s \
-src/kernal/system.s
+kernal/init.s \
+kernal/bswfont.s \
+kernal/icons.s \
+kernal/lokernal.s \
+kernal/patterns.s \
+kernal/unknown.s \
+kernal/conio.s \
+kernal/dlgbox.s \
+kernal/files.s \
+kernal/fonts.s \
+kernal/graph.s \
+kernal/icon.s \
+kernal/main.s \
+kernal/math.s \
+kernal/memory.s \
+kernal/menu.s \
+kernal/mouseio.s \
+kernal/process.s \
+kernal/sprites.s \
+kernal/system.s
 
 DEPS=inc/const.inc inc/diskdrv.inc inc/equ.inc inc/geosmac.inc inc/geossym.inc inc/kernal.inc inc/printdrv.inc
 
@@ -34,7 +34,7 @@ ALL_BINS=kernal.bin drv1541.bin drv1571.bin drv1581.bin amigamse.bin joydrv.bin 
 all: geos.d64
 
 clean:
-	rm -f $(KERNAL_OBJECTS) src/drv/*.o src/input/*.o $(ALL_BINS) combined.prg
+	rm -f $(KERNAL_OBJECTS) drv/*.o input/*.o $(ALL_BINS) combined.prg
 
 geos.d64: compressed.prg
 	c1541 <c1541.in >/dev/null
@@ -50,29 +50,29 @@ combined.prg: $(ALL_BINS)
 	cat joydrv.bin >> tmp.bin
 	mv tmp.bin combined.prg
 
-kernal.bin: $(KERNAL_OBJECTS) src/kernal/kernal.cfg
-	$(LD) -C src/kernal/kernal.cfg $(KERNAL_OBJECTS) -o $@
+kernal.bin: $(KERNAL_OBJECTS) kernal/kernal.cfg
+	$(LD) -C kernal/kernal.cfg $(KERNAL_OBJECTS) -o $@
 
-drv1541.bin: src/drv/drv1541.o src/drv/drv1541.cfg
-	$(LD) -C src/drv/drv1541.cfg src/drv/drv1541.o -o $@
+drv1541.bin: drv/drv1541.o drv/drv1541.cfg
+	$(LD) -C drv/drv1541.cfg drv/drv1541.o -o $@
 
-drv1571.bin: src/drv/drv1571.o src/drv/drv1571.cfg
-	$(LD) -C src/drv/drv1571.cfg src/drv/drv1571.o -o $@
+drv1571.bin: drv/drv1571.o drv/drv1571.cfg
+	$(LD) -C drv/drv1571.cfg drv/drv1571.o -o $@
 
-drv1581.bin: src/drv/drv1581.o src/drv/drv1581.cfg
-	$(LD) -C src/drv/drv1581.cfg src/drv/drv1581.o -o $@
+drv1581.bin: drv/drv1581.o drv/drv1581.cfg
+	$(LD) -C drv/drv1581.cfg drv/drv1581.o -o $@
 
-amigamse.bin: src/input/amigamse.o src/input/amigamse.cfg
-	$(LD) -C src/input/amigamse.cfg src/input/amigamse.o -o $@
+amigamse.bin: input/amigamse.o input/amigamse.cfg
+	$(LD) -C input/amigamse.cfg input/amigamse.o -o $@
 
-joydrv.bin: src/input/joydrv.o src/input/joydrv.cfg
-	$(LD) -C src/input/joydrv.cfg src/input/joydrv.o -o $@
+joydrv.bin: input/joydrv.o input/joydrv.cfg
+	$(LD) -C input/joydrv.cfg input/joydrv.o -o $@
 
-lightpen.bin: src/input/lightpen.o src/input/lightpen.cfg
-	$(LD) -C src/input/lightpen.cfg src/input/lightpen.o -o $@
+lightpen.bin: input/lightpen.o input/lightpen.cfg
+	$(LD) -C input/lightpen.cfg input/lightpen.o -o $@
 
-mse1531.bin: src/input/mse1531.o src/input/mse1531.cfg
-	$(LD) -C src/input/mse1531.cfg src/input/mse1531.o -o $@
+mse1531.bin: input/mse1531.o input/mse1531.cfg
+	$(LD) -C input/mse1531.cfg input/mse1531.o -o $@
 
 %.o: %.s $(DEPS)
 	$(AS) $(ASFLAGS) $< -o $@
