@@ -1,10 +1,10 @@
 ;GEOS 1571 disk driver
 ;reassembled by Maciej 'YTM/Elysium' Witkowiak
 
-.include "const.inc"
-.include "geossym.inc"
-.include "geosmac.inc"
-.include "kernal.inc"
+.include "const.i"
+.include "geossym.i"
+.include "geosmac.i"
+.include "kernal.i"
 .import ExitTurbo, SetDevice, PutDirHead, FindBAMBit, SetNextFree, CalcBlksFree, Ddiv, CopyFString, GetPtrCurDkNm, ChkDkGEOS, GetDirHead, NewDisk, VerWriteBlock, WriteBlock, DoneWithIO, ReadBlock, InitForIO, EnterTurbo
 .global Get1stDirEntry, GetNxtDirEntry, ReadBuff, WriteBuff, _BlkAlloc, _CalcBlksFree, _ChangeDiskDevice, _ChkDkGEOS, _DoneWithIO, _EnterTurbo, _ExitTurbo, _FindBAMBit, _FreeBlock, _GetBlock, _GetDirHead, _GetFreeDirBlk, _InitForIO, _NewDisk, _NxtBlkAlloc, _OpenDisk, _PurgeTurbo, _PutBlock, _PutDirHead, _ReadBlock, _SetGEOSDisk, _SetNextFree, _VerWriteBlock, _WriteBlock
 

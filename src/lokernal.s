@@ -1,11 +1,11 @@
 ;GEOS System KERNAL - lower part, placed after disk driver
 ;reassembled by Maciej 'YTM/Alliance' Witkowiak
 
-.include "const.inc"
-.include "geossym.inc"
-.include "geosmac.inc"
-.include "equ.inc"
-.include "kernal.inc"
+.include "const.i"
+.include "geossym.i"
+.include "geosmac.i"
+.include "equ.i"
+.include "kernal.i"
 .import DoneWithIO, EnterTurbo, InitForIO, ReadBlock, VerWriteBlock, WriteBlock
 .global _DoRAMOp, _FetchRAM, _ReadFile, _StashRAM, _SwapRAM, _VerifyRAM, _WriteFile, _DoRAMOp, _FetchRAM, _ReadFile, _StashRAM, _SwapRAM, _VerifyRAM, _WriteFile, _DoRAMOp, _FetchRAM, _ReadFile, _StashRAM, _SwapRAM, _VerifyRAM, _WriteFile, _DoRAMOp, _FetchRAM, _ReadFile, _StashRAM, _SwapRAM, _VerifyRAM, _WriteFile, LoKernal
 

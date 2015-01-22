@@ -1,8 +1,8 @@
 ;sprites-related functions, handles all sprites (including pointer and prompt)
 
-.include "const.inc"
-.include "geossym.inc"
-.include "geosmac.inc"
+.include "const.i"
+.include "geossym.i"
+.include "geosmac.i"
 .import BitMask2, SprTabH, SprTabL
 .global _DisablSprite, _DrawSprite, _EnablSprite, _PosSprite
 

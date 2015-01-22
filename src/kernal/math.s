@@ -1,7 +1,7 @@
 ;various math routines
 
-.include "geossym.inc"
-.include "geosmac.inc"
+.include "geossym.i"
+.include "geosmac.i"
 .import Ddec
 .global ConvertBCD, _BBMult, _BMult, _CRC, _DMult, _DSDiv, _DShiftLeft, _DShiftRight, _Dabs, _Ddec, _Ddiv, _Dnegate, _GetRandom
 

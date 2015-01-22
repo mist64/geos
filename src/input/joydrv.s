@@ -1,9 +1,9 @@
 ;GEOS joystick input driver
 ;reassembled by Maciej 'YTM/Alliance' Witkowiak
 
-.include "const.inc"
-.include "geossym.inc"
-.include "geosmac.inc"
+.include "const.i"
+.include "geossym.i"
+.include "geosmac.i"
 .import Dnegate, BBMult
 .global UpdateMouse, SlowMouse
 

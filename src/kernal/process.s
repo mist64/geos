@@ -1,9 +1,9 @@
 ;multitasking functions (processes, sleep, delays)
 
-.include "const.inc"
-.include "geossym.inc"
-.include "geosmac.inc"
-.include "kernal.inc"
+.include "const.i"
+.include "geossym.i"
+.include "geosmac.i"
+.include "kernal.i"
 .global _BlockProcess, _DoCheckDelays, _EnableProcess, _ExecuteProcesses, _FreezeProcess, _InitProcesses, _ProcessDelays, _ProcessTimers, _RestartProcess, _Sleep, _UnBlockProcess, _UnFreezeProcess
 
 .segment "process"

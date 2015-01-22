@@ -1,11 +1,11 @@
 ;GEOS Kernal - booter code
 ;reassembled by Maciej 'YTM/Alliance' Witkowiak
 
-.include "const.inc"
-.include "geossym.inc"
-.include "geosmac.inc"
-.include "equ.inc"
-.include "kernal.inc"
+.include "const.i"
+.include "geossym.i"
+.include "geosmac.i"
+.include "equ.i"
+.include "kernal.i"
 .import ClrScr, EnterDeskTop, FirstInit, GetBlock, GetDirHead, InitGEOEnv, LdApplic, OpenDisk, PutDirHead, _DoFirstInitIO, _EnterDeskTop, _FirstInit, _IRQHandler, _NMIHandler, i_FillRam
 
 .segment "booter"

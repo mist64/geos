@@ -1,9 +1,9 @@
 ;GEOS Amiga style mouse input driver
 ;reassembled by Maciej 'YTM/Elysium' Witkowiak
 
-.include "const.inc"
-.include "geossym.inc"
-.include "geosmac.inc"
+.include "const.i"
+.include "geossym.i"
+.include "geosmac.i"
 .segment "amigamse"
 .global SlowMouse, UpdateMouse
 

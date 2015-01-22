@@ -1,9 +1,9 @@
 ;font handling functions, mostly for internal (Kernal) use
 
-.include "const.inc"
-.include "geossym.inc"
-.include "geosmac.inc"
-.include "kernal.inc"
+.include "const.i"
+.include "geossym.i"
+.include "geosmac.i"
+.include "kernal.i"
 .import ID100, BitMask2, FontTVar1, GetScanLine, FontTVar2, BitMask4, BitMask3, GetRealSize, GetChWdth1
 .global _GetRealSize, Font_10
 

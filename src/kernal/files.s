@@ -1,10 +1,10 @@
 ;disk and file related functions (maybe should I split vlir functions?)
 
-.include "const.inc"
-.include "geossym.inc"
-.include "geosmac.inc"
-.include "equ.inc"
-.include "kernal.inc"
+.include "const.i"
+.include "geossym.i"
+.include "geosmac.i"
+.include "equ.i"
+.include "kernal.i"
 .import DkNmTab, FreeBlock, LoKernal, GetFreeDirBlk, BldGDirEntry, WriteBuff, WriteFile, PutBlock, PutDirHead, SetGDirEntry, BlkAlloc, GetDirHead, StartAppl, LdFile, FastDelFile, Dialog_2, GetFile, _MNLP, InitGEOEnv, UseSystemFont, DlgBoxPrep, GetBlock, FetchRAM, ExitTurbo, GetNxtDirEntry, Get1stDirEntry, ClearRam, ReadFile, ReadBuff, GetFHdrInfo, LdApplic, LdDeskAcc, UNK_4, FindFile, UNK_5
 .global _AppendRecord, _BldGDirEntry, _CloseRecordFile, _DeleteFile, _DeleteRecord, _FastDelFile, _FindFTypes, _FindFile, _FollowChain, _FreeFile, _GetFHdrInfo, _GetFile, _GetPtrCurDkNm, _InsertRecord, _LdApplic, _LdDeskAcc, _LdFile, _OpenRecordFile, _ReadByte, _ReadRecord, _RenameFile, _RstrAppl, _SaveFile, _SetDevice, _SetGDirEntry, _UpdateRecordFile, _WriteRecord, _NextRecord, _PointRecord, _PreviousRecord
 
