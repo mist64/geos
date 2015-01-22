@@ -4,12 +4,12 @@ LD=~/Documents/cc65/bin/ld65
 ASFLAGS=--include-dir inc
 
 KERNAL_SOURCES= \
-src/init.s \
-src/bswfont.s \
-src/icons.s \
-src/lokernal.s \
-src/patterns.s \
-src/unknown.s \
+src/kernal/init.s \
+src/kernal/bswfont.s \
+src/kernal/icons.s \
+src/kernal/lokernal.s \
+src/kernal/patterns.s \
+src/kernal/unknown.s \
 src/kernal/conio.s \
 src/kernal/dlgbox.s \
 src/kernal/files.s \
@@ -25,17 +25,6 @@ src/kernal/process.s \
 src/kernal/sprites.s \
 src/kernal/system.s
 
-DRIVE=src/drv/drv1541.s
-#DRIVE=src/drv/drv1571.s
-#DRIVE=src/drv/drv1581.s
-
-INPUT=src/input/joydrv.s
-#INPUT=src/input/amigamse.s
-#INPUT=src/input/lightpen.s
-#INPUT=src/input/mse1531.s
-
-SOURCES=$(KERNAL_SOURCES) $(DRIVE) $(INPUT)
-
 DEPS=inc/const.inc inc/diskdrv.inc inc/equ.inc inc/geosmac.inc inc/geossym.inc inc/kernal.inc inc/printdrv.inc
 
 KERNAL_OBJECTS=$(KERNAL_SOURCES:.s=.o)
@@ -45,8 +34,8 @@ all: kernal.bin drv1541.bin drv1571.bin drv1581.bin amigamse.bin joydrv.bin ligh
 clean:
 	rm -f $(KERNAL_OBJECTS) kernal.bin drv1541.bin drv1571.bin drv1581.bin amigamse.bin joydrv.bin lightpen.bin mse1531.bin
 
-kernal.bin: $(KERNAL_OBJECTS) kernal.cfg
-	$(LD) -C kernal.cfg $(KERNAL_OBJECTS) -o $@
+kernal.bin: $(KERNAL_OBJECTS) src/kernal/kernal.cfg
+	$(LD) -C src/kernal/kernal.cfg $(KERNAL_OBJECTS) -o $@
 
 drv1541.bin: src/drv/drv1541.o src/drv/drv1541.cfg
 	$(LD) -C src/drv/drv1541.cfg src/drv/drv1541.o -o $@
