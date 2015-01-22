@@ -1,9 +1,9 @@
 ; memory handling functions (copy, compare, move, fill)
 
-.include "const.i"
-.include "geossym.i"
-.include "geosmac.i"
-.include "equ.i"
+.include "const.inc"
+.include "geossym.inc"
+.include "geosmac.inc"
+.include "equ.inc"
 .import FetchRAM, StashRAM, DoInlineReturn
 .global _ClearRam, _CmpFString, _CmpString, _CopyFString, _CopyString, _FillRam, _MoveData, _i_FillRam, _i_MoveData
 

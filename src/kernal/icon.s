@@ -1,9 +1,9 @@
 ; GEOS Icons handler
 
-.include "const.i"
-.include "geossym.i"
-.include "geosmac.i"
-.include "kernal.i"
+.include "const.inc"
+.include "geossym.inc"
+.include "geosmac.inc"
+.include "kernal.inc"
 .import Ddec, DShiftLeft, _Sleep, MenuDoInvert, CallRoutine, _BitmapUp, _StartMouseMode, ResetMseRegion
 .global CalcIconDescTab, ProcessClick, _DoIcons
 

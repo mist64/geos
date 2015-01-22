@@ -1,11 +1,11 @@
 ; GEOS 1541 disk driver
 ; reassembled by Maciej 'YTM/Alliance' Witkowiak
 
-.include "const.i"
-.include "geossym.i"
-.include "geosmac.i"
-.include "equ.i"
-.include "kernal.i"
+.include "const.inc"
+.include "geossym.inc"
+.include "geosmac.inc"
+.include "equ.inc"
+.include "kernal.inc"
 .include "jumptab.inc"
 
 .segment "drv1541"

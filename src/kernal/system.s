@@ -1,10 +1,10 @@
 ; system core functions, like those from 'main.s' but a bit different
 
-.include "const.i"
-.include "geossym.i"
-.include "geosmac.i"
-.include "equ.i"
-.include "kernal.i"
+.include "const.inc"
+.include "geossym.inc"
+.include "geosmac.inc"
+.include "equ.inc"
+.include "kernal.inc"
 .import daysTab, dateCopy, ConvertBCD, BitMask2, CallRoutine
 .global KbdScanHelp3, _DoUpdateTime, _IRQHandler, _NMIHandler
 

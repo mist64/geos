@@ -1,9 +1,9 @@
 ; GEOS joystick input driver
 ; reassembled by Maciej 'YTM/Alliance' Witkowiak
 
-.include "const.i"
-.include "geossym.i"
-.include "geosmac.i"
+.include "const.inc"
+.include "geossym.inc"
+.include "geosmac.inc"
 .include "jumptab.inc"
 
 .segment "joydrv"

@@ -1,10 +1,10 @@
 ; almost all about mouse, menu & icon mouse handling is elsewhere
 
-.include "const.i"
-.include "geossym.i"
-.include "geosmac.i"
-.include "kernal.i"
-.include "inputdrv.i"
+.include "const.inc"
+.include "geossym.inc"
+.include "geosmac.inc"
+.include "kernal.inc"
+.include "inputdrv.inc"
 .import KbdScanHelp3, _DoPreviousMenu, CallRoutine, ProcessClick, Menu_5, EnablSprite, PosSprite, DrawSprite, _DisablSprite, MouseUp
 .global ProcessMouse, ResetMseRegion, _ClearMouseMode, _DoCheckButtons, _IsMseInRegion, _MouseOff, _MouseUp, _StartMouseMode
 

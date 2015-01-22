@@ -1,10 +1,10 @@
 ; GEOS 1571 disk driver
 ; reassembled by Maciej 'YTM/Elysium' Witkowiak
 
-.include "const.i"
-.include "geossym.i"
-.include "geosmac.i"
-.include "kernal.i"
+.include "const.inc"
+.include "geossym.inc"
+.include "geosmac.inc"
+.include "kernal.inc"
 .include "jumptab.inc"
 
 .segment "drv1571"

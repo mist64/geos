@@ -1,9 +1,9 @@
 ; this is 1531 mouse driver for GEOS
 ; reassembled by Maciej 'YTM/Elysium' Witkowiak
 
-.include "const.i"
-.include "geossym.i"
-.include "geosmac.i"
+.include "const.inc"
+.include "geossym.inc"
+.include "geosmac.inc"
 
 .segment "mse1531"
 

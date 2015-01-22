@@ -1,9 +1,9 @@
 ; simple console I/O
 
-.include "const.i"
-.include "geossym.i"
-.include "geosmac.i"
-.include "kernal.i"
+.include "const.inc"
+.include "geossym.inc"
+.include "geosmac.inc"
+.include "kernal.inc"
 .import KbdScanHelp3, DecTabH, DecTabL, _DisablSprite, _EnablSprite, _PosSprite, PutChar, PutString, Ddec, _GraphicsString, Font_10, _GetRealSize, CallRoutine, PutCharTabH, PutCharTabL, BSWFont
 .global DoBACKSPACE, DoBOLDON, DoCR, DoESC_GRAPHICS, DoESC_RULER, DoGOTOXY, DoGOTOY, DoHOME, DoITALICON, DoLF, DoNEWCARDSET, DoOUTLINEON, DoPLAINTEXT, DoREV_OFF, DoREV_ON, DoTAB, DoULINEOFF, DoULINEON, DoUPLINE, GetChWdth1, ProcessCursor, _GetCharWidth, _GetNextChar, _GetString, _InitTextPrompt, _LoadCharSet, _PromptOff, _PromptOn, _PutChar, _PutDecimal, _PutString, _SmallPutChar, _UseSystemFont, _i_PutString, DoGOTOX
 

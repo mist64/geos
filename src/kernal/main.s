@@ -2,12 +2,12 @@
 ; system core - all address-aligned data (for compatibility), core (EnterDeskTop) and init stuff
 ; reassembled by Maciej 'YTM/Alliance' Witkowiak
 
-.include "const.i"
-.include "geossym.i"
-.include "geosmac.i"
-.include "equ.i"
-.include "kernal.i"
-.include "diskdrv.i"
+.include "const.inc"
+.include "geossym.inc"
+.include "geosmac.inc"
+.include "equ.inc"
+.include "kernal.inc"
+.include "diskdrv.inc"
 .import InitMsePic, ClrScr, _DoUpdateTime, _DoCheckDelays, _ExecuteProcesses, _DoCheckButtons, ResetMseRegion, ProcessCursor, _ProcessDelays, _ProcessTimers, ProcessMouse, _DoRAMOp, _VerifyRAM, _SwapRAM, _FetchRAM, _StashRAM
 .import _BitOtherClip, _RstrFrmDialogue, _ReadByte, _IsMseInRegion, _SetDevice, _BitmapClip, _GetNextChar, _PromptOff, _PromptOn, _GetPtrCurDkNm, _UpdateRecordFile
 .import _WriteRecord, _ReadRecord, _AppendRecord, _InsertRecord, _DeleteRecord, _PointRecord, _PreviousRecord, _NextRecord, _CloseRecordFile, _OpenRecordFile, _CmpFString, _CmpString, _CopyFString, _CopyString, _DShiftRight
