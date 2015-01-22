@@ -1,5 +1,5 @@
-;GEOS system variables
-;by Maciej 'YTM/Elysium' Witkowiak
+; GEOS system variables
+; by Maciej 'YTM/Elysium' Witkowiak
 
 ;addresses defined so-so
 Z45             =       $45
@@ -12,7 +12,7 @@ z8d             =       $8d
 z8e             =       $8e
 z8f             =       $8f
 
-;GEOS Kernal internal zpage vectors (not for use by apps)
+; GEOS Kernal internal zpage vectors (not for use by apps)
 IconDescVec     =       $3f
 IconDescVecH    =       $40
 CallRLo         =       $41
@@ -21,7 +21,7 @@ DBoxDesc        =       $43
 DBoxDescL       =       $43
 DBoxDescH       =       $44
 
-;Commodore Kernal equations
+; Commodore Kernal equates
 tapeBuffVec     =       $b2
 curScrLine      =       $d1
 curPos          =       $d3
@@ -38,7 +38,7 @@ KERNALVecTab    =       $fd30
 KERNALCIAInit   =       $fda3
 KERNALVICInit   =       $ff81
 
-;GEOS Kernal internal vars (not for use by apps)
+; GEOS Kernal internal vars (not for use by apps)
 menuOptNumber   =       $86c0
 menuTop         =       $86c1
 menuBottom      =       $86c2
@@ -99,12 +99,12 @@ RecordTableTS   =       $8865
 verifyFlag      =       $8867
 TempCurDrive    =       $8868
 
-;GEOS BOOT and REU reboot adresses
+; GEOS BOOT and REU reboot adresses
 InitKernal      =       $5000
 BVBuff          =       $0400
 RunREU          =       $6000
 
-;locations to be defined later
+; locations to be defined later
 E87FC           =       $87fc
 E87FD           =       $87fd
 E87FE           =       $87fe
@@ -118,7 +118,7 @@ e88b7           =       $88b7   ;4 bytes indexed by curDrive, 1571 disk type (SS
 A8FE8           =       $8fe8
 A8FF0           =       $8ff0
 
-;RamExp stats block structure
+; RamExp stats block structure
 DACC_ST_ADDR    =       $80     ;deskAccessory load addy
 DACC_LGH        =       $82     ;deskAccessory lenght
 DTOP_CHNUM      =       $83     ;DeskTop # of chains

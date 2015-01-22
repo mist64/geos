@@ -1,4 +1,4 @@
-;various math routines
+; various math routines
 
 .include "geossym.i"
 .include "geosmac.i"

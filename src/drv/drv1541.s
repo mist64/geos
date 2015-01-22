@@ -1,5 +1,5 @@
-;GEOS 1541 disk driver
-;reassembled by Maciej 'YTM/Alliance' Witkowiak
+; GEOS 1541 disk driver
+; reassembled by Maciej 'YTM/Alliance' Witkowiak
 
 .include "const.i"
 .include "geossym.i"

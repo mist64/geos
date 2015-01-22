@@ -1,5 +1,5 @@
-;GEOS System - lower part with some gfx data
-;reassembled and decoded by Maciej 'YTM/Alliance' Witkowiak
+; GEOS System - lower part with some gfx data
+; reassembled and decoded by Maciej 'YTM/Alliance' Witkowiak
 
 .global DBIcPicCANCEL, DBIcPicOK, InitMsePic, DBIcPicCANCEL, DBIcPicOK, InitMsePic, DBIcPicCANCEL, DBIcPicOK, InitMsePic, DBIcPicCANCEL, DBIcPicOK, InitMsePic, DBIcPicCANCEL, DBIcPicOK, InitMsePic
 .segment "icons"

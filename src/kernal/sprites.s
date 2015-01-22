@@ -1,4 +1,4 @@
-;sprites-related functions, handles all sprites (including pointer and prompt)
+; sprites-related functions, handles all sprites (including pointer and prompt)
 
 .include "const.i"
 .include "geossym.i"

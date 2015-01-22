@@ -1,4 +1,4 @@
-;multitasking functions (processes, sleep, delays)
+; multitasking functions (processes, sleep, delays)
 
 .include "const.i"
 .include "geossym.i"

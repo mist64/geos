@@ -1,4 +1,4 @@
-;simply console I/O
+; simple console I/O
 
 .include "const.i"
 .include "geossym.i"

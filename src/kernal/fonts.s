@@ -1,4 +1,4 @@
-;font handling functions, mostly for internal (Kernal) use
+; font handling functions, mostly for internal (Kernal) use
 
 .include "const.i"
 .include "geossym.i"

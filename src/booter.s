@@ -1,5 +1,5 @@
-;GEOS Kernal - booter code
-;reassembled by Maciej 'YTM/Alliance' Witkowiak
+; GEOS Kernal - booter code
+; reassembled by Maciej 'YTM/Alliance' Witkowiak
 
 .include "const.i"
 .include "geossym.i"

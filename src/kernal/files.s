@@ -1,4 +1,4 @@
-;disk and file related functions (maybe should I split vlir functions?)
+; disk and file related functions (maybe I should split VLIR functions?)
 
 .include "const.i"
 .include "geossym.i"

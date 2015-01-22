@@ -1,4 +1,4 @@
-;GEOS menu handler
+; GEOS menu handler
 
 .include "const.i"
 .include "geossym.i"

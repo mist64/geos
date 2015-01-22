@@ -1,5 +1,5 @@
-;GEOS variable memory locations sorted by address
-;reassembled by Maciej 'YTM/Alliance' Witkowiak
+; GEOS variable memory locations sorted by address
+; reassembled by Maciej 'YTM/Alliance' Witkowiak
 
 zpage           =       $00
 ;
@@ -192,7 +192,7 @@ sysDBData               =       $851d
 screencolors            =       $851e
 dlgBoxRamBuf            =       $851f   ; to $8697
 ;
-;$8698 - $8877 - various system data (keyboard queue, VLIR t&s, DBox, Menu, timers)
+; $8698 - $8877 - various system data (keyboard queue, VLIR t&s, DBox, Menu, timers)
 ;
 savedmoby2              =       $88bb
 scr80polar              =       $88bc

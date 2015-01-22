@@ -1,5 +1,5 @@
-;GEOS Disk Driver JumpTab
-;reassembled by Maciej 'YTM/Alliance' Witkowiak
+; GEOS Disk Driver JumpTab
+; reassembled by Maciej 'YTM/Alliance' Witkowiak
 
 ;pointers
 _InitForIO              =       $9000

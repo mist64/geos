@@ -1,6 +1,6 @@
-;GEOS Kernal
-;reassembled by Maciej 'YTM/Alliance' Witkowiak
-;this file:system core - all address-aligned data (for compatibility), core (EnterDeskTop) and init stuff
+; GEOS Kernal
+; system core - all address-aligned data (for compatibility), core (EnterDeskTop) and init stuff
+; reassembled by Maciej 'YTM/Alliance' Witkowiak
 
 .include "const.i"
 .include "geossym.i"

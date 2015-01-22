@@ -1,4 +1,4 @@
-;dialog box handler
+; dialog box handler
 
 .include "const.i"
 .include "geossym.i"

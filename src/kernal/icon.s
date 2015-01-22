@@ -1,4 +1,4 @@
-;GEOS Icons handler
+; GEOS Icons handler
 
 .include "const.i"
 .include "geossym.i"

@@ -1,5 +1,5 @@
-;GEOS macros
-;reassembled for 6502TASM/MMS by Maciej 'YTM/Alliance' Witkowiak
+; GEOS macros
+; reassembled for 6502TASM/MMS by Maciej 'YTM/Alliance' Witkowiak
 
 .macro LoadB dest, value
 	lda #value
@@ -232,8 +232,8 @@ j:
 	.endif
 .endmacro
 
-;not part of original macro set
-;03.03.1999 by Maciej Witkowiak
+; not part of original macro set
+; by Maciej Witkowiak
 
 .macro addv value
 	clc

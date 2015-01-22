@@ -1,5 +1,5 @@
-;GEOS joystick input driver
-;reassembled by Maciej 'YTM/Alliance' Witkowiak
+; GEOS joystick input driver
+; reassembled by Maciej 'YTM/Alliance' Witkowiak
 
 .include "const.i"
 .include "geossym.i"

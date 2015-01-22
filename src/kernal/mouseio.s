@@ -1,4 +1,4 @@
-;almost all about mouse, menu & icon mouse handling is elsewhere
+; almost all about mouse, menu & icon mouse handling is elsewhere
 
 .include "const.i"
 .include "geossym.i"

@@ -1,7 +1,7 @@
-;GEOS Printer Driver Jump Table
-;reassembled by Maciej 'YTM/Alliance' Witkowiak
+; GEOS Printer Driver Jump Table
+; reassembled by Maciej 'YTM/Alliance' Witkowiak
 
-;jump table
+; jump table
 InitForPrint            =       $7900
 StartPrint              =       $7903
 PrintBuffer             =       $7906

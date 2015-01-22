@@ -1,4 +1,4 @@
-;system core functions, like those from 'main.s' but a bit different
+; system core functions, like those from 'main.s' but a bit different
 
 .include "const.i"
 .include "geossym.i"

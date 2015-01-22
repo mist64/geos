@@ -1,5 +1,5 @@
-;GEOS 1571 disk driver
-;reassembled by Maciej 'YTM/Elysium' Witkowiak
+; GEOS 1571 disk driver
+; reassembled by Maciej 'YTM/Elysium' Witkowiak
 
 .include "const.i"
 .include "geossym.i"

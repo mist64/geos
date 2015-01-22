@@ -1,4 +1,4 @@
-;graphical functions (lines, rectangles, points, bitmaps)
+; graphical functions (lines, rectangles, points, bitmaps)
 
 .include "const.i"
 .include "geossym.i"

@@ -1,4 +1,4 @@
-;memory handling functions (copy, compare, move, fill)
+; memory handling functions (copy, compare, move, fill)
 
 .include "const.i"
 .include "geossym.i"

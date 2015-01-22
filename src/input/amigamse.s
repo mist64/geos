@@ -1,5 +1,5 @@
-;GEOS Amiga style mouse input driver
-;reassembled by Maciej 'YTM/Elysium' Witkowiak
+; GEOS Amiga style mouse input driver
+; reassembled by Maciej 'YTM/Elysium' Witkowiak
 
 .include "const.i"
 .include "geossym.i"
