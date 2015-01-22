@@ -33,10 +33,10 @@ IMIRl2:
 	beq IMIRl3
 	bcs IMIRl4
 IMIRl3:
-	lda #true
+	lda #$ff
 	rts
 IMIRl4:
-	lda #false
+	lda #0
 	rts
 
 

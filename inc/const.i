@@ -2,12 +2,6 @@
 ;reassembled by Maciej 'YTM/Alliance' Witkowiak
 
 NULL                    =       0
-FALSE                   =       0
-TRUE                    =       $ff
-
-;18-8-99 - ACME port
-false   =       0
-true    =       $ff
 
 MOUSE_SPRNUM            =       0
 

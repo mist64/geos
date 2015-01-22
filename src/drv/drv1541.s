@@ -285,7 +285,7 @@ GetBord2:
 __ChkDkGEOS:
 	ldy #OFF_GS_ID
 	ldx #0
-	LoadB isGEOS, FALSE
+	LoadB isGEOS, 0
 ChkDkG0:
 	lda (r5),y
 	cmp GEOSDiskID,x

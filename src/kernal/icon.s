@@ -103,10 +103,10 @@ ProcClk4:
 	jsr MenuDoInvert
 ProcClk5:
 	ldy #$1e
-	ldx #FALSE
+	ldx #0
 	lda dblClickCount
 	beq ProcClk6
-	ldx #TRUE
+	ldx #$ff
 	ldy #0
 ProcClk6:
 	sty dblClickCount

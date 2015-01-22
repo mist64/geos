@@ -1104,7 +1104,7 @@ ReadyForUpdVLIR:
 	bne RFUpdVLIR1
 	jsr GetDirHead
 	bnex RFUpdVLIR1
-	lda #TRUE
+	lda #$ff
 	sta fileWritten
 RFUpdVLIR1:
 	rts

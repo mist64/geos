@@ -579,7 +579,7 @@ _DoFirstInitIO:
 	LoadB CPU_DDR, $2f
 	LoadB CPU_DATA, KRNL_IO_IN
 	ldx #7
-	lda #true
+	lda #$ff
 DFIIO0:
 	sta KbdDMltTab,X
 	sta KbdDBncTab,X
@@ -757,7 +757,7 @@ ToBASICTab:
 _EnterDeskTop:
 	sei
 	cld
-	ldx #TRUE
+	ldx #$ff
 	stx firstBoot
 	txs
 	jsr ClrScr
@@ -786,7 +786,7 @@ _EnterDT_Str1:
 _EnterDeskTop:
 	sei
 	cld
-	ldx #TRUE
+	ldx #$ff
 	stx firstBoot
 	txs
 	jsr ClrScr
