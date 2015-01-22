@@ -4,7 +4,8 @@
 .include "geossym.i"
 .include "geosmac.i"
 .include "kernal.i"
-.import KbdScanHelp3, _DoPreviousMenu, CallRoutine, ProcessClick, Menu_5, EnablSprite, PosSprite, DrawSprite, UpdateMouse, _DisablSprite, MouseUp, SlowMouse
+.include "inputdrv.i"
+.import KbdScanHelp3, _DoPreviousMenu, CallRoutine, ProcessClick, Menu_5, EnablSprite, PosSprite, DrawSprite, _DisablSprite, MouseUp
 .global ProcessMouse, ResetMseRegion, _ClearMouseMode, _DoCheckButtons, _IsMseInRegion, _MouseOff, _MouseUp, _StartMouseMode
 
 .segment "mouseio"

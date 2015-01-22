@@ -4,7 +4,6 @@
 .include "const.i"
 .include "geossym.i"
 .include "geosmac.i"
-.global SlowMouse, UpdateMouse
 
 .segment "mse1531"
 

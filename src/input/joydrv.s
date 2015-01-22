@@ -4,8 +4,7 @@
 .include "const.i"
 .include "geossym.i"
 .include "geosmac.i"
-.import Dnegate, BBMult
-.global UpdateMouse, SlowMouse
+.include "jumptab.inc"
 
 .segment "joydrv"
 

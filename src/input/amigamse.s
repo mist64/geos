@@ -4,8 +4,9 @@
 .include "const.i"
 .include "geossym.i"
 .include "geosmac.i"
+.include "jumptab.inc"
+
 .segment "amigamse"
-.global SlowMouse, UpdateMouse
 
 MouseJMP:
 	jmp _MouseInit

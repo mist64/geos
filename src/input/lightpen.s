@@ -4,8 +4,7 @@
 .include "const.i"
 .include "geossym.i"
 .include "geosmac.i"
-.import GraphicsString, DoDlgBox
-.global SlowMouse, UpdateMouse
+.include "jumptab.inc"
 
 .segment "lightpen"
 
