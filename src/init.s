@@ -1,4 +1,4 @@
-; GEOS Kernal - booter code
+; GEOS Kernal - init code
 ; reassembled by Maciej 'YTM/Alliance' Witkowiak
 
 .include "const.i"
@@ -8,7 +8,7 @@
 .include "kernal.i"
 .import ClrScr, EnterDeskTop, FirstInit, GetBlock, GetDirHead, InitGEOEnv, LdApplic, OpenDisk, PutDirHead, _DoFirstInitIO, _EnterDeskTop, _FirstInit, _IRQHandler, _NMIHandler, i_FillRam
 
-.segment "booter"
+.segment "init"
 
 	sei
 	cld
