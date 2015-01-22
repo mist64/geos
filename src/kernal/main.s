@@ -33,22 +33,22 @@
 ;DOING SO WILL CREATE FATAL INCOMPATIBILITES!
 ;--------------------------------------------
 
-	jmp BootKernal ;C01B
-	jmp InitKernal ;5000
+	jmp BootKernal
+	jmp InitKernal
 
 bootName:
-	.byte "GEOS BOOT" ;c006
+	.byte "GEOS BOOT"
 version:
-	.byte $20 ;c00f
+	.byte $20
 nationality:
 	.byte $00,$00
 sysFlgCopy:
-	.byte $00 ;c012
+	.byte $00
 c128Flag:
 	.byte $00
 	.byte $05,$00,$00,$00
 dateCopy:
-	.byte 88,4,20 ;c018
+	.byte 88,4,20
 
 
 ;--------------------------------------------
@@ -62,20 +62,17 @@ BitMask3:
 BitMask4:
 	.byte $7f, $3f, $1f, $0f, $07, $03, $01, $00
 
-	;c418
 VIC_IniTbl:
 	.byte $00, $00, $00, $00, $00, $00, $00, $00
 	.byte $00, $00, $00, $00, $00, $00, $00, $00
 	.byte $f8, $3b, $fb, $aa, $aa, $01, $08, $00
 	.byte $38, $0f, $01, $00, $00, $00
 
-	;caeb
 LineTabL:
 	.byte $00, $40, $80, $c0, $00, $40, $80, $c0
 	.byte $00, $40, $80, $c0, $00, $40, $80, $c0
 	.byte $00, $40, $80, $c0, $00, $40, $80, $c0
 	.byte $00
-	;cb04
 LineTabH:
 	.byte $a0, $a1, $a2, $a3, $a5, $a6, $a7, $a8
 	.byte $aa, $ab, $ac, $ad, $af, $b0, $b1, $b2
@@ -83,35 +80,31 @@ LineTabH:
 	.byte $be
 
 _PanicDB_DT:
-	;cfd3
 	.byte DEF_DB_POS | 1
 	.byte DBTXTSTR, TXT_LN_X, TXT_LN_1_Y
 	.word _PanicDB_Str
 	.byte NULL
 
 _PanicDB_Str:
-	;cfda
 	.byte BOLDON
 	.byte "System error near $"
 _PanicAddy:
-	.byte "xxxx" ;cfee
+	.byte "xxxx"
 	.byte NULL
 
 FontTVar1:
-	.byte 0 ;e391
+	.byte 0
 FontTVar2:
-	.word 0 ;e392
-	;ccb0
+	.word 0
 SprTabL:
 	.byte <spr0pic, <spr1pic, <spr2pic, <spr3pic
 	.byte <spr4pic, <spr5pic, <spr6pic, <spr7pic
-	;ccb8
 SprTabH:
 	.byte >spr0pic, >spr1pic, >spr2pic, >spr3pic
 	.byte >spr4pic, >spr5pic, >spr6pic, >spr7pic
 
 PutCharTabL:
-	.byte <DoBACKSPACE, <DoTAB ;e54b
+	.byte <DoBACKSPACE, <DoTAB
 	.byte <DoLF, <DoHOME
 	.byte <DoUPLINE, <DoCR
 	.byte <DoULINEON, <DoULINEOFF
@@ -123,7 +116,7 @@ PutCharTabL:
 	.byte <DoOUTLINEON, <DoPLAINTEXT
 
 PutCharTabH:
-	.byte >DoBACKSPACE, >DoTAB ;e55f
+	.byte >DoBACKSPACE, >DoTAB
 	.byte >DoLF, >DoHOME
 	.byte >DoUPLINE, >DoCR
 	.byte >DoULINEON, >DoULINEOFF
@@ -135,12 +128,11 @@ PutCharTabH:
 	.byte >DoOUTLINEON, >DoPLAINTEXT
 
 DecTabL:
-	.byte <1, <10, <100, <1000, <10000 ;e941
+	.byte <1, <10, <100, <1000, <10000
 DecTabH:
-	.byte >1, >10, >100, >1000, >10000 ;e946
+	.byte >1, >10, >100, >1000, >10000
 
 daysTab:
-	;fe17
 	.byte 31, 28, 31, 30, 31, 30
 	.byte 31, 31, 30, 31, 30, 31
 
@@ -154,335 +146,335 @@ DeskTopRecord:
 ;		*= OS_JUMPTAB
 
 InterruptMain:
-	jmp _InterruptMain ;c100
+	jmp _InterruptMain
 InitProcesses:
-	jmp _InitProcesses ;c103
+	jmp _InitProcesses
 RestartProcess:
-	jmp _RestartProcess ;c106
+	jmp _RestartProcess
 EnableProcess:
-	jmp _EnableProcess ;c109
+	jmp _EnableProcess
 BlockProcess:
-	jmp _BlockProcess ;c10c
+	jmp _BlockProcess
 UnBlockProcess:
-	jmp _UnBlockProcess ;c10f
+	jmp _UnBlockProcess
 FreezeProcess:
-	jmp _FreezeProcess ;c112
+	jmp _FreezeProcess
 UnFreezeProcess:
-	jmp _UnFreezeProcess ;c115
+	jmp _UnFreezeProcess
 HorizontalLine:
-	jmp _HorizontalLine ;c118
+	jmp _HorizontalLine
 InvertLine:
-	jmp _InvertLine ;c11d
+	jmp _InvertLine
 RecoverLine:
-	jmp _RecoverLine ;c11e
+	jmp _RecoverLine
 VerticalLine:
-	jmp _VerticalLine ;c121
+	jmp _VerticalLine
 Rectangle:
-	jmp _Rectangle ;c124
+	jmp _Rectangle
 FrameRectangle:
-	jmp _FrameRectangle ;c127
+	jmp _FrameRectangle
 InvertRectangle:
-	jmp _InvertRectangle ;c12a
+	jmp _InvertRectangle
 RecoverRectangle:
-	jmp _RecoverRectangle ;c12d
+	jmp _RecoverRectangle
 DrawLine:
-	jmp _DrawLine ;c130
+	jmp _DrawLine
 DrawPoint:
-	jmp _DrawPoint ;c133
+	jmp _DrawPoint
 GraphicsString:
-	jmp _GraphicsString ;c136
+	jmp _GraphicsString
 SetPattern:
-	jmp _SetPattern ;c139
+	jmp _SetPattern
 GetScanLine:
-	jmp _GetScanLine ;c13c
+	jmp _GetScanLine
 TestPoint:
-	jmp _TestPoint ;c13f
+	jmp _TestPoint
 BitmapUp:
-	jmp _BitmapUp ;c142
+	jmp _BitmapUp
 PutChar:
-	jmp _PutChar ;c145
+	jmp _PutChar
 PutString:
-	jmp _PutString ;c148
+	jmp _PutString
 UseSystemFont:
-	jmp _UseSystemFont ;c14b
+	jmp _UseSystemFont
 StartMouseMode:
-	jmp _StartMouseMode ;c14e
+	jmp _StartMouseMode
 DoMenu:
-	jmp _DoMenu ;c151
+	jmp _DoMenu
 RecoverMenu:
-	jmp _RecoverMenu ;c154
+	jmp _RecoverMenu
 RecoverAllMenus:
-	jmp _RecoverAllMenus ;c157
+	jmp _RecoverAllMenus
 DoIcons:
-	jmp _DoIcons ;c15a
+	jmp _DoIcons
 DShiftLeft:
-	jmp _DShiftLeft ;c15d
+	jmp _DShiftLeft
 BBMult:
-	jmp _BBMult ;c160
+	jmp _BBMult
 BMult:
-	jmp _BMult ;c163
+	jmp _BMult
 DMult:
-	jmp _DMult ;c166
+	jmp _DMult
 Ddiv:
-	jmp _Ddiv ;c169
+	jmp _Ddiv
 DSDiv:
-	jmp _DSDiv ;c16c
+	jmp _DSDiv
 Dabs:
-	jmp _Dabs ;c16f
+	jmp _Dabs
 Dnegate:
-	jmp _Dnegate ;c172
+	jmp _Dnegate
 Ddec:
-	jmp _Ddec ;c175
+	jmp _Ddec
 ClearRam:
-	jmp _ClearRam ;c178
+	jmp _ClearRam
 FillRam:
-	jmp _FillRam ;c17b
+	jmp _FillRam
 MoveData:
-	jmp _MoveData ;c17e
+	jmp _MoveData
 InitRam:
-	jmp _InitRam ;c181
+	jmp _InitRam
 PutDecimal:
-	jmp _PutDecimal ;c184
+	jmp _PutDecimal
 GetRandom:
-	jmp _GetRandom ;c187
+	jmp _GetRandom
 MouseUp:
-	jmp _MouseUp ;c18a
+	jmp _MouseUp
 MouseOff:
-	jmp _MouseOff ;c18d
+	jmp _MouseOff
 DoPreviousMenu:
-	jmp _DoPreviousMenu ;c190
+	jmp _DoPreviousMenu
 ReDoMenu:
-	jmp _ReDoMenu ;c193
+	jmp _ReDoMenu
 GetSerialNumber:
-	jmp _GetSerialNumber ;c196
+	jmp _GetSerialNumber
 Sleep:
-	jmp _Sleep ;c199
+	jmp _Sleep
 ClearMouseMode:
-	jmp _ClearMouseMode ;c19c
+	jmp _ClearMouseMode
 i_Rectangle:
-	jmp _i_Rectangle ;c19f
+	jmp _i_Rectangle
 i_FrameRectangle:
-	jmp _i_FrameRectangle ;c1a2
+	jmp _i_FrameRectangle
 i_RecoverRectangle:
-	jmp _i_RecoverRectangle ;c1a5
+	jmp _i_RecoverRectangle
 i_GraphicsString:
-	jmp _i_GraphicsString ;c1a8
+	jmp _i_GraphicsString
 i_BitmapUp:
-	jmp _i_BitmapUp ;c1ab
+	jmp _i_BitmapUp
 i_PutString:
-	jmp _i_PutString ;c1ae
+	jmp _i_PutString
 GetRealSize:
-	jmp _GetRealSize ;c1b1
+	jmp _GetRealSize
 i_FillRam:
-	jmp _i_FillRam ;c1b4
+	jmp _i_FillRam
 i_MoveData:
-	jmp _i_MoveData ;c1b7
+	jmp _i_MoveData
 GetString:
-	jmp _GetString ;c1ba
+	jmp _GetString
 GotoFirstMenu:
-	jmp _GotoFirstMenu ;c1bd
+	jmp _GotoFirstMenu
 InitTextPrompt:
-	jmp _InitTextPrompt ;c1c0
+	jmp _InitTextPrompt
 MainLoop:
-	jmp _MainLoop ;c1c3
+	jmp _MainLoop
 DrawSprite:
-	jmp _DrawSprite ;c1c6
+	jmp _DrawSprite
 GetCharWidth:
-	jmp _GetCharWidth ;c1c9
+	jmp _GetCharWidth
 LoadCharSet:
-	jmp _LoadCharSet ;c1cc
+	jmp _LoadCharSet
 PosSprite:
-	jmp _PosSprite ;c1cf
+	jmp _PosSprite
 EnablSprite:
-	jmp _EnablSprite ;c1d2
+	jmp _EnablSprite
 DisablSprite:
-	jmp _DisablSprite ;c1d5
+	jmp _DisablSprite
 CallRoutine:
-	jmp _CallRoutine ;c1d8
+	jmp _CallRoutine
 CalcBlksFree:
-	jmp (_CalcBlksFree) ;c1db
+	jmp (_CalcBlksFree)
 ChkDkGEOS:
-	jmp (_ChkDkGEOS) ;c1de
+	jmp (_ChkDkGEOS)
 NewDisk:
-	jmp (_NewDisk) ;c1e1
+	jmp (_NewDisk)
 GetBlock:
-	jmp (_GetBlock) ;c1e4
+	jmp (_GetBlock)
 PutBlock:
-	jmp (_PutBlock) ;c1e7
+	jmp (_PutBlock)
 SetGEOSDisk:
-	jmp (_SetGEOSDisk) ;c1ea
+	jmp (_SetGEOSDisk)
 SaveFile:
-	jmp _SaveFile ;c1ed
+	jmp _SaveFile
 SetGDirEntry:
-	jmp _SetGDirEntry ;c1f0
+	jmp _SetGDirEntry
 BldGDirEntry:
-	jmp _BldGDirEntry ;c1f3
+	jmp _BldGDirEntry
 GetFreeDirBlk:
-	jmp (_GetFreeDirBlk) ;c1f6
+	jmp (_GetFreeDirBlk)
 WriteFile:
-	jmp _WriteFile ;c1f9
+	jmp _WriteFile
 BlkAlloc:
-	jmp (_BlkAlloc) ;c1fc
+	jmp (_BlkAlloc)
 ReadFile:
-	jmp _ReadFile ;c1ff
+	jmp _ReadFile
 SmallPutChar:
-	jmp _SmallPutChar ;c202
+	jmp _SmallPutChar
 FollowChain:
-	jmp _FollowChain ;c205
+	jmp _FollowChain
 GetFile:
-	jmp _GetFile ;c208
+	jmp _GetFile
 FindFile:
-	jmp _FindFile ;c20b
+	jmp _FindFile
 CRC:
-	jmp _CRC ;c20e
+	jmp _CRC
 LdFile:
-	jmp _LdFile ;c211
+	jmp _LdFile
 EnterTurbo:
-	jmp (_EnterTurbo) ;c214
+	jmp (_EnterTurbo)
 LdDeskAcc:
-	jmp _LdDeskAcc ;c217
+	jmp _LdDeskAcc
 ReadBlock:
-	jmp (_ReadBlock) ;c21a
+	jmp (_ReadBlock)
 LdApplic:
-	jmp _LdApplic ;c21d
+	jmp _LdApplic
 WriteBlock:
-	jmp (_WriteBlock) ;c220
+	jmp (_WriteBlock)
 VerWriteBlock:
-	jmp (_VerWriteBlock) ;c223
+	jmp (_VerWriteBlock)
 FreeFile:
-	jmp _FreeFile ;c226
+	jmp _FreeFile
 GetFHdrInfo:
-	jmp _GetFHdrInfo ;c229
+	jmp _GetFHdrInfo
 EnterDeskTop:
-	jmp _EnterDeskTop ;c22c
+	jmp _EnterDeskTop
 StartAppl:
-	jmp _StartAppl ;c22f
+	jmp _StartAppl
 ExitTurbo:
-	jmp (_ExitTurbo) ;c232
+	jmp (_ExitTurbo)
 PurgeTurbo:
-	jmp (_PurgeTurbo) ;c235
+	jmp (_PurgeTurbo)
 DeleteFile:
-	jmp _DeleteFile ;c238
+	jmp _DeleteFile
 FindFTypes:
-	jmp _FindFTypes ;c23b
+	jmp _FindFTypes
 RstrAppl:
-	jmp _RstrAppl ;c23e
+	jmp _RstrAppl
 ToBASIC:
-	jmp _ToBASIC ;c241
+	jmp _ToBASIC
 FastDelFile:
-	jmp _FastDelFile ;c244
+	jmp _FastDelFile
 GetDirHead:
-	jmp (_GetDirHead) ;c247
+	jmp (_GetDirHead)
 PutDirHead:
-	jmp (_PutDirHead) ;c24a
+	jmp (_PutDirHead)
 NxtBlkAlloc:
-	jmp (_NxtBlkAlloc) ;c24d
+	jmp (_NxtBlkAlloc)
 ImprintRectangle:
-	jmp _ImprintRectangle ;c250
+	jmp _ImprintRectangle
 i_ImprintRectangle:
-	jmp _i_ImprintRectangle ;c253
+	jmp _i_ImprintRectangle
 DoDlgBox:
-	jmp _DoDlgBox ;c256
+	jmp _DoDlgBox
 RenameFile:
-	jmp _RenameFile ;c259
+	jmp _RenameFile
 InitForIO:
-	jmp (_InitForIO) ;c25c
+	jmp (_InitForIO)
 DoneWithIO:
-	jmp (_DoneWithIO) ;c25f
+	jmp (_DoneWithIO)
 DShiftRight:
-	jmp _DShiftRight ;c262
+	jmp _DShiftRight
 CopyString:
-	jmp _CopyString ;c265
+	jmp _CopyString
 CopyFString:
-	jmp _CopyFString ;c268
+	jmp _CopyFString
 CmpString:
-	jmp _CmpString ;c26b
+	jmp _CmpString
 CmpFString:
-	jmp _CmpFString ;c26e
+	jmp _CmpFString
 FirstInit:
-	jmp _FirstInit ;c271
+	jmp _FirstInit
 OpenRecordFile:
-	jmp _OpenRecordFile ;c274
+	jmp _OpenRecordFile
 CloseRecordFile:
-	jmp _CloseRecordFile ;c277
+	jmp _CloseRecordFile
 NextRecord:
-	jmp _NextRecord ;c27a
+	jmp _NextRecord
 PreviousRecord:
-	jmp _PreviousRecord ;c27d
+	jmp _PreviousRecord
 PointRecord:
-	jmp _PointRecord ;c280
+	jmp _PointRecord
 DeleteRecord:
-	jmp _DeleteRecord ;c283
+	jmp _DeleteRecord
 InsertRecord:
-	jmp _InsertRecord ;c286
+	jmp _InsertRecord
 AppendRecord:
-	jmp _AppendRecord ;c289
+	jmp _AppendRecord
 ReadRecord:
-	jmp _ReadRecord ;c28c
+	jmp _ReadRecord
 WriteRecord:
-	jmp _WriteRecord ;c28f
+	jmp _WriteRecord
 SetNextFree:
-	jmp (_SetNextFree) ;c292
+	jmp (_SetNextFree)
 UpdateRecordFile:
-	jmp _UpdateRecordFile ;c295
+	jmp _UpdateRecordFile
 GetPtrCurDkNm:
-	jmp _GetPtrCurDkNm ;c298
+	jmp _GetPtrCurDkNm
 PromptOn:
-	jmp _PromptOn ;c29b
+	jmp _PromptOn
 PromptOff:
-	jmp _PromptOff ;c29e
+	jmp _PromptOff
 OpenDisk:
-	jmp (_OpenDisk) ;c2a1
+	jmp (_OpenDisk)
 DoInlineReturn:
-	jmp _DoInlineReturn ;c2a4
+	jmp _DoInlineReturn
 GetNextChar:
-	jmp _GetNextChar ;c2a7
+	jmp _GetNextChar
 BitmapClip:
-	jmp _BitmapClip ;c2aa
+	jmp _BitmapClip
 FindBAMBit:
-	jmp (_FindBAMBit) ;c2ad
+	jmp (_FindBAMBit)
 SetDevice:
-	jmp _SetDevice ;c2b0
+	jmp _SetDevice
 IsMseInRegion:
-	jmp _IsMseInRegion ;c2b3
+	jmp _IsMseInRegion
 ReadByte:
-	jmp _ReadByte ;c2b6
+	jmp _ReadByte
 FreeBlock:
-	jmp (_FreeBlock) ;c2b9
+	jmp (_FreeBlock)
 ChangeDiskDevice:
-	jmp (_ChangeDiskDevice) ;c2bc
+	jmp (_ChangeDiskDevice)
 RstrFrmDialogue:
-	jmp _RstrFrmDialogue ;c2bf
+	jmp _RstrFrmDialogue
 Panic:
-	jmp _Panic ;c2c2
+	jmp _Panic
 BitOtherClip:
-	jmp _BitOtherClip ;c2c5
+	jmp _BitOtherClip
 .if (REUPresent)
 StashRAM:
-	jmp _StashRAM ;c2c8
+	jmp _StashRAM
 FetchRAM:
-	jmp _FetchRAM ;c2cb
+	jmp _FetchRAM
 SwapRAM:
-	jmp _SwapRAM ;c2ce
+	jmp _SwapRAM
 VerifyRAM:
-	jmp _VerifyRAM ;c2d1
+	jmp _VerifyRAM
 DoRAMOp:
-	jmp _DoRAMOp ;c2d4
+	jmp _DoRAMOp
 .else
 StashRAM:
-	ldx #DEV_NOT_FOUND ;c2c8
+	ldx #DEV_NOT_FOUND
 	rts
 FetchRAM:
-	ldx #DEV_NOT_FOUND ;c2cb
+	ldx #DEV_NOT_FOUND
 	rts
 SwapRAM:
-	ldx #DEV_NOT_FOUND ;c2ce
+	ldx #DEV_NOT_FOUND
 	rts
 VerifyRAM:
-	ldx #DEV_NOT_FOUND ;c2d1
+	ldx #DEV_NOT_FOUND
 	rts
 DoRAMOp:
-	ldx #DEV_NOT_FOUND ;c2d4
+	ldx #DEV_NOT_FOUND
 	rts
 .endif
 ;here the JumpTable ends
@@ -495,51 +487,49 @@ DkNmTab:
 	.byte >DrCCurDkNm, >DrDCurDkNm
 
 _InterruptMain:
-	jsr ProcessMouse ;c2d7
+	jsr ProcessMouse
 	jsr _ProcessTimers
 	jsr _ProcessDelays
 	jsr ProcessCursor
 	jmp _GetRandom
 
 _CallRoutine:
-	;c59f
 	cmp #0
 	bne CRou1
 	cpx #0
 	beq CRou2
 CRou1:
-	sta CallRLo ;c5a7
+	sta CallRLo
 	stx CallRHi
 	jmp (CallRLo)
 CRou2:
-	rts ;c5ae
+	rts
 
 _DoInlineReturn:
-	;c5af
 	add returnAddress
 	sta returnAddress
 	bcc DILR1
 	inc returnAddress+1
 DILR1:
-	plp ;c5b8
+	plp
 	jmp (returnAddress)
 
 SetVICRegs:
-	sty r1L ;c5bc
+	sty r1L
 	ldy #0
 SVR0:
-	lda (r0),Y ;c5c0
+	lda (r0),Y
 	cmp #$AA
 	beq SVR1
 	sta vicbase,Y
 SVR1:
-	iny ;c5c9
+	iny
 	cpy r1L
 	bne SVR0
 	rts
 
 _InitRam:
-	ldy #0 ;c567
+	ldy #0
 	lda (r0),Y
 	sta r1L
 	iny
@@ -552,7 +542,7 @@ _InitRam:
 	sta r2L
 	iny
 IRam0:
-	tya ;c57c
+	tya
 	tax
 	lda (r0),Y
 	ldy #0
@@ -561,7 +551,7 @@ IRam0:
 	bne IRam1
 	inc r1H
 IRam1:
-	txa ;c58a
+	txa
 	tay
 	iny
 	dec r2L
@@ -572,26 +562,26 @@ IRam1:
 	bcc IRam2
 	inc r0H
 IRam2:
-	bra _InitRam ;c59b
+	bra _InitRam
 IRam3:
-	rts ;c59e
+	rts
 
 InitGEOS:
-	jsr _DoFirstInitIO ;c40a ;UNK_1
+	jsr _DoFirstInitIO ;UNK_1
 InitGEOEnv:
-	lda #>InitRamTab ;c40d ;UNK_1_1
+	lda #>InitRamTab ;UNK_1_1
 	sta r0H
 	lda #<InitRamTab
 	sta r0L
 	jmp _InitRam
 
 _DoFirstInitIO:
-	LoadB CPU_DDR, $2f ;c436
+	LoadB CPU_DDR, $2f
 	LoadB CPU_DATA, KRNL_IO_IN
 	ldx #7
 	lda #true
 DFIIO0:
-	sta KbdDMltTab,X ;c442
+	sta KbdDMltTab,X
 	sta KbdDBncTab,X
 	dex
 	bpl DFIIO0
@@ -607,7 +597,7 @@ DFIIO0:
 	beq DFIIO1
 	ldx #$80
 DFIIO1:
-	stx cia1base+14 ;c468
+	stx cia1base+14
 	stx cia2base+14
 	lda cia2base
 	and #%00110000
@@ -631,24 +621,24 @@ DeskTopLgh:
 	.byte 0 ;have to be at $c3cf .IDLE
 
 DeskTopName:
-	.byte "DESK TOP", NULL ;c3cf
+	.byte "DESK TOP", NULL
 
 ;--------------------------------------------
 ;IMPORTANT! FROM NOW ON YOU CAN CHANGE THE CODE UNTIL FURTHER NOTICES.
 ;--------------------------------------------
 _MainLoop:
-	jsr _DoCheckButtons ;c0df
+	jsr _DoCheckButtons
 	jsr _ExecuteProcesses
 	jsr _DoCheckDelays
 	jsr _DoUpdateTime
 	lda appMain+0
 	ldx appMain+1
 _MNLP:
-	jsr CallRoutine ;c0f1
+	jsr CallRoutine
 	cli
 
 _MainLoop2:
-	ldx CPU_DATA ;c313
+	ldx CPU_DATA
 	LoadB CPU_DATA, IO_IN
 	lda grcntrl1
 	and #%01111111
@@ -672,17 +662,17 @@ BootKernal:
 	bcc _RunREU
 	jmp ($0302)
 BootREU:
-	ldy #8 ;c041
+	ldy #8
 BootREU1:
-	lda BootREUTab,Y ;c043
+	lda BootREUTab,Y
 	sta EXP_BASE+1,Y
 	dey
 	bpl BootREU1
 BootREU2:
-	dey ;c04c
+	dey
 	bne BootREU2
 _RunREU:
-	jmp RunREU ;c04f
+	jmp RunREU
 BootREUTab:
 	.word $0091
 	.word $0060
@@ -699,16 +689,16 @@ _ToBASIC:
 	jmp $fce2
 .else
 _ToBASIC:
-	ldy #39 ;c05c
+	ldy #39
 TB1:
-	lda (r0),Y ;c05e
+	lda (r0),Y
 	cmp #"A"
 	bcc TB2
 	cmp #"Z"+1
 	bcs TB2
 	sbc #$3F
 TB2:
-	sta LoKernalBuf,Y ;c06a
+	sta LoKernalBuf,Y
 	dey
 	bpl TB1
 	lda r5H
@@ -716,7 +706,7 @@ TB2:
 	iny
 	tya
 TB3:
-	sta BASICspace,Y ;c076
+	sta BASICspace,Y
 	iny
 	bne TB3
 	SubVW $0002,r7
@@ -741,7 +731,7 @@ TB3:
 	pla
 	sta (r0),Y
 TB4:
-	jsr GetDirHead ;c0b7
+	jsr GetDirHead
 	jsr PurgeTurbo
 	lda sysRAMFlg
 	sta sysFlgCopy
@@ -749,13 +739,13 @@ TB4:
 	beq TB6
 	ldy #6
 TB5:
-	lda ToBASICTab,Y ;c0c9
+	lda ToBASICTab,Y
 	sta r0,Y
 	dey
 	bpl TB5
 	jsr StashRAM
 TB6:
-	jmp LoKernal1 ;c0d5
+	jmp LoKernal1
 ToBASICTab:
 	.word dirEntryBuf
 	.word REUOsVarBackup
@@ -765,7 +755,6 @@ ToBASICTab:
 
 .if (useRamExp)
 _EnterDeskTop:
-	;c326
 	sei
 	cld
 	ldx #TRUE
@@ -781,7 +770,6 @@ _EnterDeskTop:
 	MoveW DeskTopExec, r7
 .else
 _EnterDT_DB:
-	;c3c0
 	.byte DEF_DB_POS | 1
 	.byte DBTXTSTR, TXT_LN_X, TXT_LN_1_Y+6
 	.word _EnterDT_Str0
@@ -791,14 +779,11 @@ _EnterDT_DB:
 	.byte NULL
 
 _EnterDT_Str0:
-	;c3d8
 	.byte BOLDON, "Please insert a disk", NULL
 _EnterDT_Str1:
-	;c3ee
 	.byte "with deskTop V1.5 or higher", NULL
 
 _EnterDeskTop:
-	;c326
 	sei
 	cld
 	ldx #TRUE
@@ -816,7 +801,7 @@ _EnterDeskTop:
 	bpl EDT1
 	tya
 EDT1:
-	jsr EDT3 ;c348
+	jsr EDT3
 	ldy NUMDRV
 	cpy #2
 	bcc EDT2
@@ -824,18 +809,18 @@ EDT1:
 	eor #1
 	jsr EDT3
 EDT2:
-	LoadW r0, _EnterDT_DB ;c35a
+	LoadW r0, _EnterDT_DB
 	jsr DoDlgBox
 	lda TempCurDrive
 	bne EDT1
 EDT3:
-	jsr SetDevice ;c36a
+	jsr SetDevice
 	jsr OpenDisk
 	beqx EDT5
 EDT4:
-	rts ;c373
+	rts
 EDT5:
-	sta r0L ;c374
+	sta r0L
 	LoadW r6, DeskTopName
 	jsr GetFile
 	bnex EDT4
@@ -847,13 +832,13 @@ EDT5:
 	cmp #'5'
 	bcc EDT4
 EDT6:
-	lda TempCurDrive ;c394
+	lda TempCurDrive
 	jsr SetDevice
 	LoadB r0L, NULL
 	MoveW fileHeader+O_GHST_VEC, r7
 .endif
 _StartAppl:
-	sei ;c3a8
+	sei
 	cld
 	ldx #$FF
 	txs
@@ -866,13 +851,13 @@ _StartAppl:
 	jmp _MNLP
 
 UNK_4:
-	MoveB A885D, r10L ;c5cf
+	MoveB A885D, r10L
 	MoveB A885E, r0L
 	and #1
 	beq U_40
 	MoveW A885F, r7
 U_40:
-	LoadW r2, dataDiskName ;c5e7
+	LoadW r2, dataDiskName
 	LoadW r3, dataFileName
 U_41:
 	rts
@@ -892,23 +877,22 @@ UNK_5:
 	lda #<dataFileName
 	ldx #r3
 U_50:
-	sty r4H ;c61f
+	sty r4H
 	sta r4L
 	ldy #r4
 	lda #16
 	jmp CopyFString
 
 Init_KRNLVec:
-	ldx #32 ;c4da
+	ldx #32
 IKV1:
-	lda KERNALVecTab-1,X ;c4dc
+	lda KERNALVecTab-1,X
 	sta irqvec-1,X
 	dex
 	bne IKV1
 	rts
 
 _FirstInit:
-	;c4e6
 	sei
 	cld
 	jsr InitGEOS
@@ -935,13 +919,13 @@ FItempColor:
 	stx CPU_DATA
 	ldy #62
 FI1:
-	lda #0 ;c52b
+	lda #0
 	sta mousePicData,Y
 	dey
 	bpl FI1
 	ldx #24
 FI2:
-	lda InitMsePic-1,X ;c535
+	lda InitMsePic-1,X
 	sta mousePicData-1,X
 	dex
 	bne FI2
@@ -951,10 +935,8 @@ FI2:
 _GetSerialNumber:
 	LoadW r0, SerialNumber
 	rts
-;d000
 
 _Panic:
-	;cf88
 	PopW r0
 	SubVW 2, r0
 	lda r0H
@@ -965,7 +947,7 @@ _Panic:
 	LoadW r0, _PanicDB_DT
 	jsr DoDlgBox
 Panil0:
-	pha ;cfb2
+	pha
 	lsr
 	lsr
 	lsr
@@ -978,19 +960,18 @@ Panil0:
 	inx
 	rts
 Panil1:
-	cmp #10 ;cfc3
+	cmp #10
 	bcs Panil2
 	addv ('0')
 	bne Panil3
 Panil2:
-	addv ('0'+7) ;cfcc
+	addv ('0'+7)
 Panil3:
-	sta _PanicAddy,X ;cfcf
+	sta _PanicAddy,X
 	rts
 
 
 InitRamTab:
-	;ddfa
 	.word currentMode
 	.byte 12
 	.byte NULL
@@ -1025,18 +1006,17 @@ InitRamTab:
 
 
 UNK_6:
-	lda #$bf ;e393
+	lda #$bf
 	sta A8FF0
 	ldx #7
 	lda #$bb
 UNK_61:
-	sta A8FE8,x ;e39d
+	sta A8FE8,x
 	dex
 	bpl UNK_61
 	rts
 
 DBIcPicNO:
-	;f914
 	.byte 5, %11111111, $80+1, %11111110, $db+8, 2, $80+6
 	     ;%11111111, %11111111, %11111111, %11111111, %11111111, %11111110
 	.byte %10000000, %00000000, %00000000, %00000000, %00000000, %00000011, $80+12
@@ -1057,7 +1037,6 @@ DBIcPicNO:
 	.byte 6, %11111111, $80+1, %01111111, 5, %11111111
 
 DBIcPicYES:
-	;f95f
 	.byte 5, %11111111, $80+1, %11111110, $db+8, 2, $80+6
 	     ;%11111111, %11111111, %11111111, %11111111, %11111111, %11111110
 	.byte %10000000, %00000000, %00000000, %00000000, %00000000, %00000011, $80+(5*6)
@@ -1078,7 +1057,6 @@ DBIcPicYES:
 	.byte 6, %11111111, $80+1, %01111111, 5, %11111111
 
 DBIcPicOPEN:
-	;f9b0
 	.byte 5, %11111111, $80+1, %11111110, $db+8, 2, $80+6
 	     ;%11111111, %11111111, %11111111, %11111111, %11111111, %11111110
 	.byte %10000000, %00000000, %00000000, %00000000, %00000000, %00000011, $80+(9*6)
@@ -1099,7 +1077,6 @@ DBIcPicOPEN:
 	.byte 6, %11111111, $80+1, %01111111, 5, %11111111
 
 DBIcPicDISK:
-	;fa03
 	.byte 5, %11111111, $80+1, %11111110, $db+8, 2, $80+6
 	     ;%11111111, %11111111, %11111111, %11111111, %11111111, %11111110
 	.byte %10000000, %00000000, %00000000, %00000000, %00000000, %00000011, $80+(9*6)
@@ -1119,4 +1096,3 @@ DBIcPicDISK:
 	     ;%01111111, %11111111, %11111111, %11111111, %11111111, %11111111
 	.byte 6, %11111111, $80+1, %01111111, 5, %11111111
 
-;fa56

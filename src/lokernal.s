@@ -475,4 +475,3 @@ exeBAS4:
 	pla
 	rti
 .endif
-;a000

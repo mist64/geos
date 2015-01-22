@@ -28,7 +28,7 @@ lphalfx:
 lpy:
 	.byte 0
 EFE8E:
-	.byte 0 ;fe8e
+	.byte 0
 
 _MouseInit:
 	LoadB mouseXPos, 8

@@ -198,4 +198,3 @@ JoyTab1:
 JoyTab2:
 	.byte $00, $40, $40, $c0
 	.byte $80, $80, $00, $00
-;fffa

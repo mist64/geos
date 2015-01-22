@@ -16,7 +16,6 @@ UpdateMouse:
 	jmp _UpdateMouse
 SetMouse:
 
-;fe89
 tmpFire:
 	.byte 0
 mseX:

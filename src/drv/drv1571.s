@@ -13,76 +13,76 @@
 DriveAddy = $0300
 
 _InitForIO:
-	.word __InitForIO ;9000
+	.word __InitForIO
 _DoneWithIO:
-	.word __DoneWithIO ;9002
+	.word __DoneWithIO
 _ExitTurbo:
-	.word __ExitTurbo ;9004
+	.word __ExitTurbo
 _PurgeTurbo:
-	.word __PurgeTurbo ;9006
+	.word __PurgeTurbo
 _EnterTurbo:
-	.word __EnterTurbo ;9008
+	.word __EnterTurbo
 _ChangeDiskDevice:
-	.word __ChangeDiskDevice ;900a
+	.word __ChangeDiskDevice
 _NewDisk:
-	.word __NewDisk ;900c
+	.word __NewDisk
 _ReadBlock:
-	.word __ReadBlock ;900e
+	.word __ReadBlock
 _WriteBlock:
-	.word __WriteBlock ;9010
+	.word __WriteBlock
 _VerWriteBlock:
-	.word __VerWriteBlock ;9012
+	.word __VerWriteBlock
 _OpenDisk:
-	.word __OpenDisk ;9014
+	.word __OpenDisk
 _GetBlock:
-	.word __GetBlock ;9016
+	.word __GetBlock
 _PutBlock:
-	.word __PutBlock ;9018
+	.word __PutBlock
 _GetDirHead:
-	.word __GetDirHead ;901a
+	.word __GetDirHead
 _PutDirHead:
-	.word __PutDirHead ;901c
+	.word __PutDirHead
 _GetFreeDirBlk:
-	.word __GetFreeDirBlk ;901e
+	.word __GetFreeDirBlk
 _CalcBlksFree:
-	.word __CalcBlksFree ;9020
+	.word __CalcBlksFree
 _FreeBlock:
-	.word __FreeBlock ;9022
+	.word __FreeBlock
 _SetNextFree:
-	.word __SetNextFree ;9024
+	.word __SetNextFree
 _FindBAMBit:
-	.word __FindBAMBit ;9026
+	.word __FindBAMBit
 _NxtBlkAlloc:
-	.word __NxtBlkAlloc ;9028
+	.word __NxtBlkAlloc
 _BlkAlloc:
-	.word __BlkAlloc ;902a
+	.word __BlkAlloc
 _ChkDkGEOS:
-	.word __ChkDkGEOS ;902c
+	.word __ChkDkGEOS
 _SetGEOSDisk:
-	.word __SetGEOSDisk ;902e
+	.word __SetGEOSDisk
 
 Get1stDirEntry:
-	jmp _Get1stDirEntry ;9030
+	jmp _Get1stDirEntry
 GetNxtDirEntry:
-	jmp _GetNxtDirEntry ;9033
+	jmp _GetNxtDirEntry
 GetBorder:
-	jmp _GetBorder ;9036
+	jmp _GetBorder
 AddDirBlock:
-	jmp _AddDirBlock ;9039
+	jmp _AddDirBlock
 ReadBuff:
-	jmp _ReadBuff ;903c
+	jmp _ReadBuff
 WriteBuff:
-	jmp _WriteBuff ;903f
-	jmp DUNK4_2 ;9042
-	jmp GetDOSError ;9045
+	jmp _WriteBuff
+	jmp DUNK4_2
+	jmp GetDOSError
 AllocateBlock:
-	jmp _AllocateBlock ;9048
+	jmp _AllocateBlock
 ReadLink:
-	jmp _ReadLink ;904b
+	jmp _ReadLink
 
 
 __GetDirHead:
-	jsr SetDirHead_1 ;904e
+	jsr SetDirHead_1
 	jsr __GetBlock
 	bnex GDH_0
 	ldy curDrive
@@ -94,24 +94,24 @@ __GetDirHead:
 	lda #6
 	bne GDH_1
 GDH_0:
-	lda #8 ;906c
+	lda #8
 GDH_1:
-	sta interleave ;906e
+	sta interleave
 	rts
 
 _ReadBuff:
-	LoadW r4, diskBlkBuf ;9072
+	LoadW r4, diskBlkBuf
 __GetBlock:
-	jsr EnterTurbo ;907a
+	jsr EnterTurbo
 	bne GetBlk0
 	jsr InitForIO
 	jsr ReadBlock
 	jsr DoneWithIO
 GetBlk0:
-	rts ;9088
+	rts
 
 __PutDirHead:
-	jsr EnterTurbo ;9089
+	jsr EnterTurbo
 	jsr InitForIO
 	jsr SetDirHead_1
 	jsr WriteBlock
@@ -124,38 +124,38 @@ __PutDirHead:
 	jsr WriteBlock
 	bnex PDH_1
 PDH_0:
-	jsr SetDirHead_1 ;90ac
+	jsr SetDirHead_1
 	jsr VerWriteBlock
 	bnex PDH_1
 	bbrf 7, curDirHead+3, PDH_1
 	jsr SetDirHead_2
 	jsr VerWriteBlock
 PDH_1:
-	jmp DoneWithIO ;90c3
+	jmp DoneWithIO
 
 _WriteBuff:
-	LoadW r4, diskBlkBuf ;90c6
+	LoadW r4, diskBlkBuf
 __PutBlock:
-	jsr EnterTurbo ;90ce
+	jsr EnterTurbo
 	bne PutBlk1
 	jsr InitForIO
 	jsr WriteBlock
 	bnex PutBlk0
 	jsr VerWriteBlock
 PutBlk0:
-	jsr DoneWithIO ;90df
+	jsr DoneWithIO
 PutBlk1:
-	rts ;90e2
+	rts
 
 SetDirHead_1:
-	ldy #$12 ;90e3
+	ldy #$12
 	lda #>curDirHead
 	bne SDH_1
 SetDirHead_2:
-	ldy #$35 ;90e9
+	ldy #$35
 	lda #>dir2Head
 SDH_1:
-	sty r1L ;90ed
+	sty r1L
 	sta r4H
 	lda #0
 	sta r1H
@@ -163,7 +163,7 @@ SDH_1:
 	rts
 
 CheckParams:
-	lda #0 ;90f8
+	lda #0
 	sta errCount
 	ldx #INV_TRACK
 	lda r1L
@@ -177,14 +177,13 @@ CheckParams:
 	cmp #$47
 	bcs CheckParams_2
 CheckParams_1:
-	sec ;9115
+	sec
 	rts
 CheckParams_2:
-	clc ;9117
+	clc
 	rts
 
 __OpenDisk:
-	;9119
 	jsr NewDisk
 	bnex OpenDsk1
 	jsr GetDirHead
@@ -200,16 +199,15 @@ __OpenDisk:
 	jsr CopyFString
 	ldx #0
 OpenDsk1:
-	rts ;9143
+	rts
 
 __BlkAlloc:
-	;9144
 	ldy #1
 	sty r3L
 	dey
 	sty r3H
 __NxtBlkAlloc:
-	PushW r9 ;914b
+	PushW r9
 	PushW r3
 	LoadW r3, $00fe
 	ldx #r2
@@ -221,7 +219,7 @@ __NxtBlkAlloc:
 	bne *+4
 	inc r2H
 BlkAlc0:
-	jsr SetCurDHVec ;9170
+	jsr SetCurDHVec
 	jsr CalcBlksFree
 	PopW r3
 	ldx #INSUFF_SPACE
@@ -229,10 +227,10 @@ BlkAlc0:
 	beq BlkAlc1
 	bcs BlkAlc4
 BlkAlc1:
-	MoveW r6, r4 ;918c
+	MoveW r6, r4
 	MoveW r2, r5
 BlkAlc2:
-	jsr SetNextFree ;919c
+	jsr SetNextFree
 	bnex BlkAlc4
 	ldy #0
 	lda r3L
@@ -242,7 +240,7 @@ BlkAlc2:
 	sta (r4),y
 	AddVW 2, r4
 BlkAlc2_1:
-	lda r5L ;91b8
+	lda r5L
 	bne *+4
 	dec r5H
 	dec r5L
@@ -257,20 +255,19 @@ BlkAlc2_1:
 	bne BlkAlc3
 	lda #$fe
 BlkAlc3:
-	clc ;91d2
+	clc
 	adc #1
 	sta (r4),y
 	ldx #0
 BlkAlc4:
-	PopW r9 ;91d9
+	PopW r9
 	rts
 
 SetCurDHVec:
-	LoadW r5, curDirHead ;91e0
+	LoadW r5, curDirHead
 	rts
 
 _Get1stDirEntry:
-	;91e9
 	LoadB r1L, 18
 	ldy #1
 	sty r1H
@@ -279,7 +276,6 @@ _Get1stDirEntry:
 	beq GNDirEntry0
 
 _GetNxtDirEntry:
-	;91f7
 	ldx #0
 	ldy #0
 	AddVW $20, r5
@@ -297,14 +293,13 @@ _GetNxtDirEntry:
 	tya
 	bne GNDirEntry1
 GNDirEntry0:
-	jsr ReadBuff ;9233
+	jsr ReadBuff
 	ldy #0
 	LoadW r5, diskBlkBuf+FRST_FILE_ENTRY
 GNDirEntry1:
-	rts ;9240
+	rts
 
 _GetBorder:
-	;9241
 	jsr GetDirHead
 	bnex GetBord2
 	jsr SetCurDHVec
@@ -313,20 +308,19 @@ _GetBorder:
 	ldy #$ff
 	bne GetBord1
 GetBord0:
-	MoveW curDirHead+OFF_OP_TR_SC, r1 ;9253
+	MoveW curDirHead+OFF_OP_TR_SC, r1
 	ldy #0
 GetBord1:
-	ldx #0 ;925f
+	ldx #0
 GetBord2:
-	rts ;9261
+	rts
 
 __ChkDkGEOS:
-	;9262
 	ldy #OFF_GS_ID
 	ldx #0
 	stx isGEOS
 ChkDkG0:
-	lda (r5),y ;9269
+	lda (r5),y
 	cmp GEOSDiskID,x
 	bne ChkDkG1
 	iny
@@ -335,14 +329,13 @@ ChkDkG0:
 	bne ChkDkG0
 	LoadB isGEOS, $ff
 ChkDkG1:
-	lda isGEOS ;927b
+	lda isGEOS
 	rts
 
 GEOSDiskID:
-	.byte "GEOS format V1.0",NULL ;927f
+	.byte "GEOS format V1.0",NULL
 
 __GetFreeDirBlk:
-	;9290
 	php
 	sei
 	PushB r6L
@@ -353,25 +346,25 @@ __GetFreeDirBlk:
 	LoadB r1L, 18
 	LoadB r1H, 1
 GFDirBlk0:
-	jsr ReadBuff ;92a8
+	jsr ReadBuff
 GFDirBlk1:
-	bnex GFDirBlk5 ;92ab
+	bnex GFDirBlk5
 	dec r6L
 	beq GFDirBlk3
 GFDirBlk11:
-	lda diskBlkBuf ;92b2
+	lda diskBlkBuf
 	bne GFDirBlk2
 	jsr AddDirBlock
 	bra GFDirBlk1
 GFDirBlk2:
-	sta r1L ;92bd
+	sta r1L
 	MoveB diskBlkBuf+1, r1H
 	bra GFDirBlk0
 GFDirBlk3:
-	ldy #FRST_FILE_ENTRY ;92c7
+	ldy #FRST_FILE_ENTRY
 	ldx #0
 GFDirBlk4:
-	lda diskBlkBuf,y ;9319
+	lda diskBlkBuf,y
 	beq GFDirBlk5
 	tya
 	addv $20
@@ -385,13 +378,12 @@ GFDirBlk4:
 	cpy #$12
 	bcc GFDirBlk11
 GFDirBlk5:
-	PopW r2 ;92e6
+	PopW r2
 	PopB r6L
 	plp
 	rts
 
 _AddDirBlock:
-	;92f1
 	PushW r6
 	ldy #$48
 	ldx #FULL_DIRECTORY
@@ -405,14 +397,14 @@ _AddDirBlock:
 	MoveW r3, r1
 	jsr ClearAndWrite
 ADirBlk0:
-	PopW r6 ;9326
+	PopW r6
 	rts
 
 ClearAndWrite:
-	lda #0 ;932d
+	lda #0
 	tay
 CAndWr0:
-	sta diskBlkBuf,y ;9330
+	sta diskBlkBuf,y
 	iny
 	bne CAndWr0
 	dey
@@ -420,7 +412,6 @@ CAndWr0:
 	jmp WriteBuff
 
 __SetNextFree:
-	;933d
 	lda r3H
 	add interleave
 	sta r6H
@@ -430,13 +421,13 @@ __SetNextFree:
 	cmp #$35
 	beq SNxtFree1
 SNxtFree00:
-	lda r6L ;9351
+	lda r6L
 	cmp #DIR_TRACK
 	beq SNxtFree3
 	cmp #$35
 	beq SNxtFree3
 SNxtFree1:
-	cmp #$24 ;935b
+	cmp #$24
 	bcc SNxtFree11
 	addv $b9
 	tax
@@ -444,42 +435,42 @@ SNxtFree1:
 	bne SNxtFree12
 	beq SNxtFree3
 SNxtFree11:
-	asl ;936a
+	asl
 	asl
 	tax
 	lda curDirHead,x
 	beq SNxtFree3
 SNxtFree12:
-	lda r6L ;9372
+	lda r6L
 	jsr SNxtFreeHelp
 	lda SecScTab,x
 	sta r7L
 	tay
 SNxtFree2:
-	jsr SNxtFreeHelp2 ;937d
+	jsr SNxtFreeHelp2
 	beq SNxtFreeEnd_OK
 	inc r6H
 	dey
 	bne SNxtFree2
 SNxtFree3:
-	bbrf 7, curDirHead+3, SNxtFree5 ;9387
+	bbrf 7, curDirHead+3, SNxtFree5
 	CmpBI r6L, $24
 	bcs SNxtFree4
 	addv $23
 	sta r6L
 	bne SNxtFree7
 SNxtFree4:
-	subv $22 ;9399
+	subv $22
 	sta r6L
 	bne SNxtFree6
 SNxtFree5:
-	inc r6L ;93a0
+	inc r6L
 	lda r6L
 SNxtFree6:
-	cmp #$24 ;93a4
+	cmp #$24
 	bcs SNxtFreeEnd_Err
 SNxtFree7:
-	sub r3L ;93a8
+	sub r3L
 	sta r6H
 	asl
 	adc #4
@@ -487,51 +478,51 @@ SNxtFree7:
 	sta r6H
 	bra SNxtFree00
 SNxtFreeEnd_OK:
-	MoveW r6, r3 ;93b8
+	MoveW r6, r3
 	ldx #0
 	rts
 SNxtFreeEnd_Err:
-	ldx #INSUFF_SPACE ;93c3
+	ldx #INSUFF_SPACE
 	rts
 
 SNxtFreeHelp:
-	pha ;93c6
+	pha
 	cmp #$24
 	bcc SNFHlp
 	subv $23
 SNFHlp:
-	ldx #0 ;93ce
+	ldx #0
 SNFHlp0:
-	cmp SecTrTab,x ;93d0
+	cmp SecTrTab,x
 	bcc SNFHlp1
 	inx
 	bne SNFHlp0
 SNFHlp1:
-	pla ;93d8
+	pla
 	rts
 
 SecTrTab:
-	.byte 18, 25, 31, 36 ;93da
+	.byte 18, 25, 31, 36
 SecScTab:
-	.byte 21, 19, 18, 17 ;93de
+	.byte 21, 19, 18, 17
 
 SNxtFreeHelp2:
-	lda r6H ;93e2
+	lda r6H
 SNFHlp2_1:
-	cmp r7L ;93e4
+	cmp r7L
 	bcc SNFHlp2_2
 	sub r7L
 	bra SNFHlp2_1
 SNFHlp2_2:
-	sta r6H ;93ee
+	sta r6H
 
 _AllocateBlock:
-	jsr FindBAMBit ;93f0
+	jsr FindBAMBit
 	bne AllBlk0
 	ldx #BAD_BAM
 	rts
 AllBlk0:
-	php ;93f8
+	php
 	CmpBI r6L, $24
 	bcc AllBlk1
 	lda r8H
@@ -539,30 +530,28 @@ AllBlk0:
 	sta dir2Head,x
 	bra AllBlk2
 AllBlk1:
-	lda r8H ;940a
+	lda r8H
 	eor curDirHead,x
 	sta curDirHead,x
 AllBlk2:
-	ldx r7H ;9412
+	ldx r7H
 	plp
 	beq AllBlk3
 	dec curDirHead,x
 	bra AllBlk4
 AllBlk3:
-	inc curDirHead,x ;941d
+	inc curDirHead,x
 AllBlk4:
-	ldx #0 ;9420
+	ldx #0
 	rts
 
 __FreeBlock:
-	;9423
 	jsr FindBAMBit
 	beq AllBlk0
 	ldx #BAD_BAM
 	rts
 
 __FindBAMBit:
-	;942B
 	lda r6H
 	and #%00000111
 	tax
@@ -588,7 +577,7 @@ __FindBAMBit:
 	and r8H
 	rts
 FBB_0:
-	asl ;945b
+	asl
 	asl
 	sta r7H
 	lda r6H
@@ -603,21 +592,20 @@ FBB_0:
 	rts
 
 FBBBitTab:
-	.byte $01, $02, $04, $08 ;946e
+	.byte $01, $02, $04, $08
 	.byte $10, $20, $40, $80
 
 __CalcBlksFree:
-	;9476
 	LoadW r4, 0
 	ldy #OFF_TO_BAM
 CBlksFre0:
-	lda (r5),y ;947e
+	lda (r5),y
 	add r4L
 	sta r4L
 	bcc *+4
 	inc r4H
 CBlksFre1:
-	tya ;9489
+	tya
 	addv 4
 	tay
 	cpy #$48
@@ -628,21 +616,20 @@ CBlksFre1:
 	bbrf 7, curDirHead+3, CBlksFre4
 	ldy #$DD
 CBlksFre2:
-	lda (r5),y ;94a5
+	lda (r5),y
 	add r4L
 	sta r4L
 	bcc *+4
 	inc r4H
 CBlksFre3:
-	iny ;94b0
+	iny
 	bne CBlksFre2
 	asl r3L
 	rol r3H
 CBlksFre4:
-	rts ;94b7
+	rts
 
 __SetGEOSDisk:
-	;94b8
 	jsr GetDirHead
 	bnex SetGDisk2
 	jsr SetCurDHVec
@@ -659,24 +646,23 @@ __SetGEOSDisk:
 	jsr SetNextFree
 	bnex SetGDisk2
 SetGDisk0:
-	MoveW r3, r1 ;94e4
+	MoveW r3, r1
 	jsr ClearAndWrite
 	bnex SetGDisk2
 	MoveW r1, curDirHead+OFF_OP_TR_SC
 	ldy #OFF_GS_ID+15
 	ldx #15
 SetGDisk1:
-	lda GEOSDiskID,x ;9500
+	lda GEOSDiskID,x
 	sta curDirHead,y
 	dey
 	dex
 	bpl SetGDisk1
 	jsr PutDirHead
 SetGDisk2:
-	rts ;950d
+	rts
 
 __InitForIO:
-	;950e
 	php
 	pla
 	sta tmpPS
@@ -715,7 +701,7 @@ __InitForIO:
 	LoadB cia2base+14, %00001001
 	ldy #$2c
 IniForIO0:
-	lda rasreg ;9571
+	lda rasreg
 	cmp TURBO_DD00_CPY
 	beq IniForIO0
 	sta TURBO_DD00_CPY
@@ -731,7 +717,7 @@ IniForIO0:
 	sta tmpDD00_2
 	ldy #$1f
 IniForIO1:
-	lda NibbleTab2,y ;9591
+	lda NibbleTab2,y
 	and #%11110000
 	ora TURBO_DD00
 	sta NibbleTab2,y
@@ -740,16 +726,16 @@ IniForIO1:
 	rts
 
 D_IRQHandler:
-	pla ;959f
+	pla
 	tay
 	pla
 	tax
 	pla
 D_NMIHandler:
-	rti ;95a4
+	rti
 
 __DoneWithIO:
-	sei ;95a5
+	sei
 	lda tmpclkreg
 	sta clkreg
 	lda tmpmobenble
@@ -766,7 +752,7 @@ __DoneWithIO:
 	rts
 
 SendDOSCmd:
-	stx z8c ;95cb
+	stx z8c
 	sta z8b
 	LoadB STATUS, 0
 	lda curDrive
@@ -777,7 +763,7 @@ SendDOSCmd:
 	bbsf 7, STATUS, SndDOSCmd1
 	ldy #0
 SndDOSCmd0:
-	lda (z8b),y ;95e8
+	lda (z8b),y
 	jsr $ffa8
 	iny
 	cpy #5
@@ -785,12 +771,11 @@ SndDOSCmd0:
 	ldx #0
 	rts
 SndDOSCmd1:
-	jsr $ffae ;95f5
+	jsr $ffae
 	ldx #DEV_NOT_FOUND
 	rts
 
 __EnterTurbo:
-	;95fb
 	lda curDrive
 	jsr SetDevice
 	ldx curDrive
@@ -802,7 +787,7 @@ __EnterTurbo:
 	lda #%10000000
 	sta _turboFlags,x
 EntTur0:
-	and #%01000000 ;9617
+	and #%01000000
 	bne EntTur3
 	jsr InitForIO
 	ldx #>EnterCommand
@@ -813,31 +798,31 @@ EntTur0:
 	sei
 	ldy #$21
 EntTur1:
-	dey ;962e
+	dey
 	bne EntTur1
 	jsr Hst_RecvByte_3
 EntTur2:
-	bbsf 7, cia2base, EntTur2 ;9634
+	bbsf 7, cia2base, EntTur2
 	jsr DoneWithIO
 	ldx curDrive
 	lda _turboFlags,x
 	ora #%01000000
 	sta _turboFlags,x
 EntTur3:
-	ldx #0 ;9647
+	ldx #0
 	beq EntTur5
 EntTur4:
-	jsr DoneWithIO ;964b
+	jsr DoneWithIO
 EntTur5:
-	txa ;964e
+	txa
 	rts
 
 EnterCommand:
-	.byte "M-E" ;9650
+	.byte "M-E"
 	.word DriveStart
 
 SendExitTurbo:
-	jsr InitForIO ;9655
+	jsr InitForIO
 	ldx #>Drv_ExitTurbo
 	lda #<Drv_ExitTurbo
 	jsr DUNK4
@@ -850,7 +835,7 @@ SendExitTurbo:
 	jmp DoneWithIO
 
 SendCODE:
-	jsr InitForIO ;9673
+	jsr InitForIO
 	lda #>DriveCode
 	sta z8e
 	lda #<DriveCode
@@ -861,7 +846,7 @@ SendCODE:
 	sta WriteAddy
 	LoadB z8f, $1f
 SndCDE0:
-	jsr SendCHUNK ;968c
+	jsr SendCHUNK
 	bnex SndCDE1
 	clc
 	lda #$20
@@ -878,10 +863,10 @@ SndCDE0:
 	dec z8f
 	bpl SndCDE0
 SndCDE1:
-	jmp DoneWithIO ;96af
+	jmp DoneWithIO
 
 SendCHUNK:
-	ldx #>WriteCommand ;96b2
+	ldx #>WriteCommand
 	lda #<WriteCommand
 	jsr SendDOSCmd
 	bnex SndCHNK2
@@ -889,7 +874,7 @@ SendCHUNK:
 	jsr $ffa8
 	ldy #0
 SndCHNK0:
-	lda (z8d),y ;96c3
+	lda (z8d),y
 	jsr $ffa8
 	iny
 	cpy #$20
@@ -897,37 +882,37 @@ SndCHNK0:
 	jsr $ffae
 	ldx #0
 SndCHNK2:
-	rts ;96d2
+	rts
 
 WriteCommand:
-	.byte "M-W" ;96d3
+	.byte "M-W"
 WriteAddy:
-	.word $0300 ;96d6
+	.word $0300
 
 NibbleTab:
-	.byte $0f, $07, $0d, $05, $0b, $03, $09, $01 ;96d8
+	.byte $0f, $07, $0d, $05, $0b, $03, $09, $01
 	.byte $0e, $06, $0c, $04, $0a, $02, $08, $00
 NibbleTab2:
-	.byte $05, $85, $25, $a5, $45, $c5, $65, $e5 ;96e8
+	.byte $05, $85, $25, $a5, $45, $c5, $65, $e5
 	.byte $15, $95, $35, $b5, $55, $d5, $75, $f5
 E96F8:
-	.byte $05, $25, $05, $25, $15, $35, $15, $35 ;96f8
+	.byte $05, $25, $05, $25, $15, $35, $15, $35
 	.byte $05, $25, $05, $25, $15, $35, $15, $35
 
 Hst_RecvByte:
-	PushB r0L ;9708
+	PushB r0L
 	jsr GetSync
 	sty r0L
 Hst_RecvByte_0:
-	sec ;9710
+	sec
 Hst_RecvByte_1:
-	lda rasreg ;9711
+	lda rasreg
 	sbc #$31
 	bcc Hst_RecvByte_2
 	and #6
 	beq Hst_RecvByte_1
 Hst_RecvByte_2:
-	MoveB TURBO_DD00_CPY, cia2base ;971c
+	MoveB TURBO_DD00_CPY, cia2base
 	MoveB TURBO_DD00, cia2base
 	dec r0L
 	lda cia2base
@@ -961,12 +946,12 @@ e974a:
 	rts
 
 Hst_RecvByte_3:
-	ldx tmpDD00_2 ;9758
+	ldx tmpDD00_2
 	stx cia2base
 	rts
 
 Hst_SendByte:
-	jsr GetSync ;975f
+	jsr GetSync
 	tya
 	pha
 	ldy #0
@@ -974,25 +959,25 @@ Hst_SendByte:
 	pla
 	tay
 e976b:
-	jsr GetSync ;976b
+	jsr GetSync
 Hst_SendByte_0:
-	dey ;976e
+	dey
 	lda (z8b),y
 	ldx TURBO_DD00
 	stx cia2base
 Hst_SendByte_01:
-	tax ;9776
+	tax
 	and #%00001111
 	sta z8d
 	sec
 Hst_SendByte_1:
-	lda rasreg ;977c
+	lda rasreg
 	sbc #$31
 	bcc Hst_SendByte_2
 	and #6
 	beq Hst_SendByte_1
 Hst_SendByte_2:
-	txa ;9787
+	txa
 	ldx TURBO_DD00_CPY
 	stx cia2base
 	and #%11110000
@@ -1015,7 +1000,6 @@ Hst_SendByte_2:
 	beq Hst_RecvByte_3
 
 __ExitTurbo:
-	;97b3
 	LoadB interleave, 8
 	txa
 	pha
@@ -1029,35 +1013,34 @@ __ExitTurbo:
 	and #%10111111
 	sta _turboFlags,x
 ExiTur0:
-	pla ;97d2
+	pla
 	tax
 	rts
 
 __PurgeTurbo:
-	;97d5
 	jsr ExitTurbo
 PurTur0:
-	ldy curDrive ;97d8
+	ldy curDrive
 	lda #0
 	sta _turboFlags,y
 	rts
 
 DUNK4:
-	stx z8c ;97e1
+	stx z8c
 	sta z8b
 	ldy #2
 	bne DUNK4_3
 DUNK4_1:
-	stx z8c ;97e9
+	stx z8c
 	sta z8b
 DUNK4_2:
-	ldy #4 ;97ed
+	ldy #4
 	lda r1H
 	sta DTrkSec+1
 	lda r1L
 	sta DTrkSec
 DUNK4_3:
-	lda z8c ;97f9
+	lda z8c
 	sta DExeProc+1
 	lda z8b
 	sta DExeProc
@@ -1068,7 +1051,7 @@ DUNK4_3:
 	jmp Hst_SendByte
 
 DUNK5:
-	ldy #1 ;980e
+	ldy #1
 	jsr Hst_RecvByte
 	pha
 	tay
@@ -1078,14 +1061,13 @@ DUNK5:
 	rts
 
 GetSync:
-	sei ;981b
+	sei
 	MoveB TURBO_DD00, cia2base
 GetSync0:
-	bbrf 7, cia2base, GetSync0 ;9821
+	bbrf 7, cia2base, GetSync0
 	rts
 
 __ChangeDiskDevice:
-	;9827
 	pha
 	jsr EnterTurbo
 	bne ChngDskDv0
@@ -1108,18 +1090,17 @@ __ChangeDiskDevice:
 	ldx #0
 	rts
 ChngDskDv0:
-	pla ;9852
+	pla
 	rts
 
 __NewDisk:
-	;9854
 	jsr EnterTurbo
 	bne NewDsk2
 	sta errCount
 	sta r1L
 	jsr InitForIO
 NewDsk0:
-	ldx #>Drv_NewDisk ;9861
+	ldx #>Drv_NewDisk
 	lda #<Drv_NewDisk
 	jsr DUNK4_1
 	jsr GetDOSError
@@ -1129,17 +1110,16 @@ NewDsk0:
 	beq NewDsk1
 	bcs NewDsk0
 NewDsk1:
-	jsr DoneWithIO ;9877
+	jsr DoneWithIO
 NewDsk2:
-	rts ;987a
+	rts
 
 __ReadBlock:
 _ReadLink:
-	;987b
 	jsr CheckParams
 	bcc RdLink1
 RdLink0:
-	jsr e990b ;9880
+	jsr e990b
 	jsr Hst_RecvByte
 	jsr GetDError
 	beqx RdLink1
@@ -1148,15 +1128,14 @@ RdLink0:
 	beq RdLink1
 	bcs RdLink0
 RdLink1:
-	ldy #0 ;9896
+	ldy #0
 	rts
 
 __WriteBlock:
-	;9899
 	jsr CheckParams
 	bcc WrBlock2
 WrBlock1:
-	ldx #>Drv_WriteSec ;989e
+	ldx #>Drv_WriteSec
 	lda #<Drv_WriteSec
 	jsr e990f
 	jsr e976b
@@ -1167,18 +1146,17 @@ WrBlock1:
 	beq WrBlock2
 	bcs WrBlock1
 WrBlock2:
-	rts ;98b7
+	rts
 
 __VerWriteBlock:
-	;98b8
 	jsr CheckParams
 	bcc VWrBlock3
 	ldx #0
 VWrBlock0:
-	lda #3 ;98bf
+	lda #3
 	sta tryCount
 VWrBlock1:
-	jsr e990b ;98c4
+	jsr e990b
 	sty z8d
 	lda #$51
 	sta e9746
@@ -1198,7 +1176,7 @@ VWrBlock1:
 	beq VWrBlock3
 	ldx #$25
 VWrBlock2:
-	dec tryCount ;98f0
+	dec tryCount
 	bne VWrBlock1
 	inc errCount
 	lda errCount
@@ -1210,24 +1188,23 @@ VWrBlock2:
 	sta errCount
 	beqx VWrBlock0
 VWrBlock3:
-	rts ;990a
+	rts
 
 e990b:
-	;990b
 	ldx #>Drv_ReadSec
 	lda #<Drv_ReadSec
 e990f:
-	jsr DUNK4_1 ;990f
+	jsr DUNK4_1
 	MoveW r4, z8b
 	ldy #0
 	rts
 
 GetDOSError:
-	ldx #>Drv_SendByte_0 ;991d
+	ldx #>Drv_SendByte_0
 	lda #<Drv_SendByte_0
 	jsr DUNK4
 GetDError:
-	lda #>errStore ;9924
+	lda #>errStore
 	sta z8c
 	lda #<errStore
 	sta z8b
@@ -1243,26 +1220,24 @@ GetDError:
 	addv $1e
 	bne GetDErr2
 GetDErr1:
-	lda #0 ;9942
+	lda #0
 GetDErr2:
-	tax ;9944
+	tax
 	rts
 
 DOSErrTab:
-	.byte $01, $05, $02, $08 ;9946
+	.byte $01, $05, $02, $08
 	.byte $08, $01, $05, $01
 	.byte $05, $05, $05
 
 DriveCode:
-	;9951
 .segment "drv1571_drivecode"
 
 DNibbleTab:
-	.byte $0f, $07, $0d, $05 ;0300
+	.byte $0f, $07, $0d, $05
 	.byte $0b, $03, $09, $01
 	.byte $0e, $06, $0c, $04
 	.byte $0a, $02, $08
-	;0310
 DNibbleTab2:
 	.byte $00, $80, $20, $a0
 	.byte $40, $c0, $60, $e0
@@ -1270,7 +1245,7 @@ DNibbleTab2:
 	.byte $50, $d0, $70, $f0
 
 Drv_SendByte_0:
-	ldy #0 ;031f
+	ldy #0
 	sty $73
 	sty $74
 	iny
@@ -1281,12 +1256,12 @@ Drv_SendByte_0:
 	jsr Drv_SendByte_3
 	ldy $71
 Drv_SendByte_1:
-	jsr D_DUNK4_1 ;0334
+	jsr D_DUNK4_1
 Drv_SendByte_2:
-	dey ;0337
+	dey
 	lda ($73),y
 Drv_SendByte_3:
-	tax ;033a
+	tax
 	lsr
 	lsr
 	lsr
@@ -1328,7 +1303,7 @@ Drv_SendByte_3:
 	beq Drv_RecvByte_2
 
 Drv_RecvWord:
-	ldy #1 ;0382
+	ldy #1
 	jsr Drv_RecvByte
 	sta $71
 	tay
@@ -1337,12 +1312,12 @@ Drv_RecvWord:
 	rts
 
 Drv_RecvByte:
-	jsr D_DUNK4_1 ;0390
+	jsr D_DUNK4_1
 	jsr e03db
 	lda #0
 	sta $70
 Drv_RecvByte_1:
-	eor $70 ;039a
+	eor $70
 	sta $70
 	jsr e03db
 	lda #4
@@ -1369,34 +1344,34 @@ Drv_RecvByte_1:
 	sta ($73),y
 	bne Drv_RecvByte_1
 Drv_RecvByte_2:
-	ldx #2 ;03d0
+	ldx #2
 	stx $1800
 	jsr e03d9
 	nop
 e03d9:
-	nop ;03d9
+	nop
 e03da:
-	nop ;03da
+	nop
 e03db:
-	nop ;03db
+	nop
 e03dc:
-	nop ;03dc
+	nop
 	nop
 e03de:
-	nop ;03de
+	nop
 e03df:
-	nop ;03df
+	nop
 e03e0:
-	rts ;03e0
+	rts
 
 D_DUNK4:
-	dec $48 ;03e1
+	dec $48
 	bne D_DUNK4_1
 	jsr D_DUNK8_2
 D_DUNK4_1:
-	LoadB $1805, $c0 ;03e8
+	LoadB $1805, $c0
 D_DUNK4_2:
-	bbrf 7, $1805, D_DUNK4 ;03ed
+	bbrf 7, $1805, D_DUNK4
 	lda #4
 	bit $1800
 	bne D_DUNK4_2
@@ -1404,7 +1379,7 @@ D_DUNK4_2:
 	rts
 
 DriveStart:
-	php ;03ff
+	php
 	sei
 	PushB $49
 	ldy #0
@@ -1425,7 +1400,7 @@ DriveStart:
 	bit $1800
 	beq *-3
 DriveLoop:
-	jsr D_DUNK8 ;0430
+	jsr D_DUNK8
 	lda #>DExecAddy
 	sta $74
 	lda #<DExecAddy
@@ -1439,14 +1414,14 @@ DriveLoop:
 	sta $180f
 	jmp Drv_Loop2
 Drv_Loop1:
-	sec ;0453
+	sec
 	sbc #$23
 	sta DDatas
 	lda $180f
 	ora #$04
 	sta $180f
 Drv_Loop2:
-	jsr D_DUNK8_1 ;0461
+	jsr D_DUNK8_1
 	LoadW $73, $0700
 	lda #>(DriveLoop-1)
 	pha
@@ -1455,7 +1430,7 @@ Drv_Loop2:
 	jmp (DExecAddy)
 
 Drv_ExitTurbo:
-	jsr D_DUNK4_1 ;0475
+	jsr D_DUNK4_1
 	LoadB $33, 0
 	jsr $f98f
 	LoadB $1c0c, $ec
@@ -1467,7 +1442,7 @@ Drv_ExitTurbo:
 	rts
 
 e048e:
-	lda $180f ;048e
+	lda $180f
 	and #$df
 	sta $180f
 	jsr $a483
@@ -1478,7 +1453,7 @@ e048e:
 	rts
 
 Drv_ChngDskDev:
-	lda e06f9 ;04a5
+	lda e06f9
 	sta $77
 	eor #$60
 	sta $78
@@ -1486,45 +1461,45 @@ Drv_ChngDskDev:
 
 
 Drv_ReadSec:
-	jsr e062a ;04af
+	jsr e062a
 	ldy #0
 	jsr Drv_SendByte_1
 	jmp Drv_SendByte_0
 
 D_DUNK8:
-	lda #$f7 ;04ba
+	lda #$f7
 	bne D_DUNK8_3
 D_DUNK8_1:
-	lda #$08 ;04be
+	lda #$08
 	ora $1c00
 	bne D_DUNK8_5
 D_DUNK8_2:
-	LoadB $20, 0 ;04c5
+	LoadB $20, 0
 	LoadB $3e, $ff
 	lda #$fb
 D_DUNK8_3:
-	and $1c00 ;04cf
+	and $1c00
 	jmp D_DUNK8_5
 D_DUNK8_4:
-	lda $1c00 ;04d5
+	lda $1c00
 	and #$9f
 	ora DTrackTab,x
 D_DUNK8_5:
-	sta $1c00 ;04dd
+	sta $1c00
 	rts
 
 DTrackTab:
-	.byte $00, $20, $40, $60 ;04e1
+	.byte $00, $20, $40, $60
 
 D_DUNK5:
-	jsr D_DUNK12 ;04e5
+	jsr D_DUNK12
 	lda $22
 	beq D_DUNK5_1
 	ldx $00
 	dex
 	beq D_DUNK5_2
 D_DUNK5_1:
-	PushB $12 ;04f1
+	PushB $12
 	PushB $13
 	jsr Drv_NewDisk_1
 	PopB $13
@@ -1539,7 +1514,7 @@ D_DUNK5_1:
 	bne D_DUNK5_5
 	lda #0
 D_DUNK5_2:
-	pha ;0511
+	pha
 	lda $22
 	ldx #$ff
 	sec
@@ -1550,20 +1525,20 @@ D_DUNK5_2:
 	adc #1
 	ldx #1
 D_DUNK5_3:
-	jsr D_DUNK6 ;0524
+	jsr D_DUNK6
 	lda DDatas
 	sta $22
 	jsr Drv_NewDisk_5
 D_DUNK5_4:
-	pla ;052f
+	pla
 D_DUNK5_41:
-	rts ;0530
+	rts
 D_DUNK5_5:
-	LoadB $00, $0b ;0531
+	LoadB $00, $0b
 	rts
 
 D_DUNK6:
-	stx $4a ;0536
+	stx $4a
 	asl
 	tay
 	lda $1c00
@@ -1572,7 +1547,7 @@ D_DUNK6:
 	lda #$2f
 	sta $71
 D_DUNK6_1:
-	lda $70 ;0545
+	lda $70
 	add $4a
 	eor $70
 	and #%00000011
@@ -1588,16 +1563,16 @@ D_DUNK6_1:
 	sbc #3
 	bne D_DUNK6_3
 D_DUNK6_2:
-	cmp #$2f ;0566
+	cmp #$2f
 	bcs D_DUNK6_3
 	adc #4
 D_DUNK6_3:
-	sta $71 ;056c
+	sta $71
 	dey
 	bne D_DUNK6_1
 	lda #$96
 D_DUNK6_4:
-	pha ;0573
+	pha
 	sta $1805
 	lda $1805
 	bne *-3
@@ -1605,9 +1580,9 @@ D_DUNK6_4:
 	rts
 
 Drv_NewDisk:
-	jsr D_DUNK12 ;057e
+	jsr D_DUNK12
 Drv_NewDisk_1:
-	ldx $00 ;0581
+	ldx $00
 	dex
 	beq Drv_NewDisk_2
 	ldx #$ff
@@ -1620,15 +1595,15 @@ Drv_NewDisk_1:
 	jsr D_DUNK6_4
 	jsr D_DUNK6_4
 Drv_NewDisk_2:
-	LoadB $70, $04 ;059b
+	LoadB $70, $04
 Drv_NewDisk_3:
-	jsr D_DUNK11 ;059f
+	jsr D_DUNK11
 	lda $18
 	cmp #$24
 	bcc Drv_NewDisk_30
 	sbc #$23
 Drv_NewDisk_30:
-	sta $22 ;05aa
+	sta $22
 	ldy $00
 	dey
 	beq Drv_NewDisk_5
@@ -1639,21 +1614,21 @@ Drv_NewDisk_30:
 	sec
 	bcs Drv_NewDisk_3
 Drv_NewDisk_4:
-	LoadB $22, 0 ;05bd
+	LoadB $22, 0
 	rts
 Drv_NewDisk_5:
-	jsr $f24b ;05c2
+	jsr $f24b
 	sta $43
 	jmp D_DUNK8_4
 
 D_DUNK9:
-	tax ;05ca
+	tax
 	bbrf 7, e06f5, D_DUNK9_0
 	jsr D_DUNK12_1
 	ldx #0
 	stx e06f5
 D_DUNK9_0:
-	cpx $22 ;05d8
+	cpx $22
 	beq D_DUNK9_1
 	jsr Drv_NewDisk_2
 	cmp #1
@@ -1668,16 +1643,16 @@ D_DUNK9_0:
 	LoadW $32, $0018
 	jsr D_DUNK11_1
 D_DUNK9_1:
-	rts ;05fd
+	rts
 
 Drv_WriteSec:
-	jsr D_DUNK5 ;05fe
+	jsr D_DUNK5
 	ldx $00
 	dex
 	bne D_DUNK10_1
 	jsr D_DUNK9
 D_DUNK10_1:
-	ldy #0 ;0609
+	ldy #0
 	jsr Drv_RecvByte
 	eor $70
 	sta $3a
@@ -1689,29 +1664,29 @@ D_DUNK10_1:
 	bne Drv_WriteSec_1
 	LoadB $00, 8
 Drv_WriteSec_1:
-	jsr Drv_SendByte_0 ;0622
+	jsr Drv_SendByte_0
 	lda #$10
 	jmp e062f
 
 e062a:
-	jsr D_DUNK5 ;062a
+	jsr D_DUNK5
 	lda #0
 e062f:
-	ldx $00 ;062f
+	ldx $00
 	dex
 	beq D_DUNK11_0
 	rts
 
 D_DUNK11:
-	lda #$30 ;0635
+	lda #$30
 D_DUNK11_0:
-	sta $45 ;0637
+	sta $45
 	lda #>e06f9
 	sta $33
 	lda #<e06f9
 	sta $32
 D_DUNK11_1:
-	LoadB $31, 7 ;0641
+	LoadB $31, 7
 	tsx
 	stx $49
 	ldx #1
@@ -1728,13 +1703,13 @@ D_DUNK11_1:
 	beq D_DUNK11_2
 	jmp $9606
 D_DUNK11_2:
-	jmp $944f ;0667
+	jmp $944f
 D_DUNK11_3:
-	jsr $f78f ;066a
+	jsr $f78f
 	jsr $970f
 	ldy #9
 D_DUNK11_4:
-	bit $180f ;0672
+	bit $180f
 	bmi D_DUNK11_4
 	bit $1c00
 	dey
@@ -1749,21 +1724,21 @@ D_DUNK11_4:
 	ldy #5
 	sta $1c01
 D_DUNK11_5:
-	bit $180f ;0693
+	bit $180f
 	bmi D_DUNK11_5
 	bit $1c00
 	dey
 	bne D_DUNK11_5
 	ldy #$bb
 D_DUNK11_7:
-	lda $0100,y ;06a0
+	lda $0100,y
 	bit $180f
 	bmi *-3
 	sta $1c01
 	iny
 	bne D_DUNK11_7
 D_DUNK11_8:
-	lda ($30),y ;06ae
+	lda ($30),y
 	bit $180f
 	bmi *-3
 	sta $1c01
@@ -1781,59 +1756,59 @@ D_DUNK11_8:
 	rts
 
 D_DUNK12:
-	lda $20 ;06d4
+	lda $20
 	and #$20
 	bne D_DUNK12_3
 	jsr $f97e
 	lda #$ff
 	sta e06f5
 D_DUNK12_1:
-	ldy #$c8 ;06e2
+	ldy #$c8
 D_DUNK12_2:
-	dex ;06e4
+	dex
 	bne D_DUNK12_2
 	dey
 	bne D_DUNK12_2
 	sty $3e
 	LoadB $20, $20
 D_DUNK12_3:
-	LoadB $48, $ff ;0645
+	LoadB $48, $ff
 	rts
 
 e06f5:
-	.byte 0 ;06f5
+	.byte 0
 DDatas:
-	.byte 0 ;06f6
+	.byte 0
 DExecAddy:
-	.word 0 ;06f7
+	.word 0
 e06f9:
-	.word 0 ;06f9
+	.word 0
 
 .segment "drv1571_b"
 
 tmpclkreg:
-	.byte 0 ;9d4c
+	.byte 0
 tmpPS:
-	.byte 0 ;9d4d
+	.byte 0
 tmpgrirqen:
-	.byte 0 ;9d4e
+	.byte 0
 tmpCPU_DATA:
-	.byte 0 ;9d4f
+	.byte 0
 tmpmobenble:
-	.byte 0 ;9d50
+	.byte 0
 	.byte 0
 DExeProc:
-	.word 0 ;9d52
+	.word 0
 DTrkSec:
-	.word 0 ;9d54
+	.word 0
 tmpDD00_2:
-	.byte 0 ;9d56
+	.byte 0
 errCount:
-	.byte 0 ;9d57
+	.byte 0
 errStore:
-	.byte 0 ;9d58
+	.byte 0
 tryCount:
-	.byte 0 ;9d59
+	.byte 0
 borderFlag:
-	.byte 0 ;9d5a
+	.byte 0
 
