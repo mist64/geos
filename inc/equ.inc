@@ -8,15 +8,6 @@ use1571         =       0
 use1581         =       0
 
 
-; select generic input driver from the list:
-; (only one value may be '1')
-useJoystick     =       1               ; classical digital joystick
-use1531         =       0               ; 1531 mouse
-useKoalaPad     =       0               ; Koala Pad whatever it is...
-useLightPen     =       0               ; lightpen (rocks!)
-usePCAnalogJoy  =       0               ; analog PC joystick connected like paddles (kixx!)
-useAmigaMouse   =       0               ; Amiga style mouse
-
 ; general code generation/optimization control:
 onlyVLIR        =       1               ; only VLIR and SEQ supported
 removeToBASIC   =       1               ; shorter code if you don't use BASIC rebooter
