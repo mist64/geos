@@ -2,7 +2,7 @@
 code purity:
 - throughoutly test it with various configurations
 - cleanup code using !zone's
-- don't install REU cache code (drv1541.tas,drv1581.tas) if there's no REU
+- don't install REU cache code (drv1541.s,drv1581.s) if there's no REU
 
 code extensions:
 - upgrade DlgBox to use more than 16 files
