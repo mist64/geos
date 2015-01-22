@@ -1,21 +1,14 @@
+;GEOS Kernal - booter code
+;reassembled by Maciej 'YTM/Alliance' Witkowiak
+
 .include "const.inc"
 .include "geossym.inc"
 .include "geosmac.inc"
 .include "equ.inc"
 .include "kernal.inc"
 .import ClrScr, EnterDeskTop, FirstInit, GetBlock, GetDirHead, InitGEOEnv, LdApplic, OpenDisk, PutDirHead, _DoFirstInitIO, _EnterDeskTop, _FirstInit, _IRQHandler, _NMIHandler, i_FillRam
+
 .segment "booter"
-
-;GEOS Kernal - booter code
-;reassembled by Maciej 'YTM/Alliance' Witkowiak
-;19,20-3-99;
-;4.4 - custom expansions on-boot tests (not tested)
-;5.4 - DeskTop ram loader
-;20.4 - DB if DeskTop not found (no DT reboot - bug somewhere)
-
-;17.8 - ACME port
-;21.8.2000 - fixed directory position bug (bootTr2)
-;22.9.2000 - macros, conditionale fixes
 
 	sei
 	cld

@@ -1,15 +1,13 @@
+;font handling functions, mostly for internal (Kernal) use
+
 .include "const.inc"
 .include "geossym.inc"
 .include "geosmac.inc"
-.include "equ.inc"
 .include "kernal.inc"
 .import ID100, BitMask2, FontTVar1, GetScanLine, FontTVar2, BitMask4, BitMask3, GetRealSize, GetChWdth1
 .global _GetRealSize, Font_10
+
 .segment "fonts"
-
-;font handling functions, mostly for internal (Kernal) use
-
-;17-8-99 - ACME port
 
 _GetRealSize:
 	subv 32

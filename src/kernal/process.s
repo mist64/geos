@@ -1,15 +1,12 @@
+;multitasking functions (processes, sleep, delays)
+
 .include "const.inc"
 .include "geossym.inc"
 .include "geosmac.inc"
-.include "equ.inc"
 .include "kernal.inc"
 .global _BlockProcess, _DoCheckDelays, _EnableProcess, _ExecuteProcesses, _FreezeProcess, _InitProcesses, _ProcessDelays, _ProcessTimers, _RestartProcess, _Sleep, _UnBlockProcess, _UnFreezeProcess
 
 .segment "process"
-
-;multitasking functions (processes, sleep, delays)
-
-;17-8-99 - ACME port
 
 _InitProcesses:
 	ldx #0

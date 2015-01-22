@@ -1,16 +1,12 @@
+;sprites-related functions, handles all sprites (including pointer and prompt)
+
 .include "const.inc"
 .include "geossym.inc"
 .include "geosmac.inc"
-;.include "equ.inc"
-;.include "kernal.inc"
 .import BitMask2, SprTabH, SprTabL
 .global _DisablSprite, _DrawSprite, _EnablSprite, _PosSprite
 
 .segment "sprites"
-
-;sprites-related functions, handles all sprites (including pointer and prompt)
-
-;17-8-99 - ACME port
 
 _DrawSprite:
 	ldy r3L

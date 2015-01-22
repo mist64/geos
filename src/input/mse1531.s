@@ -1,14 +1,12 @@
+; this is 1531 mouse driver for GEOS
+; reassembled by Maciej 'YTM/Elysium' Witkowiak
+
 .include "const.inc"
 .include "geossym.inc"
 .include "geosmac.inc"
-.include "equ.inc"
-.include "kernal.inc"
 .global SlowMouse, UpdateMouse
-.segment "mse1531"
 
-; this is 1531 mouse driver for GEOS
-; reassembled by Maciej 'YTM/Elysium' Witkowiak
-; 27.07.2000
+.segment "mse1531"
 
 MouseJMP:
 	jmp _MouseInit

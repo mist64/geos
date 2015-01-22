@@ -1,3 +1,5 @@
+;dialog box handler
+
 .include "const.inc"
 .include "geossym.inc"
 .include "geosmac.inc"
@@ -7,10 +9,6 @@
 .global Dialog_2, DlgBoxPrep, _DoDlgBox, _RstrFrmDialogue
 
 .segment "dlgbox"
-
-;dialog box handler
-
-;18-8-99 - ACME port
 
 _DoDlgBox:
 	MoveW r0, DBoxDesc

@@ -1,15 +1,13 @@
+; this is lightpen driver for GEOS
+; reassembled by Maciej 'YTM/Elysium' Witkowiak
+
 .include "const.inc"
 .include "geossym.inc"
 .include "geosmac.inc"
-.include "equ.inc"
-.include "kernal.inc"
 .import GraphicsString, DoDlgBox
 .global SlowMouse, UpdateMouse
-.segment "lightpen"
 
-; this is lightpen driver for GEOS
-; reassembled by Maciej 'YTM/Elysium' Witkowiak
-; 08.04.2001
+.segment "lightpen"
 
 MouseJMP:
 	jmp _MouseInit

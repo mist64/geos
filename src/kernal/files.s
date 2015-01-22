@@ -1,3 +1,5 @@
+;disk and file related functions (maybe should I split vlir functions?)
+
 .include "const.inc"
 .include "geossym.inc"
 .include "geosmac.inc"
@@ -7,10 +9,6 @@
 .global _AppendRecord, _BldGDirEntry, _CloseRecordFile, _DeleteFile, _DeleteRecord, _FastDelFile, _FindFTypes, _FindFile, _FollowChain, _FreeFile, _GetFHdrInfo, _GetFile, _GetPtrCurDkNm, _InsertRecord, _LdApplic, _LdDeskAcc, _LdFile, _OpenRecordFile, _ReadByte, _ReadRecord, _RenameFile, _RstrAppl, _SaveFile, _SetDevice, _SetGDirEntry, _UpdateRecordFile, _WriteRecord, _NextRecord, _PointRecord, _PreviousRecord
 
 .segment "files"
-
-;disk and file related functions (maybe should I split vlir functions?)
-
-;18-8-99 - ACME port
 
 _GetFile:
 	jsr UNK_5

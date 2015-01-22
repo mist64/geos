@@ -1,17 +1,14 @@
+;GEOS 1581 disk driver
+;reassembled by Maciej 'YTM/Elysium' Witkowiak
+
 .include "const.inc"
 .include "geossym.inc"
 .include "geosmac.inc"
-.include "equ.inc"
 .include "kernal.inc"
 .import DoRAMOp, PurgeTurbo, ExitTurbo, StashRAM, SetDevice, PutDirHead, FindBAMBit, SetNextFree, CalcBlksFree, Ddiv, SaveFile, CopyFString, GetPtrCurDkNm, ChkDkGEOS, GetDirHead, NewDisk, VerWriteBlock, WriteBlock, DoneWithIO, ReadBlock, InitForIO, EnterTurbo
 .global Get1stDirEntry, GetNxtDirEntry, PurgeTurbo, ReadBuff, SaveFile, WriteBuff, _BlkAlloc, _CalcBlksFree, _ChangeDiskDevice, _ChkDkGEOS, _DoneWithIO, _EnterTurbo, _ExitTurbo, _FindBAMBit, _FreeBlock, _GetBlock, _GetDirHead, _GetFreeDirBlk, _InitForIO, _NewDisk, _NxtBlkAlloc, _OpenDisk, _PurgeTurbo, _PutBlock, _PutDirHead, _ReadBlock, _SetGEOSDisk, _SetNextFree, _VerWriteBlock, _WriteBlock
 
 .segment "drv1581"
-
-;GEOS 1581 disk driver
-;reassembled by Maciej 'YTM/Elysium' Witkowiak
-;31.08-3.09.2001
-
 
 DriveAddy = $0300
 
@@ -1576,10 +1573,8 @@ E04E8:
 	.byte 0
 E04E9:
 	.byte 0, 0
-E04EB:
-	=*
-E04EC:
-	=*+1
+E04EB	=*
+E04EC	=*+1
 ;04ed
 .segment "drv1581_b"
 ;9bb2

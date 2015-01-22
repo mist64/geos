@@ -1,3 +1,6 @@
+;GEOS System KERNAL - lower part, placed after disk driver
+;reassembled by Maciej 'YTM/Alliance' Witkowiak
+
 .include "const.inc"
 .include "geossym.inc"
 .include "geosmac.inc"
@@ -5,16 +8,8 @@
 .include "kernal.inc"
 .import DoneWithIO, EnterTurbo, InitForIO, ReadBlock, VerWriteBlock, WriteBlock
 .global _DoRAMOp, _FetchRAM, _ReadFile, _StashRAM, _SwapRAM, _VerifyRAM, _WriteFile, _DoRAMOp, _FetchRAM, _ReadFile, _StashRAM, _SwapRAM, _VerifyRAM, _WriteFile, _DoRAMOp, _FetchRAM, _ReadFile, _StashRAM, _SwapRAM, _VerifyRAM, _WriteFile, _DoRAMOp, _FetchRAM, _ReadFile, _StashRAM, _SwapRAM, _VerifyRAM, _WriteFile, LoKernal
+
 .segment "lokernal"
-
-;GEOS System KERNAL - lower part, placed after disk driver
-;reassembled by Maciej 'YTM/Alliance' Witkowiak
-;18-3-99, 3.4
-
-;4.4 - ram expansions read/write procs (+60K not tested)
-
-;17.8.99 - ACME port
-
 
 LoKernal:
 	AddVW 2, r6

@@ -1,3 +1,5 @@
+;GEOS menu handler
+
 .include "const.inc"
 .include "geossym.inc"
 .include "geosmac.inc"
@@ -7,10 +9,6 @@
 .global MenuDoInvert, RcvrMnu0, _DoMenu, _DoPreviousMenu, _GotoFirstMenu, _ReDoMenu, _RecoverAllMenus, _RecoverMenu, Menu_5
 
 .segment "menu"
-
-;GEOS menu handler
-
-;17-8-99 - ACME handler
 
 _DoMenu:
 	sta menuOptionTab

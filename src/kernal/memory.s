@@ -1,16 +1,13 @@
+;memory handling functions (copy, compare, move, fill)
+
 .include "const.inc"
 .include "geossym.inc"
 .include "geosmac.inc"
 .include "equ.inc"
-.include "kernal.inc"
 .import FetchRAM, StashRAM, DoInlineReturn
 .global _ClearRam, _CmpFString, _CmpString, _CopyFString, _CopyString, _FillRam, _MoveData, _i_FillRam, _i_MoveData
 
 .segment "memory"
-
-;memory handling functions (copy, compare, move, fill)
-
-;17-8-99 - ACME port
 
 _CopyString:
 	lda #0

@@ -1,3 +1,5 @@
+;system core functions, like those from 'main.s' but a bit different
+
 .include "const.inc"
 .include "geossym.inc"
 .include "geosmac.inc"
@@ -7,10 +9,6 @@
 .global KbdScanHelp3, _DoUpdateTime, _IRQHandler, _NMIHandler
 
 .segment "system"
-
-;system core functions, like those from 'main.tas' but a bit different
-
-;17-8-99 - ACME port
 
 _IRQHandler:
 	cld

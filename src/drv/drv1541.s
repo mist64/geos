@@ -1,3 +1,6 @@
+;GEOS 1541 disk driver
+;reassembled by Maciej 'YTM/Alliance' Witkowiak
+
 .include "const.inc"
 .include "geossym.inc"
 .include "geosmac.inc"
@@ -5,14 +8,8 @@
 .include "kernal.inc"
 .import DoRAMOp, StashRAM, ExitTurbo, SetDevice, PutDirHead, FindBAMBit, SetNextFree, CalcBlksFree, Ddiv, CopyFString, GetPtrCurDkNm, ChkDkGEOS, GetDirHead, NewDisk, VerWriteBlock, WriteBlock, DoneWithIO, ReadBlock, InitForIO, EnterTurbo
 .global _InitForIO, _DoneWithIO, _ExitTurbo, _PurgeTurbo, _EnterTurbo, _ChangeDiskDevice, _NewDisk, _ReadBlock, _WriteBlock, _VerWriteBlock, _OpenDisk, _GetBlock, _PutBlock, _GetDirHead, _PutDirHead, _GetFreeDirBlk, _CalcBlksFree, _FreeBlock, _SetNextFree, _FindBAMBit, _NxtBlkAlloc, _BlkAlloc, _ChkDkGEOS, _SetGEOSDisk, WriteBuff, ReadBuff, Get1stDirEntry, GetNxtDirEntry
+
 .segment "drv1541"
-
-;GEOS 1541 disk driver
-;reassembled by Maciej 'YTM/Alliance' Witkowiak
-;18-20.04.99
-
-;17.8.99 - ACME port
-
 
 DriveAddy = $0300
 

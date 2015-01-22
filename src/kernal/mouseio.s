@@ -1,16 +1,13 @@
+;almost all about mouse, menu & icon mouse handling is elsewhere
+
 .include "const.inc"
 .include "geossym.inc"
 .include "geosmac.inc"
-.include "equ.inc"
 .include "kernal.inc"
 .import KbdScanHelp3, _DoPreviousMenu, CallRoutine, ProcessClick, Menu_5, EnablSprite, PosSprite, DrawSprite, UpdateMouse, _DisablSprite, MouseUp, SlowMouse
 .global ProcessMouse, ResetMseRegion, _ClearMouseMode, _DoCheckButtons, _IsMseInRegion, _MouseOff, _MouseUp, _StartMouseMode
 
 .segment "mouseio"
-
-;almost all about mouse, menu & icon mouse handling is elsewhere
-
-;17-8-99 - ACME port
 
 _IsMseInRegion:
 	lda mouseYPos

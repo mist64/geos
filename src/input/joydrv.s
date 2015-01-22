@@ -1,18 +1,13 @@
+;GEOS joystick input driver
+;reassembled by Maciej 'YTM/Alliance' Witkowiak
+
 .include "const.inc"
 .include "geossym.inc"
 .include "geosmac.inc"
-.include "equ.inc"
-.include "kernal.inc"
 .import Dnegate, BBMult
 .global UpdateMouse, SlowMouse
+
 .segment "joydrv"
-
-;GEOS joystick input driver
-;reassembled by Maciej 'YTM/Alliance' Witkowiak
-;18.04.1999
-
-;17.08.1999 - ACME port
-
 
 MouseJMP:
 	jmp _MouseInit

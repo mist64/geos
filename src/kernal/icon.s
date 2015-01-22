@@ -1,16 +1,13 @@
+;GEOS Icons handler
+
 .include "const.inc"
 .include "geossym.inc"
 .include "geosmac.inc"
-.include "equ.inc"
 .include "kernal.inc"
 .import Ddec, DShiftLeft, _Sleep, MenuDoInvert, CallRoutine, _BitmapUp, _StartMouseMode, ResetMseRegion
 .global CalcIconDescTab, ProcessClick, _DoIcons
 
 .segment "icon"
-
-;GEOS Icons handler
-
-;17-8-99 - ACME port
 
 _DoIcons:
 	MoveW r0, IconDescVec

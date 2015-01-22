@@ -1,15 +1,11 @@
+;GEOS Amiga style mouse input driver
+;reassembled by Maciej 'YTM/Elysium' Witkowiak
+
 .include "const.inc"
 .include "geossym.inc"
 .include "geosmac.inc"
-.include "equ.inc"
-.include "kernal.inc"
 .segment "amigamse"
 .global SlowMouse, UpdateMouse
-
-;GEOS Amiga style mouse input driver
-;reassembled by Maciej 'YTM/Elysium' Witkowiak
-;29.07.2001
-
 
 MouseJMP:
 	jmp _MouseInit
