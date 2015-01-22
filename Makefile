@@ -29,12 +29,18 @@ DEPS=inc/const.inc inc/diskdrv.inc inc/equ.inc inc/geosmac.inc inc/geossym.inc i
 
 KERNAL_OBJECTS=$(KERNAL_SOURCES:.s=.o)
 
-ALL_BINS=kernal.bin drv1541.bin drv1571.bin drv1581.bin amigamse.bin joydrv.bin lightpen.bin mse1531.bin
+ALL_BINS=kernal.bin drv1541.bin drv1571.bin drv1581.bin amigamse.bin joydrv.bin lightpen.bin mse1531.bin combined.prg compressed.prg geos.d64
 
-all: combined.prg
+all: geos.d64
 
 clean:
 	rm -f $(KERNAL_OBJECTS) $(ALL_BINS) combined.prg
+
+geos.d64: compressed.prg
+	c1541 <c1541.in >/dev/null
+
+compressed.prg: combined.prg
+	pucrunch -f -c64 -x0x5000 $< $@
 
 combined.prg: $(ALL_BINS)
 	printf "\x00\x50" > tmp.bin
@@ -71,3 +77,6 @@ mse1531.bin: src/input/mse1531.o src/input/mse1531.cfg
 %.o: %.s $(DEPS)
 	$(AS) $(ASFLAGS) $< -o $@
 
+# a must!
+love:	
+	@echo "Not war, eh?"
