@@ -34,7 +34,7 @@ ALL_BINS=kernal.bin drv1541.bin drv1571.bin drv1581.bin amigamse.bin joydrv.bin 
 all: geos.d64
 
 clean:
-	rm -f $(KERNAL_OBJECTS) $(ALL_BINS) combined.prg
+	rm -f $(KERNAL_OBJECTS) src/drv/*.o src/input/*.o $(ALL_BINS) combined.prg
 
 geos.d64: compressed.prg
 	c1541 <c1541.in >/dev/null
