@@ -29,7 +29,7 @@ DEPS=inc/const.inc inc/diskdrv.inc inc/equ.inc inc/geosmac.inc inc/geossym.inc i
 
 KERNAL_OBJECTS=$(KERNAL_SOURCES:.s=.o)
 
-ALL_BINS=kernal.bin drv1541.bin drv1571.bin drv1581.bin amigamse.bin joydrv.bin lightpen.bin mse1531.bin koalapad.bin pcanalog.bin combined.prg compressed.prg geos.d64
+ALL_BINS=kernal.bin init.bin drv1541.bin drv1571.bin drv1581.bin amigamse.bin joydrv.bin lightpen.bin mse1531.bin koalapad.bin pcanalog.bin combined.prg compressed.prg geos.d64
 
 all: geos.d64
 
@@ -44,14 +44,16 @@ compressed.prg: combined.prg
 
 combined.prg: $(ALL_BINS)
 	printf "\x00\x50" > tmp.bin
-	dd if=kernal.bin bs=1 count=16384 >> tmp.bin
+	cat init.bin /dev/zero | dd bs=1 count=16384 >> tmp.bin
 	cat drv1541.bin /dev/zero | dd bs=1 count=3456 >> tmp.bin
-	cat kernal.bin /dev/zero | dd bs=1 skip=19840 count=24832 >> tmp.bin
+	cat kernal.bin /dev/zero | dd bs=1 count=24832 >> tmp.bin
 	cat joydrv.bin >> tmp.bin
 	mv tmp.bin combined.prg
 
 kernal.bin: $(KERNAL_OBJECTS) kernal/kernal.cfg
 	$(LD) -C kernal/kernal.cfg $(KERNAL_OBJECTS) -o $@
+
+init.bin: kernal.bin
 
 drv1541.bin: drv/drv1541.o drv/drv1541.cfg
 	$(LD) -C drv/drv1541.cfg drv/drv1541.o -o $@
