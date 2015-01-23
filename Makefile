@@ -4,7 +4,7 @@ LD=ld65
 ASFLAGS=-I inc -I .
 
 KERNAL_SOURCES= \
-kernal/init.s \
+init/init.s \
 kernal/bswfont.s \
 kernal/icons.s \
 kernal/lokernal.s \
