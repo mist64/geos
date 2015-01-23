@@ -5,7 +5,8 @@
 .include "geosmac.inc"
 .include "config.inc"
 .include "kernal.inc"
-.import daysTab, dateCopy, ConvertBCD, BitMask2, CallRoutine
+.include "jumptab.inc"
+.import daysTab, dateCopy, ConvertBCD, BitMask2
 .global KbdScanHelp3, _DoUpdateTime, _IRQHandler, _NMIHandler
 
 .segment "system"

@@ -20,12 +20,8 @@
 .import _InvertRectangle, _FrameRectangle, _Rectangle, _VerticalLine, _RecoverLine, _InvertLine, _HorizontalLine, _UnFreezeProcess, _FreezeProcess, _UnBlockProcess, _BlockProcess, _EnableProcess, _RestartProcess, _InitProcesses, DoPLAINTEXT, DoOUTLINEON
 .import DoITALICON, DoBOLDON, DoNEWCARDSET, DoGOTOXY, DoGOTOY, DoGOTOX, DoREV_OFF, DoREV_ON, DoESC_RULER, DoESC_GRAPHICS, DoULINEOFF, DoULINEON, DoCR, DoUPLINE, DoHOME, DoLF
 .import DoTAB, DoBACKSPACE
-.global BBMult, BitMask1, BitMask2, BitMask3, BitMask4, BldGDirEntry, BlkAlloc, CalcBlksFree, CallRoutine, ChkDkGEOS, ClearRam, CopyFString, CopyString, DBIcPicDISK, DBIcPicNO, DBIcPicOPEN, DBIcPicYES
-.global DShiftLeft, Dabs, DecTabH, DecTabL, DkNmTab, DoInlineReturn, DoneWithIO, DrawSprite, EnablSprite, EnterTurbo, ExitTurbo, FastDelFile, FindBAMBit, FindFTypes, FindFile, FontTVar1
-.global FontTVar2, FrameRectangle, GetBlock, GetDirHead, GetFHdrInfo, GetFile, GetFreeDirBlk, GetPtrCurDkNm, GetRealSize, GetScanLine, GetString, GraphicsString, HorizontalLine, InitForIO, InitGEOEnv, InvertRectangle
-.global IsMseInRegion, LdApplic, LdDeskAcc, LdFile, LineTabH, LineTabL, MainLoop, MouseUp, NewDisk, PosSprite, PutBlock, PutCharTabH, PutCharTabL, PutDirHead, PutString, ReadBlock
-.global ReadFile, Rectangle, RstrFrmDialogue, SetDevice, SetGDirEntry, SetNextFree, SetPattern, SprTabH, SprTabL, StartAppl, UNK_4, UNK_5, UseSystemFont, VerWriteBlock, WriteBlock, WriteFile, _MNLP, dateCopy, daysTab
-.global i_FillRam, EnterDeskTop, _DoFirstInitIO, _FirstInit, FirstInit, OpenDisk, _DoFirstInitIO, _FirstInit, Ddec, Ddiv, DoIcons, FreeBlock, PutChar, _EnterDeskTop, StashRAM, DoRAMOp, FetchRAM, Dnegate, PurgeTurbo, SaveFile, DoDlgBox
+.global BitMask1, BitMask2, BitMask3, BitMask4
+.global DBIcPicDISK, DBIcPicNO, DBIcPicOPEN, DBIcPicYES, DecTabH, DecTabL, DkNmTab, FontTVar1, FontTVar2, InitGEOEnv, LineTabH, LineTabL, PutCharTabH, PutCharTabL, SprTabH, SprTabL, UNK_4, UNK_5, _DoFirstInitIO, _EnterDeskTop, _FirstInit, _MNLP, dateCopy, daysTab
 
 .segment "main"
 

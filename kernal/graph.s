@@ -5,7 +5,8 @@
 .include "geosmac.inc"
 .include "config.inc"
 .include "kernal.inc"
-.import Dabs, LineTabH, LineTabL, PatternTab, _PutString, CallRoutine, DoInlineReturn, BitMask1, BitMask3, BitMask4
+.include "jumptab.inc"
+.import LineTabH, LineTabL, PatternTab, _PutString, BitMask1, BitMask3, BitMask4
 .global _BitOtherClip, _BitmapClip, _BitmapUp, _DrawPoint, _FrameRectangle, _GetScanLine, _GraphicsString, _HorizontalLine, _ImprintRectangle, _InvertLine, _InvertRectangle, _RecoverLine, _RecoverRectangle, _Rectangle, _SetPattern, _TestPoint, _VerticalLine, _i_BitmapUp, _i_FrameRectangle, _i_GraphicsString, _i_ImprintRectangle, _i_RecoverRectangle, _i_Rectangle, ClrScr, _DrawLine
 
 .segment "graph"

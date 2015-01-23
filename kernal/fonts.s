@@ -4,7 +4,8 @@
 .include "geossym.inc"
 .include "geosmac.inc"
 .include "kernal.inc"
-.import ID100, BitMask2, FontTVar1, GetScanLine, FontTVar2, BitMask4, BitMask3, GetRealSize, GetChWdth1
+.include "jumptab.inc"
+.import ID100, BitMask2, FontTVar1, FontTVar2, BitMask4, BitMask3, GetChWdth1
 .global _GetRealSize, Font_10
 
 .segment "fonts"

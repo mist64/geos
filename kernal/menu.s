@@ -5,7 +5,8 @@
 .include "geosmac.inc"
 .include "config.inc"
 .include "kernal.inc"
-.import _InvertRectangle, _Sleep, _HorizontalLine, Ddec, _VerticalLine, Rectangle, SetPattern, _PutString, _UseSystemFont, ResetMseRegion, _MouseOff, _StartMouseMode, _FrameRectangle, _Rectangle, _SetPattern
+.include "jumptab.inc"
+.import _InvertRectangle, _Sleep, _HorizontalLine, _VerticalLine, _PutString, _UseSystemFont, ResetMseRegion, _MouseOff, _StartMouseMode, _FrameRectangle, _Rectangle, _SetPattern
 .global MenuDoInvert, RcvrMnu0, _DoMenu, _DoPreviousMenu, _GotoFirstMenu, _ReDoMenu, _RecoverAllMenus, _RecoverMenu, Menu_5
 
 .segment "menu"

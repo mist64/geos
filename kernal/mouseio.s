@@ -5,7 +5,8 @@
 .include "geosmac.inc"
 .include "kernal.inc"
 .include "inputdrv.inc"
-.import KbdScanHelp3, _DoPreviousMenu, CallRoutine, ProcessClick, Menu_5, EnablSprite, PosSprite, DrawSprite, _DisablSprite, MouseUp
+.include "jumptab.inc"
+.import KbdScanHelp3, _DoPreviousMenu, ProcessClick, Menu_5, _DisablSprite
 .global ProcessMouse, ResetMseRegion, _ClearMouseMode, _DoCheckButtons, _IsMseInRegion, _MouseOff, _MouseUp, _StartMouseMode
 
 .segment "mouseio"

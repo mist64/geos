@@ -4,7 +4,8 @@
 .include "geossym.inc"
 .include "geosmac.inc"
 .include "kernal.inc"
-.import Ddec, DShiftLeft, _Sleep, MenuDoInvert, CallRoutine, _BitmapUp, _StartMouseMode, ResetMseRegion
+.include "jumptab.inc"
+.import _Sleep, MenuDoInvert, _BitmapUp, _StartMouseMode, ResetMseRegion
 .global CalcIconDescTab, ProcessClick, _DoIcons
 
 .segment "icon"

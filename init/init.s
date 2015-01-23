@@ -6,7 +6,8 @@
 .include "geosmac.inc"
 .include "config.inc"
 .include "kernal.inc"
-.import ClrScr, EnterDeskTop, FirstInit, GetBlock, GetDirHead, InitGEOEnv, LdApplic, OpenDisk, PutDirHead, _DoFirstInitIO, _EnterDeskTop, _FirstInit, _IRQHandler, _NMIHandler, i_FillRam
+.include "jumptab.inc"
+.import ClrScr, InitGEOEnv, _DoFirstInitIO, _EnterDeskTop, _FirstInit, _IRQHandler, _NMIHandler
 
 .segment "init"
 
