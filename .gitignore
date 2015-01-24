@@ -1,2 +1,5 @@
 *.o
-kernal.bin
+*.bin
+*.prg
+*.d64
+desktop.cvt
