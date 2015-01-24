@@ -19,9 +19,10 @@
 .import _DoIcons, _RecoverAllMenus, _RecoverMenu, _DoMenu, _StartMouseMode, _UseSystemFont, _PutString, _PutChar, _BitmapUp, _TestPoint, _GetScanLine, _SetPattern, _GraphicsString, _DrawPoint, _DrawLine, _RecoverRectangle
 .import _InvertRectangle, _FrameRectangle, _Rectangle, _VerticalLine, _RecoverLine, _InvertLine, _HorizontalLine, _UnFreezeProcess, _FreezeProcess, _UnBlockProcess, _BlockProcess, _EnableProcess, _RestartProcess, _InitProcesses, DoPLAINTEXT, DoOUTLINEON
 .import DoITALICON, DoBOLDON, DoNEWCARDSET, DoGOTOXY, DoGOTOY, DoGOTOX, DoREV_OFF, DoREV_ON, DoESC_RULER, DoESC_GRAPHICS, DoULINEOFF, DoULINEON, DoCR, DoUPLINE, DoHOME, DoLF
+.import LoKernal1, LoKernalBuf
 .import DoTAB, DoBACKSPACE
 .global BitMask1, BitMask2, BitMask3, BitMask4
-.global DBIcPicDISK, DBIcPicNO, DBIcPicOPEN, DBIcPicYES, DecTabH, DecTabL, DkNmTab, FontTVar1, FontTVar2, InitGEOEnv, LineTabH, LineTabL, PutCharTabH, PutCharTabL, SprTabH, SprTabL, UNK_4, UNK_5, _DoFirstInitIO, _EnterDeskTop, _FirstInit, _MNLP, dateCopy, daysTab
+.global DBIcPicDISK, DBIcPicNO, DBIcPicOPEN, DBIcPicYES, DecTabH, DecTabL, DkNmTab, FontTVar1, FontTVar2, InitGEOEnv, LineTabH, LineTabL, PutCharTabH, PutCharTabL, SprTabH, SprTabL, UNK_4, UNK_5, _DoFirstInitIO, _EnterDeskTop, _FirstInit, _MNLP, dateCopy, daysTab, Init_KRNLVec
 
 .segment "main"
 
@@ -689,9 +690,9 @@ _ToBASIC:
 	ldy #39
 TB1:
 	lda (r0),Y
-	cmp #"A"
+	cmp #'A'
 	bcc TB2
-	cmp #"Z"+1
+	cmp #'Z'+1
 	bcs TB2
 	sbc #$3F
 TB2:

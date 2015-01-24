@@ -7,7 +7,8 @@
 .include "config.inc"
 .include "kernal.inc"
 .include "jumptab.inc"
-.global _DoRAMOp, _FetchRAM, _ReadFile, _StashRAM, _SwapRAM, _VerifyRAM, _WriteFile, _DoRAMOp, _FetchRAM, _ReadFile, _StashRAM, _SwapRAM, _VerifyRAM, _WriteFile, _DoRAMOp, _FetchRAM, _ReadFile, _StashRAM, _SwapRAM, _VerifyRAM, _WriteFile, _DoRAMOp, _FetchRAM, _ReadFile, _StashRAM, _SwapRAM, _VerifyRAM, _WriteFile, LoKernal
+.import Init_KRNLVec
+.global _DoRAMOp, _FetchRAM, _ReadFile, _StashRAM, _SwapRAM, _VerifyRAM, _WriteFile, _DoRAMOp, _FetchRAM, _ReadFile, _StashRAM, _SwapRAM, _VerifyRAM, _WriteFile, _DoRAMOp, _FetchRAM, _ReadFile, _StashRAM, _SwapRAM, _VerifyRAM, _WriteFile, _DoRAMOp, _FetchRAM, _ReadFile, _StashRAM, _SwapRAM, _VerifyRAM, _WriteFile, LoKernal, LoKernal1, LoKernalBuf
 
 .segment "lokernal"
 
@@ -382,17 +383,17 @@ RamExWr_1:
 .if (removeToBASIC)
 .else
 LoKernalBuf:
-	!byte 0, 0, 0, 0, 0, 0, 0, 0
-	!byte 0, 0, 0, 0, 0, 0, 0, 0
-	!byte 0, 0, 0, 0, 0, 0, 0, 0
-	!byte 0, 0, 0, 0, 0, 0, 0, 0
-	!byte 0, 0, 0, 0, 0, 0, 0, 0
+	.byte 0, 0, 0, 0, 0, 0, 0, 0
+	.byte 0, 0, 0, 0, 0, 0, 0, 0
+	.byte 0, 0, 0, 0, 0, 0, 0, 0
+	.byte 0, 0, 0, 0, 0, 0, 0, 0
+	.byte 0, 0, 0, 0, 0, 0, 0, 0
 LKIntTimer:
-	!byte 0
+	.byte 0
 LKSaveBASIC:
-	!byte 0, 0, 0
+	.byte 0, 0, 0
 LKSaveR7:
-	!byte 0, 0
+	.byte 0, 0
 
 LoKernal1:
 	sei
