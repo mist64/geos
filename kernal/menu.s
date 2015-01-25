@@ -211,7 +211,7 @@ Menu_2:
 	lda #0
 	sta leftMargin+1
 	lda #0
-	sta leftMargin+1
+	sta leftMargin
 .else
 	LoadW leftMargin, 0
 .endif

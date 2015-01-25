@@ -430,16 +430,6 @@ CheckMonth1:
 CheckMonth2:
 	rts
 
-;XXX
-        .byte   $1F
-        .byte   $1C
-        .byte   $1F
-        asl     $1E1F,x
-        .byte   $1F
-        .byte   $1F
-        asl     $1E1F,x
-        .byte   $1F
-
 .segment "system3"
 DoClockAlarm:
 	lda alarmWarnFlag

@@ -126,13 +126,13 @@ FFTypesStart:
 	SubVW 3, r6
 	jsr Get1stDirEntry
 	bnex FFTypes5
-        ldx     #$C1
-        lda     #$96
-        jsr     $C1D8
-        lda     $03
-        cmp     $D82F
-        .byte 0,0;beq     $D5FC
-        inc     $C218
+	ldx #>GetSerialNumber
+	lda #<GetSerialNumber
+	jsr CallRoutine
+	lda $03
+	cmp $D82F
+	beq FFTypes1
+	inc $C218
 FFTypes1:
 	ldy #OFF_CFILE_TYPE
 	lda (r5),y
@@ -451,8 +451,8 @@ _LdApplic:
 SwapFileName:
 	.byte $1b,"Swap File", NULL
 
-SaveSwapFile:
 	cli
+SaveSwapFile:
 	LoadB fileHeader+O_GHGEOS_TYPE, TEMPORARY
 	LoadW fileHeader, SwapFileName
 	LoadW r9, fileHeader

@@ -93,12 +93,12 @@ _PanicAddy:
 	.byte "xxxx"
 	.byte NULL
 
-.segment "X"
+.segment "fonttvar"
 
 FontTVar1:
 	.byte 0
 FontTVar2:
-	.word 0
+	.word $3f
 
 .segment "sprites2"
 
@@ -142,11 +142,13 @@ DecTabL:
 DecTabH:
 	.byte >1, >10, >100, >1000, >10000
 
-.segment "X"
+.segment "daystab"
 
 daysTab:
 	.byte 31, 28, 31, 30, 31, 30
 	.byte 31, 31, 30, 31, 30, 31
+
+.segment "X"
 
 DeskTopOpen:
 	.byte 0 ;these two bytes are here just
@@ -1049,9 +1051,6 @@ InitRamTab:
 	.word NULL
 
 .segment "unk6"
-
-;XXX
-.byte 0, $3F, 0
 
 UNK_6:
 	lda #$bf
