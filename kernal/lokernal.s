@@ -80,7 +80,7 @@ FlggdPutBl1:
 
 _WriteFile:
 	jsr EnterTurbo
-	bnex DoWrFile3
+	bnex WrFile2
 	sta verifyFlag
 	jsr InitForIO
 	LoadW r4, diskBlkBuf
@@ -93,7 +93,9 @@ _WriteFile:
 	dec verifyFlag
 	jsr DoWriteFile
 WrFile1:
-	jmp DoneWithIO
+	jsr DoneWithIO
+WrFile2:
+	rts
 
 DoWriteFile:
 	ldy #0
@@ -127,6 +129,10 @@ DoWrFile2:
 	tax
 DoWrFile3:
 	rts
+
+; XXX
+        lda     $58,x
+        .byte   $FF
 
 .if (REUPresent)
 _VerifyRAM:
@@ -421,7 +427,11 @@ LKernal2:
 	bne LKernal2
 	stx curDevice
 	LoadB BASICMemTop, $a0
+.if 1
+	LoadW_ tapeBuffVec, $03c3
+.else
 	LoadW tapeBuffVec, $03c3
+.endif
 	LoadB BASICMemBot, $08
 	lsr
 	sta scrAddyHi
@@ -476,3 +486,5 @@ exeBAS4:
 	pla
 	rti
 .endif
+
+	.byte $ff ; ???

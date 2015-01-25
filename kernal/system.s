@@ -184,7 +184,11 @@ KbdScanHlp_12:
 	sta r0H
 KbdScanHlp_13:
 	bbrf 6, r1H, KbdScanHlp_14
+.if 1
+	smbf_ 7, r0H
+.else
 	smbf 7, r0H
+.endif
 KbdScanHlp_14:
 	lda r0H
 	sty r0H

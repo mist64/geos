@@ -51,7 +51,11 @@ _BMult:
 	sta zpage+1,Y
 _DMult:
 	LoadB r8L, 16
+.if 1
+	LoadW_ r7, 0
+.else
 	LoadW r7, 0
+.endif
 BMult0:
 	lsr zpage+1,X
 	ror zpage,X
@@ -77,7 +81,11 @@ BMult1:
 	rts
 
 _Ddiv:
+.if 1
+	LoadW_ r8, 0
+.else
 	LoadW r8, 0
+.endif
 	LoadB r9L, 16
 Ddivl0:
 	asl zpage,X

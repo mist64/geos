@@ -18,9 +18,9 @@ _CopyFString:
 	ldy #0
 CSSource	= *+1
 CStril0:
-	lda (zpage),Y
+	lda (r4),Y
 CSDest		= *+1
-	sta (zpage),Y
+	sta (r5),Y
 	bne CStril1
 	beqx CStril2
 CStril1:
@@ -154,9 +154,9 @@ _CmpFString:
 	ldy #0
 CMSSource	= *+1
 CMStrl0:
-	lda (zpage),Y
+	lda (r5),Y
 CMSDest 	= *+1
-	cmp (zpage),Y
+	cmp (r1),Y
 	bne CMStrl2
 	cmp #0
 	bne CMStrl1

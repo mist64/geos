@@ -283,7 +283,7 @@ PFFet1:
 
 SetDevTab:
 	.word DISK_BASE
-	.word $0000
+	.word REUDskDrvSPC
 	.word DISK_DRV_LGH
 	.byte $00
 
@@ -689,7 +689,11 @@ DelVlirC3:
 
 FreeBlockChain:
 	MoveW r1, r6
+.if 1
+	LoadW_ r2, 0
+.else
 	LoadW r2, 0
+.endif
 FreeBlC1:
 	jsr FreeBlock
 	bnex FreeBlC4

@@ -75,15 +75,19 @@ DoLF:
 	rts
 
 DoHOME:
+.if 1
+	LoadW_ r11, 0
+.else
 	LoadW r11, 0
+.endif
 	sta r1H
-DoESC_RULER:
 	rts
 
 DoUPLINE:
 	SubB curHeight, r1H
 	rts
 
+DoESC_RULER =*+3 ; ??? XXX
 DoCR:
 	MoveW leftMargin, r11
 	jmp DoLF

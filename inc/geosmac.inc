@@ -14,6 +14,14 @@
 	sta dest+0
 .endmacro
 
+.macro LoadW_ dest, value
+	LoadB dest+0, <(value)
+	.if (.not .const(value)) .or (>(value))<>(<(value))
+	lda #>(value)
+	.endif
+	sta dest+1
+.endmacro
+
 .macro MoveB source, dest
 	lda source
 	sta dest
@@ -32,6 +40,13 @@
 .macro AddB source, dest
 	lda source
 	add dest
+	sta dest
+.endmacro
+
+.macro AddB_ source, dest
+	clc
+	lda source
+	adc dest
 	sta dest
 .endmacro
 
@@ -157,6 +172,12 @@ j:
 .macro smbf bitN, dest
 	lda #1 << bitN
 	ora dest
+	sta dest
+.endmacro
+
+.macro smbf_ bitN, dest
+lda dest
+	ora #1 << bitN
 	sta dest
 .endmacro
 
