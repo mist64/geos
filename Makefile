@@ -29,9 +29,9 @@ DEPS=inc/const.inc inc/diskdrv.inc inc/equ.inc inc/geosmac.inc inc/geossym.inc i
 
 KERNAL_OBJECTS=$(KERNAL_SOURCES:.s=.o)
 
-ALL_BINS=kernal.bin lokernal.bin init.bin drv1541.bin drv1571.bin drv1581.bin amigamse.bin joydrv.bin lightpen.bin mse1531.bin koalapad.bin pcanalog.bin combined.prg compressed.prg geos.d64
+ALL_BINS=boot.bin kernal.bin lokernal.bin init.bin drv1541.bin drv1571.bin drv1581.bin amigamse.bin joydrv.bin lightpen.bin mse1531.bin koalapad.bin pcanalog.bin combined.prg compressed.prg geos.d64
 
-all: geos.d64
+all: geos.d64 boot.bin
 
 clean:
 	rm -f $(KERNAL_OBJECTS) drv/*.o input/*.o $(ALL_BINS) combined.prg
@@ -57,6 +57,9 @@ kernal.bin: $(KERNAL_OBJECTS) kernal/kernal.cfg
 lokernal.bin: kernal.bin
 
 init.bin: kernal.bin
+
+boot.bin: boot.o boot.cfg
+	ld65 -C boot.cfg boot.o -o boot.bin
 
 drv1541.bin: drv/drv1541.o drv/drv1541.cfg
 	$(LD) -C drv/drv1541.cfg drv/drv1541.o -o $@
