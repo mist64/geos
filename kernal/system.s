@@ -26,8 +26,6 @@ IRQHand1:
 	pha
 	tya
 	pha
-	PushB CPU_DATA
-	LoadB CPU_DATA, IO_IN
 .if (use2MHz)
 	LoadB clkreg, 0
 .endif
@@ -40,6 +38,8 @@ IRQHand2:
 	inx
 	cpx #32
 	bne IRQHand2
+	PushB CPU_DATA
+	LoadB CPU_DATA, IO_IN
 	lda dblClickCount
 	beq IRQHand3
 	dec dblClickCount
@@ -61,7 +61,9 @@ IRQHand5:
 	lda intBotVector
 	ldx intBotVector+1
 	jsr CallRoutine
-	inc grirq
+	lda #1
+	sta grirq
+	PopB CPU_DATA
 .if (use2MHz)
 	lda #>IRQ2Handler
 	sta $ffff
@@ -77,7 +79,6 @@ IRQHand6:
 	bpl IRQHand6
 	PopW returnAddress
 	PopW CallRLo
-	PopB CPU_DATA
 	pla
 	tay
 	pla
@@ -158,12 +159,7 @@ KbdScanHlp_10:
 	lda r0L
 	ldx r1L
 	and BitMask2,x
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;		BEQ KbdScanHlp_19	; really dirty trick...
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-	bne KbdScanHlp_101
-	jmp KbdScanHlp_19
-KbdScanHlp_101:
+	beq KbdScanHlp_19	; really dirty trick...
 	tya
 	asl
 	asl
@@ -291,6 +287,8 @@ KbdScanHelp4:
 	ldx #0
 KbdScanHlp_41:
 	rts
+
+.segment "system2"
 
 KbdScanHelp5:
 	LoadB cia1base+0, %11111101
@@ -432,6 +430,17 @@ CheckMonth1:
 CheckMonth2:
 	rts
 
+;XXX
+        .byte   $1F
+        .byte   $1C
+        .byte   $1F
+        asl     $1E1F,x
+        .byte   $1F
+        .byte   $1F
+        asl     $1E1F,x
+        .byte   $1F
+
+.segment "system3"
 DoClockAlarm:
 	lda alarmWarnFlag
 	bne DoClkAlrm3

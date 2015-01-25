@@ -206,7 +206,8 @@ DoMseFlt2:
 	jsr _DoPreviousMenu
 	rts
 
-.segment "X"
+.segment "resetmseregion"
+
 ResetMseRegion:
 	lda #NULL
 	sta mouseLeft
@@ -215,6 +216,8 @@ ResetMseRegion:
 	LoadW mouseRight, SC_PIX_WIDTH-1
 	LoadB mouseBottom, SC_PIX_HEIGHT-1
 	rts
+
+.segment "docheckbuttons"
 
 _DoCheckButtons:
 	bbrf INPUT_BIT, pressFlag, DoChkBtns1

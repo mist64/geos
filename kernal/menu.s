@@ -495,7 +495,8 @@ Menu_76:
 	inc r3H
 	MoveW menuRight, r4
 	ldx #r4
-	jmp Ddec
+	jsr Ddec
+	rts
 
 Menu_8:
 	jsr Menu_0

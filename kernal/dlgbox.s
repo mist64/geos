@@ -22,7 +22,14 @@ DDlgB1:
 	bne DDlgB1
 	jsr DlgBoxPrep
 	jsr DrawDlgBox
+.if 1
+	lda #0
+	sta r11H
+	lda #0
+	sta r11L
+.else
 	LoadW r11, 0
+.endif
 	jsr _StartMouseMode
 	jsr _UseSystemFont
 	ldx #11
@@ -105,8 +112,9 @@ DlgBoxPrep:
 	jsr Dialog_3
 	LoadB mobenble, 1
 	PopB CPU_DATA
+	jsr InitGEOEnv
 	LoadB sysDBData, NULL
-	jmp InitGEOEnv
+	rts
 
 DrawDlgBox:
 	LoadB dispBufferOn, ST_WR_FORE | ST_WRGS_FORE
@@ -494,6 +502,7 @@ DBIcOPEN:
 	bne DBKeyVec1
 DBIcDISK:
 	lda #DISK
+	bne DBKeyVec1
 DBKeyVec1:
 	sta sysDBData
 	jmp RstrFrmDialogue
@@ -776,7 +785,8 @@ DBGFPressVector:
 DBGFPrVec1:
 	sta DBGFileSelected
 	jsr DBGFilesHelp6
-	jmp DBGFilesHelp2
+	jsr DBGFilesHelp2
+	rts
 
 DBGFDoArrow:
 	jsr DBGFilesHelp6
@@ -916,4 +926,5 @@ DBGFilesHelp8:
 	bne *+4
 	inc r3H
 	ldx #r4
-	jmp Ddec
+	jsr Ddec
+	rts

@@ -1173,7 +1173,7 @@ UNK_61:
 	bpl UNK_61
 	rts
 
-.segment "X"
+.segment "icon3"
 
 DBIcPicNO:
 	.byte 5, %11111111, $80+1, %11111110, $db+8, 2, $80+6

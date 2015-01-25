@@ -545,7 +545,7 @@ PutDec3:
 	bne PutDec3
 	rts
 
-.segment "X"
+.segment "conio6"
 
 _GetNextChar:
 	bbrf KEYPRESS_BIT, pressFlag, GetNxtChar1

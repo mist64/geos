@@ -211,7 +211,7 @@ CRC5:
 	bne CRC1
 	rts
 
-.segment "X"
+.segment "math3"
 
 ConvertBCD:
 	pha

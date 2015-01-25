@@ -36,6 +36,8 @@ DoIcons1:
 	sec
 	jmp _StartMouseMode
 
+.segment "icon2"
+
 CalcIconDescTab:
 	asl
 	asl
@@ -122,7 +124,8 @@ ProcClk6:
 	tax
 	dey
 	lda (IconDescVec),y
-	jmp CallRoutine
+	jsr CallRoutine
+	rts
 
 FindClkIcon:
 	LoadB r0L, NULL
@@ -195,4 +198,5 @@ CalcIconCoords:
 	ldx #r4
 	jsr DShiftLeft
 	ldx #r4
-	jmp Ddec
+	jsr Ddec
+	rts
