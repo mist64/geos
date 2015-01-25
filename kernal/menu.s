@@ -153,10 +153,15 @@ GetMnuDsc1:
 	sta menuTop,y
 	dey
 	bpl GetMnuDsc1
+        lda     $C098,y
+        clc
+        adc     #$5A
+        sta     $C038,y
 	MoveW menuLeft, r11
 	MoveB menuTop, r1H
 	bbsf 6, menuOptNumber, Menu_01
-	jmp ResetMseRegion
+	jsr ResetMseRegion
+	rts
 
 Menu_1:
 	jsr MenuStoreFont
@@ -202,7 +207,14 @@ Menu_2:
 	PushW leftMargin
 	PushW rightMargin
 	PushW StringFaultVec
+.if 1
+	lda #0
+	sta leftMargin+1
+	lda #0
+	sta leftMargin+1
+.else
 	LoadW leftMargin, 0
+.endif
 	sec
 	lda menuRight
 	sbc #1
@@ -215,7 +227,14 @@ Menu_2:
 	lda #<MenuStringFault
 	sta StringFaultVec
 	PushB r1H
+.if 1
+	clc
+	lda baselineOffset
+	adc r1H
+	sta r1H
+.else
 	AddB baselineOffset, r1H
+.endif
 	inc r1H
 	jsr _PutString
 	PopB r1H
@@ -251,7 +270,17 @@ Menu_42:
 	AddVB 2, r1H
 	rts
 Menu_43:
+.if 1
+	lda r11L
+	clc
+	adc #4
+	sta r11L
+	bcc :+
+	inc r11H
+:
+.else
 	AddVW 4, r11
+.endif
 	rts
 
 _RecoverAllMenus:
@@ -260,7 +289,8 @@ RcvrAllMns1:
 	jsr _RecoverMenu
 	dec menuNumber
 	bpl RcvrAllMns1
-	inc menuNumber
+	lda #0
+	sta menuNumber
 	rts
 
 _RecoverMenu:

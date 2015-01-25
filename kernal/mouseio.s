@@ -41,7 +41,7 @@ IMIRl4:
 	lda #0
 	rts
 
-.segment "X"
+.segment "mouseio2"
 
 _StartMouseMode:
 	bcc SMousMd1
@@ -88,7 +88,8 @@ ProcessMouse:
 	MoveW mouseXPos, r4
 	MoveB mouseYPos, r5L
 	jsr PosSprite
-	jmp EnablSprite
+	jsr EnablSprite
+	rts
 
 CheckMsePos:
 	ldy mouseLeft
@@ -181,7 +182,10 @@ ChClkPos4:
 	ldx otherPressVec+1
 	jmp CallRoutine
 
+	rts
+
 DoMouseFault:
+	lda #$c0
 	bbrf MOUSEON_BIT, mouseOn, ChMsePs11
 	bvc ChMsePs11
 	lda menuNumber
@@ -199,8 +203,10 @@ DoMseFlt1:
 	tya
 	bbsf 6, menuOptNumber, ChMsePs11
 DoMseFlt2:
-	jmp _DoPreviousMenu
+	jsr _DoPreviousMenu
+	rts
 
+.segment "X"
 ResetMseRegion:
 	lda #NULL
 	sta mouseLeft

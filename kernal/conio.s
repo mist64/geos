@@ -309,6 +309,8 @@ ProcessCursor:
 ProcCur1:
 	jmp _PromptOn
 
+	rts
+
 GSSkeyVector:
 	jsr _PromptOff
 	MoveW stringX, r11
@@ -472,7 +474,9 @@ IniTxPrm3:
 CalcDecimal:
 	sta r2L
 	LoadB r2H, 4
-	LoadW r3, 0
+	lda #0
+	sta r3L
+	sta r3H
 CalcDec0:
 	ldy #0
 	ldx r2H
@@ -514,6 +518,8 @@ CalcDec4:
 	bpl CalcDec0
 	rts
 
+.segment "conio5"
+
 _PutDecimal:
 	jsr CalcDecimal
 	bbsf 7, r2L, PutDec1
@@ -538,6 +544,8 @@ PutDec3:
 	dec r0L
 	bne PutDec3
 	rts
+
+.segment "X"
 
 _GetNextChar:
 	bbrf KEYPRESS_BIT, pressFlag, GetNxtChar1

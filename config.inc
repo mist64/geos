@@ -48,7 +48,7 @@ SerialNumber            = $1cd5                         ; $1cd5
 ; takes more bytes
 speedupDlgBox           = 0
 
-oldMenu_5               = 0                             ; bug - when 0 no blinking in menu
+oldMenu_5               = 1                             ; bug - when 0 no blinking in menu
 
 ; if both menu separator patterns are null, then kernal menu code
 ; will be a bit optimized for speed and space

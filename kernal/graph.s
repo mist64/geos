@@ -826,7 +826,7 @@ IndirectR13:
 IndirectR14:
 	jmp (r14)
 
-.segment "X"
+.segment "graph5"
 
 _DrawLine:
 	php

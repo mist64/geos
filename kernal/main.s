@@ -251,12 +251,14 @@ PutCharTabH:
 	.byte >DoBOLDON, >DoITALICON
 	.byte >DoOUTLINEON, >DoPLAINTEXT
 
-.segment "X"
+.segment "conio4"
 
 DecTabL:
 	.byte <1, <10, <100, <1000, <10000
 DecTabH:
 	.byte >1, >10, >100, >1000, >10000
+
+.segment "X"
 
 daysTab:
 	.byte 31, 28, 31, 30, 31, 30

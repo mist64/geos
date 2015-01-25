@@ -172,7 +172,7 @@ GRandl2:
 GRandl3:
 	rts
 
-.segment "X"
+.segment "math2"
 
 _CRC:
 	ldy #$ff
@@ -210,6 +210,8 @@ CRC5:
 	ora r1H
 	bne CRC1
 	rts
+
+.segment "X"
 
 ConvertBCD:
 	pha
