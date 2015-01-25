@@ -225,7 +225,7 @@ SprTabH:
 	.byte >spr0pic, >spr1pic, >spr2pic, >spr3pic
 	.byte >spr4pic, >spr5pic, >spr6pic, >spr7pic
 
-.segment "X"
+.segment "conio2"
 
 PutCharTabL:
 	.byte <DoBACKSPACE, <DoTAB
@@ -250,6 +250,8 @@ PutCharTabH:
 	.byte >DoGOTOXY, >DoNEWCARDSET
 	.byte >DoBOLDON, >DoITALICON
 	.byte >DoOUTLINEON, >DoPLAINTEXT
+
+.segment "X"
 
 DecTabL:
 	.byte <1, <10, <100, <1000, <10000
@@ -1118,7 +1120,7 @@ Panil3:
 	sta _PanicAddy,X
 	rts
 
-.segment "X"
+.segment "initramtab"
 
 InitRamTab:
 	.word currentMode
@@ -1153,6 +1155,10 @@ InitRamTab:
 	.byte $2c, $2d, $2e, $2f
 	.word NULL
 
+.segment "unk6"
+
+;XXX
+.byte 0, $3F, 0
 
 UNK_6:
 	lda #$bf
@@ -1164,6 +1170,8 @@ UNK_61:
 	dex
 	bpl UNK_61
 	rts
+
+.segment "X"
 
 DBIcPicNO:
 	.byte 5, %11111111, $80+1, %11111110, $db+8, 2, $80+6

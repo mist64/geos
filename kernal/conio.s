@@ -38,7 +38,6 @@ PutChar1:
 	bcs PutChar3
 PutChar2:
 	pla
-_SmallPutChar:
 	subv $20
 	jmp Font_10
 PutChar3:
@@ -53,6 +52,12 @@ PutChar4:
 	ldx StringFaultVec+1
 	lda StringFaultVec
 	jmp CallRoutine
+
+.segment "conio3"
+
+_SmallPutChar:
+	subv $20
+	jmp Font_10
 
 DoTAB:
 	lda #0
@@ -168,7 +173,8 @@ DoESC_GRAPHICS:
 	ldx #r0
 	jsr Ddec
 	ldx #r0
-	jmp Ddec
+	jsr Ddec
+	rts
 
 _i_PutString:
 	PopB r0L
@@ -224,7 +230,11 @@ UseSysFnt1:
 	bne UseSysFnt1
 	AddW r0, curIndexTable
 	AddW r0, cardDataPntr
-	rts
+        lda     $D82F
+        bne     LE6D4
+        jsr     $CFF8
+        sta     $D82F
+LE6D4:  rts
 
 _GetCharWidth:
 	subv $20

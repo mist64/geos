@@ -51,7 +51,11 @@
 
 .macro AddVW value, dest
 	.local j
-	AddVB <(value), dest+0
+;	AddVB <(value), dest+0
+	clc
+	lda #<(value)
+	adc dest
+	sta dest
 	.if (>(value))=0
 	bcc j
 	inc dest+1

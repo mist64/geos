@@ -308,14 +308,16 @@ _GetFHdrInfo:
 	MoveW r1, fileTrScTab
 	jsr SetFHeadVector
 	jsr GetBlock
-	bnex GFHName4
+	bnex _GetFHdrInfoEnd
 	ldy #OFF_DE_TR_SC
 	lda (r9),y
 	sta r1L
 	iny
 	lda (r9),y
 	sta r1H
-	jmp GetStartHAddy
+	jsr GetStartHAddy
+_GetFHdrInfoEnd:
+	rts
 
 GetHeaderFileName:
 	ldx #0
@@ -372,7 +374,9 @@ _LdDeskAcc:
 	bnex LDAcc1
 .endif
 	jsr GetStartHAddy
-	LoadW r2, $ffff
+	lda #$ff
+	sta r2L
+	sta r2H
 	jsr ReadFile
 	bnex LDAcc1
 	jsr DlgBoxPrep
@@ -430,8 +434,17 @@ _LdApplic:
 	bnex RsApp1
 	bbsf 0, A885E, RsApp1
 	jsr UNK_4
+.if 1
+	lda $814B
+	sta r2L
+	lda $814C
+	sta r2H
+.else
 	MoveW fileHeader+O_GHST_VEC, r7
+.endif
 	jmp StartAppl
+
+	rts
 
 .if (useRamExp)
 .else
@@ -439,6 +452,7 @@ SwapFileName:
 	.byte $1b,"Swap File", NULL
 
 SaveSwapFile:
+	cli
 	LoadB fileHeader+O_GHGEOS_TYPE, TEMPORARY
 	LoadW fileHeader, SwapFileName
 	LoadW r9, fileHeader
@@ -471,7 +485,8 @@ SSwFile1:
 	jsr ClearNWrite
 	bnex GDAL2
 	jsr GetStartHAddy
-	jmp WriteFile
+	jsr WriteFile
+	rts
 
 GetDAccLength:
 	lda fileHeader+O_GHEND_ADDR
@@ -484,7 +499,16 @@ GetDAccLength:
 	CmpBI fileHeader+O_GHSTR_TYPE, VLIR
 	bne GDAL2
 GDAL1:
+	clc
+.if 1
+	lda #$fe
+	adc r2L
+	sta r2L
+	bcc GDAL2
+	inc r2H
+.else
 	AddVW $fe, r2
+.endif
 GDAL2:
 	rts
 
@@ -501,7 +525,8 @@ CNWri1:
 	bne CNWri1
 	dey
 	sty diskBlkBuf+1
-	jmp WriteBuff
+	jsr WriteBuff
+	rts
 
 _SetGDirEntry:
 	jsr BldGDirEntry
@@ -591,7 +616,8 @@ BGDEnt7:
 
 _DeleteFile:
 	jsr FindNDelete
-	bnex BGDEnt7
+	beqx DelFile1
+	rts
 DelFile1:
 	LoadW r9, dirEntryBuf
 _FreeFile:
@@ -694,13 +720,17 @@ FindNDelete:
 	lda #0
 	tay
 	sta (r5),y
-	jmp WriteBuff
+	jsr WriteBuff
+	rts
 
 _FastDelFile:
 	PushW r3
 	jsr FindNDelete
 	PopW r3
-	bnex FreeBlC4
+	bnex :+
+	jsr FreeChainByTab
+:
+	rts
 
 FreeChainByTab:
 	PushW r3
@@ -719,7 +749,8 @@ FCByTab1:
 	AddVW 2, r3
 	bra FCByTab1
 FCByTab2:
-	jmp PutDirHead
+	jsr PutDirHead
+	rts
 
 _RenameFile:
 	PushW r0
@@ -743,7 +774,8 @@ RenFile2:
 	cpy #16
 	bcc RenFile2
 RenFile3:
-	jmp WriteBuff
+	jsr WriteBuff
+	rts
 
 _OpenRecordFile:
 .if (useRamExp)
@@ -918,7 +950,8 @@ _InsertRecord:
 	bnex DelRecord3
 	lda curRecord
 	sta r0L
-	jmp MoveForwVLIRTab
+	jsr MoveForwVLIRTab
+	rts
 
 _AppendRecord:
 	jsr ReadyForUpdVLIR
@@ -1000,17 +1033,20 @@ WriRecord4:
 	sty r1H
 	iny
 	sty r1L
-	jmp PutVLIRChainTS
+	jsr PutVLIRChainTS
+	rts
 
 GetVLIRTab:
 	jsr SetVLIRTable
 	bnex SVLIRTab1
-	jmp GetBlock
+	jsr GetBlock
+	rts
 
 PutVLIRTab:
 	jsr SetVLIRTable
 	bnex SVLIRTab1
-	jmp PutBlock
+	jsr PutBlock
+	rts
 
 SetVLIRTable:
 	ldx #UNOPENED_VLIR

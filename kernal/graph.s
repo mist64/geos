@@ -640,7 +640,7 @@ GSC3:
 	tax
 	rts
 
-.segment "X"
+.segment "graph4"
 
 _BitOtherClip:
 	ldx #$ff
@@ -718,6 +718,7 @@ _i_BitmapUp:
 _BitmapUp:
 	PushB r9H
 	LoadB r9H, NULL
+	lda #0
 	sta r3L
 	sta r4L
 BitmUp1:
@@ -824,6 +825,8 @@ IndirectR13:
 
 IndirectR14:
 	jmp (r14)
+
+.segment "X"
 
 _DrawLine:
 	php

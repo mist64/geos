@@ -559,6 +559,7 @@ Font_9:
 	rts
 
 Font_10:
+	nop
 	tay
 	PushB r1H
 	tya
