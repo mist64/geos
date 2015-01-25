@@ -41,6 +41,7 @@ IMIRl4:
 	lda #0
 	rts
 
+.segment "X"
 
 _StartMouseMode:
 	bcc SMousMd1

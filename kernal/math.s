@@ -114,7 +114,8 @@ _DSDiv:
 	jsr _Ddiv
 	plp
 	bpl Ddivl1
-	jmp _Dnegate
+	jsr _Dnegate
+	rts
 
 _Dabs:
 	lda zpage+1,X
@@ -151,8 +152,9 @@ GRandl0:
 	asl random
 	rol random+1
 	bcc GRandl2
+	clc
 	lda #$0F
-	add random
+	adc random
 	sta random
 	bcc GRandl1
 	inc random+1
@@ -169,6 +171,8 @@ GRandl2:
 	sta random+1
 GRandl3:
 	rts
+
+.segment "X"
 
 _CRC:
 	ldy #$ff

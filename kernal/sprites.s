@@ -22,6 +22,8 @@ DSpr0:
 	bpl DSpr0
 	rts
 
+.segment "sprites3"
+
 _PosSprite:
 	PushB CPU_DATA
 	LoadB CPU_DATA, IO_IN

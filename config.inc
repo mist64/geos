@@ -9,8 +9,8 @@ use1581         =       0
 
 
 ; general code generation/optimization control:
-onlyVLIR        =       1               ; only VLIR and SEQ supported
-removeToBASIC   =       1               ; shorter code if you don't use BASIC rebooter
+onlyVLIR        =       0               ; only VLIR and SEQ supported
+removeToBASIC   =       0               ; shorter code if you don't use BASIC rebooter
 
 
 ; RAM expansions configuration
@@ -46,7 +46,7 @@ SerialNumber            = $1cd5                         ; $1cd5
 
 ; makes drawing dialog boxes much faster, might cause visual mess
 ; takes more bytes
-speedupDlgBox           = 1
+speedupDlgBox           = 0
 
 oldMenu_5               = 0                             ; bug - when 0 no blinking in menu
 

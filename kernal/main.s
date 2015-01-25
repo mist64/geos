@@ -46,9 +46,125 @@ c128Flag:
 	.byte $00
 	.byte $05,$00,$00,$00
 dateCopy:
-	.byte 88,4,20
+	.byte 92,3,21
 
+LC01B:  lda     $C012
+        and     #$20
+        bne     LC041
+        jsr     $FF90
+        lda     #$09
+        ldx     #$06
+        ldy     #$C0
+        jsr     $FFBD
+        lda     #$50
+        ldx     #$08
+        ldy     #$01
+        jsr     $FFBA
+        .byte   $A9
+LC038:  brk
+        jsr     $FFD5
+        bcc     LC04F
+        jmp     ($0302)
 
+LC041:  ldy     #$08
+LC043:  lda     $C052,y
+        sta     $DF01,y
+        dey
+        bpl     LC043
+LC04C:  dey
+        bne     LC04C
+LC04F:  jmp     $6000
+
+LC052:  sta     ($0000),y
+        rts
+
+        brk
+        ror     a:$0000,x
+        ora     $0000
+        brk
+LC05C:  ldy     #$27
+LC05E:  lda     ($0002),y
+        cmp     #$41
+        bcc     LC06A
+        cmp     #$5B
+        bcs     LC06A
+        sbc     #$3F
+LC06A:  sta     $9F01,y
+        dey
+        bpl     LC05E
+        lda     $0D
+        beq     LC0B7
+        iny
+        tya
+LC076:  sta     $0800,y
+        iny
+        bne     LC076
+        sec
+        lda     $10
+        sbc     #$02
+        sta     $10
+LC083:  lda     $11
+        sbc     #$00
+        sta     $11
+        lda     ($10),y
+        pha
+        iny
+        lda     ($10),y
+        pha
+        lda     $11
+        pha
+        lda     $10
+        pha
+        lda     ($0C),y
+LC098:  sta     $04
+        iny
+        lda     ($0C),y
+        sta     $05
+        lda     #$FF
+        sta     $06
+        sta     $07
+        jsr     $9D8C
+        pla
+        sta     $0002
+        pla
+        sta     $03
+        ldy     #$01
+        pla
+        sta     ($0002),y
+        dey
+        pla
+        sta     ($0002),y
+LC0B7:  jsr     $C247
+        jsr     $C235
+        lda     $88C4
+        sta     $C012
+        and     #$20
+        beq     LC0D5
+        ldy     #$06
+LC0C9:  lda     LC0D8,y
+        sta     $0002,y
+        dey
+        bpl     LC0C9
+        jsr     $C2C8
+LC0D5:  jmp     $9F2F
+
+LC0D8:  brk
+        sty     $0000
+        adc     $0500,y
+        brk
+LC0DF:  jsr     $FA56
+        jsr     $CB55
+        jsr     $CC23
+        jsr     $FD52
+        lda     $849B
+        .byte   $AE
+        .byte   $9C
+LC0F0:  .byte   $84
+LC0F1:  jsr     $C1D8
+LC0F4:  cli
+        jmp     $C313
+
+.segment "main5"
 ;--------------------------------------------
 
 BitMask1:
@@ -60,12 +176,14 @@ BitMask3:
 BitMask4:
 	.byte $7f, $3f, $1f, $0f, $07, $03, $01, $00
 
+.segment "main9"
 VIC_IniTbl:
 	.byte $00, $00, $00, $00, $00, $00, $00, $00
 	.byte $00, $00, $00, $00, $00, $00, $00, $00
 	.byte $f8, $3b, $fb, $aa, $aa, $01, $08, $00
 	.byte $38, $0f, $01, $00, $00, $00
 
+.segment "graph2"
 LineTabL:
 	.byte $00, $40, $80, $c0, $00, $40, $80, $c0
 	.byte $00, $40, $80, $c0, $00, $40, $80, $c0
@@ -77,6 +195,7 @@ LineTabH:
 	.byte $b4, $b5, $b6, $b7, $b9, $ba, $bb, $bc
 	.byte $be
 
+.segment "panic2"
 _PanicDB_DT:
 	.byte DEF_DB_POS | 1
 	.byte DBTXTSTR, TXT_LN_X, TXT_LN_1_Y
@@ -90,16 +209,23 @@ _PanicAddy:
 	.byte "xxxx"
 	.byte NULL
 
+.segment "X"
+
 FontTVar1:
 	.byte 0
 FontTVar2:
 	.word 0
+
+.segment "sprites2"
+
 SprTabL:
 	.byte <spr0pic, <spr1pic, <spr2pic, <spr3pic
 	.byte <spr4pic, <spr5pic, <spr6pic, <spr7pic
 SprTabH:
 	.byte >spr0pic, >spr1pic, >spr2pic, >spr3pic
 	.byte >spr4pic, >spr5pic, >spr6pic, >spr7pic
+
+.segment "X"
 
 PutCharTabL:
 	.byte <DoBACKSPACE, <DoTAB
@@ -139,6 +265,8 @@ DeskTopOpen:
 DeskTopRecord:
 	.byte 0 ;to keep OS_JUMPTAB at $c100
 	.byte 0,0,0 ;three really unused
+
+.segment "main3"
 ;--------------------------------------------
 ;here the JumpTable begins, DO NOT CHANGE!!!
 ;		*= OS_JUMPTAB
@@ -478,12 +606,14 @@ DoRAMOp:
 ;here the JumpTable ends
 ;--------------------------------------------
 
+.segment "main2"
 DkNmTab:
 	.byte <DrACurDkNm, <DrBCurDkNm
 	.byte <DrCCurDkNm, <DrDCurDkNm
 	.byte >DrACurDkNm, >DrBCurDkNm
 	.byte >DrCCurDkNm, >DrDCurDkNm
 
+.segment "main4"
 _InterruptMain:
 	jsr ProcessMouse
 	jsr _ProcessTimers
@@ -491,6 +621,7 @@ _InterruptMain:
 	jsr ProcessCursor
 	jmp _GetRandom
 
+.segment "main15"
 _CallRoutine:
 	cmp #0
 	bne CRou1
@@ -526,6 +657,7 @@ SVR1:
 	bne SVR0
 	rts
 
+.segment "main14"
 _InitRam:
 	ldy #0
 	lda (r0),Y
@@ -564,6 +696,7 @@ IRam2:
 IRam3:
 	rts
 
+.segment "main8"
 InitGEOS:
 	jsr _DoFirstInitIO ;UNK_1
 InitGEOEnv:
@@ -573,6 +706,7 @@ InitGEOEnv:
 	sta r0L
 	jmp _InitRam
 
+.segment "main10"
 _DoFirstInitIO:
 	LoadB CPU_DDR, $2f
 	LoadB CPU_DATA, KRNL_IO_IN
@@ -611,6 +745,7 @@ DFIIO1:
 	LoadB CPU_DATA, RAM_64K
 	jmp ResetMseRegion
 
+.segment "X"
 DeskTopStart:
 	.word 0 ;these are for ensuring compatibility with
 DeskTopExec:
@@ -618,9 +753,11 @@ DeskTopExec:
 DeskTopLgh:
 	.byte 0 ;have to be at $c3cf .IDLE
 
+.segment "main7b"
 DeskTopName:
 	.byte "DESK TOP", NULL
 
+.segment "X"
 ;--------------------------------------------
 ;IMPORTANT! FROM NOW ON YOU CAN CHANGE THE CODE UNTIL FURTHER NOTICES.
 ;--------------------------------------------
@@ -635,6 +772,7 @@ _MNLP:
 	jsr CallRoutine
 	cli
 
+.segment "main6"
 _MainLoop2:
 	ldx CPU_DATA
 	LoadB CPU_DATA, IO_IN
@@ -644,6 +782,7 @@ _MainLoop2:
 	stx CPU_DATA
 	jmp _MainLoop
 
+.segment "X"
 BootKernal:
 	bbsf 5, sysFlgCopy, BootREU
 	jsr $FF90
@@ -751,6 +890,7 @@ ToBASICTab:
 	.byte $00
 .endif
 
+.segment "main7a"
 .if (useRamExp)
 _EnterDeskTop:
 	sei
@@ -776,11 +916,13 @@ _EnterDT_DB:
 	.byte OK, DBI_X_2, DBI_Y_2
 	.byte NULL
 
+.segment "main7c"
 _EnterDT_Str0:
 	.byte BOLDON, "Please insert a disk", NULL
 _EnterDT_Str1:
 	.byte "with deskTop V1.5 or higher", NULL
 
+.segment "main7"
 _EnterDeskTop:
 	sei
 	cld
@@ -848,6 +990,7 @@ _StartAppl:
 	lda r7L
 	jmp _MNLP
 
+.segment "main16"
 UNK_4:
 	MoveB A885D, r10L
 	MoveB A885E, r0L
@@ -879,7 +1022,10 @@ U_50:
 	sta r4L
 	ldy #r4
 	lda #16
-	jmp CopyFString
+	jsr CopyFString
+	rts
+
+.segment "main12"
 
 Init_KRNLVec:
 	ldx #32
@@ -896,12 +1042,8 @@ _FirstInit:
 	jsr InitGEOS
 	LoadW EnterDeskTop+1, _EnterDeskTop
 	LoadB maxMouseSpeed, iniMaxMouseSpeed
-.if (iniMaxMouseSpeed=iniMouseAccel)
-	sta mouseAccel
-.else
-	LoadB mouseAccel, iniMouseAccel
-.endif
 	LoadB minMouseSpeed, iniMinMouseSpeed
+	LoadB mouseAccel, iniMouseAccel
 	LoadB screencolors, (DKGREY << 4)+LTGREY
 	sta FItempColor
 	jsr i_FillRam
@@ -929,10 +1071,18 @@ FI2:
 	bne FI2
 	jmp UNK_6
 
+.segment "getserial"
 
 _GetSerialNumber:
-	LoadW r0, SerialNumber
+;	LoadW r0, SerialNumber
+	lda $9EA7
+	sta $02
+	lda $9EA8
+	sta $03
 	rts
+	.byte 1, $60 ; ???
+
+.segment "panic"
 
 _Panic:
 	PopW r0
@@ -968,6 +1118,7 @@ Panil3:
 	sta _PanicAddy,X
 	rts
 
+.segment "X"
 
 InitRamTab:
 	.word currentMode

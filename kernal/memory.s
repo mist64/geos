@@ -115,8 +115,14 @@ MData6:
 	rts
 
 MData7:
-	AddB r2H, r0H
-	AddB r2H, r1H
+	clc
+	lda r2H
+	adc r0H
+	sta r0H
+	clc
+	lda r2H
+	adc r1H
+	sta r1H
 	ldy r2L
 	beq MData9
 MData8:
@@ -165,6 +171,8 @@ CMStrl1:
 CMStrl2:
 	rts
 
+.segment "main13"
+
 _ClearRam:
 	LoadB r2L, NULL
 _FillRam:
@@ -191,6 +199,8 @@ CRam3:
 	bne CRam3
 CRam4:
 	rts
+
+.segment "fillram"
 
 _i_FillRam:
 	PopW returnAddress

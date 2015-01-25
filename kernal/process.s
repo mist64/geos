@@ -133,7 +133,7 @@ EnProc0:
 _BlockProcess:
 	lda TimersCMDs,X
 	ora #SET_BLOCKED
-	bne EnProc0
+	bra EnProc0
 _UnBlockProcess:
 	lda TimersCMDs,X
 	and #SET_BLOCKED ^ $ff
@@ -141,7 +141,7 @@ _UnBlockProcess:
 _FreezeProcess:
 	lda TimersCMDs,X
 	ora #SET_FROZEN
-	bne EnProc0
+	bra EnProc0
 _UnFreezeProcess:
 	lda TimersCMDs,X
 	and #SET_FROZEN ^ $ff

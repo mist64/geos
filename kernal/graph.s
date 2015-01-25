@@ -9,7 +9,7 @@
 .import LineTabH, LineTabL, PatternTab, _PutString, BitMask1, BitMask3, BitMask4
 .global _BitOtherClip, _BitmapClip, _BitmapUp, _DrawPoint, _FrameRectangle, _GetScanLine, _GraphicsString, _HorizontalLine, _ImprintRectangle, _InvertLine, _InvertRectangle, _RecoverLine, _RecoverRectangle, _Rectangle, _SetPattern, _TestPoint, _VerticalLine, _i_BitmapUp, _i_FrameRectangle, _i_GraphicsString, _i_ImprintRectangle, _i_RecoverRectangle, _i_Rectangle, ClrScr, _DrawLine
 
-.segment "graph"
+.segment "main11"
 
 ClrScr:
 	LoadW r0, SCREEN_BASE
@@ -33,6 +33,7 @@ ClrScr2:
 	bne ClrScr1
 	rts
 
+.segment "graph"
 
 PrepareXCoord:
 	ldx r11L
@@ -412,13 +413,15 @@ i_GStr0:
 
 _GraphicsString:
 	jsr Getr0AndInc
-	beq GtDrwPrmsEnd
+	beq _GraphicsStringEnd
 	tay
 	dey
 	lda GStrTL,Y
 	ldx GStrTH,Y
 	jsr CallRoutine
 	bra _GraphicsString
+_GraphicsStringEnd:
+	rts
 
 GStrTL:
 	.byte <_DoMovePenTo, <_DoLineTo
@@ -457,6 +460,8 @@ _DoRectangleTo:
 	jsr GrStSetCoords
 	jmp _Rectangle
 
+	rts ; ???
+
 _DoNewPattern:
 	jsr Getr0AndInc
 	jmp _SetPattern
@@ -468,7 +473,8 @@ _DoESC_PutString:
 	sta r11H
 	jsr Getr0AndInc
 	sta r1H
-	jmp _PutString
+	jsr _PutString
+	rts
 
 _DoFrame_RecTo:
 	jsr GrStSetCoords
@@ -578,14 +584,16 @@ Gr0AI0:
 _GetScanLine:
 	txa
 	pha
+	pha
 	and #%00000111
 	sta r6H
-	txa
+	pla
 	lsr
 	lsr
 	lsr
 	tax
 	bbrf 7, dispBufferOn, GSC2
+	bit dispBufferOn
 	bvs GSC1
 	lda LineTabL,X
 	ora r6H
@@ -632,6 +640,7 @@ GSC3:
 	tax
 	rts
 
+.segment "X"
 
 _BitOtherClip:
 	ldx #$ff

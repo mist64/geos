@@ -52,7 +52,9 @@ GFile3:
 	bbrf 0, A885E, GFile4
 	MoveW A885F, r7
 GFile4:
-	LoadW r2, $ffff
+	lda #$ff
+	sta r2L
+	sta r2H
 	jsr ReadFile
 GFile5:
 	rts
@@ -124,6 +126,13 @@ FFTypesStart:
 	SubVW 3, r6
 	jsr Get1stDirEntry
 	bnex FFTypes5
+        ldx     #$C1
+        lda     #$96
+        jsr     $C1D8
+        lda     $03
+        cmp     $D82F
+        .byte 0,0;beq     $D5FC
+        inc     $C218
 FFTypes1:
 	ldy #OFF_CFILE_TYPE
 	lda (r5),y
@@ -148,7 +157,13 @@ FFTypes2:
 FFTypes3:
 	lda #NULL
 	sta (r6),y
-	AddVW $11, r6
+	clc
+	lda #$11
+	adc r6L
+	sta r6L
+	bcc j
+	inc r6H
+j:
 	dec r7H
 	beq FFTypes5
 FFTypes4:
@@ -218,6 +233,7 @@ FFile7:
 	rts
 
 _SetDevice:
+	nop
 	cmp curDevice
 	beq SetDev2
 	pha
@@ -1142,6 +1158,7 @@ ReadByt3:
 	stx r5L
 	bra _ReadByte
 
+.segment "main6"
 _GetPtrCurDkNm:
 	ldy curDrive
 	lda DkNmTab-8,Y
