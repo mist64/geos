@@ -46,7 +46,11 @@ c128Flag:
 	.byte $00
 	.byte $05,$00,$00,$00
 dateCopy:
+.ifdef maurice
 	.byte 92,3,23
+.else
+	.byte 88,4,20
+.endif
 
 .segment "main5"
 ;--------------------------------------------
@@ -98,7 +102,11 @@ _PanicAddy:
 FontTVar1:
 	.byte 0
 FontTVar2:
-	.word $3f
+.ifdef maurice
+	.word $34
+.else
+	.word 0
+.endif
 
 .segment "sprites2"
 

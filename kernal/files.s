@@ -283,9 +283,13 @@ PFFet1:
 
 SetDevTab:
 	.word DISK_BASE
+.ifdef maurice
 	.word REUDskDrvSPC
+.else
+	.word 0
+.endif
 	.word DISK_DRV_LGH
-	.byte $00
+	.byte 0
 
 SetDevDrivesTabL:
 	.byte <(REUDskDrvSPC+(0*DISK_DRV_LGH))
@@ -451,7 +455,13 @@ _LdApplic:
 SwapFileName:
 	.byte $1b,"Swap File", NULL
 
-	cli
+; ???
+.ifdef maurice
+	.byte $58
+.else
+	.byte 0
+.endif
+
 SaveSwapFile:
 	LoadB fileHeader+O_GHGEOS_TYPE, TEMPORARY
 	LoadW fileHeader, SwapFileName

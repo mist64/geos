@@ -130,9 +130,12 @@ DoWrFile2:
 DoWrFile3:
 	rts
 
-; XXX
-        lda     $58,x
-        .byte   $FF
+ ; ???
+ .ifdef maurice
+        .byte   $5E  $8F, $FF
+.else
+        .byte   $B5, $58, $FF
+.endif
 
 .if (REUPresent)
 _VerifyRAM:
@@ -487,4 +490,9 @@ exeBAS4:
 	rti
 .endif
 
-	.byte $ff ; ???
+ ; ???
+.ifdef maurice
+	.byte $ff
+.else
+	.byte $40
+.endif
