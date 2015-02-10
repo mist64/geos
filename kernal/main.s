@@ -914,7 +914,7 @@ UNK_5:
 	MoveB r10L, A885D
 	MoveB r0L, A885E
 	and #%11000000
-	beq U_41
+	beq U_51
 	ldy #>dataDiskName
 	lda #<dataDiskName
 	ldx #r2
@@ -928,6 +928,7 @@ U_50:
 	ldy #r4
 	lda #16
 	jsr CopyFString
+U_51:
 	rts
 
 .segment "main12"

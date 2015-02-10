@@ -435,19 +435,12 @@ RsApp2:
 _LdApplic:
 	jsr UNK_5
 	jsr LdFile
-	bnex RsApp1
-	bbsf 0, A885E, RsApp1
+	bnex LdApplic1
+	bbsf 0, A885E, LdApplic1
 	jsr UNK_4
-.if 1
-	lda $814B
-	sta r2L
-	lda $814C
-	sta r2H
-.else
-	MoveW fileHeader+O_GHST_VEC, r7
-.endif
+	MoveW_ fileHeader+O_GHST_VEC, r7
 	jmp StartAppl
-
+LdApplic1:
 	rts
 
 .if (useRamExp)
@@ -477,25 +470,26 @@ SSwFile1:
 	iny
 	bne SSwFile1
 	jsr GetDirHead
-	bnex RsApp2
+	bnex SSwFile2
 	jsr GetDAccLength
 	jsr SetBufTSVector
 	jsr BlkAlloc
-	bnex RsApp2
+	bnex SSwFile2
 	jsr SetBufTSVector
 	jsr SetGDirEntry
-	bnex RsApp2
+	bnex SSwFile2
 	jsr PutDirHead
-	bnex GDAL2
+	bnex SSwFile2
 	sta fileHeader+O_GHINFO_TXT
 	MoveW dirEntryBuf+OFF_GHDR_PTR, r1
 	jsr SetFHeadVector
 	jsr PutBlock
-	bnex GDAL2
+	bnex SSwFile2
 	jsr ClearNWrite
-	bnex GDAL2
+	bnex SSwFile2
 	jsr GetStartHAddy
 	jsr WriteFile
+SSwFile2:
 	rts
 
 GetDAccLength:
@@ -525,7 +519,7 @@ GDAL2:
 ClearNWrite:
 	ldx #0
 	CmpBI dirEntryBuf+OFF_GSTRUC_TYPE, VLIR
-	bne GDAL2
+	bne CNWri2
 	MoveW dirEntryBuf+OFF_DE_TR_SC, r1
 	txa
 	tay
@@ -536,6 +530,7 @@ CNWri1:
 	dey
 	sty diskBlkBuf+1
 	jsr WriteBuff
+CNWri2:
 	rts
 
 _SetGDirEntry:
@@ -730,11 +725,12 @@ FreeBlC4:
 FindNDelete:
 	MoveW r0, r6
 	jsr FindFile
-	bnex FreeBlC4
+	bnex :+
 	lda #0
 	tay
 	sta (r5),y
 	jsr WriteBuff
+:
 	rts
 
 _FastDelFile:
@@ -759,18 +755,19 @@ FCByTab1:
 	lda (r3),y
 	sta r6H
 	jsr FreeBlock
-	bnex FreeBlC4
+	bnex FCByTab3
 	AddVW 2, r3
 	bra FCByTab1
 FCByTab2:
 	jsr PutDirHead
+FCByTab3:
 	rts
 
 _RenameFile:
 	PushW r0
 	jsr FindFile
 	PopW r0
-	bnex FreeBlC4 ;->RTS
+	bnex RenFile4
 	AddVW OFF_FNAME, r5
 	ldy #0
 RenFile1:
@@ -789,6 +786,7 @@ RenFile2:
 	bcc RenFile2
 RenFile3:
 	jsr WriteBuff
+RenFile4:
 	rts
 
 _OpenRecordFile:
@@ -959,13 +957,13 @@ DelRecord3:
 _InsertRecord:
 	ldx #INV_RECORD
 	lda curRecord
-	bmi DelRecord3
+	bmi :+
 	jsr ReadyForUpdVLIR
-	bnex DelRecord3
+	bnex :+
 	lda curRecord
 	sta r0L
 	jsr MoveForwVLIRTab
-	rts
+:	rts
 
 _AppendRecord:
 	jsr ReadyForUpdVLIR
@@ -1012,18 +1010,18 @@ ReaRecord1:
 _WriteRecord:
 	ldx #INV_RECORD
 	lda curRecord
-	bmi ReaRecord1
+	bmi WriRecord5
 	PushW r2
 	jsr ReadyForUpdVLIR
 	PopW r2
-	bnex ReaRecord1
+	bnex WriRecord5
 	jsr GetVLIRChainTS
 	lda r1L
 	bne WriRecord1
 	ldx #0
 	lda r2L
 	ora r2H
-	beq ReaRecord1
+	beq WriRecord5
 	bne WriRecord3
 WriRecord1:
 	PushW r2
@@ -1032,7 +1030,7 @@ WriRecord1:
 	MoveB r2L, r0L
 	PopW r7
 	PopW r2
-	bnex SVLIRTab1
+	bnex WriRecord5
 	SubB r0L, fileSize
 	bcs WriRecord2
 	dec fileSize+1
@@ -1048,19 +1046,20 @@ WriRecord4:
 	iny
 	sty r1L
 	jsr PutVLIRChainTS
+WriRecord5:
 	rts
 
 GetVLIRTab:
 	jsr SetVLIRTable
-	bnex SVLIRTab1
+	bnex :+
 	jsr GetBlock
-	rts
+:	rts
 
 PutVLIRTab:
 	jsr SetVLIRTable
-	bnex SVLIRTab1
+	bnex :+
 	jsr PutBlock
-	rts
+:	rts
 
 SetVLIRTable:
 	ldx #UNOPENED_VLIR

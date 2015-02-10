@@ -87,7 +87,6 @@ DoUPLINE:
 	SubB curHeight, r1H
 	rts
 
-DoESC_RULER =*+3 ; ??? XXX
 DoCR:
 	MoveW leftMargin, r11
 	jmp DoLF
@@ -303,16 +302,16 @@ GSStrFltEnd:
 
 ProcessCursor:
 	lda alphaFlag
-	bpl GSStrFltEnd
+	bpl ProcCur2
 	dec alphaFlag
 	lda alphaFlag
 	and #$3f
-	bne GSStrFltEnd
+	bne ProcCur2
 	bbrf 6, alphaFlag, ProcCur1
 	jmp _PromptOff
 ProcCur1:
 	jmp _PromptOn
-
+ProcCur2:
 	rts
 
 GSSkeyVector:

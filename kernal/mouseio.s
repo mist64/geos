@@ -7,7 +7,7 @@
 .include "inputdrv.inc"
 .include "jumptab.inc"
 .import KbdScanHelp3, _DoPreviousMenu, ProcessClick, Menu_5, _DisablSprite
-.global ProcessMouse, ResetMseRegion, _ClearMouseMode, _DoCheckButtons, _IsMseInRegion, _MouseOff, _MouseUp, _StartMouseMode
+.global ProcessMouse, ResetMseRegion, _ClearMouseMode, _DoCheckButtons, _IsMseInRegion, _MouseOff, _MouseUp, _StartMouseMode, DoESC_RULER
 
 .segment "mouseio"
 
@@ -80,7 +80,7 @@ MseUp1:
 
 ProcessMouse:
 	jsr UpdateMouse
-	bbrf MOUSEON_BIT, mouseOn, MseUp1
+	bbrf MOUSEON_BIT, mouseOn, ProcessMouse1
 	jsr CheckMsePos
 	LoadB r3L, 0
 	MoveW msePicPtr, r4
@@ -89,6 +89,7 @@ ProcessMouse:
 	MoveB mouseYPos, r5L
 	jsr PosSprite
 	jsr EnablSprite
+ProcessMouse1:
 	rts
 
 CheckMsePos:
@@ -186,10 +187,10 @@ ChClkPos4:
 
 DoMouseFault:
 	lda #$c0
-	bbrf MOUSEON_BIT, mouseOn, ChMsePs11
-	bvc ChMsePs11
+	bbrf MOUSEON_BIT, mouseOn, DoMseFlt3
+	bvc DoMseFlt3
 	lda menuNumber
-	beq ChMsePs11
+	beq DoMseFlt3
 	bbsf OFFMENU_BIT, faultData, DoMseFlt2
 	ldx #SET_OFFTOP
 	lda #$C0
@@ -201,9 +202,10 @@ DoMseFlt1:
 	and faultData
 	bne DoMseFlt2
 	tya
-	bbsf 6, menuOptNumber, ChMsePs11
+	bbsf 6, menuOptNumber, DoMseFlt3
 DoMseFlt2:
 	jsr _DoPreviousMenu
+DoMseFlt3:
 	rts
 
 .segment "resetmseregion"
@@ -239,11 +241,11 @@ DoChkBtns2:
 	jsr CallRoutine
 DoChkBtns3:
 	lda faultData
-	beq DoChkBtns4
+	beq DoESC_RULER
 	lda mouseFaultVec
 	ldx mouseFaultVec+1
 	jsr CallRoutine
 	lda #NULL
 	sta faultData
-DoChkBtns4:
+DoESC_RULER:
 	rts

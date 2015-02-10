@@ -32,6 +32,11 @@
 	MoveB source+0, dest+0
 .endmacro
 
+.macro MoveW_ source, dest
+	MoveB source+0, dest+0
+	MoveB source+1, dest+1
+.endmacro
+
 .macro add source
 	clc
 	adc source

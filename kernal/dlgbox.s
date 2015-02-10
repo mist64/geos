@@ -756,14 +756,14 @@ DBGFArrowPic:
 
 DBGFPressVector:
 	lda mouseData
-	bmi DBGFlsHlp_15
+	bmi DBGFPrVec2
 	jsr DBGFilesHelp7
 	clc
 	lda r2L
 	adc #$45
 	sta r2H
 	jsr IsMseInRegion
-	beq DBGFlsHlp_15
+	beq DBGFPrVec2
 	jsr DBGFilesHelp6
 	jsr DBGFilesHelp7
 	lda mouseYPos
@@ -786,6 +786,7 @@ DBGFPrVec1:
 	sta DBGFileSelected
 	jsr DBGFilesHelp6
 	jsr DBGFilesHelp2
+DBGFPrVec2:
 	rts
 
 DBGFDoArrow:

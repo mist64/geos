@@ -84,7 +84,7 @@ ProcClk1:
 	jmp CallRoutine
 ProcClk2:
 	lda clkBoxTemp
-	bne Icons_13
+	bne ProcClk7
 	lda r0L
 	sta clkBoxTemp2
 	sty clkBoxTemp
@@ -125,6 +125,7 @@ ProcClk6:
 	dey
 	lda (IconDescVec),y
 	jsr CallRoutine
+ProcClk7:
 	rts
 
 FindClkIcon:

@@ -121,8 +121,9 @@ _DSDiv:
 	ldx r8L
 	jsr _Ddiv
 	plp
-	bpl Ddivl1
+	bpl DSDiv1
 	jsr _Dnegate
+DSDiv1:
 	rts
 
 _Dabs:

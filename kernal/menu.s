@@ -153,14 +153,17 @@ GetMnuDsc1:
 	sta menuTop,y
 	dey
 	bpl GetMnuDsc1
-        lda     $C098,y
-        clc
-        adc     #$5A
-        sta     $C038,y
+.if 1
+	lda $C098,y
+	clc
+	adc #$5A
+	sta $C038,y
+.endif
 	MoveW menuLeft, r11
 	MoveB menuTop, r1H
-	bbsf 6, menuOptNumber, Menu_01
+	bbsf 6, menuOptNumber, GetMnuDsc2
 	jsr ResetMseRegion
+GetMnuDsc2:
 	rts
 
 Menu_1:
