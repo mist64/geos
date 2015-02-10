@@ -158,11 +158,13 @@ daysTab:
 
 .segment "X"
 
+.if (useRamExp)
 DeskTopOpen:
 	.byte 0 ;these two bytes are here just
 DeskTopRecord:
 	.byte 0 ;to keep OS_JUMPTAB at $c100
 	.byte 0,0,0 ;three really unused
+.endif
 
 .segment "main3"
 ;--------------------------------------------
@@ -644,12 +646,14 @@ DFIIO1:
 	jmp ResetMseRegion
 
 .segment "X"
+.if (useRamExp)
 DeskTopStart:
 	.word 0 ;these are for ensuring compatibility with
 DeskTopExec:
 	.word 0 ;DeskTop replacements - filename of desktop
 DeskTopLgh:
 	.byte 0 ;have to be at $c3cf .IDLE
+.endif
 
 .segment "main7b"
 DeskTopName:
