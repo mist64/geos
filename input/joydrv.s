@@ -186,9 +186,11 @@ JoyProc4:
 JProc4_1:
 	pla
 	and #%01000000
-	beq JProc3_2
+	beq JProc4_2
 	ldx #r2
-	jmp Dnegate
+	jsr Dnegate
+JProc4_2:
+	rts
 
 JoyTab1:
 	.byte $ff, $b5, $00, $b5
