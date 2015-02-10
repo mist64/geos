@@ -421,7 +421,7 @@ SNxtFree3:
 	sta r6H
 	bra SNxtFree00
 SNxtFree4:
-	MoveW r6, r3
+	MoveW_ r6, r3
 	ldx #0
 	rts
 SNxtFree5:
@@ -508,7 +508,7 @@ FreeBlk0:
 	rts
 
 __CalcBlksFree:
-	LoadW r4, 0
+	LoadW_ r4, 0
 	ldy #OFF_TO_BAM
 CBlksFre0:
 	lda (r5),y
@@ -884,7 +884,7 @@ SendCODE:
 	sta WriteAddy+1
 	lda #<DriveAddy
 	sta WriteAddy
-	LoadB z8f, $1b
+	LoadB z8f, $1a
 SndCDE0:
 	jsr SendCHUNK
 	bnex SndCDE1
@@ -931,7 +931,7 @@ SndCHNK2:
 WriteCommand:
 	.byte "M-W"
 WriteAddy:
-	.word $0300
+	.word 0
 
 __ExitTurbo:
 	txa
