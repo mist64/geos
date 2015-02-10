@@ -131,10 +131,10 @@ DoWrFile3:
 	rts
 
  ; ???
- .ifdef maurice
-        .byte   $5E  $8F, $FF
+.ifdef maurice
+	.byte $B5, $58, $FF
 .else
-        .byte   $B5, $58, $FF
+	.byte $5E, $8F, $FF
 .endif
 
 .if (REUPresent)
