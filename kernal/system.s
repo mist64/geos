@@ -7,7 +7,7 @@
 .include "kernal.inc"
 .include "jumptab.inc"
 .import daysTab, dateCopy, ConvertBCD, BitMask2
-.global KbdScanHelp3, _DoUpdateTime, _IRQHandler, _NMIHandler
+.global KbdScanHelp3, _DoUpdateTime, _IRQHandler, _NMIHandler, _GetNextChar
 
 .segment "system"
 
@@ -292,7 +292,12 @@ KbdScanHelp4:
 KbdScanHlp_41:
 	rts
 
-.segment "system2"
+_GetNextChar:
+	bbrf KEYPRESS_BIT, pressFlag, GetNxtChar1
+	jmp KbdScanHelp3
+GetNxtChar1:
+	lda #0
+	rts
 
 KbdScanHelp5:
 	LoadB cia1base+0, %11111101

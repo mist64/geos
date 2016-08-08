@@ -9,7 +9,6 @@ kernal/bswfont.s \
 kernal/icons.s \
 kernal/lokernal.s \
 kernal/patterns.s \
-kernal/unknown.s \
 kernal/conio.s \
 kernal/dlgbox.s \
 kernal/files.s \

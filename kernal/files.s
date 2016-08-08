@@ -7,10 +7,26 @@
 .include "kernal.inc"
 .include "diskdrv.inc"
 .include "jumptab.inc"
-.import DkNmTab, LoKernal, Dialog_2, _MNLP, InitGEOEnv, DlgBoxPrep, UNK_4, UNK_5
+.import LoKernal, Dialog_2, _MNLP, InitGEOEnv, DlgBoxPrep, UNK_4, UNK_5
 .global _AppendRecord, _BldGDirEntry, _CloseRecordFile, _DeleteFile, _DeleteRecord, _FastDelFile, _FindFTypes, _FindFile, _FollowChain, _FreeFile, _GetFHdrInfo, _GetFile, _GetPtrCurDkNm, _InsertRecord, _LdApplic, _LdDeskAcc, _LdFile, _OpenRecordFile, _ReadByte, _ReadRecord, _RenameFile, _RstrAppl, _SaveFile, _SetDevice, _SetGDirEntry, _UpdateRecordFile, _WriteRecord, _NextRecord, _PointRecord, _PreviousRecord, SerialHiCompare
 
-.segment "files"
+.segment "files1"
+DkNmTab:
+	.byte <DrACurDkNm, <DrBCurDkNm
+	.byte <DrCCurDkNm, <DrDCurDkNm
+	.byte >DrACurDkNm, >DrBCurDkNm
+	.byte >DrCCurDkNm, >DrDCurDkNm
+
+.segment "files2"
+_GetPtrCurDkNm:
+	ldy curDrive
+	lda DkNmTab-8,Y
+	sta zpage,X
+	lda DkNmTab-4,Y
+	sta zpage+1,X
+	rts
+
+.segment "files3"
 
 _GetFile:
 	jsr UNK_5
@@ -1220,12 +1236,3 @@ ReadByt3:
 	inx
 	stx r5L
 	bra _ReadByte
-
-.segment "main6"
-_GetPtrCurDkNm:
-	ldy curDrive
-	lda DkNmTab-8,Y
-	sta zpage,X
-	lda DkNmTab-4,Y
-	sta zpage+1,X
-	rts

@@ -3,7 +3,7 @@
 .include "const.inc"
 .include "geossym.inc"
 .include "geosmac.inc"
-.import BitMask2, SprTabH, SprTabL
+.import BitMask2
 .global _DisablSprite, _DrawSprite, _EnablSprite, _PosSprite
 
 .segment "sprites"
@@ -22,7 +22,12 @@ DSpr0:
 	bpl DSpr0
 	rts
 
-.segment "sprites3"
+SprTabL:
+	.byte <spr0pic, <spr1pic, <spr2pic, <spr3pic
+	.byte <spr4pic, <spr5pic, <spr6pic, <spr7pic
+SprTabH:
+	.byte >spr0pic, >spr1pic, >spr2pic, >spr3pic
+	.byte >spr4pic, >spr5pic, >spr6pic, >spr7pic
 
 _PosSprite:
 	PushB CPU_DATA

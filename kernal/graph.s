@@ -6,10 +6,10 @@
 .include "config.inc"
 .include "kernal.inc"
 .include "jumptab.inc"
-.import LineTabH, LineTabL, PatternTab, _PutString, BitMask1, BitMask3, BitMask4
+.import PatternTab, _PutString, BitMask1, BitMask3, BitMask4
 .global _BitOtherClip, _BitmapClip, _BitmapUp, _DrawPoint, _FrameRectangle, _GetScanLine, _GraphicsString, _HorizontalLine, _ImprintRectangle, _InvertLine, _InvertRectangle, _RecoverLine, _RecoverRectangle, _Rectangle, _SetPattern, _TestPoint, _VerticalLine, _i_BitmapUp, _i_FrameRectangle, _i_GraphicsString, _i_ImprintRectangle, _i_RecoverRectangle, _i_Rectangle, ClrScr, _DrawLine
 
-.segment "main11"
+.segment "graph1"
 
 ClrScr:
 	LoadW r0, SCREEN_BASE
@@ -33,7 +33,7 @@ ClrScr2:
 	bne ClrScr1
 	rts
 
-.segment "graph"
+.segment "graph2"
 
 PrepareXCoord:
 	ldx r11L
@@ -640,7 +640,18 @@ GSC3:
 	tax
 	rts
 
-.segment "graph4"
+LineTabL:
+	.byte $00, $40, $80, $c0, $00, $40, $80, $c0
+	.byte $00, $40, $80, $c0, $00, $40, $80, $c0
+	.byte $00, $40, $80, $c0, $00, $40, $80, $c0
+	.byte $00
+LineTabH:
+	.byte $a0, $a1, $a2, $a3, $a5, $a6, $a7, $a8
+	.byte $aa, $ab, $ac, $ad, $af, $b0, $b1, $b2
+	.byte $b4, $b5, $b6, $b7, $b9, $ba, $bb, $bc
+	.byte $be
+
+.segment "graph3"
 
 _BitOtherClip:
 	ldx #$ff
@@ -826,7 +837,7 @@ IndirectR13:
 IndirectR14:
 	jmp (r14)
 
-.segment "graph5"
+.segment "graph4"
 
 _DrawLine:
 	php

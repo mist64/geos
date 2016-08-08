@@ -5,8 +5,28 @@
 .include "geosmac.inc"
 .include "kernal.inc"
 .include "jumptab.inc"
-.import ID100, BitMask2, FontTVar1, FontTVar2, BitMask4, BitMask3, GetChWdth1
+.import BitMask2, BitMask4, BitMask3, GetChWdth1
 .global _GetRealSize, Font_10
+
+.segment "unknown"
+ID100:
+	.byte $b1, $30, $03, $1b, $d8, $c0, $0c, $8d, $80, $10, $02, $20, $01, $08, $40, $04
+	.byte $00, $01, $03, $03, $06, $07, $07, $07, $0c, $0d, $0f, $0f, $0e, $0f, $0f, $0f
+	.byte $18, $19, $1b, $1b, $1e, $1f, $1f, $1f, $1c, $1d, $1f, $1f, $1e, $1f, $1f, $1f
+	.byte $30, $31, $33, $33, $36, $37, $37, $37, $3c, $3d, $3f, $3f, $3e, $3f, $3f, $3f
+	.byte $38, $39, $3b, $3b, $3e, $3f, $3f, $3f, $3c, $3d, $3f, $3f, $3e, $3f, $3f, $3f
+	.byte $60, $61, $63, $63, $66, $67, $67, $67, $6c, $6d, $6f, $6f, $6e, $6f, $6f, $6f
+	.byte $78, $79, $7b, $7b, $7e, $7f, $7f, $7f, $7c, $7d, $7f, $7f, $7e, $7f, $7f, $7f
+	.byte $70, $71, $73, $73, $76, $77, $77, $77, $7c, $7d, $7f, $7f, $7e, $7f, $7f, $7f
+	.byte $78, $79, $7b, $7b, $7e, $7f, $7f, $7f, $7c, $7d, $7f, $7f, $7e, $7f, $7f, $7f
+	.byte $c0, $c1, $c3, $c3, $c6, $c7, $c7, $c7, $cc, $cd, $cf, $cf, $ce, $cf, $cf, $cf
+	.byte $d8, $d9, $db, $db, $de, $df, $df, $df, $dc, $dd, $df, $df, $de, $df, $df, $df
+	.byte $f0, $f1, $f3, $f3, $f6, $f7, $f7, $f7, $fc, $fd, $ff, $ff, $fe, $ff, $ff, $ff
+	.byte $f8, $f9, $fb, $fb, $fe, $ff, $ff, $ff, $fc, $fd, $ff, $ff, $fe, $ff, $ff, $ff
+	.byte $e0, $e1, $e3, $e3, $e6, $e7, $e7, $e7, $ec, $ed, $ef, $ef, $ee, $ef, $ef, $ef
+	.byte $f8, $f9, $fb, $fb, $fe, $ff, $ff, $ff, $fc, $fd, $ff, $ff, $fe, $ff, $ff, $ff
+	.byte $f0, $f1, $f3, $f3, $f6, $f7, $f7, $f7, $fc, $fd, $ff, $ff, $fe, $ff, $ff, $ff
+	.byte $f8, $f9, $fb, $fb, $fe, $ff, $ff, $ff, $fc, $fd, $ff, $ff, $fe, $ff, $ff, $ff
 
 .segment "fonts"
 
@@ -794,3 +814,17 @@ FontGt4_2:
 	sta Z45+1,y
 	sta Z45+2,y
 	beq FontGt2_1
+
+FontTVar1:
+	.byte 0
+FontTVar2:
+.ifdef maurice
+    ; This should be initialized to 0, and will
+    ; be changed at runtime.
+    ; Maurice's version was created by dumping
+    ; KERNAL from memory after it had been running,
+    ; so it has a random value here.
+	.word $34
+.else
+	.word 0
+.endif

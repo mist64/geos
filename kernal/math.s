@@ -5,7 +5,7 @@
 .include "jumptab.inc"
 .global ConvertBCD, _BBMult, _BMult, _CRC, _DMult, _DSDiv, _DShiftLeft, _DShiftRight, _Dabs, _Ddec, _Ddiv, _Dnegate, _GetRandom
 
-.segment "math"
+.segment "math1"
 
 _DShiftLeft:
 	dey

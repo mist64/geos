@@ -6,8 +6,8 @@
 .include "config.inc"
 .include "kernal.inc"
 .include "jumptab.inc"
-.import KbdScanHelp3, DecTabH, DecTabL, _DisablSprite, _EnablSprite, _PosSprite, _GraphicsString, Font_10, _GetRealSize, PutCharTabH, PutCharTabL, BSWFont, SerialHiCompare, _GetSerialNumber2, SerialHiCompare
-.global DoBACKSPACE, DoBOLDON, DoCR, DoESC_GRAPHICS, DoESC_RULER, DoGOTOXY, DoGOTOY, DoHOME, DoITALICON, DoLF, DoNEWCARDSET, DoOUTLINEON, DoPLAINTEXT, DoREV_OFF, DoREV_ON, DoTAB, DoULINEOFF, DoULINEON, DoUPLINE, GetChWdth1, ProcessCursor, _GetCharWidth, _GetNextChar, _GetString, _InitTextPrompt, _LoadCharSet, _PromptOff, _PromptOn, _PutChar, _PutDecimal, _PutString, _SmallPutChar, _UseSystemFont, _i_PutString, DoGOTOX
+.import KbdScanHelp3, _DisablSprite, _EnablSprite, _PosSprite, _GraphicsString, Font_10, _GetRealSize, BSWFont, SerialHiCompare, _GetSerialNumber2, SerialHiCompare
+.global DoBACKSPACE, DoBOLDON, DoCR, DoESC_GRAPHICS, DoESC_RULER, DoGOTOXY, DoGOTOY, DoHOME, DoITALICON, DoLF, DoNEWCARDSET, DoOUTLINEON, DoPLAINTEXT, DoREV_OFF, DoREV_ON, DoTAB, DoULINEOFF, DoULINEON, DoUPLINE, GetChWdth1, ProcessCursor, _GetCharWidth, _GetString, _InitTextPrompt, _LoadCharSet, _PromptOff, _PromptOn, _PutChar, _PutDecimal, _PutString, _SmallPutChar, _UseSystemFont, _i_PutString, DoGOTOX
 
 .segment "conio"
 
@@ -54,7 +54,29 @@ PutChar4:
 	lda StringFaultVec
 	jmp CallRoutine
 
-.segment "conio3"
+PutCharTabL:
+	.byte <DoBACKSPACE, <DoTAB
+	.byte <DoLF, <DoHOME
+	.byte <DoUPLINE, <DoCR
+	.byte <DoULINEON, <DoULINEOFF
+	.byte <DoESC_GRAPHICS, <DoESC_RULER
+	.byte <DoREV_ON, <DoREV_OFF
+	.byte <DoGOTOX, <DoGOTOY
+	.byte <DoGOTOXY, <DoNEWCARDSET
+	.byte <DoBOLDON, <DoITALICON
+	.byte <DoOUTLINEON, <DoPLAINTEXT
+
+PutCharTabH:
+	.byte >DoBACKSPACE, >DoTAB
+	.byte >DoLF, >DoHOME
+	.byte >DoUPLINE, >DoCR
+	.byte >DoULINEON, >DoULINEOFF
+	.byte >DoESC_GRAPHICS, >DoESC_RULER
+	.byte >DoREV_ON, >DoREV_OFF
+	.byte >DoGOTOX, >DoGOTOY
+	.byte >DoGOTOXY, >DoNEWCARDSET
+	.byte >DoBOLDON, >DoITALICON
+	.byte >DoOUTLINEON, >DoPLAINTEXT
 
 _SmallPutChar:
 	subv $20
@@ -522,7 +544,10 @@ CalcDec4:
 	bpl CalcDec0
 	rts
 
-.segment "conio5"
+DecTabL:
+	.byte <1, <10, <100, <1000, <10000
+DecTabH:
+	.byte >1, >10, >100, >1000, >10000
 
 _PutDecimal:
 	jsr CalcDecimal
@@ -547,13 +572,4 @@ PutDec3:
 	jsr _PutChar
 	dec r0L
 	bne PutDec3
-	rts
-
-.segment "conio6"
-
-_GetNextChar:
-	bbrf KEYPRESS_BIT, pressFlag, GetNxtChar1
-	jmp KbdScanHelp3
-GetNxtChar1:
-	lda #0
 	rts

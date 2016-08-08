@@ -22,15 +22,9 @@
 .import LoKernal1, LoKernalBuf
 .import DoTAB, DoBACKSPACE
 .global BitMask1, BitMask2, BitMask3, BitMask4
-.global DBIcPicDISK, DBIcPicNO, DBIcPicOPEN, DBIcPicYES, DecTabH, DecTabL, DkNmTab, FontTVar1, FontTVar2, InitGEOEnv, LineTabH, LineTabL, PutCharTabH, PutCharTabL, SprTabH, SprTabL, UNK_4, UNK_5, _DoFirstInitIO, _EnterDeskTop, _FirstInit, _MNLP, dateCopy, daysTab, Init_KRNLVec, _GetSerialNumber, _GetSerialNumber2
+.global DBIcPicDISK, DBIcPicNO, DBIcPicOPEN, DBIcPicYES, InitGEOEnv, UNK_4, UNK_5, _DoFirstInitIO, _EnterDeskTop, _FirstInit, _MNLP, dateCopy, daysTab, Init_KRNLVec, _GetSerialNumber, _GetSerialNumber2
 
 .segment "main"
-
-;--------------------------------------------
-;IMPORTANT! DO NOT CHANGE ANYTHING BELOW, UP TO 'DESK TOP' STRING.
-;DOING SO WILL CREATE FATAL INCOMPATIBILITES!
-;--------------------------------------------
-
 	jmp BootKernal
 	jmp InitKernal
 
@@ -52,128 +46,134 @@ dateCopy:
 	.byte 88,4,20
 .endif
 
-.segment "main5"
-;--------------------------------------------
+BootKernal:
+	bbsf 5, sysFlgCopy, BootREU
+	jsr $FF90
+	lda #version-bootName
+	ldx #<bootName
+	ldy #>bootName
+	jsr $FFBD
+	lda #$50
+	ldx #8
+	ldy #1
+	jsr $FFBA
+	lda #0
+	jsr $FFD5
+	bcc _RunREU
+	jmp ($0302)
+BootREU:
+	ldy #8
+BootREU1:
+	lda BootREUTab,Y
+	sta EXP_BASE+1,Y
+	dey
+	bpl BootREU1
+BootREU2:
+	dey
+	bne BootREU2
+_RunREU:
+	jmp RunREU
+BootREUTab:
+	.word $0091
+	.word $0060
+	.word $007e
+	.word $0500
+	.word $0000
 
-BitMask1:
-	.byte $80, $40, $20, $10, $08, $04, $02
-BitMask2:
-	.byte $01, $02, $04, $08, $10, $20, $40, $80
-BitMask3:
-	.byte $00, $80, $c0, $e0, $f0, $f8, $fc, $fe
-BitMask4:
-	.byte $7f, $3f, $1f, $0f, $07, $03, $01, $00
-
-.segment "main9"
-VIC_IniTbl:
-	.byte $00, $00, $00, $00, $00, $00, $00, $00
-	.byte $00, $00, $00, $00, $00, $00, $00, $00
-	.byte $00, $3b, $fb, $aa, $aa, $01, $08, $00
-	.byte $38, $0f, $01, $00, $00, $00
-
-.segment "graph2"
-LineTabL:
-	.byte $00, $40, $80, $c0, $00, $40, $80, $c0
-	.byte $00, $40, $80, $c0, $00, $40, $80, $c0
-	.byte $00, $40, $80, $c0, $00, $40, $80, $c0
-	.byte $00
-LineTabH:
-	.byte $a0, $a1, $a2, $a3, $a5, $a6, $a7, $a8
-	.byte $aa, $ab, $ac, $ad, $af, $b0, $b1, $b2
-	.byte $b4, $b5, $b6, $b7, $b9, $ba, $bb, $bc
-	.byte $be
-
-.segment "panic2"
-_PanicDB_DT:
-	.byte DEF_DB_POS | 1
-	.byte DBTXTSTR, TXT_LN_X, TXT_LN_1_Y
-	.word _PanicDB_Str
-	.byte NULL
-
-_PanicDB_Str:
-	.byte BOLDON
-	.byte "System error near $"
-_PanicAddy:
-	.byte "xxxx"
-	.byte NULL
-
-.segment "fonttvar"
-
-FontTVar1:
-	.byte 0
-FontTVar2:
-.ifdef maurice
-    ; This should be initialized to 0, and will
-    ; be changed at runtime.
-    ; Maurice's version was created by dumping
-    ; KERNAL from memory after it had been running,
-    ; so it has a random value here.
-	.word $34
+.if (removeToBASIC)
+_ToBASIC:
+	sei
+	jsr PurgeTurbo
+	LoadB CPU_DATA, KRNL_BAS_IO_IN
+	LoadB $DE00, 0
+	jmp $fce2
 .else
-	.word 0
+_ToBASIC:
+	ldy #39
+TB1:
+	lda (r0),Y
+	cmp #'A'
+	bcc TB2
+	cmp #'Z'+1
+	bcs TB2
+	sbc #$3F
+TB2:
+	sta LoKernalBuf,Y
+	dey
+	bpl TB1
+	lda r5H
+	beq TB4
+	iny
+	tya
+TB3:
+	sta BASICspace,Y
+	iny
+	bne TB3
+	SubVW $0002,r7
+	lda (r7),Y
+	pha
+	iny
+	lda (r7),Y
+	pha
+	PushW r7
+	lda (r5),Y
+	sta r1L
+	iny
+	lda (r5),Y
+	sta r1H
+.if 1
+	lda #$ff
+	sta r2L
+	sta r2H
+.else
+	LoadW r2, $ffff
+.endif
+	jsr _ReadFile
+	PopW r0
+	ldy #1
+	pla
+	sta (r0),Y
+	dey
+	pla
+	sta (r0),Y
+TB4:
+	jsr GetDirHead
+	jsr PurgeTurbo
+	lda sysRAMFlg
+	sta sysFlgCopy
+	and #%00100000
+	beq TB6
+	ldy #6
+TB5:
+	lda ToBASICTab,Y
+	sta r0,Y
+	dey
+	bpl TB5
+	jsr StashRAM
+TB6:
+	jmp LoKernal1
+ToBASICTab:
+	.word dirEntryBuf
+	.word REUOsVarBackup
+	.word OS_VARS_LGH
+	.byte $00
 .endif
 
-.segment "sprites2"
+_MainLoop:
+	jsr _DoCheckButtons
+	jsr _ExecuteProcesses
+	jsr _DoCheckDelays
+	jsr _DoUpdateTime
+	lda appMain+0
+	ldx appMain+1
+_MNLP:
+	jsr CallRoutine
+	cli
+	jmp _MainLoop2
 
-SprTabL:
-	.byte <spr0pic, <spr1pic, <spr2pic, <spr3pic
-	.byte <spr4pic, <spr5pic, <spr6pic, <spr7pic
-SprTabH:
-	.byte >spr0pic, >spr1pic, >spr2pic, >spr3pic
-	.byte >spr4pic, >spr5pic, >spr6pic, >spr7pic
-
-.segment "conio2"
-
-PutCharTabL:
-	.byte <DoBACKSPACE, <DoTAB
-	.byte <DoLF, <DoHOME
-	.byte <DoUPLINE, <DoCR
-	.byte <DoULINEON, <DoULINEOFF
-	.byte <DoESC_GRAPHICS, <DoESC_RULER
-	.byte <DoREV_ON, <DoREV_OFF
-	.byte <DoGOTOX, <DoGOTOY
-	.byte <DoGOTOXY, <DoNEWCARDSET
-	.byte <DoBOLDON, <DoITALICON
-	.byte <DoOUTLINEON, <DoPLAINTEXT
-
-PutCharTabH:
-	.byte >DoBACKSPACE, >DoTAB
-	.byte >DoLF, >DoHOME
-	.byte >DoUPLINE, >DoCR
-	.byte >DoULINEON, >DoULINEOFF
-	.byte >DoESC_GRAPHICS, >DoESC_RULER
-	.byte >DoREV_ON, >DoREV_OFF
-	.byte >DoGOTOX, >DoGOTOY
-	.byte >DoGOTOXY, >DoNEWCARDSET
-	.byte >DoBOLDON, >DoITALICON
-	.byte >DoOUTLINEON, >DoPLAINTEXT
-
-.segment "conio4"
-
-DecTabL:
-	.byte <1, <10, <100, <1000, <10000
-DecTabH:
-	.byte >1, >10, >100, >1000, >10000
-
-.segment "daystab"
-
-daysTab:
-	.byte 31, 28, 31, 30, 31, 30
-	.byte 31, 31, 30, 31, 30, 31
-
-.segment "X"
-
-.if (useRamExp)
-DeskTopOpen:
-	.byte 0 ;these two bytes are here just
-DeskTopRecord:
-	.byte 0 ;to keep OS_JUMPTAB at $c100
-	.byte 0,0,0 ;three really unused
-.endif
-
-.segment "main3"
+.segment "jumptab"
 ;--------------------------------------------
-;here the JumpTable begins, DO NOT CHANGE!!!
+; Jump Table
 ;		*= OS_JUMPTAB
 
 InterruptMain:
@@ -508,17 +508,11 @@ DoRAMOp:
 	ldx #DEV_NOT_FOUND
 	rts
 .endif
-;here the JumpTable ends
+
+
 ;--------------------------------------------
+.segment "main1b"
 
-.segment "main2"
-DkNmTab:
-	.byte <DrACurDkNm, <DrBCurDkNm
-	.byte <DrCCurDkNm, <DrDCurDkNm
-	.byte >DrACurDkNm, >DrBCurDkNm
-	.byte >DrCCurDkNm, >DrDCurDkNm
-
-.segment "main4"
 _InterruptMain:
 	jsr ProcessMouse
 	jsr _ProcessTimers
@@ -526,161 +520,18 @@ _InterruptMain:
 	jsr ProcessCursor
 	jmp _GetRandom
 
-.segment "main15"
-_CallRoutine:
-	cmp #0
-	bne CRou1
-	cpx #0
-	beq CRou2
-CRou1:
-	sta CallRLo
-	stx CallRHi
-	jmp (CallRLo)
-CRou2:
-	rts
-
-_DoInlineReturn:
-	add returnAddress
-	sta returnAddress
-	bcc DILR1
-	inc returnAddress+1
-DILR1:
-	plp
-	jmp (returnAddress)
-
-SetVICRegs:
-	sty r1L
-	ldy #0
-SVR0:
-	lda (r0),Y
-	cmp #$AA
-	beq SVR1
-	sta vicbase,Y
-SVR1:
-	iny
-	cpy r1L
-	bne SVR0
-	rts
-
-.segment "main14"
-_InitRam:
-	ldy #0
-	lda (r0),Y
-	sta r1L
-	iny
-	ora (r0),Y
-	beq IRam3
-	lda (r0),Y
-	sta r1H
-	iny
-	lda (r0),Y
-	sta r2L
-	iny
-IRam0:
-	tya
-	tax
-	lda (r0),Y
-	ldy #0
-	sta (r1),Y
-	inc r1L
-	bne IRam1
-	inc r1H
-IRam1:
-	txa
-	tay
-	iny
-	dec r2L
-	bne IRam0
-	tya
-	add r0L
-	sta r0L
-	bcc IRam2
-	inc r0H
-IRam2:
-	bra _InitRam
-IRam3:
-	rts
-
-.segment "main8"
-InitGEOS:
-	jsr _DoFirstInitIO ;UNK_1
-InitGEOEnv:
-	lda #>InitRamTab ;UNK_1_1
-	sta r0H
-	lda #<InitRamTab
-	sta r0L
-	jmp _InitRam
-
-.segment "main10"
-_DoFirstInitIO:
-	LoadB CPU_DDR, $2f
-	LoadB CPU_DATA, KRNL_IO_IN
-	ldx #7
-	lda #$ff
-DFIIO0:
-	sta KbdDMltTab,X
-	sta KbdDBncTab,X
-	dex
-	bpl DFIIO0
-	stx KbdQueFlag
-	stx cia1base+2
-	inx
-	stx KbdQueHead
-	stx KbdQueTail
-	stx cia1base+3
-	stx cia1base+15
-	stx cia2base+15
-	lda PALNTSCFLAG
-	beq DFIIO1
-	ldx #$80
-DFIIO1:
-	stx cia1base+14
-	stx cia2base+14
-	lda cia2base
-	and #%00110000
-	ora #%00000101
-	sta cia2base
-	LoadB cia2base+2, $3f
-	LoadB cia1base+13, $7f
-	sta cia2base+13
-	LoadW r0, VIC_IniTbl
-	ldy #30
-	jsr SetVICRegs
-	jsr Init_KRNLVec
-	LoadB CPU_DATA, RAM_64K
-	jmp ResetMseRegion
-
-.segment "X"
-.if (useRamExp)
-DeskTopStart:
-	.word 0 ;these are for ensuring compatibility with
-DeskTopExec:
-	.word 0 ;DeskTop replacements - filename of desktop
-DeskTopLgh:
-	.byte 0 ;have to be at $c3cf .IDLE
-.endif
-
-.segment "main7b"
-DeskTopName:
-	.byte "DESK TOP", NULL
-
-.segment "main1c"
 ;--------------------------------------------
-;IMPORTANT! FROM NOW ON YOU CAN CHANGE THE CODE UNTIL FURTHER NOTICES.
-;--------------------------------------------
-_MainLoop:
-	jsr _DoCheckButtons
-	jsr _ExecuteProcesses
-	jsr _DoCheckDelays
-	jsr _DoUpdateTime
-	lda appMain+0
-	ldx appMain+1
-_MNLP:
-	jsr CallRoutine
-	cli
-	jmp _MainLoop2
 
-.segment "main6"
+BitMask1:
+	.byte $80, $40, $20, $10, $08, $04, $02
+BitMask2:
+	.byte $01, $02, $04, $08, $10, $20, $40, $80
+BitMask3:
+	.byte $00, $80, $c0, $e0, $f0, $f8, $fc, $fe
+BitMask4:
+	.byte $7f, $3f, $1f, $0f, $07, $03, $01, $00
+
+.segment "main2"
 _MainLoop2:
 	ldx CPU_DATA
 	LoadB CPU_DATA, IO_IN
@@ -690,121 +541,7 @@ _MainLoop2:
 	stx CPU_DATA
 	jmp _MainLoop
 
-.segment "main1b"
-BootKernal:
-	bbsf 5, sysFlgCopy, BootREU
-	jsr $FF90
-	lda #version-bootName
-	ldx #<bootName
-	ldy #>bootName
-	jsr $FFBD
-	lda #$50
-	ldx #8
-	ldy #1
-	jsr $FFBA
-	lda #0
-	jsr $FFD5
-	bcc _RunREU
-	jmp ($0302)
-BootREU:
-	ldy #8
-BootREU1:
-	lda BootREUTab,Y
-	sta EXP_BASE+1,Y
-	dey
-	bpl BootREU1
-BootREU2:
-	dey
-	bne BootREU2
-_RunREU:
-	jmp RunREU
-BootREUTab:
-	.word $0091
-	.word $0060
-	.word $007e
-	.word $0500
-	.word $0000
-
-.if (removeToBASIC)
-_ToBASIC:
-	sei
-	jsr PurgeTurbo
-	LoadB CPU_DATA, KRNL_BAS_IO_IN
-	LoadB $DE00, 0
-	jmp $fce2
-.else
-_ToBASIC:
-	ldy #39
-TB1:
-	lda (r0),Y
-	cmp #'A'
-	bcc TB2
-	cmp #'Z'+1
-	bcs TB2
-	sbc #$3F
-TB2:
-	sta LoKernalBuf,Y
-	dey
-	bpl TB1
-	lda r5H
-	beq TB4
-	iny
-	tya
-TB3:
-	sta BASICspace,Y
-	iny
-	bne TB3
-	SubVW $0002,r7
-	lda (r7),Y
-	pha
-	iny
-	lda (r7),Y
-	pha
-	PushW r7
-	lda (r5),Y
-	sta r1L
-	iny
-	lda (r5),Y
-	sta r1H
-.if 1
-	lda #$ff
-	sta r2L
-	sta r2H
-.else
-	LoadW r2, $ffff
-.endif
-	jsr _ReadFile
-	PopW r0
-	ldy #1
-	pla
-	sta (r0),Y
-	dey
-	pla
-	sta (r0),Y
-TB4:
-	jsr GetDirHead
-	jsr PurgeTurbo
-	lda sysRAMFlg
-	sta sysFlgCopy
-	and #%00100000
-	beq TB6
-	ldy #6
-TB5:
-	lda ToBASICTab,Y
-	sta r0,Y
-	dey
-	bpl TB5
-	jsr StashRAM
-TB6:
-	jmp LoKernal1
-ToBASICTab:
-	.word dirEntryBuf
-	.word REUOsVarBackup
-	.word OS_VARS_LGH
-	.byte $00
-.endif
-
-.segment "main7a"
+.segment "main3"
 .if (useRamExp)
 _EnterDeskTop:
 	sei
@@ -820,23 +557,9 @@ _EnterDeskTop:
 	jsr RamExpRead
 	LoadB r0L, NULL
 	MoveW DeskTopExec, r7
-.else
-_EnterDT_DB:
-	.byte DEF_DB_POS | 1
-	.byte DBTXTSTR, TXT_LN_X, TXT_LN_1_Y+6
-	.word _EnterDT_Str0
-	.byte DBTXTSTR, TXT_LN_X, TXT_LN_2_Y+6
-	.word _EnterDT_Str1
-	.byte OK, DBI_X_2, DBI_Y_2
-	.byte NULL
+.endif
 
-.segment "main7c"
-_EnterDT_Str0:
-	.byte BOLDON, "Please insert a disk", NULL
-_EnterDT_Str1:
-	.byte "with deskTop V1.5 or higher", NULL
-
-.segment "main7"
+.if (!useRamExp)
 _EnterDeskTop:
 	sei
 	cld
@@ -891,6 +614,7 @@ EDT6:
 	LoadB r0L, NULL
 	MoveW fileHeader+O_GHST_VEC, r7
 .endif
+
 _StartAppl:
 	sei
 	cld
@@ -904,44 +628,79 @@ _StartAppl:
 	lda r7L
 	jmp _MNLP
 
-.segment "main16"
-UNK_4:
-	MoveB A885D, r10L
-	MoveB A885E, r0L
-	and #1
-	beq U_40
-	MoveW A885F, r7
-U_40:
-	LoadW r2, dataDiskName
-	LoadW r3, dataFileName
-U_41:
-	rts
+.if (!useRamExp)
+_EnterDT_DB:
+	.byte DEF_DB_POS | 1
+	.byte DBTXTSTR, TXT_LN_X, TXT_LN_1_Y+6
+	.word _EnterDT_Str0
+	.byte DBTXTSTR, TXT_LN_X, TXT_LN_2_Y+6
+	.word _EnterDT_Str1
+	.byte OK, DBI_X_2, DBI_Y_2
+	.byte NULL
+.endif
 
+DeskTopName:
+	.byte "DESK TOP", NULL
 
-UNK_5:
-	MoveW r7, A885F
-	MoveB r10L, A885D
-	MoveB r0L, A885E
-	and #%11000000
-	beq U_51
-	ldy #>dataDiskName
-	lda #<dataDiskName
-	ldx #r2
-	jsr U_50
-	ldy #>dataFileName
-	lda #<dataFileName
-	ldx #r3
-U_50:
-	sty r4H
-	sta r4L
-	ldy #r4
-	lda #16
-	jsr CopyFString
-U_51:
-	rts
+_EnterDT_Str0:
+	.byte BOLDON, "Please insert a disk", NULL
+_EnterDT_Str1:
+	.byte "with deskTop V1.5 or higher", NULL
 
-.segment "main12"
+InitGEOS:
+	jsr _DoFirstInitIO ;UNK_1
+InitGEOEnv:
+	lda #>InitRamTab ;UNK_1_1
+	sta r0H
+	lda #<InitRamTab
+	sta r0L
+	jmp _InitRam
 
+VIC_IniTbl:
+	.byte $00, $00, $00, $00, $00, $00, $00, $00
+	.byte $00, $00, $00, $00, $00, $00, $00, $00
+	.byte $00, $3b, $fb, $aa, $aa, $01, $08, $00
+	.byte $38, $0f, $01, $00, $00, $00
+
+_DoFirstInitIO:
+	LoadB CPU_DDR, $2f
+	LoadB CPU_DATA, KRNL_IO_IN
+	ldx #7
+	lda #$ff
+DFIIO0:
+	sta KbdDMltTab,X
+	sta KbdDBncTab,X
+	dex
+	bpl DFIIO0
+	stx KbdQueFlag
+	stx cia1base+2
+	inx
+	stx KbdQueHead
+	stx KbdQueTail
+	stx cia1base+3
+	stx cia1base+15
+	stx cia2base+15
+	lda PALNTSCFLAG
+	beq DFIIO1
+	ldx #$80
+DFIIO1:
+	stx cia1base+14
+	stx cia2base+14
+	lda cia2base
+	and #%00110000
+	ora #%00000101
+	sta cia2base
+	LoadB cia2base+2, $3f
+	LoadB cia1base+13, $7f
+	sta cia2base+13
+	LoadW r0, VIC_IniTbl
+	ldy #30
+	jsr SetVICRegs
+	jsr Init_KRNLVec
+	LoadB CPU_DATA, RAM_64K
+	jmp ResetMseRegion
+
+.segment "main4"
 Init_KRNLVec:
 	ldx #32
 IKV1:
@@ -986,19 +745,139 @@ FI2:
 	bne FI2
 	jmp UNK_6
 
-.segment "getserial"
-
-_GetSerialNumber:
-;	LoadW r0, SerialNumber
-	lda $9EA7
+.segment "main5"
+_InitRam:
+	ldy #0
+	lda (r0),Y
+	sta r1L
+	iny
+	ora (r0),Y
+	beq IRam3
+	lda (r0),Y
+	sta r1H
+	iny
+	lda (r0),Y
+	sta r2L
+	iny
+IRam0:
+	tya
+	tax
+	lda (r0),Y
+	ldy #0
+	sta (r1),Y
+	inc r1L
+	bne IRam1
+	inc r1H
+IRam1:
+	txa
+	tay
+	iny
+	dec r2L
+	bne IRam0
+	tya
+	add r0L
 	sta r0L
-_GetSerialNumber2:
-	lda $9EA8
-	sta r0H
+	bcc IRam2
+	inc r0H
+IRam2:
+	bra _InitRam
+IRam3:
 	rts
-	.byte 1, $60 ; ???
 
-.segment "panic"
+_CallRoutine:
+	cmp #0
+	bne CRou1
+	cpx #0
+	beq CRou2
+CRou1:
+	sta CallRLo
+	stx CallRHi
+	jmp (CallRLo)
+CRou2:
+	rts
+
+_DoInlineReturn:
+	add returnAddress
+	sta returnAddress
+	bcc DILR1
+	inc returnAddress+1
+DILR1:
+	plp
+	jmp (returnAddress)
+
+SetVICRegs:
+	sty r1L
+	ldy #0
+SVR0:
+	lda (r0),Y
+	cmp #$AA
+	beq SVR1
+	sta vicbase,Y
+SVR1:
+	iny
+	cpy r1L
+	bne SVR0
+	rts
+
+UNK_4:
+	MoveB A885D, r10L
+	MoveB A885E, r0L
+	and #1
+	beq U_40
+	MoveW A885F, r7
+U_40:
+	LoadW r2, dataDiskName
+	LoadW r3, dataFileName
+U_41:
+	rts
+
+
+UNK_5:
+	MoveW r7, A885F
+	MoveB r10L, A885D
+	MoveB r0L, A885E
+	and #%11000000
+	beq U_51
+	ldy #>dataDiskName
+	lda #<dataDiskName
+	ldx #r2
+	jsr U_50
+	ldy #>dataFileName
+	lda #<dataFileName
+	ldx #r3
+U_50:
+	sty r4H
+	sta r4L
+	ldy #r4
+	lda #16
+	jsr CopyFString
+U_51:
+	rts
+
+.segment "daystab"
+
+daysTab:
+	.byte 31, 28, 31, 30, 31, 30
+	.byte 31, 31, 30, 31, 30, 31
+
+.segment "X"
+
+.if (useRamExp)
+DeskTopOpen:
+	.byte 0 ;these two bytes are here just
+DeskTopRecord:
+	.byte 0 ;to keep OS_JUMPTAB at $c100
+	.byte 0,0,0 ;three really unused
+
+DeskTopStart:
+	.word 0 ;these are for ensuring compatibility with
+DeskTopExec:
+	.word 0 ;DeskTop replacements - filename of desktop
+DeskTopLgh:
+	.byte 0 ;have to be at $c3cf .IDLE
+.endif
+
+.segment "main6"
 
 _Panic:
 	PopW r0
@@ -1033,6 +912,29 @@ Panil2:
 Panil3:
 	sta _PanicAddy,X
 	rts
+
+_PanicDB_DT:
+	.byte DEF_DB_POS | 1
+	.byte DBTXTSTR, TXT_LN_X, TXT_LN_1_Y
+	.word _PanicDB_Str
+	.byte NULL
+
+_PanicDB_Str:
+	.byte BOLDON
+	.byte "System error near $"
+_PanicAddy:
+	.byte "xxxx"
+	.byte NULL
+
+_GetSerialNumber:
+;	LoadW r0, SerialNumber
+	lda $9EA7
+	sta r0L
+_GetSerialNumber2:
+	lda $9EA8
+	sta r0H
+	rts
+	.byte 1, $60 ; ???
 
 .segment "initramtab"
 

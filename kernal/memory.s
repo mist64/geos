@@ -171,7 +171,7 @@ CMStrl1:
 CMStrl2:
 	rts
 
-.segment "main13"
+.segment "clearram"
 
 _ClearRam:
 	LoadB r2L, NULL
