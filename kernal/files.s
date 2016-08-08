@@ -8,7 +8,7 @@
 .include "diskdrv.inc"
 .include "jumptab.inc"
 .import DkNmTab, LoKernal, Dialog_2, _MNLP, InitGEOEnv, DlgBoxPrep, UNK_4, UNK_5
-.global _AppendRecord, _BldGDirEntry, _CloseRecordFile, _DeleteFile, _DeleteRecord, _FastDelFile, _FindFTypes, _FindFile, _FollowChain, _FreeFile, _GetFHdrInfo, _GetFile, _GetPtrCurDkNm, _InsertRecord, _LdApplic, _LdDeskAcc, _LdFile, _OpenRecordFile, _ReadByte, _ReadRecord, _RenameFile, _RstrAppl, _SaveFile, _SetDevice, _SetGDirEntry, _UpdateRecordFile, _WriteRecord, _NextRecord, _PointRecord, _PreviousRecord
+.global _AppendRecord, _BldGDirEntry, _CloseRecordFile, _DeleteFile, _DeleteRecord, _FastDelFile, _FindFTypes, _FindFile, _FollowChain, _FreeFile, _GetFHdrInfo, _GetFile, _GetPtrCurDkNm, _InsertRecord, _LdApplic, _LdDeskAcc, _LdFile, _OpenRecordFile, _ReadByte, _ReadRecord, _RenameFile, _RstrAppl, _SaveFile, _SetDevice, _SetGDirEntry, _UpdateRecordFile, _WriteRecord, _NextRecord, _PointRecord, _PreviousRecord, SerialHiCompare
 
 .segment "files"
 
@@ -126,13 +126,19 @@ FFTypesStart:
 	SubVW 3, r6
 	jsr Get1stDirEntry
 	bnex FFTypes5
+
+.if (trap)
+    ; sabotage code: breaks LdDeskAcc if
+    ; _UseSystemFont hasn't been called before this
 	ldx #>GetSerialNumber
 	lda #<GetSerialNumber
 	jsr CallRoutine
-	lda $03
-	cmp $D82F
+	lda r0H
+	cmp SerialHiCompare
 	beq FFTypes1
-	inc $C218
+	inc LdDeskAcc+1
+.endif
+
 FFTypes1:
 	ldy #OFF_CFILE_TYPE
 	lda (r5),y
@@ -448,11 +454,19 @@ LdApplic1:
 SwapFileName:
 	.byte $1b,"Swap File", NULL
 
+.if (trap)
 ; ???
+SerialHiCompare:
 .ifdef maurice
+    ; This should be initialized to 0, and will
+    ; be changed at runtime.
+    ; Maurice's version was created by dumping
+    ; KERNAL from memory after it had been running,
+    ; so it has a random value here.
 	.byte $58
 .else
 	.byte 0
+.endif
 .endif
 
 SaveSwapFile:

@@ -1,12 +1,9 @@
 ; GEOS System build configuration
 ; by Maciej 'YTM/Elysium' Witkowiak
 
-; select the driver for the boot drive from the list:
-; (only one value may be '1')
-use1541         =       1
-use1571         =       0
-use1581         =       0
-
+; The original GEOS binary contains a few traps to counter tampering.
+; They can be turned off with this global switch
+trap = 1
 
 ; general code generation/optimization control:
 onlyVLIR        =       0               ; only VLIR and SEQ supported
@@ -24,25 +21,13 @@ useRamCart128   =       0               ; for Ram Cart 128K
 use2MHz                 =       0               ; for 2MHz-on-border on C128 in 64 mode
 
 
-; unsupported right now
-useParallel1541         =       0               ; parallel cable - (only 8 data lines, no handshake)
-; all 1541 drives in system have to be parallel then
-
 ; Feel (almost) free to change values below:
-currentYear     = 99            ;88
-currentMonth    = 7             ;7
-currentDay      = 3             ;6
-AMPM            = 1             ;1              ; 0 - AM/1-PM
-currentHour     = $14           ;1              ; BCD! 14:31 = $14/$31
-currentMinute   = $11           ;0              ; BCD! 21:08 = $21/$08
-
 iniMaxMouseSpeed        = $7f                           ; range from $00-$7f
 iniMinMouseSpeed        = $1e                           ;
 iniMouseAccel           = $7f                           ;
 
 currentInterleave       = 8                             ; 8 for 1541, 6 for 1571
 SelectFlashDelay        = 10                            ; 10 in 1/50 s
-SerialNumber            = $1cd5                         ; $1cd5
 
 ; makes drawing dialog boxes much faster, might cause visual mess
 ; takes more bytes

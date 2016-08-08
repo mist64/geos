@@ -3,9 +3,10 @@
 .include "const.inc"
 .include "geossym.inc"
 .include "geosmac.inc"
+.include "config.inc"
 .include "kernal.inc"
 .include "jumptab.inc"
-.import KbdScanHelp3, DecTabH, DecTabL, _DisablSprite, _EnablSprite, _PosSprite, _GraphicsString, Font_10, _GetRealSize, PutCharTabH, PutCharTabL, BSWFont
+.import KbdScanHelp3, DecTabH, DecTabL, _DisablSprite, _EnablSprite, _PosSprite, _GraphicsString, Font_10, _GetRealSize, PutCharTabH, PutCharTabL, BSWFont, SerialHiCompare, _GetSerialNumber2, SerialHiCompare
 .global DoBACKSPACE, DoBOLDON, DoCR, DoESC_GRAPHICS, DoESC_RULER, DoGOTOXY, DoGOTOY, DoHOME, DoITALICON, DoLF, DoNEWCARDSET, DoOUTLINEON, DoPLAINTEXT, DoREV_OFF, DoREV_ON, DoTAB, DoULINEOFF, DoULINEON, DoUPLINE, GetChWdth1, ProcessCursor, _GetCharWidth, _GetNextChar, _GetString, _InitTextPrompt, _LoadCharSet, _PromptOff, _PromptOn, _PutChar, _PutDecimal, _PutString, _SmallPutChar, _UseSystemFont, _i_PutString, DoGOTOX
 
 .segment "conio"
@@ -75,11 +76,7 @@ DoLF:
 	rts
 
 DoHOME:
-.if 1
 	LoadW_ r11, 0
-.else
-	LoadW r11, 0
-.endif
 	sta r1H
 	rts
 
@@ -233,11 +230,15 @@ UseSysFnt1:
 	bne UseSysFnt1
 	AddW r0, curIndexTable
 	AddW r0, cardDataPntr
-        lda     $D82F
-        bne     LE6D4
-        jsr     $CFF8
-        sta     $D82F
-LE6D4:  rts
+
+.if (trap)
+    ; copy high-byte of serial
+	lda SerialHiCompare
+	bne :+
+	jsr _GetSerialNumber2
+	sta SerialHiCompare
+.endif
+:	rts
 
 _GetCharWidth:
 	subv $20

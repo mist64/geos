@@ -22,7 +22,7 @@
 .import LoKernal1, LoKernalBuf
 .import DoTAB, DoBACKSPACE
 .global BitMask1, BitMask2, BitMask3, BitMask4
-.global DBIcPicDISK, DBIcPicNO, DBIcPicOPEN, DBIcPicYES, DecTabH, DecTabL, DkNmTab, FontTVar1, FontTVar2, InitGEOEnv, LineTabH, LineTabL, PutCharTabH, PutCharTabL, SprTabH, SprTabL, UNK_4, UNK_5, _DoFirstInitIO, _EnterDeskTop, _FirstInit, _MNLP, dateCopy, daysTab, Init_KRNLVec
+.global DBIcPicDISK, DBIcPicNO, DBIcPicOPEN, DBIcPicYES, DecTabH, DecTabL, DkNmTab, FontTVar1, FontTVar2, InitGEOEnv, LineTabH, LineTabL, PutCharTabH, PutCharTabL, SprTabH, SprTabL, UNK_4, UNK_5, _DoFirstInitIO, _EnterDeskTop, _FirstInit, _MNLP, dateCopy, daysTab, Init_KRNLVec, _GetSerialNumber, _GetSerialNumber2
 
 .segment "main"
 
@@ -103,6 +103,11 @@ FontTVar1:
 	.byte 0
 FontTVar2:
 .ifdef maurice
+    ; This should be initialized to 0, and will
+    ; be changed at runtime.
+    ; Maurice's version was created by dumping
+    ; KERNAL from memory after it had been running,
+    ; so it has a random value here.
 	.word $34
 .else
 	.word 0
@@ -986,9 +991,10 @@ FI2:
 _GetSerialNumber:
 ;	LoadW r0, SerialNumber
 	lda $9EA7
-	sta $02
+	sta r0L
+_GetSerialNumber2:
 	lda $9EA8
-	sta $03
+	sta r0H
 	rts
 	.byte 1, $60 ; ???
 

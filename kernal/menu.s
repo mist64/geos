@@ -6,7 +6,7 @@
 .include "config.inc"
 .include "kernal.inc"
 .include "jumptab.inc"
-.import _InvertRectangle, _Sleep, _HorizontalLine, _VerticalLine, _PutString, _UseSystemFont, ResetMseRegion, _MouseOff, _StartMouseMode, _FrameRectangle, _Rectangle, _SetPattern
+.import _InvertRectangle, _Sleep, _HorizontalLine, _VerticalLine, _PutString, _UseSystemFont, ResetMseRegion, _MouseOff, _StartMouseMode, _FrameRectangle, _Rectangle, _SetPattern, _GetSerialNumber, _GraphicsString
 .global MenuDoInvert, RcvrMnu0, _DoMenu, _DoPreviousMenu, _GotoFirstMenu, _ReDoMenu, _RecoverAllMenus, _RecoverMenu, Menu_5
 
 .segment "menu"
@@ -153,12 +153,16 @@ GetMnuDsc1:
 	sta menuTop,y
 	dey
 	bpl GetMnuDsc1
-.if 1
-	lda $C098,y
+
+.if (trap)
+    ; If the user has changed where GetSerialNumber points to,
+    ; this will sabotage the KERNAL call GraphicsString.
+	lda GetSerialNumber + 1 - $FF,y
 	clc
-	adc #$5A
-	sta $C038,y
+	adc #<(_GraphicsString - _GetSerialNumber)
+	sta GraphicsString + 1 - $FF,y
 .endif
+
 	MoveW menuLeft, r11
 	MoveB menuTop, r1H
 	bbsf 6, menuOptNumber, GetMnuDsc2
