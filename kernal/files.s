@@ -352,6 +352,11 @@ PFFet1:
 SetDevTab:
 	.word DISK_BASE
 .ifdef maurice
+    ; This should be initialized to 0, and will
+    ; be changed at runtime.
+    ; Maurice's version was created by dumping
+    ; KERNAL from memory after it had been running,
+    ; so it has a different value here.
 	.word REUDskDrvSPC
 .else
 	.word 0

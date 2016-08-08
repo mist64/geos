@@ -13,6 +13,7 @@
 .global LoKernal
 .global LoKernal1
 .global LoKernalBuf
+.global SerialNumber
 .global _DoRAMOp
 .global _FetchRAM
 .global _ReadFile
@@ -141,12 +142,14 @@ DoWrFile2:
 DoWrFile3:
 	rts
 
- ; ???
+SerialNumber:
 .ifdef maurice
-	.byte $B5, $58, $FF
+	.word $58B5
 .else
-	.byte $5E, $8F, $FF
+	.word $8F5E
 .endif
+
+    .byte $FF ; ???
 
 .if (REUPresent)
 _VerifyRAM:

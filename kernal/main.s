@@ -93,6 +93,7 @@
 .import _WriteFile
 .import LoKernal1
 .import LoKernalBuf
+.import SerialNumber
 
 ; dlgbox.s
 .import _RstrFrmDialogue
@@ -1082,13 +1083,13 @@ _PanicAddy:
 	.byte NULL
 
 _GetSerialNumber:
-;	LoadW r0, SerialNumber
-	lda $9EA7
+	lda SerialNumber
 	sta r0L
 _GetSerialNumber2:
-	lda $9EA8
+	lda SerialNumber+1
 	sta r0H
 	rts
+
 	.byte 1, $60 ; ???
 
 .segment "initramtab"
