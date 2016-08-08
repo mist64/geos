@@ -6,8 +6,42 @@
 .include "config.inc"
 .include "kernal.inc"
 .include "jumptab.inc"
-.import _InvertRectangle, _Sleep, _HorizontalLine, _VerticalLine, _PutString, _UseSystemFont, ResetMseRegion, _MouseOff, _StartMouseMode, _FrameRectangle, _Rectangle, _SetPattern, _GetSerialNumber, _GraphicsString
-.global MenuDoInvert, RcvrMnu0, _DoMenu, _DoPreviousMenu, _GotoFirstMenu, _ReDoMenu, _RecoverAllMenus, _RecoverMenu, Menu_5
+
+; graph.s
+.import _FrameRectangle
+.import _GraphicsString
+.import _HorizontalLine
+.import _InvertRectangle
+.import _Rectangle
+.import _SetPattern
+.import _VerticalLine
+
+; process.s
+.import _Sleep
+
+; conio.s
+.import _PutString
+.import _UseSystemFont
+
+; mouseio.s
+.import _MouseOff
+.import _StartMouseMode
+.import ResetMseRegion
+
+.if (trap)
+; main.s
+.import _GetSerialNumber
+.endif
+
+.global MenuDoInvert
+.global Menu_5
+.global RcvrMnu0
+.global _DoMenu
+.global _DoPreviousMenu
+.global _GotoFirstMenu
+.global _ReDoMenu
+.global _RecoverAllMenus
+.global _RecoverMenu
 
 .segment "menu"
 

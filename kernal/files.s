@@ -7,8 +7,54 @@
 .include "kernal.inc"
 .include "diskdrv.inc"
 .include "jumptab.inc"
-.import LoKernal, Dialog_2, _MNLP, InitGEOEnv, DlgBoxPrep, UNK_4, UNK_5
-.global _AppendRecord, _BldGDirEntry, _CloseRecordFile, _DeleteFile, _DeleteRecord, _FastDelFile, _FindFTypes, _FindFile, _FollowChain, _FreeFile, _GetFHdrInfo, _GetFile, _GetPtrCurDkNm, _InsertRecord, _LdApplic, _LdDeskAcc, _LdFile, _OpenRecordFile, _ReadByte, _ReadRecord, _RenameFile, _RstrAppl, _SaveFile, _SetDevice, _SetGDirEntry, _UpdateRecordFile, _WriteRecord, _NextRecord, _PointRecord, _PreviousRecord, SerialHiCompare
+
+; dlgbox.s:
+.import Dialog_2
+.import DlgBoxPrep
+
+; lokernal.s
+.import LoKernal
+
+; main.s
+.import _MNLP
+.import InitGEOEnv
+.import UNK_4
+.import UNK_5
+
+.global _AppendRecord
+.global _BldGDirEntry
+.global _CloseRecordFile
+.global _DeleteFile
+.global _DeleteRecord
+.global _FastDelFile
+.global _FindFTypes
+.global _FindFile
+.global _FollowChain
+.global _FreeFile
+.global _GetFHdrInfo
+.global _GetFile
+.global _GetPtrCurDkNm
+.global _InsertRecord
+.global _LdApplic
+.global _LdDeskAcc
+.global _LdFile
+.global _NextRecord
+.global _OpenRecordFile
+.global _PointRecord
+.global _PreviousRecord
+.global _ReadByte
+.global _ReadRecord
+.global _RenameFile
+.global _RstrAppl
+.global _SaveFile
+.global _SetDevice
+.global _SetGDirEntry
+.global _UpdateRecordFile
+.global _WriteRecord
+
+.if (trap)
+.global SerialHiCompare
+.endif
 
 .segment "files1"
 DkNmTab:

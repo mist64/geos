@@ -3,7 +3,20 @@
 .include "geossym.inc"
 .include "geosmac.inc"
 .include "jumptab.inc"
-.global ConvertBCD, _BBMult, _BMult, _CRC, _DMult, _DSDiv, _DShiftLeft, _DShiftRight, _Dabs, _Ddec, _Ddiv, _Dnegate, _GetRandom
+
+.global ConvertBCD
+.global _BBMult
+.global _BMult
+.global _CRC
+.global _DMult
+.global _DSDiv
+.global _DShiftLeft
+.global _DShiftRight
+.global _Dabs
+.global _Ddec
+.global _Ddiv
+.global _Dnegate
+.global _GetRandom
 
 .segment "math1"
 

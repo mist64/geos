@@ -6,8 +6,43 @@
 .include "config.inc"
 .include "kernal.inc"
 .include "jumptab.inc"
-.import PatternTab, _PutString, BitMask1, BitMask3, BitMask4
-.global _BitOtherClip, _BitmapClip, _BitmapUp, _DrawPoint, _FrameRectangle, _GetScanLine, _GraphicsString, _HorizontalLine, _ImprintRectangle, _InvertLine, _InvertRectangle, _RecoverLine, _RecoverRectangle, _Rectangle, _SetPattern, _TestPoint, _VerticalLine, _i_BitmapUp, _i_FrameRectangle, _i_GraphicsString, _i_ImprintRectangle, _i_RecoverRectangle, _i_Rectangle, ClrScr, _DrawLine
+
+; conio.s
+.import _PutString
+
+; main.s
+.import BitMask1
+.import BitMask3
+.import BitMask4
+
+; patterns.s
+.import PatternTab
+
+.global ClrScr
+.global _BitOtherClip
+.global _BitmapClip
+.global _BitmapUp
+.global _DrawLine
+.global _DrawPoint
+.global _FrameRectangle
+.global _GetScanLine
+.global _GraphicsString
+.global _HorizontalLine
+.global _ImprintRectangle
+.global _InvertLine
+.global _InvertRectangle
+.global _RecoverLine
+.global _RecoverRectangle
+.global _Rectangle
+.global _SetPattern
+.global _TestPoint
+.global _VerticalLine
+.global _i_BitmapUp
+.global _i_FrameRectangle
+.global _i_GraphicsString
+.global _i_ImprintRectangle
+.global _i_RecoverRectangle
+.global _i_Rectangle
 
 .segment "graph1"
 

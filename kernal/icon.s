@@ -5,8 +5,23 @@
 .include "geosmac.inc"
 .include "kernal.inc"
 .include "jumptab.inc"
-.import _Sleep, MenuDoInvert, _BitmapUp, _StartMouseMode, ResetMseRegion
-.global CalcIconDescTab, ProcessClick, _DoIcons
+
+; graph.s
+.import _BitmapUp
+
+; menu.s
+.import MenuDoInvert
+
+; mouseio.s
+.import _StartMouseMode
+.import ResetMseRegion
+
+; process.s
+.import _Sleep
+
+.global CalcIconDescTab
+.global ProcessClick
+.global _DoIcons
 
 .segment "icon"
 

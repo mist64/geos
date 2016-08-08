@@ -8,23 +8,188 @@
 .include "config.inc"
 .include "kernal.inc"
 .include "diskdrv.inc"
-.import InitMsePic, ClrScr, _DoUpdateTime, _DoCheckDelays, _ExecuteProcesses, _DoCheckButtons, ResetMseRegion, ProcessCursor, _ProcessDelays, _ProcessTimers, ProcessMouse, _DoRAMOp, _VerifyRAM, _SwapRAM, _FetchRAM, _StashRAM
-.import _BitOtherClip, _RstrFrmDialogue, _ReadByte, _IsMseInRegion, _SetDevice, _BitmapClip, _GetNextChar, _PromptOff, _PromptOn, _GetPtrCurDkNm, _UpdateRecordFile
-.import _WriteRecord, _ReadRecord, _AppendRecord, _InsertRecord, _DeleteRecord, _PointRecord, _PreviousRecord, _NextRecord, _CloseRecordFile, _OpenRecordFile, _CmpFString, _CmpString, _CopyFString, _CopyString, _DShiftRight
-.import _RenameFile, _DoDlgBox, _i_ImprintRectangle, _ImprintRectangle, _FastDelFile, _RstrAppl, _FindFTypes, _DeleteFile, _GetFHdrInfo, _FreeFile
-.import _LdApplic, _LdDeskAcc, _LdFile, _CRC, _FindFile, _GetFile, _FollowChain, _SmallPutChar, _ReadFile, _WriteFile
-.import _BldGDirEntry, _SetGDirEntry, _SaveFile, _DisablSprite, _EnablSprite, _PosSprite, _LoadCharSet, _GetCharWidth, _DrawSprite
-.import _InitTextPrompt, _GotoFirstMenu, _GetString, _i_MoveData, _i_FillRam, _GetRealSize, _i_PutString, _i_BitmapUp, _i_GraphicsString, _i_RecoverRectangle, _i_FrameRectangle, _i_Rectangle, _ClearMouseMode, _Sleep, _ReDoMenu, _DoPreviousMenu
-.import _MouseOff, _MouseUp, _GetRandom, _PutDecimal, _MoveData, _FillRam, _ClearRam, _Ddec, _Dnegate, _Dabs, _DSDiv, _Ddiv, _DMult, _BMult, _BBMult, _DShiftLeft
-.import _DoIcons, _RecoverAllMenus, _RecoverMenu, _DoMenu, _StartMouseMode, _UseSystemFont, _PutString, _PutChar, _BitmapUp, _TestPoint, _GetScanLine, _SetPattern, _GraphicsString, _DrawPoint, _DrawLine, _RecoverRectangle
-.import _InvertRectangle, _FrameRectangle, _Rectangle, _VerticalLine, _RecoverLine, _InvertLine, _HorizontalLine, _UnFreezeProcess, _FreezeProcess, _UnBlockProcess, _BlockProcess, _EnableProcess, _RestartProcess, _InitProcesses, DoPLAINTEXT, DoOUTLINEON
-.import DoITALICON, DoBOLDON, DoNEWCARDSET, DoGOTOXY, DoGOTOY, DoGOTOX, DoREV_OFF, DoREV_ON, DoESC_RULER, DoESC_GRAPHICS, DoULINEOFF, DoULINEON, DoCR, DoUPLINE, DoHOME, DoLF
-.import LoKernal1, LoKernalBuf
-.import DoTAB, DoBACKSPACE
-.global BitMask1, BitMask2, BitMask3, BitMask4
-.global DBIcPicDISK, DBIcPicNO, DBIcPicOPEN, DBIcPicYES, InitGEOEnv, UNK_4, UNK_5, _DoFirstInitIO, _EnterDeskTop, _FirstInit, _MNLP, dateCopy, daysTab, Init_KRNLVec, _GetSerialNumber, _GetSerialNumber2
 
-.segment "main"
+; icons.s
+.import InitMsePic
+.import _DoIcons
+
+; graph.s
+.import ClrScr
+.import _BitOtherClip
+.import _BitmapClip
+.import _i_ImprintRectangle
+.import _ImprintRectangle
+.import _i_BitmapUp
+.import _i_GraphicsString
+.import _i_RecoverRectangle
+.import _i_FrameRectangle
+.import _i_Rectangle
+.import _BitmapUp
+.import _TestPoint
+.import _GetScanLine
+.import _SetPattern
+.import _GraphicsString
+.import _DrawPoint
+.import _DrawLine
+.import _RecoverRectangle
+.import _InvertRectangle
+.import _FrameRectangle
+.import _Rectangle
+.import _VerticalLine
+.import _RecoverLine
+.import _InvertLine
+.import _HorizontalLine
+
+; system.s
+.import _DoUpdateTime
+.import _GetNextChar
+
+; process.s
+.import _DoCheckDelays
+.import _ExecuteProcesses
+.import _ProcessDelays
+.import _ProcessTimers
+.import _Sleep
+.import _UnFreezeProcess
+.import _FreezeProcess
+.import _UnBlockProcess
+.import _BlockProcess
+.import _EnableProcess
+.import _RestartProcess
+.import _InitProcesses
+
+; mouseio.s
+.import _DoCheckButtons
+.import ResetMseRegion
+.import ProcessMouse
+.import _IsMseInRegion
+.import _ClearMouseMode
+.import _MouseOff
+.import _MouseUp
+.import _StartMouseMode
+
+; conio.s
+.import ProcessCursor
+.import _PromptOff
+.import _PromptOn
+.import _SmallPutChar
+.import _LoadCharSet
+.import _GetCharWidth
+.import _InitTextPrompt
+.import _GetString
+.import _i_PutString
+.import _PutDecimal
+.import _UseSystemFont
+.import _PutString
+.import _PutChar
+
+; lokernal.s
+.import _DoRAMOp
+.import _VerifyRAM
+.import _SwapRAM
+.import _FetchRAM
+.import _StashRAM
+.import _ReadFile
+.import _WriteFile
+.import LoKernal1
+.import LoKernalBuf
+
+; dlgbox.s
+.import _RstrFrmDialogue
+.import _DoDlgBox
+
+; files.s
+.import _AppendRecord
+.import _BldGDirEntry
+.import _CloseRecordFile
+.import _DeleteFile
+.import _DeleteRecord
+.import _FastDelFile
+.import _FindFTypes
+.import _FindFile
+.import _FollowChain
+.import _FreeFile
+.import _GetFHdrInfo
+.import _GetFile
+.import _GetPtrCurDkNm
+.import _InsertRecord
+.import _LdApplic
+.import _LdDeskAcc
+.import _LdFile
+.import _NextRecord
+.import _OpenRecordFile
+.import _PointRecord
+.import _PreviousRecord
+.import _ReadByte
+.import _ReadRecord
+.import _RenameFile
+.import _RstrAppl
+.import _SaveFile
+.import _SetDevice
+.import _SetGDirEntry
+.import _UpdateRecordFile
+.import _WriteRecord
+
+; memory.s
+.import _CmpFString
+.import _CmpString
+.import _CopyFString
+.import _CopyString
+.import _i_MoveData
+.import _i_FillRam
+.import _MoveData
+.import _FillRam
+.import _ClearRam
+
+; math.s
+.import _DShiftRight
+.import _CRC
+.import _GetRandom
+.import _Ddec
+.import _Dnegate
+.import _Dabs
+.import _DSDiv
+.import _Ddiv
+.import _DMult
+.import _BMult
+.import _BBMult
+.import _DShiftLeft
+
+; sprites.s
+.import _DisablSprite
+.import _EnablSprite
+.import _PosSprite
+.import _DrawSprite
+
+; menu.s
+.import _GotoFirstMenu
+.import _ReDoMenu
+.import _DoPreviousMenu
+.import _RecoverAllMenus
+.import _RecoverMenu
+.import _DoMenu
+
+; fonts.s
+.import _GetRealSize
+
+.global BitMask1
+.global BitMask2
+.global BitMask3
+.global BitMask4
+.global InitGEOEnv
+.global Init_KRNLVec
+.global UNK_4
+.global UNK_5
+.global _DoFirstInitIO
+.global _EnterDeskTop
+.global _FirstInit
+.global _GetSerialNumber
+.global _GetSerialNumber2
+.global _MNLP
+.global dateCopy
+.global daysTab
+
+.segment "kernalhdr"
 	jmp BootKernal
 	jmp InitKernal
 
@@ -542,7 +707,6 @@ _MainLoop2:
 	jmp _MainLoop
 
 .segment "main3"
-.if (useRamExp)
 _EnterDeskTop:
 	sei
 	cld
@@ -551,23 +715,14 @@ _EnterDeskTop:
 	txs
 	jsr ClrScr
 	jsr InitGEOS
+.if (useRamExp)
 	MoveW DeskTopStart, r0
 	MoveB DeskTopLgh, r2H
 	LoadW r1, 1
 	jsr RamExpRead
 	LoadB r0L, NULL
 	MoveW DeskTopExec, r7
-.endif
-
-.if (!useRamExp)
-_EnterDeskTop:
-	sei
-	cld
-	ldx #$ff
-	stx firstBoot
-	txs
-	jsr ClrScr
-	jsr InitGEOS
+.else
 	MoveB curDrive, TempCurDrive
 	eor #1
 	tay
@@ -983,86 +1138,3 @@ UNK_61:
 	dex
 	bpl UNK_61
 	rts
-
-.segment "icon3"
-
-DBIcPicNO:
-	.byte 5, %11111111, $80+1, %11111110, $db+8, 2, $80+6
-	     ;%11111111, %11111111, %11111111, %11111111, %11111111, %11111110
-	.byte %10000000, %00000000, %00000000, %00000000, %00000000, %00000011, $80+12
-	     ;%10000000, %00000000, %00000000, %00000000, %00000000, %00000011
-	.byte %10000000, %00000001, %11001100, %01111100, %00000000, %00000011
-	.byte %10000000, %00000001, %11001100, %11000110, %00000000, %00000011, $db+8, 2, $80+6
-	.byte %10000000, %00000001, %11101100, %11000110, %00000000, %00000011, $db+8, 2, $80+6
-	     ;%10000000, %00000001, %11101100, %11000110, %00000000, %00000011
-	.byte %10000000, %00000001, %10111100, %11000110, %00000000, %00000011, $db+8, 2, $80+6
-	     ;%10000000, %00000001, %10111100, %11000110, %00000000, %00000011
-	.byte %10000000, %00000001, %10011100, %11000110, %00000000, %00000011, $80+6
-	     ;%10000000, %00000001, %10011100, %11000110, %00000000, %00000011
-	.byte %10000000, %00000001, %10001100, %01111100, %00000000, %00000011, $db+8, 2, $80+6
-	.byte %10000000, %00000000, %00000000, %00000000, %00000000, %00000011
-	     ;%10000000, %00000000, %00000000, %00000000, %00000000, %00000011
-	     ;%11111111, %11111111, %11111111, %11111111, %11111111, %11111111
-	     ;%01111111, %11111111, %11111111, %11111111, %11111111, %11111111
-	.byte 6, %11111111, $80+1, %01111111, 5, %11111111
-
-DBIcPicYES:
-	.byte 5, %11111111, $80+1, %11111110, $db+8, 2, $80+6
-	     ;%11111111, %11111111, %11111111, %11111111, %11111111, %11111110
-	.byte %10000000, %00000000, %00000000, %00000000, %00000000, %00000011, $80+(5*6)
-	     ;%10000000, %00000000, %00000000, %00000000, %00000000, %00000011
-	.byte %10000000, %00001100, %11001111, %11000111, %11000000, %00000011 ;1
-	.byte %10000000, %00001100, %11001100, %00001100, %01100000, %00000011 ;2
-	.byte %10000000, %00001100, %11001100, %00001100, %00000000, %00000011 ;3
-	.byte %10000000, %00000111, %10001100, %00001100, %00000000, %00000011 ;4
-	.byte %10000000, %00000111, %10001111, %10000111, %11000000, %00000011, $db+8, 2, $80+6
-	.byte %10000000, %00000011, %00001100, %00000000, %01100000, %00000011, $80+12
-	     ;%10000000, %00000011, %00001100, %00000000, %01100000, %00000011
-	.byte %10000000, %00000011, %00001100, %00001100, %01100000, %00000011
-	.byte %10000000, %00000011, %00001111, %11000111, %11000000, %00000011, $db+8, 2, $80+6
-	.byte %10000000, %00000000, %00000000, %00000000, %00000000, %00000011
-	     ;%10000000, %00000000, %00000000, %00000000, %00000000, %00000011
-	     ;%11111111, %11111111, %11111111, %11111111, %11111111, %11111111
-	     ;%01111111, %11111111, %11111111, %11111111, %11111111, %11111111
-	.byte 6, %11111111, $80+1, %01111111, 5, %11111111
-
-DBIcPicOPEN:
-	.byte 5, %11111111, $80+1, %11111110, $db+8, 2, $80+6
-	     ;%11111111, %11111111, %11111111, %11111111, %11111111, %11111110
-	.byte %10000000, %00000000, %00000000, %00000000, %00000000, %00000011, $80+(9*6)
-	     ;%10000000, %00000000, %00000000, %00000000, %00000000, %00000011
-	.byte %10000000, %00111110, %00000000, %00000000, %00000000, %00000011 ;1
-	.byte %10000000, %01100011, %00000000, %00000000, %00000000, %00000011 ;2
-	.byte %10000000, %01100011, %01111100, %01111001, %11110000, %00000011 ;3
-	.byte %10000000, %01100011, %01100110, %11001101, %11011000, %00000011 ;4
-	.byte %10000000, %01100011, %01100110, %11001101, %10011000, %00000011 ;5
-	.byte %10000000, %01100011, %01100110, %11111101, %10011000, %00000011 ;6
-	.byte %10000000, %01100011, %01100110, %11000001, %10011000, %00000011 ;7
-	.byte %10000000, %01100011, %01100110, %11001101, %10011000, %00000011 ;8
-	.byte %10000000, %00111110, %01111100, %01111001, %10011000, %00000011, $db+8, 2, $80+6
-	.byte %10000000, %00000000, %01100000, %00000000, %00000000, %00000011
-	     ;%10000000, %00000000, %01100000, %00000000, %00000000, %00000011
-	     ;%11111111, %11111111, %11111111, %11111111, %11111111, %11111111
-	     ;%01111111, %11111111, %11111111, %11111111, %11111111, %11111111
-	.byte 6, %11111111, $80+1, %01111111, 5, %11111111
-
-DBIcPicDISK:
-	.byte 5, %11111111, $80+1, %11111110, $db+8, 2, $80+6
-	     ;%11111111, %11111111, %11111111, %11111111, %11111111, %11111110
-	.byte %10000000, %00000000, %00000000, %00000000, %00000000, %00000011, $80+(9*6)
-	     ;%10000000, %00000000, %00000000, %00000000, %00000000, %00000011
-	.byte %10000000, %00011111, %00001100, %00000011, %00000000, %00000011 ;1
-	.byte %10000000, %00011001, %10000000, %00000011, %00000000, %00000011 ;2
-	.byte %10000000, %00011000, %11011100, %11110011, %00110000, %00000011 ;3
-	.byte %10000000, %00011000, %11001101, %10011011, %01100000, %00000011 ;4
-	.byte %10000000, %00011000, %11001101, %10000011, %11000000, %00000011 ;5
-	.byte %10000000, %00011000, %11001100, %11110011, %10000000, %00000011 ;6
-	.byte %10000000, %00011000, %11001100, %00011011, %11000000, %00000011 ;7
-	.byte %10000000, %00011001, %10001101, %10011011, %01100000, %00000011 ;8
-	.byte %10000000, %00011111, %00001100, %11110011, %00110000, %00000011, $db+8, 2, $80+6
-	.byte %10000000, %00000000, %00000000, %00000000, %00000000, %00000011
-	     ;%10000000, %00000000, %00000000, %00000000, %00000000, %00000011
-	     ;%11111111, %11111111, %11111111, %11111111, %11111111, %11111111
-	     ;%01111111, %11111111, %11111111, %11111111, %11111111, %11111111
-	.byte 6, %11111111, $80+1, %01111111, 5, %11111111
-

@@ -6,8 +6,26 @@
 .include "kernal.inc"
 .include "inputdrv.inc"
 .include "jumptab.inc"
-.import KbdScanHelp3, _DoPreviousMenu, ProcessClick, Menu_5, _DisablSprite
-.global ProcessMouse, ResetMseRegion, _ClearMouseMode, _DoCheckButtons, _IsMseInRegion, _MouseOff, _MouseUp, _StartMouseMode, DoESC_RULER
+
+; icon.s
+.import ProcessClick
+; menu.s
+.import _DoPreviousMenu
+.import Menu_5
+; sprite.s
+.import _DisablSprite
+; system.s
+.import KbdScanHelp3
+
+.global ProcessMouse
+.global ResetMseRegion
+.global _ClearMouseMode
+.global _DoCheckButtons
+.global _IsMseInRegion
+.global _MouseOff
+.global _MouseUp
+.global _StartMouseMode
+.global DoESC_RULER
 
 .segment "mouseio"
 

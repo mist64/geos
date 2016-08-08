@@ -6,8 +6,49 @@
 .include "config.inc"
 .include "kernal.inc"
 .include "jumptab.inc"
-.import KbdScanHelp3, _DisablSprite, _EnablSprite, _PosSprite, _GraphicsString, Font_10, _GetRealSize, BSWFont, SerialHiCompare, _GetSerialNumber2, SerialHiCompare
-.global DoBACKSPACE, DoBOLDON, DoCR, DoESC_GRAPHICS, DoESC_RULER, DoGOTOXY, DoGOTOY, DoHOME, DoITALICON, DoLF, DoNEWCARDSET, DoOUTLINEON, DoPLAINTEXT, DoREV_OFF, DoREV_ON, DoTAB, DoULINEOFF, DoULINEON, DoUPLINE, GetChWdth1, ProcessCursor, _GetCharWidth, _GetString, _InitTextPrompt, _LoadCharSet, _PromptOff, _PromptOn, _PutChar, _PutDecimal, _PutString, _SmallPutChar, _UseSystemFont, _i_PutString, DoGOTOX
+
+; bswfont.s
+.import BSWFont
+
+; fonts.s
+.import Font_10
+.import _GetRealSize
+
+; graph.s
+.import _GraphicsString
+
+; mouseio.s
+.import DoESC_RULER
+
+; sprites.s
+.import _DisablSprite
+.import _EnablSprite
+.import _PosSprite
+
+; system.s
+.import KbdScanHelp3
+
+.if (trap)
+; files.s
+.import SerialHiCompare
+; main.s
+.import _GetSerialNumber2
+.endif
+
+.global GetChWdth1
+.global ProcessCursor
+.global _GetCharWidth
+.global _GetString
+.global _InitTextPrompt
+.global _LoadCharSet
+.global _PromptOff
+.global _PromptOn
+.global _PutChar
+.global _PutDecimal
+.global _PutString
+.global _SmallPutChar
+.global _UseSystemFont
+.global _i_PutString
 
 .segment "conio"
 

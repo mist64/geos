@@ -4,7 +4,19 @@
 .include "geossym.inc"
 .include "geosmac.inc"
 .include "kernal.inc"
-.global _BlockProcess, _DoCheckDelays, _EnableProcess, _ExecuteProcesses, _FreezeProcess, _InitProcesses, _ProcessDelays, _ProcessTimers, _RestartProcess, _Sleep, _UnBlockProcess, _UnFreezeProcess
+
+.global _BlockProcess
+.global _DoCheckDelays
+.global _EnableProcess
+.global _ExecuteProcesses
+.global _FreezeProcess
+.global _InitProcesses
+.global _ProcessDelays
+.global _ProcessTimers
+.global _RestartProcess
+.global _Sleep
+.global _UnBlockProcess
+.global _UnFreezeProcess
 
 .segment "process"
 

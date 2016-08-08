@@ -5,10 +5,19 @@
 .include "geosmac.inc"
 .include "kernal.inc"
 .include "jumptab.inc"
-.import BitMask2, BitMask4, BitMask3, GetChWdth1
-.global _GetRealSize, Font_10
 
-.segment "unknown"
+; conio.s
+.import GetChWdth1
+
+; main.s
+.import BitMask2
+.import BitMask4
+.import BitMask3
+
+.global _GetRealSize
+.global Font_10
+
+.segment "fonts1"
 ID100:
 	.byte $b1, $30, $03, $1b, $d8, $c0, $0c, $8d, $80, $10, $02, $20, $01, $08, $40, $04
 	.byte $00, $01, $03, $03, $06, $07, $07, $07, $0c, $0d, $0f, $0f, $0e, $0f, $0f, $0f
@@ -28,7 +37,7 @@ ID100:
 	.byte $f0, $f1, $f3, $f3, $f6, $f7, $f7, $f7, $fc, $fd, $ff, $ff, $fe, $ff, $ff, $ff
 	.byte $f8, $f9, $fb, $fb, $fe, $ff, $ff, $ff, $fc, $fd, $ff, $ff, $fe, $ff, $ff, $ff
 
-.segment "fonts"
+.segment "fonts2"
 
 _GetRealSize:
 	subv 32

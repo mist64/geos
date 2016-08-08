@@ -5,7 +5,16 @@
 .include "geosmac.inc"
 .include "config.inc"
 .include "jumptab.inc"
-.global _ClearRam, _CmpFString, _CmpString, _CopyFString, _CopyString, _FillRam, _MoveData, _i_FillRam, _i_MoveData
+
+.global _ClearRam
+.global _CmpFString
+.global _CmpString
+.global _CopyFString
+.global _CopyString
+.global _FillRam
+.global _MoveData
+.global _i_FillRam
+.global _i_MoveData
 
 .segment "memory"
 

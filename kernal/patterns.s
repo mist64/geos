@@ -1,5 +1,7 @@
 .global PatternTab
+
 .segment "patterns"
+
 PatternTab:
 	.byte $00, $00, $00, $00, $00, $00, $00, $00, $ff, $ff, $ff, $ff, $ff, $ff, $ff, $ff
 	.byte $aa, $55, $aa, $55, $aa, $55, $aa, $55, $99, $42, $24, $99, $99, $24, $42, $99

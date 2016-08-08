@@ -7,7 +7,19 @@
 .include "config.inc"
 .include "kernal.inc"
 .include "jumptab.inc"
-.import ClrScr, InitGEOEnv, _DoFirstInitIO, _EnterDeskTop, _FirstInit, _IRQHandler, _NMIHandler
+
+; graph.s
+.import ClrScr
+
+; main.s
+.import InitGEOEnv
+.import _DoFirstInitIO
+.import _EnterDeskTop
+.import _FirstInit
+
+; system.s
+.import _IRQHandler
+.import _NMIHandler
 
 .segment "init"
 

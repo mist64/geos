@@ -3,8 +3,14 @@
 .include "const.inc"
 .include "geossym.inc"
 .include "geosmac.inc"
+
+; main.s
 .import BitMask2
-.global _DisablSprite, _DrawSprite, _EnablSprite, _PosSprite
+
+.global _DisablSprite
+.global _DrawSprite
+.global _EnablSprite
+.global _PosSprite
 
 .segment "sprites"
 

@@ -6,7 +6,7 @@
 .include "kernal.inc"
 .include "jumptab.inc"
 
-kernel_offset      := $2F40
+kernal_offset      := $2F40
 kernal_start       := $BF40
 kernal_end         := $FFFF
 
@@ -38,7 +38,7 @@ L2CA7:
 	sta $8800,x
 	dex
 	bne L2CA7
-	LoadW r0, kernel_offset
+	LoadW r0, kernal_offset
 	LoadW r1, kernal_start
 	LoadW r2, kernal_end - kernal_start + 1
 	jsr $3E97

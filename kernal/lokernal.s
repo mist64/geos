@@ -7,8 +7,19 @@
 .include "config.inc"
 .include "kernal.inc"
 .include "jumptab.inc"
+
 .import Init_KRNLVec
-.global _DoRAMOp, _FetchRAM, _ReadFile, _StashRAM, _SwapRAM, _VerifyRAM, _WriteFile, _DoRAMOp, _FetchRAM, _ReadFile, _StashRAM, _SwapRAM, _VerifyRAM, _WriteFile, _DoRAMOp, _FetchRAM, _ReadFile, _StashRAM, _SwapRAM, _VerifyRAM, _WriteFile, _DoRAMOp, _FetchRAM, _ReadFile, _StashRAM, _SwapRAM, _VerifyRAM, _WriteFile, LoKernal, LoKernal1, LoKernalBuf
+
+.global LoKernal
+.global LoKernal1
+.global LoKernalBuf
+.global _DoRAMOp
+.global _FetchRAM
+.global _ReadFile
+.global _StashRAM
+.global _SwapRAM
+.global _VerifyRAM
+.global _WriteFile
 
 .segment "lokernal"
 

@@ -6,8 +6,20 @@
 .include "config.inc"
 .include "kernal.inc"
 .include "jumptab.inc"
-.import daysTab, dateCopy, ConvertBCD, BitMask2
-.global KbdScanHelp3, _DoUpdateTime, _IRQHandler, _NMIHandler, _GetNextChar
+
+; main.s
+.import BitMask2
+.import daysTab
+.import dateCopy
+
+; math.s
+.import ConvertBCD
+
+.global KbdScanHelp3
+.global _DoUpdateTime
+.global _IRQHandler
+.global _NMIHandler
+.global _GetNextChar
 
 .segment "system"
 
