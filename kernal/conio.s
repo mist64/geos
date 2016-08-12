@@ -590,6 +590,21 @@ DecTabL:
 DecTabH:
 	.byte >1, >10, >100, >1000, >10000
 
+;---------------------------------------------------------------
+; PutDecimal                                              $C184
+;
+; Pass:   a - format:   Bit 7: 1 for left justify
+;                              0 for right
+;                       Bit 6: 1 supress leading 0's
+;                              0 print leading 0's
+;                       Bit 0-5: field width 4 right justify
+;           r0          16 Bit nbr to print
+;           r1H         y position (0-199)
+;           r11         x position (0-319)
+;Return:    r1H         y position for next char
+;           r11         x position for next char
+;Destroyed: a, x, y, r0, r2 - r10, r12, r13
+;---------------------------------------------------------------
 _PutDecimal:
 	jsr CalcDecimal
 	bbsf 7, r2L, PutDec1

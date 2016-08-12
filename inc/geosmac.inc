@@ -22,6 +22,11 @@
 	sta dest+1
 .endmacro
 
+.macro LoadW__ dest, value
+	LoadB dest+1, >(value)
+	LoadB dest+0, <(value)
+.endmacro
+
 .macro MoveB source, dest
 	lda source
 	sta dest
@@ -71,10 +76,26 @@
 
 .macro AddVW value, dest
 	.local j
-;	AddVB <(value), dest+0
 	clc
 	lda #<(value)
 	adc dest
+	sta dest
+	.if (>(value))=0
+	bcc j
+	inc dest+1
+	j:
+	.else
+	lda #>(value)
+	adc dest + 1
+	sta dest + 1
+	.endif
+.endmacro
+
+.macro AddVW_ value, dest
+	.local j
+	lda dest
+	clc
+	adc #<(value)
 	sta dest
 	.if (>(value))=0
 	bcc j

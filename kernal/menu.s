@@ -248,14 +248,7 @@ Menu_2:
 	PushW leftMargin
 	PushW rightMargin
 	PushW StringFaultVec
-.if 1
-	lda #0
-	sta leftMargin+1
-	lda #0
-	sta leftMargin
-.else
-	LoadW leftMargin, 0
-.endif
+	LoadW__ leftMargin, 0
 	sec
 	lda menuRight
 	sbc #1
@@ -268,14 +261,7 @@ Menu_2:
 	lda #<MenuStringFault
 	sta StringFaultVec
 	PushB r1H
-.if 1
-	clc
-	lda baselineOffset
-	adc r1H
-	sta r1H
-.else
-	AddB baselineOffset, r1H
-.endif
+	AddB_ baselineOffset, r1H
 	inc r1H
 	jsr _PutString
 	PopB r1H
@@ -311,17 +297,7 @@ Menu_42:
 	AddVB 2, r1H
 	rts
 Menu_43:
-.if 1
-	lda r11L
-	clc
-	adc #4
-	sta r11L
-	bcc :+
-	inc r11H
-:
-.else
-	AddVW 4, r11
-.endif
+	AddVW_ 4, r11
 	rts
 
 _RecoverAllMenus:

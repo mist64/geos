@@ -844,16 +844,7 @@ GetDAccLength:
 	CmpBI fileHeader+O_GHSTR_TYPE, VLIR
 	bne GDAL2
 GDAL1:
-	clc
-.if 1
-	lda #$fe
-	adc r2L
-	sta r2L
-	bcc GDAL2
-	inc r2H
-.else
 	AddVW $fe, r2
-.endif
 GDAL2:
 	rts
 
@@ -1035,11 +1026,7 @@ DelVlirC3:
 
 FreeBlockChain:
 	MoveW r1, r6
-.if 1
 	LoadW_ r2, 0
-.else
-	LoadW r2, 0
-.endif
 FreeBlC1:
 	jsr FreeBlock
 	bnex FreeBlC4

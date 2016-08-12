@@ -949,11 +949,7 @@ DrwLin5:
 	AddW r9, r8
 	bra DrwLin5
 DrwLin6:
-.if 1
 	AddB_ r13L, r11L
-.else
-	AddB r13L, r11L
-.endif
 	AddW r10, r8
 	bra DrwLin5
 DrwLin7:

@@ -61,13 +61,7 @@ TB3:
 	iny
 	lda (r5),Y
 	sta r1H
-.if 1
-	lda #$ff
-	sta r2L
-	sta r2H
-.else
-	LoadW r2, $ffff
-.endif
+	LoadW_ r2, $ffff
 	jsr _ReadFile
 	PopW r0
 	ldy #1
@@ -142,11 +136,7 @@ LKernal2:
 	bne LKernal2
 	stx curDevice
 	LoadB BASICMemTop, $a0
-.if 1
 	LoadW_ tapeBuffVec, $03c3
-.else
-	LoadW tapeBuffVec, $03c3
-.endif
 	LoadB BASICMemBot, $08
 	lsr
 	sta scrAddyHi

@@ -42,14 +42,7 @@ DDlgB1:
 	bne DDlgB1
 	jsr DlgBoxPrep
 	jsr DrawDlgBox
-.if 1
-	lda #0
-	sta r11H
-	lda #0
-	sta r11L
-.else
-	LoadW r11, 0
-.endif
+	LoadW__ r11, 0
 	jsr _StartMouseMode
 	jsr _UseSystemFont
 	ldx #11
