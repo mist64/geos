@@ -25,13 +25,13 @@
 .import _EnablSprite
 .import _PosSprite
 
-; system.s
+; keyboarddrv.s
 .import KbdScanHelp3
 
 .if (trap)
 ; files.s
 .import SerialHiCompare
-; main.s
+; serial.s
 .import _GetSerialNumber2
 .endif
 

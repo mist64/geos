@@ -4,7 +4,6 @@
 .include "geosmac.inc"
 .include "jumptab.inc"
 
-.global ConvertBCD
 .global _BBMult
 .global _BMult
 .global _CRC
@@ -231,25 +230,4 @@ CRC5:
 	lda r1L
 	ora r1H
 	bne CRC1
-	rts
-
-.segment "math3"
-
-ConvertBCD:
-	pha
-	and #%11110000
-	lsr
-	lsr
-	lsr
-	lsr
-	tay
-	pla
-	and #%00001111
-	clc
-CvtBCD1:
-	dey
-	bmi CvtBCD2
-	adc #10
-	bne CvtBCD1
-CvtBCD2:
 	rts

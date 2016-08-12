@@ -29,7 +29,7 @@
 .import ResetMseRegion
 
 .if (trap)
-; main.s
+; serial.s
 .import _GetSerialNumber
 .endif
 

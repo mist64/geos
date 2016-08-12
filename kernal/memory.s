@@ -12,11 +12,79 @@
 .global _CopyFString
 .global _CopyString
 .global _FillRam
+.global _InitRam
 .global _MoveData
 .global _i_FillRam
 .global _i_MoveData
 
-.segment "memory"
+.segment "memory1"
+
+_ClearRam:
+	LoadB r2L, NULL
+_FillRam:
+	lda r0H
+	beq CRam2
+	lda r2L
+	ldy #0
+CRam1:
+	sta (r1),Y
+	dey
+	bne CRam1
+	inc r1H
+	dec r0H
+	bne CRam1
+CRam2:
+	lda r2L
+	ldy r0L
+	beq CRam4
+	dey
+CRam3:
+	sta (r1),Y
+	dey
+	cpy #$FF
+	bne CRam3
+CRam4:
+	rts
+
+_InitRam:
+	ldy #0
+	lda (r0),Y
+	sta r1L
+	iny
+	ora (r0),Y
+	beq IRam3
+	lda (r0),Y
+	sta r1H
+	iny
+	lda (r0),Y
+	sta r2L
+	iny
+IRam0:
+	tya
+	tax
+	lda (r0),Y
+	ldy #0
+	sta (r1),Y
+	inc r1L
+	bne IRam1
+	inc r1H
+IRam1:
+	txa
+	tay
+	iny
+	dec r2L
+	bne IRam0
+	tya
+	add r0L
+	sta r0L
+	bcc IRam2
+	inc r0H
+IRam2:
+	bra _InitRam
+IRam3:
+	rts
+
+.segment "memory2"
 
 _CopyString:
 	lda #0
@@ -180,36 +248,7 @@ CMStrl1:
 CMStrl2:
 	rts
 
-.segment "clearram"
-
-_ClearRam:
-	LoadB r2L, NULL
-_FillRam:
-	lda r0H
-	beq CRam2
-	lda r2L
-	ldy #0
-CRam1:
-	sta (r1),Y
-	dey
-	bne CRam1
-	inc r1H
-	dec r0H
-	bne CRam1
-CRam2:
-	lda r2L
-	ldy r0L
-	beq CRam4
-	dey
-CRam3:
-	sta (r1),Y
-	dey
-	cpy #$FF
-	bne CRam3
-CRam4:
-	rts
-
-.segment "fillram"
+.segment "memory3"
 
 _i_FillRam:
 	PopW returnAddress

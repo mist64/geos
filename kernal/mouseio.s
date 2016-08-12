@@ -14,7 +14,7 @@
 .import Menu_5
 ; sprite.s
 .import _DisablSprite
-; system.s
+; keyboarddrv.s
 .import KbdScanHelp3
 
 .global ProcessMouse

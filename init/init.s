@@ -15,11 +15,6 @@
 .import InitGEOEnv
 .import _DoFirstInitIO
 .import _EnterDeskTop
-.import _FirstInit
-
-; system.s
-.import _IRQHandler
-.import _NMIHandler
 
 .segment "init"
 

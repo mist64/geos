@@ -7,22 +7,28 @@ KERNAL_SOURCES= \
 init/init.s \
 kernal/bswfont.s \
 kernal/icons.s \
-kernal/lokernal.s \
 kernal/patterns.s \
 kernal/conio.s \
 kernal/dlgbox.s \
 kernal/files.s \
 kernal/fonts.s \
 kernal/graph.s \
+kernal/hw.s \
 kernal/icon.s \
+kernal/jumptable.s \
+kernal/keyboarddrv.s \
 kernal/main.s \
 kernal/math.s \
 kernal/memory.s \
 kernal/menu.s \
 kernal/mouseio.s \
 kernal/process.s \
+kernal/reu.s \
+kernal/serial.s \
 kernal/sprites.s \
-kernal/system.s
+kernal/irq.s \
+kernal/time.s \
+kernal/tobasic.s
 
 DEPS=inc/const.inc inc/diskdrv.inc inc/equ.inc inc/geosmac.inc inc/geossym.inc inc/kernal.inc inc/printdrv.inc
 
@@ -51,7 +57,7 @@ combined.prg: $(ALL_BINS)
 	mv tmp.bin combined.prg
 
 kernal.bin: $(KERNAL_OBJECTS) kernal/kernal.cfg
-	$(LD) -C kernal/kernal.cfg $(KERNAL_OBJECTS) -o $@
+	$(LD) -C kernal/kernal.cfg $(KERNAL_OBJECTS) -o $@ -m kernal.map
 
 lokernal.bin: kernal.bin
 

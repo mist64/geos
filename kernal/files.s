@@ -1,4 +1,5 @@
-; disk and file related functions (maybe I should split VLIR functions?)
+; GEOS Kernal
+; disk and file related functions
 
 .include "const.inc"
 .include "geossym.inc"
@@ -8,24 +9,27 @@
 .include "diskdrv.inc"
 .include "jumptab.inc"
 
+; conio.s
+.import _UseSystemFont
+
 ; dlgbox.s:
 .import Dialog_2
 .import DlgBoxPrep
 
-; lokernal.s
-.import LoKernal
+; graph.s
+.import ClrScr
 
 ; main.s
 .import _MNLP
 .import InitGEOEnv
-.import UNK_4
-.import UNK_5
+.import InitGEOS
 
 .global _AppendRecord
 .global _BldGDirEntry
 .global _CloseRecordFile
 .global _DeleteFile
 .global _DeleteRecord
+.global _EnterDeskTop
 .global _FastDelFile
 .global _FindFTypes
 .global _FindFile
@@ -43,27 +47,152 @@
 .global _PointRecord
 .global _PreviousRecord
 .global _ReadByte
+.global _ReadFile
 .global _ReadRecord
 .global _RenameFile
 .global _RstrAppl
 .global _SaveFile
 .global _SetDevice
 .global _SetGDirEntry
+.global _StartAppl
 .global _UpdateRecordFile
+.global _WriteFile
 .global _WriteRecord
+.global UNK_4
+.global UNK_5
 
 .if (trap)
 .global SerialHiCompare
 .endif
 
 .segment "files1"
+
+Add2:
+	AddVW 2, r6
+return:
+	rts
+
+_ReadFile:
+	jsr EnterTurbo
+	bnex return
+	jsr InitForIO
+	PushW r0
+	LoadW r4, diskBlkBuf
+	LoadB r5L, 2
+	MoveW r1, fileTrScTab+2
+RdFile1:
+	jsr ReadBlock
+	bnex RdFile6
+	ldy #$fe
+	lda diskBlkBuf
+	bne RdFile2
+	ldy diskBlkBuf+1
+	dey
+	beq RdFile5
+RdFile2:
+	lda r2H
+	bne RdFile3
+	cpy r2L
+	bcc RdFile3
+	beq RdFile3
+	ldx #BFR_OVERFLOW
+	bne RdFile6
+RdFile3:
+	sty r1L
+	LoadB CPU_DATA, RAM_64K
+RdFile4:
+	lda diskBlkBuf+1,y
+	dey
+	sta (r7),y
+	bne RdFile4
+	LoadB CPU_DATA, KRNL_IO_IN
+	AddB r1L, r7L
+	bcc *+4
+	inc r7H
+	SubB r1L, r2L
+	bcs *+4
+	dec r2H
+RdFile5:
+	inc r5L
+	inc r5L
+	ldy r5L
+	MoveB diskBlkBuf+1, r1H
+	sta fileTrScTab+1,y
+	MoveB diskBlkBuf, r1L
+	sta fileTrScTab,y
+	bne RdFile1
+	ldx #0
+RdFile6:
+	PopW r0
+	jmp DoneWithIO
+
+FlaggedPutBlock:
+	lda verifyFlag
+	beq FlggdPutBl1
+	jmp VerWriteBlock
+FlggdPutBl1:
+	jmp WriteBlock
+
+_WriteFile:
+	jsr EnterTurbo
+	bnex WrFile2
+	sta verifyFlag
+	jsr InitForIO
+	LoadW r4, diskBlkBuf
+	PushW r6
+	PushW r7
+	jsr DoWriteFile
+	PopW r7
+	PopW r6
+	bnex WrFile1
+	dec verifyFlag
+	jsr DoWriteFile
+WrFile1:
+	jsr DoneWithIO
+WrFile2:
+	rts
+
+DoWriteFile:
+	ldy #0
+	lda (r6),y
+	beq DoWrFile2
+	sta r1L
+	iny
+	lda (r6),y
+	sta r1H
+	dey
+	jsr Add2
+	lda (r6),y
+	sta (r4),y
+	iny
+	lda (r6),y
+	sta (r4),y
+	ldy #$fe
+	LoadB CPU_DATA, RAM_64K
+DoWrFile1:
+	dey
+	lda (r7),y
+	sta diskBlkBuf+2,y
+	tya
+	bne DoWrFile1
+	LoadB CPU_DATA, KRNL_IO_IN
+	jsr FlaggedPutBlock
+	bnex DoWrFile3
+	AddVW $fe, r7
+	bra DoWriteFile
+DoWrFile2:
+	tax
+DoWrFile3:
+	rts
+
+.segment "files2"
 DkNmTab:
 	.byte <DrACurDkNm, <DrBCurDkNm
 	.byte <DrCCurDkNm, <DrDCurDkNm
 	.byte >DrACurDkNm, >DrBCurDkNm
 	.byte >DrCCurDkNm, >DrDCurDkNm
 
-.segment "files2"
+.segment "files3"
 _GetPtrCurDkNm:
 	ldy curDrive
 	lda DkNmTab-8,Y
@@ -72,7 +201,139 @@ _GetPtrCurDkNm:
 	sta zpage+1,X
 	rts
 
-.segment "files3"
+.segment "main3"
+
+_EnterDeskTop:
+	sei
+	cld
+	ldx #$ff
+	stx firstBoot
+	txs
+	jsr ClrScr
+	jsr InitGEOS
+.if (useRamExp)
+	MoveW DeskTopStart, r0
+	MoveB DeskTopLgh, r2H
+	LoadW r1, 1
+	jsr RamExpRead
+	LoadB r0L, NULL
+	MoveW DeskTopExec, r7
+.else
+	MoveB curDrive, TempCurDrive
+	eor #1
+	tay
+	lda _driveType,Y
+	php
+	lda TempCurDrive
+	plp
+	bpl EDT1
+	tya
+EDT1:
+	jsr EDT3
+	ldy NUMDRV
+	cpy #2
+	bcc EDT2
+	lda curDrive
+	eor #1
+	jsr EDT3
+EDT2:
+	LoadW r0, _EnterDT_DB
+	jsr DoDlgBox
+	lda TempCurDrive
+	bne EDT1
+EDT3:
+	jsr SetDevice
+	jsr OpenDisk
+	beqx EDT5
+EDT4:
+	rts
+EDT5:
+	sta r0L
+	LoadW r6, DeskTopName
+	jsr GetFile
+	bnex EDT4
+	lda fileHeader+O_GHFNAME+13
+	cmp #'1'
+	bcc EDT4
+	bne EDT6
+	lda fileHeader+O_GHFNAME+15
+	cmp #'5'
+	bcc EDT4
+EDT6:
+	lda TempCurDrive
+	jsr SetDevice
+	LoadB r0L, NULL
+	MoveW fileHeader+O_GHST_VEC, r7
+.endif
+
+_StartAppl:
+	sei
+	cld
+	ldx #$FF
+	txs
+	jsr UNK_5
+	jsr InitGEOS
+	jsr _UseSystemFont
+	jsr UNK_4
+	ldx r7H
+	lda r7L
+	jmp _MNLP
+
+.if (!useRamExp)
+_EnterDT_DB:
+	.byte DEF_DB_POS | 1
+	.byte DBTXTSTR, TXT_LN_X, TXT_LN_1_Y+6
+	.word _EnterDT_Str0
+	.byte DBTXTSTR, TXT_LN_X, TXT_LN_2_Y+6
+	.word _EnterDT_Str1
+	.byte OK, DBI_X_2, DBI_Y_2
+	.byte NULL
+.endif
+
+DeskTopName:
+	.byte "DESK TOP", NULL
+
+_EnterDT_Str0:
+	.byte BOLDON, "Please insert a disk", NULL
+_EnterDT_Str1:
+	.byte "with deskTop V1.5 or higher", NULL
+
+.segment "main5c"
+UNK_4:
+	MoveB A885D, r10L
+	MoveB A885E, r0L
+	and #1
+	beq U_40
+	MoveW A885F, r7
+U_40:
+	LoadW r2, dataDiskName
+	LoadW r3, dataFileName
+U_41:
+	rts
+
+UNK_5:
+	MoveW r7, A885F
+	MoveB r10L, A885D
+	MoveB r0L, A885E
+	and #%11000000
+	beq U_51
+	ldy #>dataDiskName
+	lda #<dataDiskName
+	ldx #r2
+	jsr U_50
+	ldy #>dataFileName
+	lda #<dataFileName
+	ldx #r3
+U_50:
+	sty r4H
+	sta r4L
+	ldy #r4
+	lda #16
+	jsr CopyFString
+U_51:
+	rts
+
+.segment "files4"
 
 _GetFile:
 	jsr UNK_5
@@ -522,14 +783,13 @@ SwapFileName:
 	.byte $1b,"Swap File", NULL
 
 .if (trap)
-; ???
 SerialHiCompare:
 .ifdef maurice
     ; This should be initialized to 0, and will
     ; be changed at runtime.
     ; Maurice's version was created by dumping
     ; KERNAL from memory after it had been running,
-    ; so it has a random value here.
+    ; so it has a pre-filled value here.
 	.byte $58
 .else
 	.byte 0
@@ -687,11 +947,11 @@ BGDEnt5:
 	dey
 	sty fileHeader+1
 	MoveW fileTrScTab, dirEntryBuf+OFF_GHDR_PTR
-	jsr LoKernal
+	jsr Add2
 	MoveW fileTrScTab+2, dirEntryBuf+OFF_DE_TR_SC
 	CmpBI dirEntryBuf+OFF_GSTRUC_TYPE, VLIR
 	bne BGDEnt6
-	jsr LoKernal
+	jsr Add2
 BGDEnt6:
 	ldy #O_GHGEOS_TYPE
 	lda (r9),y
