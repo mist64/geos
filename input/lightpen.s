@@ -1,5 +1,6 @@
-; this is lightpen driver for GEOS
-; reassembled by Maciej 'YTM/Elysium' Witkowiak
+; GEOS
+;
+; lightpen input driver
 
 .include "const.inc"
 .include "geossym.inc"

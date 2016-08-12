@@ -1,4 +1,6 @@
-; GEOS Icons handler
+; GEOS KERNAL
+;
+; Icons
 
 .include "const.inc"
 .include "geossym.inc"
@@ -12,7 +14,7 @@
 ; menu.s
 .import MenuDoInvert
 
-; mouseio.s
+; mouse.s
 .import _StartMouseMode
 .import ResetMseRegion
 
@@ -23,7 +25,7 @@
 .global ProcessClick
 .global _DoIcons
 
-.segment "icon"
+.segment "icon1"
 
 _DoIcons:
 	MoveW r0, IconDescVec

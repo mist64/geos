@@ -1,4 +1,6 @@
-; multitasking functions (processes, sleep, delays)
+; GEOS KERNAL
+;
+; Multitasking (processes, sleep, delays)
 
 .include "const.inc"
 .include "geossym.inc"
@@ -176,7 +178,6 @@ ProcDel2:
 	bpl ProcDel0
 ProcDel3:
 	rts
-
 
 _DoCheckDelays:
 	ldx DelaySP

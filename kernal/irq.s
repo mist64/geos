@@ -1,4 +1,6 @@
-; system core functions, like those from 'main.s' but a bit different
+; GEOS KERNAL
+;
+; IRQ/NMI handlers
 
 .include "const.inc"
 .include "geossym.inc"

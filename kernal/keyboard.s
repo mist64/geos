@@ -1,18 +1,20 @@
+; GEOS KERNAL
+;
+; C64 keyboard driver
 
 .include "const.inc"
 .include "geossym.inc"
 .include "geosmac.inc"
-.include "config.inc"
 .include "kernal.inc"
 
-; main.s
-.import BitMask2
+; bitmask.s
+.import BitMaskPow2
 
 .global _DoKeyboardScan
 .global _GetNextChar
 .global KbdScanHelp3
 
-.segment "keyboarddrv"
+.segment "keyboard"
 
 _DoKeyboardScan:
 	lda KbdQueFlag
@@ -61,7 +63,7 @@ KbdScanHelp1:
 KbdScanHlp_10:
 	lda r0L
 	ldx r1L
-	and BitMask2,x
+	and BitMaskPow2,x
 	beq KbdScanHlp_19	; really dirty trick...
 	tya
 	asl
@@ -108,7 +110,7 @@ KbdScanHlp_17:
 	beq KbdScanHlp_18
 	ldx r1L
 	lda r0L
-	and BitMask2,x
+	and BitMaskPow2,x
 	and KbdDMltTab,y
 	beq KbdScanHlp_18
 	LoadB KbdQueFlag, 15

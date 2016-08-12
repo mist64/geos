@@ -1,4 +1,6 @@
-; almost all about mouse, menu & icon mouse handling is elsewhere
+; GEOS KERNAL
+;
+; Mouse
 
 .include "const.inc"
 .include "geossym.inc"
@@ -9,11 +11,14 @@
 
 ; icon.s
 .import ProcessClick
+
 ; menu.s
 .import _DoPreviousMenu
 .import Menu_5
+
 ; sprite.s
 .import _DisablSprite
+
 ; keyboarddrv.s
 .import KbdScanHelp3
 
@@ -27,7 +32,7 @@
 .global _StartMouseMode
 .global DoESC_RULER
 
-.segment "mouseio"
+.segment "mouse1"
 
 _IsMseInRegion:
 	lda mouseYPos
@@ -59,7 +64,7 @@ IMIRl4:
 	lda #0
 	rts
 
-.segment "mouseio2"
+.segment "mouse2"
 
 _StartMouseMode:
 	bcc SMousMd1
@@ -226,7 +231,7 @@ DoMseFlt2:
 DoMseFlt3:
 	rts
 
-.segment "resetmseregion"
+.segment "mouse3"
 
 ResetMseRegion:
 	lda #NULL
@@ -237,7 +242,7 @@ ResetMseRegion:
 	LoadB mouseBottom, SC_PIX_HEIGHT-1
 	rts
 
-.segment "docheckbuttons"
+.segment "mouse4"
 
 _DoCheckButtons:
 	bbrf INPUT_BIT, pressFlag, DoChkBtns1

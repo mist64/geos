@@ -1,3 +1,7 @@
+; GEOS KERNAL
+;
+; Patterns
+
 .global PatternTab
 
 .segment "patterns"

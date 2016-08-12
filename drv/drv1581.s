@@ -1,5 +1,6 @@
-; GEOS 1581 disk driver
-; reassembled by Maciej 'YTM/Elysium' Witkowiak
+; GEOS
+;
+; Commodore 1581 disk driver
 
 .include "const.inc"
 .include "geossym.inc"

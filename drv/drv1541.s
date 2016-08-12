@@ -1,5 +1,6 @@
-; GEOS 1541 disk driver
-; reassembled by Maciej 'YTM/Alliance' Witkowiak
+; GEOS
+;
+; Commodore 1541 disk driver
 
 .include "const.inc"
 .include "geossym.inc"

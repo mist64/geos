@@ -1,5 +1,6 @@
-; GEOS Kernal
-; logic to start a program in BASIC mode
+; GEOS KERNAL
+;
+; Start a program in BASIC mode
 
 .include "const.inc"
 .include "geossym.inc"
@@ -14,12 +15,119 @@
 ; hw.s
 .import Init_KRNLVec
 
-; main.s
+; header.s
+.import BootKernal
 .import sysFlgCopy
 
 .global _ToBASIC
 
-.segment "tobasic"
+.segment "tobasic1"
+
+.if (!removeToBASIC)
+LoKernalBuf:
+	.byte 0, 0, 0, 0, 0, 0, 0, 0
+	.byte 0, 0, 0, 0, 0, 0, 0, 0
+	.byte 0, 0, 0, 0, 0, 0, 0, 0
+	.byte 0, 0, 0, 0, 0, 0, 0, 0
+	.byte 0, 0, 0, 0, 0, 0, 0, 0
+LKIntTimer:
+	.byte 0
+LKSaveBASIC:
+	.byte 0, 0, 0
+LKSaveR7:
+	.byte 0, 0
+
+LoKernal1:
+	sei
+	LoadB CPU_DATA, KRNL_IO_IN
+	ldy #2
+LKernal1:
+	lda BASICspace,y
+	sta LKSaveBASIC,y
+	dey
+	bpl LKernal1
+	MoveW r7, LKSaveR7
+	inc CPU_DATA
+	ldx #$ff
+	txs
+	LoadB grcntrl2, 0
+	jsr KERNALCIAInit
+	ldx curDevice
+	lda #0
+	tay
+LKernal2:
+	sta zpage+2,y
+	sta zpage+$0200, y
+	sta zpage+$0300, y
+	iny
+	bne LKernal2
+	stx curDevice
+	LoadB BASICMemTop, $a0
+	LoadW_ tapeBuffVec, $03c3
+	LoadB BASICMemBot, $08
+	lsr
+	sta scrAddyHi
+	jsr Init_KRNLVec
+	jsr KERNALVICInit
+	lda #>execBASIC
+	sta nmivec+1
+	lda #<execBASIC
+	sta nmivec
+	LoadB LKIntTimer, 6
+	lda cia2base+13
+	LoadB cia2base+4, $ff
+	sta cia2base+5
+	LoadB cia2base+13, $81
+	LoadB cia2base+14, $01
+	jmp (BASIC_START)
+
+execBASIC:
+	pha
+	tya
+	pha
+	lda cia2base+13
+	dec LKIntTimer
+	bne exeBAS4
+	LoadB cia2base+13, $7f
+	LoadW nmivec, BootKernal
+	ldy #2
+exeBAS1:
+	lda LKSaveBASIC, y
+	sta BASICspace, y
+	dey
+	bpl exeBAS1
+	MoveW LKSaveR7, cardDataPntr+1
+	iny
+exeBAS2:
+	lda LoKernalBuf,y
+	beq exeBAS3
+	sta (curScrLine),y
+	lda #14
+	sta curScrLineColor,y
+	iny
+	bne exeBAS2
+exeBAS3:
+	tya
+	beq exeBAS4
+	LoadB curPos, $28
+	LoadB kbdQuePos, 1
+	LoadB kbdQue, CR
+exeBAS4:
+	pla
+	tay
+	pla
+	rti
+
+ ; ???
+.ifdef maurice
+	.byte $ff
+.else
+	.byte $40
+.endif
+
+.endif
+
+.segment "tobasic2"
 
 _ToBASIC:
 .if (removeToBASIC)
@@ -91,110 +199,4 @@ ToBASICTab:
 	.word REUOsVarBackup
 	.word OS_VARS_LGH
 	.byte $00
-.endif
-
-.segment "tobasic2"
-
-.if (removeToBASIC)
-.else
-LoKernalBuf:
-	.byte 0, 0, 0, 0, 0, 0, 0, 0
-	.byte 0, 0, 0, 0, 0, 0, 0, 0
-	.byte 0, 0, 0, 0, 0, 0, 0, 0
-	.byte 0, 0, 0, 0, 0, 0, 0, 0
-	.byte 0, 0, 0, 0, 0, 0, 0, 0
-LKIntTimer:
-	.byte 0
-LKSaveBASIC:
-	.byte 0, 0, 0
-LKSaveR7:
-	.byte 0, 0
-
-LoKernal1:
-	sei
-	LoadB CPU_DATA, KRNL_IO_IN
-	ldy #2
-LKernal1:
-	lda BASICspace,y
-	sta LKSaveBASIC,y
-	dey
-	bpl LKernal1
-	MoveW r7, LKSaveR7
-	inc CPU_DATA
-	ldx #$ff
-	txs
-	LoadB grcntrl2, 0
-	jsr KERNALCIAInit
-	ldx curDevice
-	lda #0
-	tay
-LKernal2:
-	sta zpage+2,y
-	sta zpage+$0200, y
-	sta zpage+$0300, y
-	iny
-	bne LKernal2
-	stx curDevice
-	LoadB BASICMemTop, $a0
-	LoadW_ tapeBuffVec, $03c3
-	LoadB BASICMemBot, $08
-	lsr
-	sta scrAddyHi
-	jsr Init_KRNLVec
-	jsr KERNALVICInit
-	lda #>execBASIC
-	sta nmivec+1
-	lda #<execBASIC
-	sta nmivec
-	LoadB LKIntTimer, 6
-	lda cia2base+13
-	LoadB cia2base+4, $ff
-	sta cia2base+5
-	LoadB cia2base+13, $81
-	LoadB cia2base+14, $01
-	jmp (BASIC_START)
-
-execBASIC:
-	pha
-	tya
-	pha
-	lda cia2base+13
-	dec LKIntTimer
-	bne exeBAS4
-	LoadB cia2base+13, $7f
-	LoadW nmivec, OS_ROM
-	ldy #2
-exeBAS1:
-	lda LKSaveBASIC, y
-	sta BASICspace, y
-	dey
-	bpl exeBAS1
-	MoveW LKSaveR7, cardDataPntr+1
-	iny
-exeBAS2:
-	lda LoKernalBuf,y
-	beq exeBAS3
-	sta (curScrLine),y
-	lda #14
-	sta curScrLineColor,y
-	iny
-	bne exeBAS2
-exeBAS3:
-	tya
-	beq exeBAS4
-	LoadB curPos, $28
-	LoadB kbdQuePos, 1
-	LoadB kbdQue, CR
-exeBAS4:
-	pla
-	tay
-	pla
-	rti
-.endif
-
- ; ???
-.ifdef maurice
-	.byte $ff
-.else
-	.byte $40
 .endif

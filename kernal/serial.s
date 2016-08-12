@@ -1,3 +1,6 @@
+; GEOS KERNAL
+;
+; Serial number
 
 .include "const.inc"
 .include "geossym.inc"
@@ -8,7 +11,7 @@
 .global _GetSerialNumber
 .global _GetSerialNumber2
 
-.segment "serial"
+.segment "serial1"
 
 SerialNumber:
 .ifdef maurice

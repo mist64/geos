@@ -1,4 +1,6 @@
-; GEOS menu handler
+; GEOS KERNAL
+;
+; Menus
 
 .include "const.inc"
 .include "geossym.inc"
@@ -23,7 +25,7 @@
 .import _PutString
 .import _UseSystemFont
 
-; mouseio.s
+; mouse.s
 .import _MouseOff
 .import _StartMouseMode
 .import ResetMseRegion

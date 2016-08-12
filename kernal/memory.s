@@ -1,4 +1,6 @@
-; memory handling functions (copy, compare, move, fill)
+; GEOS KERNAL
+;
+; Memory utility functions
 
 .include "const.inc"
 .include "geossym.inc"

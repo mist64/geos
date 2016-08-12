@@ -1,5 +1,11 @@
+; GEOS
+;
+; Koala pad input driver
+
 ; TODO: reassemble
+
 .segment "koalapad"
+
 .byte $4c, $90, $fe, $4c, $9a, $fe, $4c, $9b, $fe, $00, $08, $08, $00, $00, $00, $00
 .byte $a9, $00, $85, $3b, $a9, $08, $85, $3a, $85, $3c, $60, $24, $30, $30, $03, $4c
 .byte $36, $ff, $a5, $01, $48, $a9, $35, $85, $01, $ad, $02, $dc, $48, $ad, $03, $dc

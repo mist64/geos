@@ -1,4 +1,6 @@
-; font handling functions, mostly for internal (Kernal) use
+; GEOS KERNAL
+;
+; Font drawing
 
 .include "const.inc"
 .include "geossym.inc"
@@ -9,10 +11,10 @@
 ; conio.s
 .import GetChWdth1
 
-; main.s
-.import BitMask2
-.import BitMask4
-.import BitMask3
+; bitmask.s
+.import BitMaskPow2
+.import BitMaskLeadingSet
+.import BitMaskLeadingClear
 
 .global _GetRealSize
 .global Font_10
@@ -118,7 +120,7 @@ Font_11:
 	adc cardDataPntr+1
 	sta r2H
 	ldy E87FD
-	lda BitMask3,y
+	lda BitMaskLeadingSet,y
 	eor #$ff
 	sta E87FC
 	ldy r6H
@@ -126,7 +128,7 @@ Font_11:
 	tya
 	and #%00000111
 	tay
-	lda BitMask4,y
+	lda BitMaskLeadingClear,y
 	eor #$ff
 	sta r7H
 	lda currentMode
@@ -263,7 +265,7 @@ Font_27:
 	pla
 	and #%00000111
 	tay
-	lda BitMask3,y
+	lda BitMaskLeadingSet,y
 	sta r3L
 	eor #$ff
 	sta r9L
@@ -281,7 +283,7 @@ Font_29:
 	tya
 	and #%00000111
 	tax
-	lda BitMask4,x
+	lda BitMaskLeadingClear,x
 	sta r4H
 	eor #$ff
 	sta r9H
@@ -518,9 +520,9 @@ Font_71:
 	ldx #7
 Font_72:
 	lda Z45,y
-	and BitMask2,x
+	and BitMaskPow2,x
 	beq Font_73
-	lda BitMask2,x
+	lda BitMaskPow2,x
 	eor #$ff
 	and E87FF,y
 	sta E87FF,y
@@ -539,10 +541,10 @@ Font_81:
 	ldx #7
 Font_82:
 	lda Z45,y
-	and BitMask2,x
+	and BitMaskPow2,x
 	beq Font_87
 	lda E87FF,y
-	ora BitMask2,x
+	ora BitMaskPow2,x
 	sta E87FF,y
 	inx
 	cpx #8
@@ -553,7 +555,7 @@ Font_82:
 	bne Font_84
 Font_83:
 	lda E87FF,y
-	ora BitMask2,x
+	ora BitMaskPow2,x
 	sta E87FF,y
 Font_84:
 	dex
@@ -565,7 +567,7 @@ Font_84:
 	bne Font_86
 Font_85:
 	lda E87FF,y
-	ora BitMask2,x
+	ora BitMaskPow2,x
 	sta E87FF,y
 Font_86:
 	inx

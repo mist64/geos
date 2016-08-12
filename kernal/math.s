@@ -1,4 +1,6 @@
-; various math routines
+; GEOS KERNAL
+;
+; Math library
 
 .include "geossym.inc"
 .include "geosmac.inc"

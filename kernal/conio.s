@@ -1,4 +1,6 @@
-; simple console I/O
+; GEOS KERNAL
+;
+; Console I/O
 
 .include "const.inc"
 .include "geossym.inc"
@@ -17,7 +19,7 @@
 ; graph.s
 .import _GraphicsString
 
-; mouseio.s
+; mouse.s
 .import DoESC_RULER
 
 ; sprites.s
@@ -593,7 +595,7 @@ DecTabH:
 ;---------------------------------------------------------------
 ; PutDecimal                                              $C184
 ;
-; Pass:   a - format:   Bit 7: 1 for left justify
+; Pass:     a - format: Bit 7: 1 for left justify
 ;                              0 for right
 ;                       Bit 6: 1 supress leading 0's
 ;                              0 print leading 0's

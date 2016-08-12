@@ -1,5 +1,6 @@
 ; GEOS KERNAL
-; Jump Table
+;
+; System call jump table
 
 .include "const.inc"
 .include "geossym.inc"
@@ -7,6 +8,9 @@
 .include "config.inc"
 .include "kernal.inc"
 .include "diskdrv.inc"
+
+; init.s
+.import _FirstInit
 
 ; icons.s
 .import _DoIcons
@@ -50,7 +54,7 @@
 .import _RestartProcess
 .import _InitProcesses
 
-; mouseio.s
+; mouse.s
 .import _IsMseInRegion
 .import _ClearMouseMode
 .import _MouseOff
@@ -163,14 +167,17 @@
 .import _ToBASIC
 
 ; main.s
-.import _Panic
-.import _DoInlineReturn
-.import _FirstInit
 .import _StartAppl
 .import _EnterDeskTop
-.import _CallRoutine
 .import _MainLoop
 .import _InterruptMain
+
+; misc.s
+.import _CallRoutine
+.import _DoInlineReturn
+
+; panic.s
+.import _Panic
 
 ; serial.s
 .import _GetSerialNumber

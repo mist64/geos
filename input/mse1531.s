@@ -1,5 +1,6 @@
-; this is 1531 mouse driver for GEOS
-; reassembled by Maciej 'YTM/Elysium' Witkowiak
+; GEOS
+;
+; Commodore 1531 mouse input driver
 
 .include "const.inc"
 .include "geossym.inc"

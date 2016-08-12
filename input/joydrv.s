@@ -1,5 +1,6 @@
-; GEOS joystick input driver
-; reassembled by Maciej 'YTM/Alliance' Witkowiak
+; GEOS
+;
+; Joystick input driver
 
 .include "const.inc"
 .include "geossym.inc"

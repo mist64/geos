@@ -1,5 +1,6 @@
-; GEOS Kernal
-; disk and file related functions
+; GEOS KERNAL
+;
+; BAM/VLIR filesystem driver, application and desk accessory launching
 
 .include "const.inc"
 .include "geossym.inc"
@@ -19,10 +20,12 @@
 ; graph.s
 .import ClrScr
 
-; main.s
-.import _MNLP
+; init.s
 .import InitGEOEnv
 .import InitGEOS
+
+; main.s
+.import _MNLP
 
 .global _AppendRecord
 .global _BldGDirEntry
@@ -201,7 +204,7 @@ _GetPtrCurDkNm:
 	sta zpage+1,X
 	rts
 
-.segment "main3"
+.segment "files4"
 
 _EnterDeskTop:
 	sei
@@ -298,7 +301,7 @@ _EnterDT_Str0:
 _EnterDT_Str1:
 	.byte "with deskTop V1.5 or higher", NULL
 
-.segment "main5c"
+.segment "files5"
 UNK_4:
 	MoveB A885D, r10L
 	MoveB A885E, r0L
@@ -333,7 +336,7 @@ U_50:
 U_51:
 	rts
 
-.segment "files4"
+.segment "files6"
 
 _GetFile:
 	jsr UNK_5
@@ -1534,3 +1537,20 @@ ReadByt3:
 	inx
 	stx r5L
 	bra _ReadByte
+
+.segment "X"
+
+.if (useRamExp)
+DeskTopOpen:
+	.byte 0 ;these two bytes are here just
+DeskTopRecord:
+	.byte 0 ;to keep OS_JUMPTAB at $c100
+	.byte 0,0,0 ;three really unused
+
+DeskTopStart:
+	.word 0 ;these are for ensuring compatibility with
+DeskTopExec:
+	.word 0 ;DeskTop replacements - filename of desktop
+DeskTopLgh:
+	.byte 0 ;have to be at $c3cf .IDLE
+.endif

@@ -1,3 +1,6 @@
+; GEOS KERNAL
+;
+; C64 hardware initialization code
 
 .include "const.inc"
 .include "geossym.inc"
@@ -5,13 +8,13 @@
 .include "config.inc"
 .include "kernal.inc"
 
-; mouseio.s
+; mouse.s
 .import ResetMseRegion
 
 .global Init_KRNLVec
 .global _DoFirstInitIO
 
-.segment "hw"
+.segment "hw1"
 
 VIC_IniTbl:
 	.byte $00, $00, $00, $00, $00, $00, $00, $00
@@ -58,7 +61,7 @@ DFIIO1:
 	LoadB CPU_DATA, RAM_64K
 	jmp ResetMseRegion
 
-.segment "main4"
+.segment "hw2"
 Init_KRNLVec:
 	ldx #32
 IKV1:
@@ -68,7 +71,7 @@ IKV1:
 	bne IKV1
 	rts
 
-.segment "main5b"
+.segment "hw3"
 SetVICRegs:
 	sty r1L
 	ldy #0

@@ -1,3 +1,6 @@
+; GEOS KERNAL
+;
+; C64 clock driver
 
 .include "const.inc"
 .include "geossym.inc"
@@ -5,7 +8,7 @@
 .include "config.inc"
 .include "kernal.inc"
 
-; main.s
+; header.s
 .import dateCopy
 
 .global _DoUpdateTime

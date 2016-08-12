@@ -1,4 +1,6 @@
-; graphical functions (lines, rectangles, points, bitmaps)
+; GEOS KERNAL
+;
+; Graphics library (lines, rectangles, points, bitmaps)
 
 .include "const.inc"
 .include "geossym.inc"
@@ -10,10 +12,10 @@
 ; conio.s
 .import _PutString
 
-; main.s
-.import BitMask1
-.import BitMask3
-.import BitMask4
+; bitmask.s
+.import BitMaskPow2Rev
+.import BitMaskLeadingSet
+.import BitMaskLeadingClear
 
 ; patterns.s
 .import PatternTab
@@ -76,12 +78,12 @@ PrepareXCoord:
 	lda r4L
 	and #%00000111
 	tax
-	lda BitMask4,X
+	lda BitMaskLeadingClear,X
 	sta r8H
 	lda r3L
 	and #%00000111
 	tax
-	lda BitMask3,X
+	lda BitMaskLeadingSet,X
 	sta r8L
 	lda r3L
 	and #%11111000
@@ -280,7 +282,7 @@ _VerticalLine:
 	PushB r4L
 	and #%00000111
 	tax
-	lda BitMask1,X
+	lda BitMaskPow2Rev,X
 	sta r7H
 	lda r4L
 	and #%11111000
@@ -295,7 +297,7 @@ VLin0:
 	lda r7L
 	and #%00000111
 	tax
-	lda BitMask1,X
+	lda BitMaskPow2Rev,X
 	and r8L
 	bne VLin1
 	lda r7H
@@ -1027,7 +1029,7 @@ DrwPoi1:
 	lda r3L
 	and #%00000111
 	tax
-	lda BitMask1, x
+	lda BitMaskPow2Rev, x
 	plp
 	bmi DrwPoi4
 	bcc DrwPoi2
@@ -1063,7 +1065,7 @@ _TestPoint:
 	lda r3L
 	and #%00000111
 	tax
-	lda BitMask1,x
+	lda BitMaskPow2Rev,x
 	and (r6),y
 	beq TestPoi1
 	sec

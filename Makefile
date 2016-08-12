@@ -5,8 +5,11 @@ ASFLAGS=-I inc -I .
 
 KERNAL_SOURCES= \
 init/init.s \
+kernal/init.s \
+kernal/misc.s \
+kernal/bitmask.s \
 kernal/bswfont.s \
-kernal/icons.s \
+kernal/mouseptr.s \
 kernal/patterns.s \
 kernal/conio.s \
 kernal/dlgbox.s \
@@ -16,12 +19,14 @@ kernal/graph.s \
 kernal/hw.s \
 kernal/icon.s \
 kernal/jumptable.s \
-kernal/keyboarddrv.s \
-kernal/main.s \
+kernal/keyboard.s \
+kernal/header.s \
+kernal/mainloop.s \
 kernal/math.s \
 kernal/memory.s \
 kernal/menu.s \
-kernal/mouseio.s \
+kernal/mouse.s \
+kernal/panic.s \
 kernal/process.s \
 kernal/reu.s \
 kernal/serial.s \

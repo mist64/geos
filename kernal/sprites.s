@@ -1,11 +1,13 @@
-; sprites-related functions, handles all sprites (including pointer and prompt)
+; GEOS KERNAL
+;
+; C64 sprite driver
 
 .include "const.inc"
 .include "geossym.inc"
 .include "geosmac.inc"
 
-; main.s
-.import BitMask2
+; bitmask.s
+.import BitMaskPow2
 
 .global _DisablSprite
 .global _DrawSprite
@@ -14,6 +16,13 @@
 
 .segment "sprites"
 
+;---------------------------------------------------------------
+; DrawSprite                                              $C1C6
+; Pass:      r3L sprite nbr (2-7)
+;            r4  ptr to picture data
+; Return:    graphic data transfer to VIC chip
+; Destroyed: a, y, r5
+;---------------------------------------------------------------
 _DrawSprite:
 	ldy r3L
 	lda SprTabL,Y
@@ -53,7 +62,7 @@ _PosSprite:
 	lda r6L
 	sta mob0xpos,Y
 	ldx r3L
-	lda BitMask2,X
+	lda BitMaskPow2,X
 	eor #$FF
 	and msbxpos
 	tay
@@ -61,7 +70,7 @@ _PosSprite:
 	and r6H
 	beq PSpr0
 	tya
-	ora BitMask2,X
+	ora BitMaskPow2,X
 	tay
 PSpr0:
 	sty msbxpos
@@ -70,7 +79,7 @@ PSpr0:
 
 _EnablSprite:
 	ldx r3L
-	lda BitMask2,X
+	lda BitMaskPow2,X
 	tax
 	PushB CPU_DATA
 	LoadB CPU_DATA, IO_IN
@@ -82,7 +91,7 @@ _EnablSprite:
 
 _DisablSprite:
 	ldx r3L
-	lda BitMask2,X
+	lda BitMaskPow2,X
 	eor #$FF
 	pha
 	ldx CPU_DATA

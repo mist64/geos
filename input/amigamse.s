@@ -1,5 +1,6 @@
-; GEOS Amiga style mouse input driver
-; reassembled by Maciej 'YTM/Elysium' Witkowiak
+; GEOS
+;
+; Amiga mouse input driver
 
 .include "const.inc"
 .include "geossym.inc"

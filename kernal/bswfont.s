@@ -1,3 +1,7 @@
+; GEOS KERNAL
+;
+; System font BSW/9
+
 .global BSWFont
 
 .segment "bswfont"
