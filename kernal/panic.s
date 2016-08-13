@@ -11,8 +11,15 @@
 
 .segment "panic"
 
+; syscall
 .global _Panic
 
+;---------------------------------------------------------------
+; Panic                                                   $C2C2
+;
+; Pass:      nothing
+; Return:    does not return
+;---------------------------------------------------------------
 _Panic:
 	PopW r0
 	SubVW 2, r0
@@ -44,7 +51,7 @@ Panil1:
 Panil2:
 	addv ('0'+7)
 Panil3:
-	sta _PanicAddy,X
+	sta _PanicAddy,x
 	rts
 
 _PanicDB_DT:

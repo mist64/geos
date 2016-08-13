@@ -6,6 +6,7 @@
 .include "geossym.inc"
 .include "geosmac.inc"
 .include "jumptab.inc"
+.include "c64.inc"
 
 .segment "amigamse"
 
@@ -86,9 +87,9 @@ cont:
 	cmp lastY
 	beq hop1
 	lda lastY
-	cmp goingDown,X
+	cmp goingDown,x
 	beq goDown
-	cmp goingUp,X
+	cmp goingUp,x
 	bne hop1
 
 goUp:
@@ -133,9 +134,9 @@ hop1:
 	cmp lastX
 	beq hop2
 	lda lastX
-	cmp goingUp,X
+	cmp goingUp,x
 	beq goUp2
-	cmp goingDown,X
+	cmp goingDown,x
 	bne hop2
 
 goDown2:

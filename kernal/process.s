@@ -7,14 +7,17 @@
 .include "geosmac.inc"
 .include "kernal.inc"
 
-.global _BlockProcess
+; called from main loop
 .global _DoCheckDelays
-.global _EnableProcess
 .global _ExecuteProcesses
-.global _FreezeProcess
-.global _InitProcesses
 .global _ProcessDelays
 .global _ProcessTimers
+
+; syscalls
+.global _BlockProcess
+.global _EnableProcess
+.global _FreezeProcess
+.global _InitProcesses
 .global _RestartProcess
 .global _Sleep
 .global _UnBlockProcess
@@ -22,6 +25,17 @@
 
 .segment "process"
 
+;---------------------------------------------------------------
+; InitProcesses                                           $C103
+;
+; Pass:      a   nbr of process to initialize. 20 max
+;            r0  ptr to process table
+; Return:    process initialized
+; Destroyed: a, x, y
+;            ex: .word  processRout1
+;                .word  time/60th sec
+;                .word  processRout2 etc...
+;---------------------------------------------------------------
 _InitProcesses:
 	ldx #0
 	stx NumTimers
@@ -29,167 +43,202 @@ _InitProcesses:
 	sta r1H
 	tax
 	lda #SET_FROZEN
-IProc0:
-	sta TimersCMDs-1,X
+@1:	sta TimersCMDs-1,x
 	dex
-	bne IProc0
+	bne @1
 	ldy #0
-IProc1:
-	lda (r0),Y
-	sta TimersRtns,X
+@2:	lda (r0),Y
+	sta TimersRtns,x
 	iny
 	lda (r0),Y
-	sta TimersRtns+1,X
+	sta TimersRtns+1,x
 	iny
 	lda (r0),Y
-	sta TimersVals,X
+	sta TimersVals,x
 	iny
 	lda (r0),Y
-	sta TimersVals+1,X
+	sta TimersVals+1,x
 	iny
 	inx
 	inx
 	dec r1H
-	bne IProc1
+	bne @2
 	MoveB r1L, NumTimers
 	rts
 
+;---------------------------------------------------------------
+; called from main loop
+;---------------------------------------------------------------
 _ExecuteProcesses:
 	ldx NumTimers
-	beq EProc2
+	beq @3
 	dex
-EProc0:
-	lda TimersCMDs,X
-	bpl EProc1
+@1:	lda TimersCMDs,x
+	bpl @2
 	and #SET_BLOCKED
-	bne EProc1
-	lda TimersCMDs,X
+	bne @2
+	lda TimersCMDs,x
 	and #SET_RUNABLE ^ $ff
-	sta TimersCMDs,X
+	sta TimersCMDs,x
 	txa
 	pha
 	asl
 	tax
-	lda TimersRtns,X
+	lda TimersRtns,x
 	sta r0L
-	lda TimersRtns+1,X
+	lda TimersRtns+1,x
 	sta r0H
-	jsr _DoExecProcess
+	jsr @4
 	pla
 	tax
-EProc1:
-	dex
-	bpl EProc0
-EProc2:
-	rts
-_DoExecProcess:
-	jmp (r0)
+@2:	dex
+	bpl @1
+@3:	rts
+@4:	jmp (r0)
 
+;---------------------------------------------------------------
+; called from main loop
+;---------------------------------------------------------------
 _ProcessTimers:
 	lda #0
 	tay
 	tax
 	cmp NumTimers
-	beq PTime3
-PTime0:
-	lda TimersCMDs,X
+	beq @4
+@1:	lda TimersCMDs,x
 	and #SET_FROZEN | SET_NOTIMER
-	bne PTime2
+	bne @3
 	lda TimersTab,Y
-	bne PTime1
+	bne @2
 	pha
 	lda TimersTab+1,Y
 	subv 1
 	sta TimersTab+1,Y
 	pla
-PTime1:
-	subv 1
+@2:	subv 1
 	sta TimersTab,Y
 	ora TimersTab+1,Y
-	bne PTime2
+	bne @3
 	jsr RProc0
-	lda TimersCMDs,X
+	lda TimersCMDs,x
 	ora #SET_RUNABLE
-	sta TimersCMDs,X
-PTime2:
-	iny
+	sta TimersCMDs,x
+@3:	iny
 	iny
 	inx
 	cpx NumTimers
-	bne PTime0
-PTime3:
-	rts
+	bne @1
+@4:	rts
 
+;---------------------------------------------------------------
+; RestartProcess                                          $C106
+;
+; Pass:      x   nbr of the process to restart
+; Return:    resets a process timer
+; Destroyed: a
+;---------------------------------------------------------------
 _RestartProcess:
-	lda TimersCMDs,X
+	lda TimersCMDs,x
 	and #(SET_BLOCKED | SET_FROZEN) ^ $ff
-	sta TimersCMDs,X
+	sta TimersCMDs,x
 RProc0:
 	txa
 	pha
 	asl
 	tax
-	lda TimersVals,X
-	sta TimersTab,X
-	lda TimersVals+1,X
-	sta TimersTab+1,X
+	lda TimersVals,x
+	sta TimersTab,x
+	lda TimersVals+1,x
+	sta TimersTab+1,x
 	pla
 	tax
 	rts
 
+;---------------------------------------------------------------
+; EnableProcess                                           $C109
+;
+; Pass:      x   nbr of the process to have run
+; Return:    process routine is run during next Main Loop
+; Destroyed: a
+;---------------------------------------------------------------
 _EnableProcess:
-	lda TimersCMDs,X
+	lda TimersCMDs,x
 	ora #SET_RUNABLE
 EnProc0:
-	sta TimersCMDs,X
+	sta TimersCMDs,x
 	rts
 
+;---------------------------------------------------------------
+; BlockProcess                                            $C10C
+;
+; Pass:      x   nbr of the process to block
+; Destroyed: a
+;---------------------------------------------------------------
 _BlockProcess:
-	lda TimersCMDs,X
+	lda TimersCMDs,x
 	ora #SET_BLOCKED
 	bra EnProc0
+;---------------------------------------------------------------
+; UnblockProcess                                          $C10F
+;
+; Pass:      x   nbr of the process to unblock
+; Return:    process's flag reset, timer counting down
+; Destroyed: a
+;---------------------------------------------------------------
 _UnBlockProcess:
-	lda TimersCMDs,X
+	lda TimersCMDs,x
 	and #SET_BLOCKED ^ $ff
 	bra EnProc0
+;---------------------------------------------------------------
+; FreezeProcess                                           $C112
+;
+; Pass:      x   nbr of the process to freeze
+; Return:    process freezed
+; Destroyed: a
+;---------------------------------------------------------------
 _FreezeProcess:
-	lda TimersCMDs,X
+	lda TimersCMDs,x
 	ora #SET_FROZEN
 	bra EnProc0
+;---------------------------------------------------------------
+; UnfreezeProcess                                         $C115
+;
+; Pass:      x   nbr of the process to unblock
+; Return:    restart the process's timer
+; Destroyed: a
+;---------------------------------------------------------------
 _UnFreezeProcess:
-	lda TimersCMDs,X
+	lda TimersCMDs,x
 	and #SET_FROZEN ^ $ff
 	bra EnProc0
 
+;---------------------------------------------------------------
+; called from main loop
+;---------------------------------------------------------------
 _ProcessDelays:
 	ldx DelaySP
-	beq ProcDel3
+	beq @4
 	dex
-ProcDel0:
-	lda DelayValL,X
-	bne ProcDel1
-	ora DelayValH,X
-	beq ProcDel2
-	dec DelayValH,X
-ProcDel1:
-	dec DelayValL,X
-ProcDel2:
-	dex
-	bpl ProcDel0
-ProcDel3:
-	rts
+@1:	lda DelayValL,x
+	bne @2
+	ora DelayValH,x
+	beq @3
+	dec DelayValH,x
+@2:	dec DelayValL,x
+@3:	dex
+	bpl @1
+@4:	rts
 
 _DoCheckDelays:
 	ldx DelaySP
-	beq DChDl2
+	beq @3
 	dex
-DChDl0:
-	lda DelayValL,X
-	ora DelayValH,X
-	bne DChDl1
-	lda DelayRtnsH,X
+@1:	lda DelayValL,x
+	ora DelayValH,x
+	bne @2
+	lda DelayRtnsH,x
 	sta r0H
-	lda DelayRtnsL,X
+	lda DelayRtnsL,x
 	sta r0L
 	txa
 	pha
@@ -197,40 +246,42 @@ DChDl0:
 	jsr _DoExecDelay
 	pla
 	tax
-DChDl1:
-	dex
-	bpl DChDl0
-DChDl2:
-	rts
+@2:	dex
+	bpl @1
+@3:	rts
 
 _DoExecDelay:
 	inc r0L
-	bne DEDe0
+	bne @1
 	inc r0H
-DEDe0:
-	jmp (r0)
+@1:	jmp (r0)
 
 _RemoveDelay:
 	php
 	sei
-RDel0:
-	inx
+@1:	inx
 	cpx DelaySP
-	beq RDel1
-	lda DelayValL,X
-	sta DelayValL-1,X
-	lda DelayValH,X
-	sta DelayValH-1,X
-	lda DelayRtnsL,X
-	sta DelayRtnsL-1,X
-	lda DelayRtnsH,X
-	sta DelayRtnsH-1,X
-	bra RDel0
-RDel1:
-	dec DelaySP
+	beq @2
+	lda DelayValL,x
+	sta DelayValL-1,x
+	lda DelayValH,x
+	sta DelayValH-1,x
+	lda DelayRtnsL,x
+	sta DelayRtnsL-1,x
+	lda DelayRtnsH,x
+	sta DelayRtnsH-1,x
+	bra @1
+@2:	dec DelaySP
 	plp
 	rts
 
+;---------------------------------------------------------------
+; Sleep                                                   $C199
+;
+; Pass:      r0  time to sleep in 16th of a second
+; Return:    to previous routine
+; Destroyed: depends & 20 sleep max will be handle
+;---------------------------------------------------------------
 _Sleep:
 	php
 	pla
@@ -238,13 +289,13 @@ _Sleep:
 	sei
 	ldx DelaySP
 	lda r0L
-	sta DelayValL,X
+	sta DelayValL,x
 	lda r0H
-	sta DelayValH,X
+	sta DelayValH,x
 	pla
-	sta DelayRtnsL,X
+	sta DelayRtnsL,x
 	pla
-	sta DelayRtnsH,X
+	sta DelayRtnsH,x
 	inc DelaySP
 	tya
 	pha

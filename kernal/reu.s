@@ -1,6 +1,6 @@
 ; GEOS KERNAL
 ;
-; REU driver
+; C64/REU driver
 
 .include "const.inc"
 .include "geossym.inc"
@@ -8,6 +8,7 @@
 .include "config.inc"
 .include "kernal.inc"
 
+; syscalls
 .global _DoRAMOp
 .global _FetchRAM
 .global _StashRAM
@@ -34,6 +35,7 @@ _DoRAMOp:
 	cmp ramExpSize
 	bcs DRAMOp2
 	ldx CPU_DATA
+ASSERT_NOT_BELOW_IO
 	LoadB CPU_DATA, IO_IN
 	MoveW r0, EXP_BASE+2
 	MoveW r1, EXP_BASE+4
@@ -48,6 +50,7 @@ DRAMOp1:
 	and #%01100000
 	beq DRAMOp1
 	stx CPU_DATA
+ASSERT_NOT_BELOW_IO
 	ldx #0
 DRAMOp2:
 	rts
@@ -116,6 +119,7 @@ RamExpRdHlp:
 	ldy #0
 	sty r1L
 	ldx #IO_IN
+ASSERT_NOT_BELOW_IO
 	stx CPU_DATA
 
 RamExRdH_1:
@@ -123,8 +127,10 @@ RamExRdH_1:
 	stx PLUS60K_CR
 	ldx #RAM_64K
 	stx CPU_DATA
+ASSERT_NOT_BELOW_IO
 	lda (r1),y
 	ldx #IO_IN
+ASSERT_NOT_BELOW_IO
 	stx CPU_DATA
 	ldx #0
 	stx PLUS60K_CR
@@ -136,6 +142,7 @@ RamExRdH_1:
 	dec r2H
 	bpl RamExRdH_1
 	PopB CPU_DATA
+ASSERT_NOT_BELOW_IO
 	rts
 RamExpRdHlpEnd:
 
@@ -149,6 +156,7 @@ RamExpWrHlp:
 
 RamExWrH_1:
 	ldx #IO_IN
+ASSERT_NOT_BELOW_IO
 	stx CPU_DATA
 	ldx #0
 	stx PLUS60K_CR
@@ -157,6 +165,7 @@ RamExWrH_1:
 	stx PLUS60K_CR
 	ldx #RAM_64K
 	stx CPU_DATA
+ASSERT_NOT_BELOW_IO
 	sta (r1),y
 	iny
 	bne RamExWrH_1
@@ -164,9 +173,11 @@ RamExWrH_1:
 	inc r1H
 	dec r2H
 	bpl RamExWrH_1
+ASSERT_NOT_BELOW_IO
 	LoadB CPU_DATA, IO_IN
 	LoadB PLUS60K_CR, 0
 	PopB CPU_DATA
+ASSERT_NOT_BELOW_IO
 	rts
 RamExpWrHlpEnd:
 .endif
@@ -175,6 +186,7 @@ RamExpWrHlpEnd:
 .if (useRamCart64)
 RamExpRead:
 	PushB CPU_DATA
+ASSERT_NOT_BELOW_IO
 	LoadB CPU_DATA, IO_IN
 	PushB r1L
 	PushB r0H
@@ -195,10 +207,12 @@ RamExRd_End:
 	PopB r0H
 	PopB r1L
 	PopB CPU_DATA
+ASSERT_NOT_BELOW_IO
 	rts
 
 RamExpWrite:
 	PushB CPU_DATA
+ASSERT_NOT_BELOW_IO
 	LoadB CPU_DATA, IO_IN
 	PushB r1L
 	PushB r0H
@@ -221,6 +235,7 @@ RamExWr_1:
 .if (useRamCart128)
 RamExpRead:
 	PushB CPU_DATA
+ASSERT_NOT_BELOW_IO
 	LoadB CPU_DATA, IO_IN
 	PushW r1
 	PushB r0H
@@ -235,18 +250,20 @@ RamExRd_1:
 	bne RamExRd_1
 	inc r0H
 	inc r1L
-	bne *+4
+	bne @X
 	inc r1H
-	dex
+@X:	dex
 	bpl RamExRd_0
 RamExRd_End:
 	PopB r0H
 	PopW r1
 	PopB CPU_DATA
+ASSERT_NOT_BELOW_IO
 	rts
 
 RamExpWrite:
 	PushB CPU_DATA
+ASSERT_NOT_BELOW_IO
 	LoadB CPU_DATA, IO_IN
 	PushW r1
 	PushB r0H
@@ -261,9 +278,9 @@ RamExWr_1:
 	bne RamExWr_1
 	inc r0H
 	inc r1L
-	bne *+4
+	bne @X
 	inc r1H
-	dex
+@X:	dex
 	bpl RamExWr_0
 	jmp RamExRd_End
 .endif

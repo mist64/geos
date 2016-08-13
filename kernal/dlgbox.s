@@ -8,6 +8,7 @@
 .include "config.inc"
 .include "kernal.inc"
 .include "jumptab.inc"
+.include "c64.inc"
 
 ; conio.s
 .import _UseSystemFont
@@ -119,12 +120,14 @@ DlgBoxProcH:
 	.byte >DBDoUSR_ROUT
 
 DlgBoxPrep:
+ASSERT_NOT_BELOW_IO
 	PushB CPU_DATA
 	LoadB CPU_DATA, IO_IN
 	LoadW r4, dlgBoxRamBuf
 	jsr Dialog_3
 	LoadB mobenble, 1
 	PopB CPU_DATA
+ASSERT_NOT_BELOW_IO
 	jsr InitGEOEnv
 	LoadB sysDBData, NULL
 	rts
@@ -260,9 +263,9 @@ ClcDlgCoor4:
 	iny
 	inx
 	lda (DBoxDesc),y
-	bcc *+4
+	bcc @X
 	adc #0
-	sta r2L,x
+@X:	sta r2L,x
 	iny
 	inx
 	cpx #6
@@ -286,11 +289,13 @@ _RstrFrmDialogue:
 	rts
 
 Dialog_2:
+ASSERT_NOT_BELOW_IO
 	PushB CPU_DATA
 	LoadB CPU_DATA, IO_IN
 	LoadW r4, dlgBoxRamBuf
 	jsr Dialog_4
 	PopB CPU_DATA
+ASSERT_NOT_BELOW_IO
 	rts
 
 Dialog_3:
@@ -332,9 +337,9 @@ Dialog_5:
 	tya
 	add r4L
 	sta r4L
-	bcc *+4
+	bcc @X
 	inc r4H
-	ldy #0
+@X:	ldy #0
 	lda DialogCopyTab,x
 	sta r2L
 	inx
@@ -811,9 +816,9 @@ DBGFDoArrow:
 	rol r0H
 	addv 12
 	sta r0L
-	bcc *+4
+	bcc @X
 	inc r0H
-	ldx DBGFTableIndex
+@X:	ldx DBGFTableIndex
 	CmpW r0, mouseXPos
 	bcc DBDoArrow1
 	dex
@@ -910,9 +915,9 @@ DBGFilesHelp7:
 	clc
 	jsr CalcDialogCoords
 	AddB DBGFOffsLeft, r3L
-	bcc *+4
+	bcc @X
 	inc r3H
-	addv $7c
+@X:	addv $7c
 	sta r4L
 	lda #0
 	adc r3H
@@ -936,9 +941,9 @@ DBGFilesHelp8:
 	inc r2L
 	dec r2H
 	inc r3L
-	bne *+4
+	bne @X
 	inc r3H
-	ldx #r4
+@X:	ldx #r4
 	jsr Ddec
 	rts
 

@@ -75,15 +75,15 @@
 .endmacro
 
 .macro AddVW value, dest
-	.local j
+	.local @j
 	clc
 	lda #<(value)
 	adc dest
 	sta dest
 	.if (>(value))=0
-	bcc j
+	bcc @j
 	inc dest+1
-	j:
+@j:
 	.else
 	lda #>(value)
 	adc dest + 1
@@ -147,19 +147,19 @@
 .endmacro
 
 .macro CmpW source, dest
-	.local j
+	.local @j
 	CmpB source+1, dest+1
-	bne j
+	bne @j
 	CmpB source+0, dest+0
-j:
+@j:
 .endmacro
 	
 .macro CmpWI source, immed
-	.local j
+	.local @j
 	CmpBI source+1, >(immed)
-	bne j
+	bne @j
 	CmpBI source+0, <(immed)
-j:
+@j:
 .endmacro
 
 .macro PushB source
@@ -222,64 +222,64 @@ lda dest
 .endmacro
 
 .macro bbs bitN, source, addr
-	.local j
+	.local @j
 	php
 	pha
 	lda source
 	and #1 << bitN
-	beq j
+	beq @j
 	pla
 	plp
 	bra addr
-j:	
+@j:
 	pla
 	plp
 .endmacro
 
 .macro bbsf bitN, source, addr
 	.if (bitN = 7)
-	bit source
-	bmi addr 
+		bit source
+		bmi addr
 	.else
-	.if (bitN = 6)
+		.if (bitN = 6)
 			bit source
-		bvs addr
-	.else
-		lda source
-		and #1 << bitN
-		bne addr
-	.endif
+			bvs addr
+		.else
+			lda source
+			and #1 << bitN
+			bne addr
+		.endif
 	.endif
 .endmacro
 
 .macro bbr bitN, source, addr
-	.local j
+	.local @j
 	php
 	pha
 	lda source
 	and #1 << bitN
-	bne j
+	bne @j
 	pla
 	plp
 	bra addr
-j:	
+@j:
 	pla
 	plp
 .endmacro
 
 .macro bbrf bitN, source, addr
 	.if (bitN = 7)
-	bit source
-	bpl addr
-	.else
-	.if (bitN = 6)
 		bit source
-		bvc addr
+		bpl addr
 	.else
+		.if (bitN = 6)
+			bit source
+			bvc addr
+		.else
 			lda source
-		and #1 << bitN
-		beq addr
-	.endif
+			and #1 << bitN
+			beq addr
+		.endif
 	.endif
 .endmacro
 
@@ -305,3 +305,8 @@ j:
 	txa
 	beq addr
 .endmacro
+
+.macro ASSERT_NOT_BELOW_IO
+	.assert * < $D000 || * >= $E000, error, "This code can't run below the C64 I/O area."
+.endmacro
+

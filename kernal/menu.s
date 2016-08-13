@@ -35,9 +35,7 @@
 .import _GetSerialNumber
 .endif
 
-.global MenuDoInvert
-.global Menu_5
-.global RcvrMnu0
+; syscalls
 .global _DoMenu
 .global _DoPreviousMenu
 .global _GotoFirstMenu
@@ -45,8 +43,41 @@
 .global _RecoverAllMenus
 .global _RecoverMenu
 
+; used by icon.s
+.global MenuDoInvert
+
+; used by mouse.s
+.global Menu_5
+
+; used by dlgbox.s
+.global RcvrMnu0
+
 .segment "menu"
 
+;---------------------------------------------------------------
+; DoMenu                                                  $C151
+;
+; Function:  Display and activate the menu structure pointed to
+;            by r0
+
+; Pass:      a   nbr of menu to place mouse on
+;            r0  address of menu table
+; Destroyed: a, x, y, r0 - r13
+;            ex: .byte top,bottom
+;                .word left,right
+;                .byte nbr_menu|type
+;
+;                .word text1
+;                .byte type
+;                .word subMenu1 .etc...
+;      subMenu1: .byte top,bottom
+;                .word left,right
+;                .byte nbr_items|type
+;
+;                .word text1a
+;                .byte type
+;                .word domenu1 .etc...
+;---------------------------------------------------------------
 _DoMenu:
 	sta menuOptionTab
 	ldx #0
@@ -132,10 +163,12 @@ DoMenu6:
 	smbf MENUON_BIT, mouseOn
 	jmp _StartMouseMode
 
+;---------------------------------------------------------------
 _ReDoMenu:
 	jsr _MouseOff
 	jmp DoPrvMn1
 
+;---------------------------------------------------------------
 _GotoFirstMenu:
 	php
 	sei
@@ -302,6 +335,7 @@ Menu_43:
 	AddVW_ 4, r11
 	rts
 
+;---------------------------------------------------------------
 _RecoverAllMenus:
 RcvrAllMns1:
 	jsr GetMenuDesc
@@ -312,6 +346,7 @@ RcvrAllMns1:
 	sta menuNumber
 	rts
 
+;---------------------------------------------------------------
 _RecoverMenu:
 	jsr CopyMenuCoords
 RcvrMnu0:
@@ -357,9 +392,9 @@ DrawMenu2:
 .if (menuHSeparator<>0)
 	MoveW menuLeft, r3
 	inc r3L
-	bne *+4
+	bne @X
 	inc r3H
-	MoveW menuRight, r4
+@X:	MoveW menuRight, r4
 	ldx #r4
 	jsr Ddec
 DrawMenu3:
@@ -481,7 +516,7 @@ Menu_72:
 	cpy #0
 	bne Menu_73
 	inc r3L
-	bne *+4
+	bne Menu_73
 	inc r3H
 Menu_73:
 	ldx menuTop
@@ -510,9 +545,9 @@ Menu_75:
 Menu_76:
 	MoveW menuLeft, r3
 	inc r3L
-	bne *+4
+	bne @X
 	inc r3H
-	MoveW menuRight, r4
+@X:	MoveW menuRight, r4
 	ldx #r4
 	jsr Ddec
 	rts

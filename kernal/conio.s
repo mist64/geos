@@ -8,12 +8,13 @@
 .include "config.inc"
 .include "kernal.inc"
 .include "jumptab.inc"
+.include "c64.inc"
 
 ; bswfont.s
 .import BSWFont
 
 ; fonts.s
-.import Font_10
+.import FontPutChar
 .import _GetRealSize
 
 ; graph.s
@@ -27,11 +28,8 @@
 .import _EnablSprite
 .import _PosSprite
 
-; keyboarddrv.s
-.import KbdScanHelp3
-
 .if (trap)
-; files.s
+; filesys.s
 .import SerialHiCompare
 ; serial.s
 .import _GetSerialNumber2
@@ -56,13 +54,12 @@
 
 _PutChar:
 	cmp #$20
-	bcs PutChar1
+	bcs @1
 	tay
 	lda PutCharTabL-8,y
 	ldx PutCharTabH-8,y
 	jmp CallRoutine
-PutChar1:
-	pha
+@1:	pha
 	ldy r11H
 	sty r13H
 	ldy r11L
@@ -73,65 +70,52 @@ PutChar1:
 	tya
 	add r13L
 	sta r13L
-	bcc *+4
+	bcc @2
 	inc r13H
-	CmpW rightMargin, r13
-	bcc PutChar4
+@2:	CmpW rightMargin, r13
+	bcc @5
 	CmpW leftMargin, r11
-	beq PutChar2
-	bcs PutChar3
-PutChar2:
-	pla
+	beq @3
+	bcs @4
+@3:	pla
 	subv $20
-	jmp Font_10
-PutChar3:
-	lda r13L
+	jmp FontPutChar
+@4:	lda r13L
 	addv 1
 	sta r11L
 	lda r13H
 	adc #0
 	sta r11H
-PutChar4:
-	pla
+@5:	pla
 	ldx StringFaultVec+1
 	lda StringFaultVec
 	jmp CallRoutine
 
+.define PutCharTab DoBACKSPACE, DoTAB, DoLF, DoHOME, DoUPLINE, DoCR, DoULINEON, DoULINEOFF, DoESC_GRAPHICS, DoESC_RULER, DoREV_ON, DoREV_OFF, DoGOTOX, DoGOTOY, DoGOTOXY, DoNEWCARDSET, DoBOLDON, DoITALICON, DoOUTLINEON, DoPLAINTEXT
 PutCharTabL:
-	.byte <DoBACKSPACE, <DoTAB
-	.byte <DoLF, <DoHOME
-	.byte <DoUPLINE, <DoCR
-	.byte <DoULINEON, <DoULINEOFF
-	.byte <DoESC_GRAPHICS, <DoESC_RULER
-	.byte <DoREV_ON, <DoREV_OFF
-	.byte <DoGOTOX, <DoGOTOY
-	.byte <DoGOTOXY, <DoNEWCARDSET
-	.byte <DoBOLDON, <DoITALICON
-	.byte <DoOUTLINEON, <DoPLAINTEXT
-
+	.lobytes PutCharTab
 PutCharTabH:
-	.byte >DoBACKSPACE, >DoTAB
-	.byte >DoLF, >DoHOME
-	.byte >DoUPLINE, >DoCR
-	.byte >DoULINEON, >DoULINEOFF
-	.byte >DoESC_GRAPHICS, >DoESC_RULER
-	.byte >DoREV_ON, >DoREV_OFF
-	.byte >DoGOTOX, >DoGOTOY
-	.byte >DoGOTOXY, >DoNEWCARDSET
-	.byte >DoBOLDON, >DoITALICON
-	.byte >DoOUTLINEON, >DoPLAINTEXT
+	.hibytes PutCharTab
 
+;---------------------------------------------------------------
+; SmallPutChar                                            $C202
+;
+; Pass:      same as PutChar, but must be sure that
+;            everything is OK, there is no checking
+; Return:    same as PutChar
+; Destroyed: same as PutChar
+;---------------------------------------------------------------
 _SmallPutChar:
 	subv $20
-	jmp Font_10
+	jmp FontPutChar
 
 DoTAB:
 	lda #0
 	add r11L
 	sta r11L
-	bcc *+4
+	bcc @1
 	inc r11H
-	rts
+@1:	rts
 
 DoLF:
 	lda r1H
@@ -171,23 +155,23 @@ DoREV_OFF:
 
 DoGOTOX:
 	inc r0L
-	bne *+4
+	bne @1
 	inc r0H
-	ldy #0
+@1:	ldy #0
 	lda (r0),y
 	sta r11L
 	inc r0L
-	bne *+4
+	bne @2
 	inc r0H
-	lda (r0),y
+@2:	lda (r0),y
 	sta r11H
 	rts
 
 DoGOTOY:
 	inc r0L
-	bne *+4
+	bne @1
 	inc r0H
-	ldy #0
+@1:	ldy #0
 	lda (r0),y
 	sta r1H
 	rts
@@ -222,19 +206,19 @@ DoBACKSPC:
 	sty PrvCharWidth
 DoBACKSPACE:
 	SubB PrvCharWidth, r11L
-	bcs *+4
+	bcs @1
 	dec r11H
-	PushW r11
+@1:	PushW r11
 	lda #$5f
-	jsr Font_10
+	jsr FontPutChar
 	PopW r11
 	rts
 
 DoESC_GRAPHICS:
 	inc r0L
-	bne *+4
+	bne @1
 	inc r0H
-	jsr _GraphicsString
+@1:	jsr _GraphicsString
 	ldx #r0
 	jsr Ddec
 	ldx #r0
@@ -245,65 +229,62 @@ _i_PutString:
 	PopB r0L
 	pla
 	inc r0L
-	bne iPutSt1
+	bne @1
 	addv 1
-iPutSt1:
-	sta r0H
+@1:	sta r0H
 	ldy #0
 	lda (r0),y
 	inc r0L
-	bne *+4
+	bne @2
 	inc r0H
-	sta r11L
+@2:	sta r11L
 	lda (r0),y
 	inc r0L
-	bne *+4
+	bne @3
 	inc r0H
-	sta r11H
+@3:	sta r11H
 	lda (r0),y
 	inc r0L
-	bne *+4
+	bne @4
 	inc r0H
-	sta r1H
+@4:	sta r1H
 	jsr _PutString
 	inc r0L
-	bne *+4
+	bne @5
 	inc r0H
-	jmp (r0)
+@5:	jmp (r0)
 
 _PutString:
 	ldy #0
 	lda (r0),y
-	beq PutStr1
+	beq @2
 	jsr _PutChar
 	inc r0L
-	bne *+4
+	bne @1
 	inc r0H
-	bra _PutString
-PutStr1:
-	rts
+@1:	bra _PutString
+@2:	rts
 
 _UseSystemFont:
 	LoadW r0, BSWFont
 _LoadCharSet:
 	ldy #0
-UseSysFnt1:
-	lda (r0),y
+@1:	lda (r0),y
 	sta baselineOffset,y
 	iny
 	cpy #8
-	bne UseSysFnt1
+	bne @1
 	AddW r0, curIndexTable
 	AddW r0, cardDataPntr
 
 .if (trap)
     ; copy high-byte of serial
 	lda SerialHiCompare
-	bne :+
+	bne @2
 	jsr _GetSerialNumber2
 	sta SerialHiCompare
 .endif
-:	rts
+@2:	rts
 
 _GetCharWidth:
 	subv $20
@@ -312,11 +293,10 @@ _GetCharWidth:
 	rts
 GetChWdth1:
 	cmp #$5f
-	bne GetChWdth2
+	bne @1
 	lda PrvCharWidth
 	rts
-GetChWdth2:
-	asl
+@1:	asl
 	tay
 	iny
 	iny
@@ -353,32 +333,28 @@ _GetString:
 	sta StringFaultVec+1
 	lda #<GSStringFault
 	sta StringFaultVec
-	bbrf 7, stringMargCtrl, GetStr1
+	bbrf 7, stringMargCtrl, @1
 	MoveW r4, StringFaultVec
-GetStr1:
-	lda curHeight
+@1:	lda curHeight
 	jsr _InitTextPrompt
 	jmp _PromptOn
 
 GSStringFault:
 	MoveB stringLen, stringMaxLen
 	dec stringLen
-GSStrFltEnd:
 	rts
 
 ProcessCursor:
 	lda alphaFlag
-	bpl ProcCur2
+	bpl @2
 	dec alphaFlag
 	lda alphaFlag
 	and #$3f
-	bne ProcCur2
-	bbrf 6, alphaFlag, ProcCur1
+	bne @2
+	bbrf 6, alphaFlag, @1
 	jmp _PromptOff
-ProcCur1:
-	jmp _PromptOn
-ProcCur2:
-	rts
+@1:	jmp _PromptOn
+@2:	rts
 
 GSSkeyVector:
 	jsr _PromptOff
@@ -386,30 +362,27 @@ GSSkeyVector:
 	MoveB stringY, r1H
 	ldy stringLen
 	lda keyData
-	bpl GSSkeyVec2
-GSSkeyVec1:
-	rts
-GSSkeyVec2:
-	cmp #CR
-	beq GSSkeyVec5
+	bpl @2
+@1:	rts
+@2:	cmp #CR
+	beq @6
 	cmp #BACKSPACE
-	beq GSSkeyVec3
+	beq @4
 	cmp #KEY_DELETE
-	beq GSSkeyVec3
+	beq @4
 	cmp #KEY_INSERT
-	beq GSSkeyVec3
+	beq @4
 	cmp #KEY_RIGHT
-	beq GSSkeyVec3
+	beq @4
 	cmp #' '
-	bcc GSSkeyVec1
+	bcc @1
 	cpy stringMaxLen
-	beq GSSkeyVec4
+	beq @5
 	sta (string),y
 	PushB dispBufferOn
-	bbrf 5, dispBufferOn, GSSkeyVec21
+	bbrf 5, dispBufferOn, @3
 	LoadB dispBufferOn, (ST_WR_FORE | ST_WRGS_FORE)
-GSSkeyVec21:
-	PushB r1H
+@3:	PushB r1H
 	clc
 	lda baselineOffset
 	adc r1H
@@ -423,14 +396,11 @@ GSSkeyVec21:
 	stx stringX+1
 	ldx r11L
 	stx stringX
-	bra GSSkeyVec4
-GSSkeyVec3:
-	jsr GSHelp1
-	bra GSSkeyVec4
-GSSkeyVec4:
-	jmp _PromptOn
-GSSkeyVec5:
-	sei
+	bra @5
+@4:	jsr GSHelp1
+	bra @5
+@5:	jmp _PromptOn
+@6:	sei
 	jsr _PromptOff
 	lda #%01111111
 	and alphaFlag
@@ -449,14 +419,13 @@ GSSkeyVec5:
 
 GSHelp1:
 	cpy #0
-	beq GSHelp12
+	beq @2
 	dey
 	sty stringLen
 	PushB dispBufferOn
-	bbrf 5, dispBufferOn, GSHelp11
+	bbrf 5, dispBufferOn, @1
 	LoadB dispBufferOn, (ST_WR_FORE | ST_WRGS_FORE)
-GSHelp11:
-	PushB r1H
+@1:	PushB r1H
 	clc
 	lda baselineOffset
 	adc r1H
@@ -472,8 +441,7 @@ GSHelp11:
 	stx stringX
 	clc
 	rts
-GSHelp12:
-	sec
+@2:	sec
 	rts
 
 _PromptOn:
@@ -503,6 +471,7 @@ PrmptOff1:
 _InitTextPrompt:
 	tay
 	PushB CPU_DATA
+ASSERT_NOT_BELOW_IO
 	LoadB CPU_DATA, IO_IN
 	MoveB mob0clr, mob1clr
 	lda moby2
@@ -513,31 +482,29 @@ _InitTextPrompt:
 	LoadB alphaFlag, %10000011
 	ldx #64
 	lda #0
-IniTxPrm1:
-	sta spr1pic-1,x
+@1:	sta spr1pic-1,x
 	dex
-	bne IniTxPrm1
+	bne @1
 	pla
 	tay
 	cpy #21
-	bcc IniTxPrm2
-	beq IniTxPrm2
+	bcc @2
+	beq @2
 	tya
 	lsr
 	tay
 	lda moby2
 	ora #2
 	sta moby2
-IniTxPrm2:
-	lda #%10000000
-IniTxPrm3:
-	sta spr1pic,x
+@2:	lda #%10000000
+@3:	sta spr1pic,x
 	inx
 	inx
 	inx
 	dey
-	bpl IniTxPrm3
+	bpl @3
 	PopB CPU_DATA
+ASSERT_NOT_BELOW_IO
 	rts
 
 CalcDecimal:
@@ -546,31 +513,27 @@ CalcDecimal:
 	lda #0
 	sta r3L
 	sta r3H
-CalcDec0:
-	ldy #0
+@1:	ldy #0
 	ldx r2H
-CalcDec1:
-	lda r0L
+@2:	lda r0L
 	sec
 	sbc DecTabL,x
 	sta r0L
 	lda r0H
 	sbc DecTabH,x
-	bcc CalcDec2
+	bcc @3
 	sta r0H
 	iny
-	bra CalcDec1
-CalcDec2:
-	lda r0L
+	bra @2
+@3:	lda r0L
 	adc DecTabL,x
 	sta r0L
 	tya
-	bne CalcDec3
+	bne @4
 	cpx #0
-	beq CalcDec3
-	bbsf 6, r2L, CalcDec4
-CalcDec3:
-	ora #%00110000
+	beq @4
+	bbsf 6, r2L, @5
+@4:	ora #%00110000
 	ldx r3L
 	sta Z45,x
 	ldx currentMode
@@ -582,15 +545,15 @@ CalcDec3:
 	lda #%10111111
 	and r2L
 	sta r2L
-CalcDec4:
-	dec r2H
-	bpl CalcDec0
+@5:	dec r2H
+	bpl @1
 	rts
 
+.define DecTab 1, 10, 100, 1000, 10000
 DecTabL:
-	.byte <1, <10, <100, <1000, <10000
+	.lobytes DecTab
 DecTabH:
-	.byte >1, >10, >100, >1000, >10000
+	.hibytes DecTab
 
 ;---------------------------------------------------------------
 ; PutDecimal                                              $C184
@@ -609,25 +572,22 @@ DecTabH:
 ;---------------------------------------------------------------
 _PutDecimal:
 	jsr CalcDecimal
-	bbsf 7, r2L, PutDec1
+	bbsf 7, r2L, @1
 	lda r2L
 	and #$3f
 	sub r3H
 	add r11L
 	sta r11L
-	bcc *+4
+	bcc @1
 	inc r11H
-PutDec1:
-	ldx r3L
+@1:	ldx r3L
 	stx r0L
-PutDec2:
-	lda Z45-1,x
+@2:	lda Z45-1,x
 	pha
 	dex
-	bne PutDec2
-PutDec3:
-	pla
+	bne @2
+@3:	pla
 	jsr _PutChar
 	dec r0L
-	bne PutDec3
+	bne @3
 	rts

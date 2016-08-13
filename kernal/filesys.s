@@ -1,6 +1,6 @@
 ; GEOS KERNAL
 ;
-; BAM/VLIR filesystem driver, application and desk accessory launching
+; BAM/VLIR filesystem driver
 
 .include "const.inc"
 .include "geossym.inc"
@@ -13,20 +13,25 @@
 ; conio.s
 .import _UseSystemFont
 
-; dlgbox.s:
-.import Dialog_2
-.import DlgBoxPrep
-
 ; graph.s
 .import ClrScr
 
 ; init.s
-.import InitGEOEnv
 .import InitGEOS
 
 ; main.s
 .import _MNLP
 
+; load.s
+.global GetStartHAddy
+.global UNK_4
+.global UNK_5
+
+.if (trap)
+.global SerialHiCompare
+.endif
+
+; syscalls
 .global _AppendRecord
 .global _BldGDirEntry
 .global _CloseRecordFile
@@ -39,12 +44,8 @@
 .global _FollowChain
 .global _FreeFile
 .global _GetFHdrInfo
-.global _GetFile
 .global _GetPtrCurDkNm
 .global _InsertRecord
-.global _LdApplic
-.global _LdDeskAcc
-.global _LdFile
 .global _NextRecord
 .global _OpenRecordFile
 .global _PointRecord
@@ -53,7 +54,6 @@
 .global _ReadFile
 .global _ReadRecord
 .global _RenameFile
-.global _RstrAppl
 .global _SaveFile
 .global _SetDevice
 .global _SetGDirEntry
@@ -61,12 +61,6 @@
 .global _UpdateRecordFile
 .global _WriteFile
 .global _WriteRecord
-.global UNK_4
-.global UNK_5
-
-.if (trap)
-.global SerialHiCompare
-.endif
 
 .segment "files1"
 
@@ -74,6 +68,8 @@ Add2:
 	AddVW 2, r6
 return:
 	rts
+
+ASSERT_NOT_BELOW_IO
 
 _ReadFile:
 	jsr EnterTurbo
@@ -110,10 +106,10 @@ RdFile4:
 	bne RdFile4
 	LoadB CPU_DATA, KRNL_IO_IN
 	AddB r1L, r7L
-	bcc *+4
+	bcc @X
 	inc r7H
-	SubB r1L, r2L
-	bcs *+4
+@X:	SubB r1L, r2L
+	bcs RdFile5
 	dec r2H
 RdFile5:
 	inc r5L
@@ -188,20 +184,24 @@ DoWrFile2:
 DoWrFile3:
 	rts
 
+ASSERT_NOT_BELOW_IO
+
 .segment "files2"
-DkNmTab:
-	.byte <DrACurDkNm, <DrBCurDkNm
-	.byte <DrCCurDkNm, <DrDCurDkNm
-	.byte >DrACurDkNm, >DrBCurDkNm
-	.byte >DrCCurDkNm, >DrDCurDkNm
+
+.define DkNmTab DrACurDkNm, DrBCurDkNm, DrCCurDkNm, DrDCurDkNm
+DkNmTabL:
+	.lobytes DkNmTab
+DkNmTabH:
+	.hibytes DkNmTab
 
 .segment "files3"
+
 _GetPtrCurDkNm:
 	ldy curDrive
-	lda DkNmTab-8,Y
-	sta zpage,X
-	lda DkNmTab-4,Y
-	sta zpage+1,X
+	lda DkNmTabL-8,Y
+	sta zpage,x
+	lda DkNmTabH-8,Y
+	sta zpage+1,x
 	rts
 
 .segment "files4"
@@ -302,6 +302,7 @@ _EnterDT_Str1:
 	.byte "with deskTop V1.5 or higher", NULL
 
 .segment "files5"
+
 UNK_4:
 	MoveB A885D, r10L
 	MoveB A885E, r0L
@@ -337,53 +338,6 @@ U_51:
 	rts
 
 .segment "files6"
-
-_GetFile:
-	jsr UNK_5
-	jsr FindFile
-	bnex GFile5
-	jsr UNK_4
-	LoadW r9, dirEntryBuf
-	CmpBI dirEntryBuf + OFF_GFILE_TYPE, DESK_ACC
-	bne GFile0
-	jmp LdDeskAcc
-GFile0:
-	cmp #APPLICATION
-	beq GFile1
-	cmp #AUTO_EXEC
-	bne _LdFile
-GFile1:
-	jmp LdApplic
-
-_LdFile:
-	jsr GetFHdrInfo
-	bnex GFile5
-	CmpBI fileHeader + O_GHSTR_TYPE, VLIR
-	bne GFile3
-	ldy #OFF_DE_TR_SC
-	lda (r9),y
-	sta r1L
-	iny
-	lda (r9),y
-	sta r1H
-	jsr ReadBuff
-	bnex GFile5
-	ldx #INV_RECORD
-	lda diskBlkBuf + 2
-	sta r1L
-	beq GFile5
-	lda diskBlkBuf + 3
-	sta r1H
-GFile3:
-	bbrf 0, A885E, GFile4
-	MoveW A885F, r7
-GFile4:
-	lda #$ff
-	sta r2L
-	sta r2H
-	jsr ReadFile
-GFile5:
-	rts
 
 _FollowChain:
 	php
@@ -446,9 +400,9 @@ FFTypesStart:
 	rol r0H
 	adc r7H
 	sta r0L
-	bcc *+4
+	bcc @X
 	inc r0H
-	jsr ClearRam
+@X:	jsr ClearRam
 	SubVW 3, r6
 	jsr Get1stDirEntry
 	bnex FFTypes5
@@ -628,16 +582,11 @@ SetDevTab:
 	.word DISK_DRV_LGH
 	.byte 0
 
+.define SetDevDrivesTab REUDskDrvSPC+0*DISK_DRV_LGH, REUDskDrvSPC+1*DISK_DRV_LGH, REUDskDrvSPC+2*DISK_DRV_LGH, REUDskDrvSPC+3*DISK_DRV_LGH
 SetDevDrivesTabL:
-	.byte <(REUDskDrvSPC+(0*DISK_DRV_LGH))
-	.byte <(REUDskDrvSPC+(1*DISK_DRV_LGH))
-	.byte <(REUDskDrvSPC+(2*DISK_DRV_LGH))
-	.byte <(REUDskDrvSPC+(3*DISK_DRV_LGH))
+	.lobytes SetDevDrivesTab
 SetDevDrivesTabH:
-	.byte >(REUDskDrvSPC+(0*DISK_DRV_LGH))
-	.byte >(REUDskDrvSPC+(1*DISK_DRV_LGH))
-	.byte >(REUDskDrvSPC+(2*DISK_DRV_LGH))
-	.byte >(REUDskDrvSPC+(3*DISK_DRV_LGH))
+	.hibytes SetDevDrivesTab
 
 _GetFHdrInfo:
 	ldy #OFF_GHDR_PTR
@@ -690,100 +639,7 @@ GFHName3:
 GFHName4:
 	rts
 
-_LdDeskAcc:
-	MoveB r10L, A885D
-	jsr GetFHdrInfo
-	bnex LDAcc1
-.if (useRamExp)
-	PushW r1
-	jsr RamExpGetStat
-	MoveW fileHeader+O_GHST_ADDR, diskBlkBuf+DACC_ST_ADDR
-	lda fileHeader+O_GHEND_ADDR+1
-	sub diskBlkBuf+DACC_ST_ADDR+1
-	sta diskBlkBuf+DACC_LGH
-	jsr RamExpPutStat
-	MoveW diskBlkBuf+DACC_ST_ADDR, r0
-	MoveB diskBlkBuf+DACC_LGH, r2H
-	MoveB diskBlkBuf+RAM_EXP_1STFREE, r1L
-	LoadB r1H, 0
-	jsr RamExpWrite
-	PopW r1
-.else
-	PushW r1
-	jsr SaveSwapFile
-	PopW r1
-	bnex LDAcc1
-.endif
-	jsr GetStartHAddy
-	lda #$ff
-	sta r2L
-	sta r2H
-	jsr ReadFile
-	bnex LDAcc1
-	jsr DlgBoxPrep
-	jsr UseSystemFont
-	jsr InitGEOEnv
-	MoveB A885D, r10L
-	PopW DeskAccPC
-	tsx
-	stx DeskAccSP
-	ldx fileHeader+O_GHST_VEC+1
-	lda fileHeader+O_GHST_VEC
-	jmp _MNLP
-	PopW r1
-LDAcc1:
-	rts
-
-_RstrAppl:
-.if (useRamExp)
-	jsr RamExpGetStat
-	MoveW diskBlkBuf+DACC_ST_ADDR, r0
-	MoveB diskBlkBuf+DACC_LGH, r2H
-	MoveB diskBlkBuf+RAM_EXP_1STFREE, r1L
-	LoadB r1H, 0
-	jsr RamExpRead
-	jsr Dialog_2
-	lda #0
-.else
-	lda #>SwapFileName
-	sta r6H
-	lda #<SwapFileName
-	sta r6L
-	LoadB r0L, NULL
-	jsr GetFile
-	bnex RsApp1
-	jsr Dialog_2
-	lda #>SwapFileName
-	sta r0H
-	lda #<SwapFileName
-	sta r0L
-	LoadW r3, fileTrScTab
-	jsr FastDelFile
-	txa
-.endif
-RsApp1:
-	ldx DeskAccSP
-	txs
-	tax
-	PushW DeskAccPC
-RsApp2:
-	rts
-
-_LdApplic:
-	jsr UNK_5
-	jsr LdFile
-	bnex LdApplic1
-	bbsf 0, A885E, LdApplic1
-	jsr UNK_4
-	MoveW_ fileHeader+O_GHST_VEC, r7
-	jmp StartAppl
-LdApplic1:
-	rts
-
-.if (useRamExp)
-.else
-SwapFileName:
-	.byte $1b,"Swap File", NULL
+.segment "files7"
 
 .if (trap)
 SerialHiCompare:
@@ -799,12 +655,7 @@ SerialHiCompare:
 .endif
 .endif
 
-SaveSwapFile:
-	LoadB fileHeader+O_GHGEOS_TYPE, TEMPORARY
-	LoadW fileHeader, SwapFileName
-	LoadW r9, fileHeader
-	LoadB r10L, NULL
-.endif
+.segment "files8"
 
 _SaveFile:
 	ldy #0

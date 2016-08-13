@@ -1,6 +1,6 @@
 ; GEOS KERNAL
 ;
-; Graphics library (lines, rectangles, points, bitmaps)
+; VIC-II graphics library
 
 .include "const.inc"
 .include "geossym.inc"
@@ -20,7 +20,10 @@
 ; patterns.s
 .import PatternTab
 
+; used by filesys.s
 .global ClrScr
+
+; syscalls
 .global _BitOtherClip
 .global _BitmapClip
 .global _BitmapUp
@@ -48,6 +51,9 @@
 
 .segment "graph1"
 
+;---------------------------------------------------------------
+; used by EnterDesktop
+;---------------------------------------------------------------
 ClrScr:
 	LoadW r0, SCREEN_BASE
 	LoadW r1, BACK_SCR_BASE
@@ -78,12 +84,12 @@ PrepareXCoord:
 	lda r4L
 	and #%00000111
 	tax
-	lda BitMaskLeadingClear,X
+	lda BitMaskLeadingClear,x
 	sta r8H
 	lda r3L
 	and #%00000111
 	tax
-	lda BitMaskLeadingSet,X
+	lda BitMaskLeadingSet,x
 	sta r8L
 	lda r3L
 	and #%11111000
@@ -93,6 +99,16 @@ PrepareXCoord:
 	sta r4L
 	rts
 
+;---------------------------------------------------------------
+; HorizontalLine                                          $C118
+;
+; Pass:      a    pattern byte
+;            r11L y position in scanlines (0-199)
+;            r3   x in pixel of left end (0-319)
+;            r4   x in pixel of right end (0-319)
+; Return:    r11L unchanged
+; Destroyed: a, x, y, r5 - r8, r11
+;---------------------------------------------------------------
 _HorizontalLine:
 	sta r7L
 	PushW r3
@@ -153,6 +169,15 @@ HLineHelp:
 	and r7L
 	ora r7H
 	rts
+;---------------------------------------------------------------
+; InvertLine                                              $C11B
+;
+; Pass:      r3   x pos of left endpoint (0-319)
+;            r4   x pos of right endpoint (0-319)
+;            r11L y pos (0-199)
+; Return:    r3-r4 unchanged
+; Destroyed: a, x, y, r5 - r8
+;---------------------------------------------------------------
 _InvertLine:
 	PushW r3
 	PushW r4
@@ -217,6 +242,16 @@ ImprintLine:
 	sty r5H
 	bra RLin0
 
+;---------------------------------------------------------------
+; RecoverLine                                             $C11E
+;
+; Pass:      r3   x pos of left endpoint (0-319)
+;            r4   x pos of right endpoint (0-319)
+;            r11L y pos of line (0-199)
+; Return:    copies bits of line from background to
+;            foreground sceen
+; Destroyed: a, x, y, r5 - r8
+;---------------------------------------------------------------
 _RecoverLine:
 	PushW r3
 	PushW r4
@@ -277,12 +312,22 @@ RecLineHelp:
 	sta (r5),Y
 	rts
 
+;---------------------------------------------------------------
+; VerticalLine                                            $C121
+;
+; Pass:      a pattern
+;            r3L top of line (0-199)
+;            r3H bottom of line (0-199)
+;            r4  x position of line (0-319)
+; Return:    draw the line
+; Destroyed: a, x, y, r4 - r8, r11
+;---------------------------------------------------------------
 _VerticalLine:
 	sta r8L
 	PushB r4L
 	and #%00000111
 	tax
-	lda BitMaskPow2Rev,X
+	lda BitMaskPow2Rev,x
 	sta r7H
 	lda r4L
 	and #%11111000
@@ -297,7 +342,7 @@ VLin0:
 	lda r7L
 	and #%00000111
 	tax
-	lda BitMaskPow2Rev,X
+	lda BitMaskPow2Rev,x
 	and r8L
 	bne VLin1
 	lda r7H
@@ -318,6 +363,11 @@ VLin2:
 	PopB r4L
 	rts
 
+;---------------------------------------------------------------
+; i_Rectangle                                             $C19F
+;
+; Same as Rectangle with data after the jsr
+;---------------------------------------------------------------
 _i_Rectangle:
 	jsr GetInlineDrwParms
 	jsr _Rectangle
@@ -325,6 +375,16 @@ _i_Rectangle:
 	lda #7
 	jmp DoInlineReturn
 
+;---------------------------------------------------------------
+; Rectangle                                               $C124
+;
+; Pass:      r2L top (0-199)
+;            r2H bottom (0-199)
+;            r3  left (0-319)
+;            r4  right (0-319)
+; Return:    draws the rectangle
+; Destroyed: a, x, y, r5 - r8, r11
+;---------------------------------------------------------------
 _Rectangle:
 	MoveB r2L, r11L
 Rect1:
@@ -339,6 +399,16 @@ Rect1:
 	bne Rect1
 	rts
 
+;---------------------------------------------------------------
+; InvertRectangle                                         $C12A
+;
+; Pass:      r2L top in scanlines (0-199)
+;            r2H bottom in scanlines (0-199)
+;            r3  left in pixels (0-319)
+;            r4  right in pixels (0-319)
+; Return:    r2L, r3H unchanged
+; Destroyed: a, x, y, r5 - r8
+;---------------------------------------------------------------
 _InvertRectangle:
 	MoveB r2L, r11L
 IRect1:
@@ -349,6 +419,11 @@ IRect1:
 	bne IRect1
 	rts
 
+;---------------------------------------------------------------
+; i_RecoverRectangle                                      $C1A5
+;
+; Same as RecoverRectangle with data after the jsr
+;---------------------------------------------------------------
 _i_RecoverRectangle:
 	jsr GetInlineDrwParms
 	jsr _RecoverRectangle
@@ -356,6 +431,16 @@ _i_RecoverRectangle:
 	lda #7
 	jmp DoInlineReturn
 
+;---------------------------------------------------------------
+; RecoverRectangle                                        $C12D
+;
+; Pass:      r2L top (0-199)
+;            r2H bottom (0-199)
+;            r3  left (0-319)
+;            r4  right (0-319)
+; Return:    rectangle recovered from backscreen
+; Destroyed: a, x, y, r5 - r8, r11
+;---------------------------------------------------------------
 _RecoverRectangle:
 	MoveB r2L, r11L
 RRect1:
@@ -366,6 +451,11 @@ RRect1:
 	bne RRect1
 	rts
 
+;---------------------------------------------------------------
+; i_ImprintRectangle                                      $C253
+;
+; Same as ImprintRectangle with data after the jsr
+;---------------------------------------------------------------
 _i_ImprintRectangle:
 	jsr GetInlineDrwParms
 	jsr _ImprintRectangle
@@ -373,6 +463,16 @@ _i_ImprintRectangle:
 	lda #7
 	jmp DoInlineReturn
 
+;---------------------------------------------------------------
+; ImprintRectangle                                        $C250
+;
+; Pass:      r2L top (0-199)
+;            r2H bottom (0-199)
+;            r3  left (0-319)
+;            r4  right (0-319)
+; Return:    r2L, r3H unchanged
+; Destroyed: a, x, y, r5 - r8, r11
+;---------------------------------------------------------------
 _ImprintRectangle:
 	MoveB r2L, r11L
 ImRec1:
@@ -383,6 +483,12 @@ ImRec1:
 	bne ImRec1
 	rts
 
+;---------------------------------------------------------------
+; i_FrameRectangle                                        $C1A2
+;
+; Same as FrameRectangle with data after the jsr
+; with the pattern byte the last
+;---------------------------------------------------------------
 _i_FrameRectangle:
 	jsr GetInlineDrwParms
 	iny
@@ -392,6 +498,17 @@ _i_FrameRectangle:
 	lda #8
 	jmp DoInlineReturn
 
+;---------------------------------------------------------------
+; FrameRectangle                                          $C127
+;
+; Pass:      a   GEOS pattern
+;            r2L top (0-199)
+;            r2H bottom (0-199)
+;            r3  left (0-319)
+;            r4  right (0-319)
+; Return:    r2L, r3H unchanged
+; Destroyed: a, x, y, r5 - r9, r11
+;---------------------------------------------------------------
 _FrameRectangle:
 	sta r9H
 	ldy r2L
@@ -437,6 +554,11 @@ GetInlineDrwParms:
 GtDrwPrmsEnd:
 	rts
 
+;---------------------------------------------------------------
+; i_GraphicsString                                        $C1A8
+;
+; Same as GraphicsString with data after the jsr
+;---------------------------------------------------------------
 _i_GraphicsString:
 	PopB r0L
 	pla
@@ -448,6 +570,23 @@ i_GStr0:
 	jsr _GraphicsString
 	jmp (r0)
 
+;---------------------------------------------------------------
+; GraphicsString                                          $C136
+;
+; Pass:      r0 ptr to graphics string,0
+;            MOVEPENTO     1  .word x, .byte  y
+;            LINETO        2  .word x, .byte  y
+;            RECTANGLETO   3  .word x, .byte  y
+;            NEWPATTERN    5  .byte pattern No.
+;            ESC_PUTSTRING 6  see PutString
+;            FRAME_RECTO   7  .word x, .byte  y
+;          New:
+;            MOVEPENRIGHT  8  .word x
+;            MOVEPENDOWN   9  .byte y
+;            MOVERIGHTDOWN 10 .word x, .byte  y
+; Return:    graphics being drawed
+; Destroyed: a, x, y, r0 - r15
+;---------------------------------------------------------------
 _GraphicsString:
 	jsr Getr0AndInc
 	beq _GraphicsStringEnd
@@ -460,19 +599,11 @@ _GraphicsString:
 _GraphicsStringEnd:
 	rts
 
+.define GStrT _DoMovePenTo, _DoLineTo, _DoRectangleTo, _DoNothing, _DoNewPattern, _DoESC_PutString, _DoFrame_RecTo, _DoPenXDelta, _DoPenYDelta, _DoPenXYDelta
 GStrTL:
-	.byte <_DoMovePenTo, <_DoLineTo
-	.byte <_DoRectangleTo, <_DoNothing
-	.byte <_DoNewPattern, <_DoESC_PutString
-	.byte <_DoFrame_RecTo, <_DoPenXDelta
-	.byte <_DoPenYDelta, <_DoPenXYDelta
-
+	.lobytes GStrT
 GStrTH:
-	.byte >_DoMovePenTo, >_DoLineTo
-	.byte >_DoRectangleTo, >_DoNothing
-	.byte >_DoNewPattern, >_DoESC_PutString
-	.byte >_DoFrame_RecTo, >_DoPenXDelta
-	.byte >_DoPenYDelta, >_DoPenXYDelta
+	.hibytes GStrT
 
 _DoMovePenTo:
 	jsr GetCoords
@@ -588,6 +719,13 @@ GSSC5:
 	stx GraphPenXL
 	sty GraphPenXH
 	rts
+;---------------------------------------------------------------
+; SetPattern                                              $C139
+;
+; Pass:      a pattern nbr (0-33)
+; Return:    currentPattern - updated
+; Destroyed: a
+;---------------------------------------------------------------
 _SetPattern:
 	asl
 	asl
@@ -618,6 +756,16 @@ Gr0AI0:
 	cmp #0
 	rts
 
+;---------------------------------------------------------------
+; GetScanLine                                             $C13C
+;
+; Function:  Returns the address of the beginning of a scanline
+
+; Pass:      x   scanline nbr
+; Return:    r5  add of 1st byte of foreground scr
+;            r6  add of 1st byte of background scr
+; Destroyed: a
+;---------------------------------------------------------------
 _GetScanLine:
 	txa
 	pha
@@ -629,70 +777,95 @@ _GetScanLine:
 	lsr
 	lsr
 	tax
-	bbrf 7, dispBufferOn, GSC2
-	bit dispBufferOn
-	bvs GSC1
-	lda LineTabL,X
+	bbrf 7, dispBufferOn, @2 ; ST_WR_FORE
+	bbsf 6, dispBufferOn, @1 ; ST_WR_BACK
+	lda LineTabL,x
 	ora r6H
 	sta r5L
-	lda LineTabH,X
+	lda LineTabH,x
 	sta r5H
 	MoveW r5, r6
 	pla
 	tax
 	rts
-
-GSC1:
-	lda LineTabL,X
+@1:	lda LineTabL,x
 	ora r6H
 	sta r5L
 	sta r6L
-	lda LineTabH,X
+	lda LineTabH,x
 	sta r5H
-	subv 64
+	subv >(SCREEN_BASE-BACK_SCR_BASE)
 	sta r6H
 	pla
 	tax
 	rts
-
-GSC2:
-	bbrf 6, dispBufferOn, GSC3
-	lda LineTabL,X
+@2:	bbrf 6, dispBufferOn, @3 ; ST_WR_BACK
+	lda LineTabL,x
 	ora r6H
 	sta r6L
-	lda LineTabH,X
-	subv 64
+	lda LineTabH,x
+	subv >(SCREEN_BASE-BACK_SCR_BASE)
 	sta r6H
 	MoveW r6, r5
 	pla
 	tax
 	rts
-
-GSC3:
-	LoadB r5L, 0
+@3:	LoadB r5L, <$AF00
 	sta r6L
-	LoadB r5H, $AF
+	LoadB r5H, >$AF00
 	sta r6H
 	pla
 	tax
 	rts
 
+.define LineTab SCREEN_BASE+0*320, SCREEN_BASE+1*320, SCREEN_BASE+2*320, SCREEN_BASE+3*320, SCREEN_BASE+4*320, SCREEN_BASE+5*320, SCREEN_BASE+6*320, SCREEN_BASE+7*320, SCREEN_BASE+8*320, SCREEN_BASE+9*320, SCREEN_BASE+10*320, SCREEN_BASE+11*320, SCREEN_BASE+12*320, SCREEN_BASE+13*320, SCREEN_BASE+14*320, SCREEN_BASE+15*320, SCREEN_BASE+16*320, SCREEN_BASE+17*320, SCREEN_BASE+18*320, SCREEN_BASE+19*320, SCREEN_BASE+20*320, SCREEN_BASE+21*320, SCREEN_BASE+22*320, SCREEN_BASE+23*320, SCREEN_BASE+24*320
 LineTabL:
-	.byte $00, $40, $80, $c0, $00, $40, $80, $c0
-	.byte $00, $40, $80, $c0, $00, $40, $80, $c0
-	.byte $00, $40, $80, $c0, $00, $40, $80, $c0
-	.byte $00
+	.lobytes LineTab
 LineTabH:
-	.byte $a0, $a1, $a2, $a3, $a5, $a6, $a7, $a8
-	.byte $aa, $ab, $ac, $ad, $af, $b0, $b1, $b2
-	.byte $b4, $b5, $b6, $b7, $b9, $ba, $bb, $bc
-	.byte $be
+	.hibytes LineTab
 
 .segment "graph3"
 
+;---------------------------------------------------------------
+; BitOtherClip                                            $C2C5
+;
+; Pass:      r0   ptr to a 134 bytes buffer
+;            r1L  left side of window  in bytes (0-39)
+;            r1H  top of window (0-199)
+;            r2L  width in bytes of window (0-39)
+;            r2H  height in pixels of window (0-199)
+;            r11L nbr of bytes to skip from the left side before
+;                 printing it
+;            r11H the width in pixels of the bitmap to show
+;                 within the window
+;            r12  nbr of scanline to skip from the top
+;            r13  add. of input routine, returns next byte from
+;                 bitmap in the accumulator.
+;            r14  address of sync routine. Just reload r0 with
+;                 buffer address
+; Return:    display the bitmap
+; Destroyed: a, x, y, r0 - r14
+;---------------------------------------------------------------
 _BitOtherClip:
 	ldx #$ff
 	jmp BitmClp1
+;---------------------------------------------------------------
+; BitmapClip                                              $C2AA
+;
+; Pass:      r0   pointer to bitmap
+;            r1L  left side of window in bytes to display the
+;                 bitmap (0-39)
+;            r1H  top of window in pixels (0-199)
+;            r2L  width of window in bytes (0-39)
+;            r2H  height of window in pixels (0-39)
+;            r11L nbr of bytes to skip from the left side before
+;                 printing it
+;            r11H the width in pixels of the bitmap to show
+;                 within the window
+;            r12  nbr of scanline to skip from the top
+; Return:    display the bitmap
+; Destroyed: a, x, y, r0 - r12
+;---------------------------------------------------------------
 _BitmapClip:
 	ldx #0
 BitmClp1:
@@ -738,6 +911,11 @@ BitmHelpClp:
 BitmHClp1:
 	rts
 
+;---------------------------------------------------------------
+; i_BitmapUp                                              $C1AB
+;
+; Same as BitmapUp with data after the jsr
+;---------------------------------------------------------------
 _i_BitmapUp:
 	PopW returnAddress
 	ldy #1
@@ -763,6 +941,17 @@ _i_BitmapUp:
 	lda #7
 	jmp DoInlineReturn
 
+;---------------------------------------------------------------
+; BitmapUp                                                $C142
+;
+; Pass:      r0  ptr of bitmap
+;            r1L x pos. in bytes (0-39)
+;            r1H y pos. in scanlines (0-199)
+;            r2L width in bytes (0-39)
+;            r2H height in pixels (0-199)
+; Return:    display the bitmap
+; Destroyed: a, x, y, r0 - r9l
+;---------------------------------------------------------------
 _BitmapUp:
 	PushB r9H
 	LoadB r9H, NULL
@@ -852,9 +1041,9 @@ BitmDe21:
 	ldy #0
 	lda (r0),y
 	inc r0L
-	bne *+4
+	bne @X
 	inc r0H
-	ldx r4L
+@X:	ldx r4L
 	beq BitmDe22
 	dec r4H
 	bne BitmDe22
@@ -876,6 +1065,20 @@ IndirectR14:
 
 .segment "graph4"
 
+;---------------------------------------------------------------
+; DrawLine                                                $C130
+;
+; Pass:      signFlg  set to recover from back screen
+;                     reset for drawing
+;            carryFlg set for drawing in forground color
+;                     reset for background color
+;            r3       x pos of 1st point (0-319)
+;            r11L     y pos of 1st point (0-199)
+;            r4       x pos of 2nd point (0-319)
+;            r11H     y pos of 2nd point (0-199)
+; Return:    line is drawn or recover
+; Destroyed: a, x, y, r4 - r8, r11
+;---------------------------------------------------------------
 _DrawLine:
 	php
 	LoadB r7H, 0
@@ -945,9 +1148,9 @@ DrwLin5:
 	CmpW r3, r4
 	bcs DrwLin7
 	inc r3L
-	bne *+4
+	bne @X
 	inc r3H
-	bbrf 7, r8H, DrwLin6
+@X:	bbrf 7, r8H, DrwLin6
 	AddW r9, r8
 	bra DrwLin5
 DrwLin6:
@@ -1014,6 +1217,13 @@ Drw2Lin5:
 	plp
 	rts
 
+;---------------------------------------------------------------
+; DrawPoint                                               $C133
+;
+; Pass:      same as DrawLine with no 2nd point
+; Return:    point is drawn or recovered
+; Destroyed: a, x, y, r5 - r6
+;---------------------------------------------------------------
 _DrawPoint:
 	php
 	ldx r11L
@@ -1053,6 +1263,15 @@ DrwPoi4:
 	sta (r5),y
 	rts
 
+;---------------------------------------------------------------
+; TestPoint                                               $C13F
+;
+; Pass:      a    pattern
+;            r3   x position of pixel (0-319)
+;            r11L y position of pixel (0-199)
+; Return:    carry set if bit is set
+; Destroyed: a, x, y, r5, r6
+;---------------------------------------------------------------
 _TestPoint:
 	ldx r11L
 	jsr _GetScanLine
@@ -1060,9 +1279,9 @@ _TestPoint:
 	and #%11111000
 	tay
 	lda r3H
-	beq *+4
+	beq @X
 	inc r6H
-	lda r3L
+@X:	lda r3L
 	and #%00000111
 	tax
 	lda BitMaskPow2Rev,x

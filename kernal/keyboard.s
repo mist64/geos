@@ -6,13 +6,19 @@
 .include "geossym.inc"
 .include "geosmac.inc"
 .include "kernal.inc"
+.include "c64.inc"
 
 ; bitmask.s
 .import BitMaskPow2
 
+; used by irq.s
 .global _DoKeyboardScan
-.global _GetNextChar
+
+; used by mouse.s
 .global KbdScanHelp3
+
+; syscall
+.global _GetNextChar
 
 .segment "keyboard"
 
@@ -193,6 +199,8 @@ KbdScanHelp4:
 KbdScanHlp_41:
 	rts
 
+;---------------------------------------------------------------
+;---------------------------------------------------------------
 _GetNextChar:
 	bbrf KEYPRESS_BIT, pressFlag, GetNxtChar1
 	jmp KbdScanHelp3

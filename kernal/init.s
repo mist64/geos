@@ -8,8 +8,9 @@
 .include "config.inc"
 .include "kernal.inc"
 .include "jumptab.inc"
+.include "c64.inc"
 
-; files.s
+; filesys.s
 .import _EnterDeskTop
 
 ; graph.s
@@ -60,19 +61,21 @@ _FirstInit:
 FItempColor:
 	.byte (DKGREY << 4)+LTGREY
 	ldx CPU_DATA
+ASSERT_NOT_BELOW_IO
 	LoadB CPU_DATA, IO_IN
 	LoadB mob0clr, BLUE
 	sta mob1clr
 	LoadB extclr, BLACK
 	stx CPU_DATA
+ASSERT_NOT_BELOW_IO
 	ldy #62
 :	lda #0
 	sta mousePicData,Y
 	dey
 	bpl :-
 	ldx #24
-:	lda InitMsePic-1,X
-	sta mousePicData-1,X
+:	lda InitMsePic-1,x
+	sta mousePicData-1,x
 	dex
 	bne :-
 	jmp UNK_6

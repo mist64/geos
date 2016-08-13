@@ -21,24 +21,44 @@
 ; process.s
 .import _Sleep
 
+; used by dlgbox
 .global CalcIconDescTab
+
+; used by mouse
 .global ProcessClick
+
+; syscall
 .global _DoIcons
 
 .segment "icon1"
 
+;---------------------------------------------------------------
+; DoIcons                                                 $C15A
+;
+; Function:  Draw and turn on icons as defined in an Icon Table.
+;
+; Pass:      r0 ptr to icon table
+; Return:    nothing
+; Destroyed: a, x, y, r0 - r11
+;    ex: .byte nbr_icons
+;        .word x mouse
+;        .byte y mouse
+;
+;        .word icon1Pic
+;        .byte x,y,w,h
+;        .word DoIcon1 .etc...
+;---------------------------------------------------------------
 _DoIcons:
 	MoveW r0, IconDescVec
 	jsr Icons_1
 	jsr ResetMseRegion
 	lda mouseOn
 	and #SET_MSE_ON
-	bne DoIcons1
+	bne @1
 	lda mouseOn
 	and #%10111111
 	sta mouseOn
-DoIcons1:
-	lda mouseOn
+@1:	lda mouseOn
 	ora #SET_ICONSON
 	sta mouseOn
 	ldy #1
@@ -66,70 +86,63 @@ CalcIconDescTab:
 
 Icons_1:
 	LoadB r10L, NULL
-Icons_10:
-	lda r10L
+@1:	lda r10L
 	jsr CalcIconDescTab
 	ldx #0
-Icons_11:
-	lda (IconDescVec),y
+@2:	lda (IconDescVec),y
 	sta r0,x
 	iny
 	inx
 	cpx #6
-	bne Icons_11
+	bne @2
 	lda r0L
 	ora r0H
-	beq Icons_12
+	beq @3
 	jsr _BitmapUp
-Icons_12:
-	inc r10L
+@3:	inc r10L
 	lda r10L
 	ldy #0
 	cmp (IconDescVec),y
-	bne Icons_10
-Icons_13:
+	bne @1
 	rts
 
+;---------------------------------------------------------------
+; called by mouse
+;---------------------------------------------------------------
 ProcessClick:
 	lda IconDescVecH
-	beq ProcClk1
+	beq @1
 	jsr FindClkIcon
-	bcs ProcClk2
-ProcClk1:
-	lda otherPressVec
+	bcs @2
+@1:	lda otherPressVec
 	ldx otherPressVec+1
 	jmp CallRoutine
-ProcClk2:
-	lda clkBoxTemp
-	bne ProcClk7
+@2:	lda clkBoxTemp
+	bne @7
 	lda r0L
 	sta clkBoxTemp2
 	sty clkBoxTemp
 	lda #%11000000
 	bit iconSelFlg
-	beq ProcClk5
-	bmi ProcClk3
-	bvs ProcClk4
-ProcClk3:
-	jsr CalcIconCoords
+	beq @5
+	bmi @3
+	bvs @4
+@3:	jsr CalcIconCoords
 	jsr MenuDoInvert
 	MoveB selectionFlash, r0L
 	LoadB r0H, NULL
 	jsr _Sleep
 	MoveB clkBoxTemp2, r0L
 	ldy clkBoxTemp
-ProcClk4:
-	jsr CalcIconCoords
+@4:	jsr CalcIconCoords
 	jsr MenuDoInvert
-ProcClk5:
-	ldy #$1e
+@5:	ldy #$1e
 	ldx #0
 	lda dblClickCount
-	beq ProcClk6
+	beq @6
 	ldx #$ff
 	ldy #0
-ProcClk6:
-	sty dblClickCount
+@6:	sty dblClickCount
 	stx r0H
 	MoveB clkBoxTemp2, r0L
 	ldy clkBoxTemp
@@ -142,18 +155,16 @@ ProcClk6:
 	dey
 	lda (IconDescVec),y
 	jsr CallRoutine
-ProcClk7:
-	rts
+@7:	rts
 
 FindClkIcon:
 	LoadB r0L, NULL
-FndClkIcn1:
-	lda r0L
+@1:	lda r0L
 	jsr CalcIconDescTab
 	lda (IconDescVec),y
 	iny
 	ora (IconDescVec),y
-	beq FndClkIcn2
+	beq @2
 	iny
 	lda mouseXPos+1
 	lsr
@@ -163,30 +174,28 @@ FndClkIcn1:
 	lsr
 	sec
 	sbc (IconDescVec),y
-	bcc FndClkIcn2
+	bcc @2
 	iny
 	iny
 	cmp (IconDescVec),y
-	bcs FndClkIcn2
+	bcs @2
 	dey
 	lda mouseYPos
 	sec
 	sbc (IconDescVec),y
-	bcc FndClkIcn2
+	bcc @2
 	iny
 	iny
 	cmp (IconDescVec),y
-	bcc FndClkIcn3
-FndClkIcn2:
-	inc r0L
+	bcc @3
+@2:	inc r0L
 	lda r0L
 	ldy #0
 	cmp (IconDescVec),y
-	bne FndClkIcn1
+	bne @1
 	clc
 	rts
-FndClkIcn3:
-	sec
+@3:	sec
 	rts
 
 CalcIconCoords:

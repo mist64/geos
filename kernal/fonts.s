@@ -16,12 +16,15 @@
 .import BitMaskLeadingSet
 .import BitMaskLeadingClear
 
+; used by conio.s
+.global FontPutChar
+
+; syscall
 .global _GetRealSize
-.global Font_10
 
 .segment "fonts1"
-ID100:
-	.byte $b1, $30, $03, $1b, $d8, $c0, $0c, $8d, $80, $10, $02, $20, $01, $08, $40, $04
+
+ID110:
 	.byte $00, $01, $03, $03, $06, $07, $07, $07, $0c, $0d, $0f, $0f, $0e, $0f, $0f, $0f
 	.byte $18, $19, $1b, $1b, $1e, $1f, $1f, $1f, $1c, $1d, $1f, $1f, $1e, $1f, $1f, $1f
 	.byte $30, $31, $33, $33, $36, $37, $37, $37, $3c, $3d, $3f, $3f, $3e, $3f, $3f, $3f
@@ -41,6 +44,19 @@ ID100:
 
 .segment "fonts2"
 
+;---------------------------------------------------------------
+; GetRealSize                                             $C1B1
+;
+; Function:  Returns the size of a character in the current
+;            mode (bold, italic...) and current Font.
+;
+; Pass:      a   ASCII character
+;            x   currentMode
+; Return:    y   character width
+;            x   character height
+;            a   baseline offset
+; Destroyed: nothing
+;---------------------------------------------------------------
 _GetRealSize:
 	subv 32
 	jsr GetChWdth1
@@ -49,12 +65,11 @@ _GetRealSize:
 	ldx curHeight
 	pha
 	and #$40
-	beq GReSiz1
+	beq @1
 	iny
-GReSiz1:
-	pla
+@1:	pla
 	and #8
-	beq GReSiz2
+	beq @2
 	inx
 	inx
 	iny
@@ -62,8 +77,7 @@ GReSiz1:
 	lda baselineOffset
 	addv 2
 	rts
-GReSiz2:
-	lda baselineOffset
+@2:	lda baselineOffset
 	rts
 
 Font_1:
@@ -100,10 +114,9 @@ Font_1:
 	sta r3H
 	tax
 	cpx #3
-	bcc Font_11
+	bcc @1
 	ldx #3
-Font_11:
-	lda Font_tabL,x
+@1:	lda Font_tabL,x
 	sta r13L
 	lda Font_tabH,x
 	sta r13H
@@ -134,10 +147,9 @@ Font_11:
 	lda currentMode
 	tax
 	and #SET_OUTLINE
-	beq Font_12
+	beq @2
 	lda #$80
-Font_12:
-	sta r8H
+@2:	sta r8H
 	lda r5L
 	addv 32
 	jsr GetRealSize
@@ -147,16 +159,14 @@ Font_12:
 	tya
 	pha
 	lda r11H
-	bmi Font_13
+	bmi @3
 	CmpW rightMargin, r11
 	bcc Font_16
-Font_13:
-	lda currentMode
+@3:	lda currentMode
 	and #SET_ITALIC
-	bne Font_14
+	bne @4
 	tax
-Font_14:
-	txa
+@4:	txa
 	lsr
 	sta r3L
 	add r11L
@@ -177,10 +187,9 @@ Font_14:
 	ldx #0
 	lda currentMode
 	and #SET_REVERSE
-	beq Font_15
+	beq @5
 	dex
-Font_15:
-	stx r10L
+@5:	stx r10L
 	clc
 	rts
 
@@ -192,6 +201,7 @@ Font_16:
 	inc r11H
 	sec
 	rts
+
 Font_17:
 	SubB r3L, r11L
 	bcs Font_18
@@ -200,45 +210,40 @@ Font_18:
 	sec
 	rts
 
+.define Font_tab FontGt1, FontGt2, FontGt3, FontGt4
 Font_tabL:
-	.byte <FontGt1, <FontGt2, <FontGt3, <FontGt4
+	.lobytes Font_tab
 Font_tabH:
-	.byte >FontGt1, >FontGt2, >FontGt3, >FontGt4
+	.hibytes Font_tab
 
 Font_2:
 	ldx r1H
 	jsr GetScanLine
 	lda FontTVar2
 	ldx FontTVar2+1
-	bmi Font_22
+	bmi @2
 	cpx leftMargin+1
-	bne Font_21
+	bne @1
 	cmp leftMargin
-Font_21:
-	bcs Font_23
-Font_22:
-	ldx leftMargin+1
+@1:	bcs @3
+@2:	ldx leftMargin+1
 	lda leftMargin
-Font_23:
-	pha
+@3:	pha
 	and #%11111000
 	sta r4L
 	cpx #0
-	bne Font_24
+	bne @4
 	cmp #$c0
-	bcc Font_26
-Font_24:
-	subv $80
+	bcc @6
+@4:	subv $80
 	pha
 	AddVB $80, r5L
 	sta r6L
-	bcc Font_25
+	bcc @5
 	inc r5H
 	inc r6H
-Font_25:
-	pla
-Font_26:
-	sta r1L
+@5:	pla
+@6:	sta r1L
 	MoveB FontTVar2+1, r3L
 	lsr r3L
 	lda FontTVar2
@@ -255,10 +260,9 @@ Font_26:
 	lsr
 	lsr
 	sub r7L
-	bpl Font_27
+	bpl @7
 	lda #0
-Font_27:
-	sta FontTVar1
+@7:	sta FontTVar1
 	lda FontTVar2
 	and #%00000111
 	sta r7L
@@ -274,13 +278,11 @@ Font_27:
 	ldx rightMargin+1
 	lda rightMargin
 	cpx r11H
-	bne Font_28
+	bne @8
 	cmp r11L
-Font_28:
-	bcs Font_29
+@8:	bcs @9
 	tay
-Font_29:
-	tya
+@9:	tya
 	and #%00000111
 	tax
 	lda BitMaskLeadingClear,x
@@ -289,25 +291,22 @@ Font_29:
 	sta r9H
 	tya
 	sub r4L
-	bpl Font_210
+	bpl @A
 	lda #0
-Font_210:
-	lsr
+@A:	lsr
 	lsr
 	lsr
 	add FontTVar1
 	sta r8L
 	cmp r3H
-	bcs Font_211
+	bcs @B
 	lda r3H
-Font_211:
-	cmp #3
-	bcs Font_213
+@B:	cmp #3
+	bcs @D
 	cmp #2
-	bne Font_212
+	bne @C
 	lda #1
-Font_212:
-	asl
+@C:	asl
 	asl
 	asl
 	asl
@@ -318,93 +317,86 @@ Font_212:
 	add r12L
 	tax
 	lda Font_tab2,x
-	addv <FontSH1
+	addv <base
 	tay
 	lda #0
-	adc #>FontSH1
-	bne Font_214
-Font_213:
-	lda #>FontSH5
+	adc #>base
+	bne @E
+@D:	lda #>FontSH5
 	ldy #<FontSH5
-Font_214:
-	sta r12H
+@E:	sta r12H
 	sty r12L
-Font_215:
+clc_rts:
 	clc
 	rts
 
 Font_tab2:
-	.byte <(FntSh56-FontSH1)
-	.byte <(FontSH3-FontSH1+0)
-	.byte <(FontSH3-FontSH1+1)
-	.byte <(FontSH3-FontSH1+2)
-	.byte <(FontSH3-FontSH1+3)
-	.byte <(FontSH3-FontSH1+4)
-	.byte <(FontSH3-FontSH1+5)
-	.byte <(FontSH3-FontSH1+6)
-	.byte <(FontSH1-FontSH1+7)
-	.byte <(FontSH1-FontSH1+6)
-	.byte <(FontSH1-FontSH1+5)
-	.byte <(FontSH1-FontSH1+4)
-	.byte <(FontSH1-FontSH1+3)
-	.byte <(FontSH1-FontSH1+2)
-	.byte <(FontSH1-FontSH1+1)
-	.byte <(FontSH1-FontSH1+0)
-	.byte <(FntSh56-FontSH1)
-	.byte <(FontSH4-FontSH1+0)
-	.byte <(FontSH4-FontSH1+5)
-	.byte <(FontSH4-FontSH1+10)
-	.byte <(FontSH4-FontSH1+15)
-	.byte <(FontSH4-FontSH1+20)
-	.byte <(FontSH4-FontSH1+25)
-	.byte <(FontSH4-FontSH1+30)
-	.byte <(FontSH2-FontSH1+35)
-	.byte <(FontSH2-FontSH1+30)
-	.byte <(FontSH2-FontSH1+25)
-	.byte <(FontSH2-FontSH1+20)
-	.byte <(FontSH2-FontSH1+15)
-	.byte <(FontSH2-FontSH1+10)
-	.byte <(FontSH2-FontSH1+5)
-	.byte <(FontSH2-FontSH1+0)
+	.byte <(noop-base)
+	.byte <(b7-base)
+	.byte <(b6-base)
+	.byte <(b5-base)
+	.byte <(b4-base)
+	.byte <(b3-base)
+	.byte <(b2-base)
+	.byte <(b1-base)
+	.byte <(c0-base)
+	.byte <(c1-base)
+	.byte <(c2-base)
+	.byte <(c3-base)
+	.byte <(c4-base)
+	.byte <(c5-base)
+	.byte <(c6-base)
+	.byte <(c7-base)
+	.byte <(noop-base)
+	.byte <(d7-base)
+	.byte <(d6-base)
+	.byte <(d5-base)
+	.byte <(d4-base)
+	.byte <(d3-base)
+	.byte <(d2-base)
+	.byte <(d1-base)
+	.byte <(e0-base)
+	.byte <(e1-base)
+	.byte <(e2-base)
+	.byte <(e3-base)
+	.byte <(e4-base)
+	.byte <(e5-base)
+	.byte <(e6-base)
+	.byte <(e7-base)
 
+; called if currentMode & (SET_UNDERLINE | SET_ITALIC)
 Font_3:
 	lda currentMode
-	bpl Font_32
+	bpl @2
 	ldy r1H
 	cpy E87FE
-	beq Font_31
+	beq @1
 	dey
 	cpy E87FE
-	bne Font_32
-Font_31:
-	lda r10L
+	bne @2
+@1:	lda r10L
 	eor #$ff
 	sta r10L
-Font_32:
-	bbrf ITALIC_BIT, currentMode, Font_215
+@2:	bbrf ITALIC_BIT, currentMode, clc_rts
 	lda r10H
 	lsr
-	bcs Font_35
+	bcs @5
 	ldx FontTVar2
-	bne Font_33
+	bne @3
 	dec FontTVar2+1
-Font_33:
-	dex
+@3:	dex
 	stx FontTVar2
 	ldx r11L
-	bne Font_34
+	bne @4
 	dec r11H
-Font_34:
-	dex
+@4:	dex
 	stx r11L
 	jsr Font_2
-Font_35:
-	CmpW rightMargin, FontTVar2
-	bcc Font_36
+@5:	CmpW rightMargin, FontTVar2
+	bcc @6
 	CmpW leftMargin, r11
 	rts
-Font_36:
-	sec
+@6:	sec
 	rts
 
 Font_4:
@@ -412,102 +404,91 @@ Font_4:
 	ldx FontTVar1
 	lda Z45,x
 	cpx r8L
-	beq Font_43
-	bcs Font_44
+	beq @3
+	bcs @4
 	eor r10L
 	and r9L
-	sta Font4_B1
+	sta @mask1
 	lda r3L
 	and (r6),y
-Font4_B1 = *+1
+@mask1 = *+1
 	ora #0
 	sta (r6),y
 	sta (r5),y
-Font_41:
-	tya
+@1:	tya
 	addv 8
 	tay
 	inx
 	cpx r8L
-	beq Font_42
+	beq @2
 	lda Z45,x
 	eor r10L
 	sta (r6),y
 	sta (r5),y
-	bra Font_41
-Font_42:
-	lda Z45,x
+	bra @1
+@2:	lda Z45,x
 	eor r10L
 	and r9H
-	sta Font4_B2
+	sta @mask2
 	lda r4H
 	and (r6),y
-Font4_B2 = *+1
+@mask2 = *+1
 	ora #0
 	sta (r6),y
 	sta (r5),y
 	rts
-Font_43:
-	eor r10L
+@3:	eor r10L
 	and r9H
 	eor #$ff
 	ora r3L
 	ora r4H
 	eor #$ff
-	sta Font4_B3
+	sta @mask3
 	lda r3L
 	ora r4H
 	and (r6),y
-Font4_B3 = *+1
+@mask3 = *+1
 	ora #0
 	sta (r6),y
 	sta (r5),y
-Font_44:
-	rts
+@4:	rts
 
 Font_5:
 	ldx r8L
 	lda #0
-Font_51:
-	sta E87FF,x
+@1:	sta E87FF,x
 	dex
-	bpl Font_51
+	bpl @1
 	lda r8H
 	and #%01111111
-	bne Font_54
-Font_52:
-	jsr Font_8
-Font_52_2:
-	ldx r8L
-Font_53:
-	lda E87FF,x
+	bne @5
+@2:	jsr Font_8
+@3:	ldx r8L
+@4:	lda E87FF,x
 	sta Z45,x
 	dex
-	bpl Font_53
+	bpl @4
 	inc r8H
 	rts
-Font_54:
-	cmp #1
-	beq Font_55
+@5:	cmp #1
+	beq @6
 	ldy r10H
 	dey
-	beq Font_52
+	beq @2
 	dey
 	php
 	jsr Font_8
 	jsr Font_6
 	plp
-	beq Font_56
-Font_55:
-	jsr Font_6
+	beq @7
+@6:	jsr Font_6
 	jsr FntIndirectJMP
 	jsr Font_8
 	SubW curSetWidth, r2
-Font_56:
-	jsr FntIndirectJMP
+@7:	jsr FntIndirectJMP
 	jsr Font_8
 	jsr Font_7
-	bra Font_52_2
+	bra @3
 
 Font_6:
 	AddW curSetWidth, r2
@@ -515,67 +496,57 @@ Font_6:
 
 Font_7:
 	ldy #$ff
-Font_71:
-	iny
+@1:	iny
 	ldx #7
-Font_72:
-	lda Z45,y
+@2:	lda Z45,y
 	and BitMaskPow2,x
-	beq Font_73
+	beq @3
 	lda BitMaskPow2,x
 	eor #$ff
 	and E87FF,y
 	sta E87FF,y
-Font_73:
-	dex
-	bpl Font_72
+@3:	dex
+	bpl @2
 	cpy r8L
-	bne Font_71
+	bne @1
 	rts
 
 Font_8:
 	jsr Font_9
 	ldy #$ff
-Font_81:
-	iny
+@1:	iny
 	ldx #7
-Font_82:
-	lda Z45,y
+@2:	lda Z45,y
 	and BitMaskPow2,x
-	beq Font_87
+	beq @7
 	lda E87FF,y
 	ora BitMaskPow2,x
 	sta E87FF,y
 	inx
 	cpx #8
-	bne Font_83
+	bne @3
 	lda E87FE,y
 	ora #1
 	sta E87FE,y
-	bne Font_84
-Font_83:
-	lda E87FF,y
+	bne @4
+@3:	lda E87FF,y
 	ora BitMaskPow2,x
 	sta E87FF,y
-Font_84:
+@4:	dex
 	dex
-	dex
-	bpl Font_85
+	bpl @5
 	lda E8800,y
 	ora #$80
 	sta E8800,y
-	bne Font_86
-Font_85:
-	lda E87FF,y
+	bne @6
+@5:	lda E87FF,y
 	ora BitMaskPow2,x
 	sta E87FF,y
-Font_86:
-	inx
-Font_87:
-	dex
-	bpl Font_82
+@6:	inx
+@7:	dex
+	bpl @2
 	cpy r8L
-	bne Font_81
+	bne @1
 	rts
 
 Font_9:
@@ -589,146 +560,141 @@ Font_9:
 	ror Z45+7
 	rts
 
-Font_10:
+; central character printing, called from conio.s
+; character - 32 in A
+FontPutChar:
 	nop
 	tay
 	PushB r1H
 	tya
-	jsr Font_1
-	bcs Font_108
-Font_100:
-	clc
+	jsr Font_1 ; put pointer in r13
+	bcs @9 ; return
+@1:	clc
 	lda currentMode
 	and #SET_UNDERLINE | SET_ITALIC
-	beq Font_101
+	beq @2
 	jsr Font_3
-Font_101:
-	php
-	bcs Font_102
-	jsr FntIndirectJMP
-Font_102:
-	bbrf 7, r8H, Font_103
+@2:	php
+	bcs @3
+	jsr FntIndirectJMP ; call r13
+@3:	bbrf 7, r8H, @4
 	jsr Font_5
-	bra Font_104
-Font_103:
-	jsr Font_6
-Font_104:
-	plp
-	bcs Font_106
+	bra @5
+@4:	jsr Font_6
+@5:	plp
+	bcs @7
 	lda r1H
 	cmp windowTop
-	bcc Font_106
+	bcc @7
 	cmp windowBottom
-	bcc Font_105
-	bne Font_106
-Font_105:
-	jsr Font_4
-Font_106:
-	inc r5L
+	bcc @6
+	bne @7
+@6:	jsr Font_4
+@7:	inc r5L
 	inc r6L
 	lda r5L
 	and #%00000111
-	bne Font_107
+	bne @8
 	inc r5H
 	inc r6H
 	AddVB $38, r5L
 	sta r6L
-	bcc Font_107
+	bcc @8
 	inc r5H
 	inc r6H
-Font_107:
-	inc r1H
+@8:	inc r1H
 	dec r10H
-	bne Font_100
-Font_108:
-	PopB r1H
+	bne @1
+@9:	PopB r1H
 	rts
 
-;procedures indexed from Font_Tab2, DO NOT CHANGE!
+base:
 
-FontSH1:
-	lsr
-	lsr
-	lsr
-	lsr
-	lsr
-	lsr
-	lsr
+c7:	lsr
+c6:	lsr
+c5:	lsr
+c4:	lsr
+c3:	lsr
+c2:	lsr
+c1:	lsr
+c0:	jmp FntShJump
+
+e7:	lsr
+	ror Z46
+	ror Z47
+e6:	lsr
+	ror Z46
+	ror Z47
+e5:	lsr
+	ror Z46
+	ror Z47
+e4:	lsr
+	ror Z46
+	ror Z47
+e3:	lsr
+	ror Z46
+	ror Z47
+e2:	lsr
+	ror Z46
+	ror Z47
+e1:	lsr
+	ror Z46
+	ror Z47
+e0:	jmp FntShJump
+
+b7:	asl
+b6:	asl
+b5:	asl
+b4:	asl
+b3:	asl
+b2:	asl
+b1:	asl
 	jmp FntShJump
-FontSH2:
-	lsr
-	ror Z46
-	ror Z47
-	lsr
-	ror Z46
-	ror Z47
-	lsr
-	ror Z46
-	ror Z47
-	lsr
-	ror Z46
-	ror Z47
-	lsr
-	ror Z46
-	ror Z47
-	lsr
-	ror Z46
-	ror Z47
-	lsr
-	ror Z46
-	ror Z47
-	jmp FntShJump
-FontSH3:
-	asl
-	asl
-	asl
-	asl
-	asl
-	asl
-	asl
-	jmp FntShJump
-FontSH4:
-	asl Z47
+
+d7:	asl Z47
 	rol Z46
 	rol
-	asl Z47
+d6:	asl Z47
 	rol Z46
 	rol
-	asl Z47
+d5:	asl Z47
 	rol Z46
 	rol
-	asl Z47
+d4:	asl Z47
 	rol Z46
 	rol
-	asl Z47
+d3:	asl Z47
 	rol Z46
 	rol
-	asl Z47
+d2:	asl Z47
 	rol Z46
 	rol
-	asl Z47
+d1:	asl Z47
 	rol Z46
 	rol
 	jmp FntShJump
+
+.assert * - base < 256, error, "Font shift code must be < 256 bytes"
+
 FontSH5:
 	sta Z45
 	lda r7L
 	sub E87FD
-	beq FntSh52
-	bcc FntSh53
+	beq @2
+	bcc @3
 	tay
-FntSh51:
+@1:
 	jsr Font_9
 	dey
-	bne FntSh51
-FntSh52:
+	bne @1
+@2:
 	lda Z45
 	jmp FntShJump
-FntSh53:
+@3:
 	lda E87FD
 	sub r7L
 	tay
-FntSh54:
+@4:
 	asl Z45+7
 	rol Z45+6
 	rol Z45+5
@@ -738,19 +704,19 @@ FntSh54:
 	rol Z45+1
 	rol Z45
 	dey
-	bne FntSh54
+	bne @4
 	lda Z45
 FntShJump:
 	sta Z45
-	bbrf BOLD_BIT, currentMode, FntSh56
+	bbrf BOLD_BIT, currentMode, noop
 	lda #0
 	pha
 	ldy #$ff
-FntSh55:
+@5:
 	iny
 	ldx Z45,y
 	pla
-	ora ID100+$10,x
+	ora ID110,x
 	sta Z45,y
 	txa
 	lsr
@@ -758,12 +724,10 @@ FntSh55:
 	ror
 	pha
 	cpy r8L
-	bne FntSh55
+	bne @5
 	pla
-FntSh56:
+noop:
 	rts
-
-; end of indexed table, keep on changin'
 
 FntIndirectJMP:
 	ldy #0

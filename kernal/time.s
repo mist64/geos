@@ -1,16 +1,18 @@
 ; GEOS KERNAL
 ;
-; C64 clock driver
+; C64/CIA clock driver
 
 .include "const.inc"
 .include "geossym.inc"
 .include "geosmac.inc"
 .include "config.inc"
 .include "kernal.inc"
+.include "c64.inc"
 
 ; header.s
 .import dateCopy
 
+; called by main loop
 .global _DoUpdateTime
 
 .segment "time"
@@ -18,6 +20,7 @@
 _DoUpdateTime:
 	sei
 	ldx CPU_DATA
+ASSERT_NOT_BELOW_IO
 	LoadB CPU_DATA, IO_IN
 	lda cia1base+15
 	and #%01111111
@@ -56,6 +59,7 @@ DoUpdTime4:
 	bpl DoUpdTime4
 	MoveB cia1base+13, r1L
 	stx CPU_DATA
+ASSERT_NOT_BELOW_IO
 	bbrf 7, alarmSetFlag, DoUpdTime5
 	and #ALARMMASK
 	beq DoUpdTime6
@@ -138,6 +142,7 @@ DoClockAlarm:
 	lda alarmWarnFlag
 	bne DoClkAlrm3
 	ldy CPU_DATA
+ASSERT_NOT_BELOW_IO
 	LoadB CPU_DATA, IO_IN
 	ldx #24
 DoClkAlrm1:
@@ -153,6 +158,7 @@ DoClkAlrm1:
 DoClkAlrm2:
 	stx sidbase+4
 	sty CPU_DATA
+ASSERT_NOT_BELOW_IO
 	lda #$1e
 	sta alarmWarnFlag
 	dec alarmSetFlag

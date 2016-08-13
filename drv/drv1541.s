@@ -8,6 +8,7 @@
 .include "config.inc"
 .include "kernal.inc"
 .include "jumptab.inc"
+.include "c64.inc"
 
 .segment "drv1541"
 
@@ -187,7 +188,7 @@ __NxtBlkAlloc:
 	lda r8L
 	beq BlkAlc0
 	inc r2L
-	bne *+4
+	bne BlkAlc0
 	inc r2H
 BlkAlc0:
 	LoadW r5, curDirHead
@@ -211,9 +212,9 @@ BlkAlc2:
 	sta (r4),y
 	AddVW 2, r4
 	lda r5L
-	bne *+4
+	bne @X
 	dec r5H
-	dec r5L
+@X:	dec r5L
 	lda r5L
 	ora r5H
 	bne BlkAlc2
@@ -515,7 +516,7 @@ CBlksFre0:
 	lda (r5),y
 	add r4L
 	sta r4L
-	bcc *+4
+	bcc CBlksFre1
 	inc r4H
 CBlksFre1:
 	tya
@@ -893,15 +894,15 @@ SndCDE0:
 	lda #$20
 	adc z8d
 	sta z8d
-	bcc *+4
+	bcc @X
 	inc z8e
-	clc
+@X:	clc
 	lda #$20
 	adc WriteAddy
 	sta WriteAddy
-	bcc *+5
+	bcc @Y
 	inc WriteAddy+1
-	dec z8f
+@Y:	dec z8f
 	bpl SndCDE0
 SndCDE1:
 	jmp DoneWithIO
@@ -1171,9 +1172,9 @@ Drv_SendByte_3:
 	bit $1800
 	beq *-3
 	bit $1800
-	bne *+2
-	bne *+2
-	stx $1800
+	bne @X
+@X:	bne @Y
+@Y:	stx $1800
 	txa
 	rol
 	and #%00001111
@@ -1464,9 +1465,9 @@ D_DUNK9_0:
 	ldy $19
 	iny
 	cpy $43
-	bcc *+4
+	bcc @X
 	ldy #0
-	sty $19
+@X:	sty $19
 	LoadB $45, 0
 	LoadW $32, $0018
 	jsr D_DUNK11_1

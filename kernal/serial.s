@@ -24,6 +24,13 @@ SerialNumber:
 
 .segment "serial2"
 
+;---------------------------------------------------------------
+; GetSerialNumber                                         $C196
+;
+; Pass:      nothing
+; Return:    r0  serial nbr of your kernal
+; Destroyed: a
+;---------------------------------------------------------------
 _GetSerialNumber:
 	lda SerialNumber
 	sta r0L

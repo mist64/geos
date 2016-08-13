@@ -8,9 +8,6 @@
 .include "kernal.inc"
 .include "jumptab.inc"
 
-; graph.s
-.import ClrScr
-
 ; main.s
 .import InitGEOEnv
 .import _DoFirstInitIO

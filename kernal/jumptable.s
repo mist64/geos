@@ -41,7 +41,7 @@
 .import _InvertLine
 .import _HorizontalLine
 
-; keyboarddrv.s
+; keyboard.s
 .import _GetNextChar
 
 ; process.s
@@ -86,7 +86,14 @@
 .import _RstrFrmDialogue
 .import _DoDlgBox
 
-; files.s
+; load.s
+.import _GetFile
+.import _LdApplic
+.import _LdDeskAcc
+.import _LdFile
+.import _RstrAppl
+
+; filesys.s
 .import _AppendRecord
 .import _BldGDirEntry
 .import _CloseRecordFile
@@ -98,12 +105,8 @@
 .import _FollowChain
 .import _FreeFile
 .import _GetFHdrInfo
-.import _GetFile
 .import _GetPtrCurDkNm
 .import _InsertRecord
-.import _LdApplic
-.import _LdDeskAcc
-.import _LdFile
 .import _NextRecord
 .import _OpenRecordFile
 .import _PointRecord
@@ -112,7 +115,6 @@
 .import _ReadFile
 .import _ReadRecord
 .import _RenameFile
-.import _RstrAppl
 .import _SaveFile
 .import _SetDevice
 .import _SetGDirEntry
@@ -183,6 +185,8 @@
 .import _GetSerialNumber
 
 .segment "jumptab"
+
+.assert * = $C100, error, "Jump table not at $C100"
 
 InterruptMain:
 	jmp _InterruptMain

@@ -7,11 +7,15 @@
 .include "geosmac.inc"
 .include "config.inc"
 .include "kernal.inc"
+.include "c64.inc"
 
 ; mouse.s
 .import ResetMseRegion
 
+; used by tobasic.s
 .global Init_KRNLVec
+
+; used by init.s
 .global _DoFirstInitIO
 
 .segment "hw1"
@@ -25,14 +29,14 @@ VIC_IniTbl_end:
 
 _DoFirstInitIO:
 	LoadB CPU_DDR, $2f
+ASSERT_NOT_BELOW_IO
 	LoadB CPU_DATA, KRNL_IO_IN
 	ldx #7
 	lda #$ff
-DFIIO0:
-	sta KbdDMltTab,X
-	sta KbdDBncTab,X
+@1:	sta KbdDMltTab,x
+	sta KbdDBncTab,x
 	dex
-	bpl DFIIO0
+	bpl @1
 	stx KbdQueFlag
 	stx cia1base+2
 	inx
@@ -42,10 +46,9 @@ DFIIO0:
 	stx cia1base+15
 	stx cia2base+15
 	lda PALNTSCFLAG
-	beq DFIIO1
+	beq @2
 	ldx #$80
-DFIIO1:
-	stx cia1base+14
+@2:	stx cia1base+14
 	stx cia2base+14
 	lda cia2base
 	and #%00110000
@@ -59,30 +62,29 @@ DFIIO1:
 	jsr SetVICRegs
 	jsr Init_KRNLVec
 	LoadB CPU_DATA, RAM_64K
+ASSERT_NOT_BELOW_IO
 	jmp ResetMseRegion
 
 .segment "hw2"
+
 Init_KRNLVec:
 	ldx #32
-IKV1:
-	lda KERNALVecTab-1,X
-	sta irqvec-1,X
+@1:	lda KERNALVecTab-1,x
+	sta irqvec-1,x
 	dex
-	bne IKV1
+	bne @1
 	rts
 
 .segment "hw3"
+
 SetVICRegs:
 	sty r1L
 	ldy #0
-SVR0:
-	lda (r0),Y
+@1:	lda (r0),Y
 	cmp #$AA
-	beq SVR1
+	beq @2
 	sta vicbase,Y
-SVR1:
-	iny
+@2:	iny
 	cpy r1L
-	bne SVR0
+	bne @1
 	rts
-

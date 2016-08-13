@@ -7,12 +7,15 @@
 .include "geosmac.inc"
 .include "config.inc"
 .include "kernal.inc"
-;.include "jumptab.inc"
 
+; syscalls
 .global _CallRoutine
 .global _DoInlineReturn
 
 .segment "misc"
+
+;---------------------------------------------------------------
+;---------------------------------------------------------------
 _CallRoutine:
 	cmp #0
 	bne CRou1
@@ -25,6 +28,8 @@ CRou1:
 CRou2:
 	rts
 
+;---------------------------------------------------------------
+;---------------------------------------------------------------
 _DoInlineReturn:
 	add returnAddress
 	sta returnAddress

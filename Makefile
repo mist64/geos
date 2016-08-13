@@ -13,7 +13,8 @@ kernal/mouseptr.s \
 kernal/patterns.s \
 kernal/conio.s \
 kernal/dlgbox.s \
-kernal/files.s \
+kernal/load.s \
+kernal/filesys.s \
 kernal/fonts.s \
 kernal/graph.s \
 kernal/hw.s \

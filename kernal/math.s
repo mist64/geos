@@ -6,6 +6,7 @@
 .include "geosmac.inc"
 .include "jumptab.inc"
 
+; syscalls
 .global _BBMult
 .global _BMult
 .global _CRC
@@ -21,81 +22,116 @@
 
 .segment "math1"
 
+;---------------------------------------------------------------
+; DShiftLeft                                              $C15D
+;
+; Function:  Arithmetically shift operand left n bits. Computes
+;            operand * 2^n
+;
+; Pass:      x   add of zpage Reg
+;            y   nbr of bits to shift left
+; Return:    (x) Reg pointed by x is shifted
+; Destroyed: y
+;---------------------------------------------------------------
 _DShiftLeft:
 	dey
-	bmi DShLf0
-	asl zpage,X
-	rol zpage+1,X
+	bmi @1
+	asl zpage,x
+	rol zpage+1,x
 	jmp _DShiftLeft
-DShLf0:
-	rts
+@1:	rts
+
+;---------------------------------------------------------------
+;---------------------------------------------------------------
 _DShiftRight:
 	dey
-	bmi DShRg0
-	lsr zpage+1,X
-	ror zpage,X
+	bmi @1
+	lsr zpage+1,x
+	ror zpage,x
 	jmp _DShiftRight
-DShRg0:
-	rts
+@1:	rts
 
+;---------------------------------------------------------------
+; BBMult                                                  $C160
+;
+; Function:  Multiply two unsigned byte operands and store
+;            product in word addressed by x.
+;
+; Pass:      x   address of destination zpage
+;            y   address of source zpage
+; Return:    x,y unchanged
+; Destroyed: a, r7, r8
+;---------------------------------------------------------------
 _BBMult:
 	lda zpage,Y
 	sta r8H
 	sty r8L
 	ldy #8
 	lda #0
-BBMul0:
-	lsr r8H
-	bcc BBMul1
+@1:	lsr r8H
+	bcc @2
 	clc
-	adc zpage,X
-BBMul1:
-	ror
+	adc zpage,x
+@2:	ror
 	ror r7L
 	dey
-	bne BBMul0
-	sta zpage+1,X
+	bne @1
+	sta zpage+1,x
 	lda r7L
-	sta zpage,X
+	sta zpage,x
 	ldy r8L
 	rts
 
+;---------------------------------------------------------------
+;---------------------------------------------------------------
 _BMult:
 	lda #0
 	sta zpage+1,Y
+;---------------------------------------------------------------
+;---------------------------------------------------------------
 _DMult:
 	LoadB r8L, 16
 	LoadW_ r7, 0
-BMult0:
-	lsr zpage+1,X
-	ror zpage,X
-	bcc BMult1
+@1:	lsr zpage+1,x
+	ror zpage,x
+	bcc @2
 	lda r7L
 	clc
 	adc zpage,Y
 	sta r7L
 	lda r7H
 	adc zpage+1,Y
-BMult1:
-	lsr
+@2:	lsr
 	sta r7H
 	ror r7L
 	ror r6H
 	ror r6L
 	dec r8L
-	bne BMult0
+	bne @1
 	lda r6L
-	sta zpage,X
+	sta zpage,x
 	lda r6H
-	sta zpage+1,X
+	sta zpage+1,x
 	rts
 
+;---------------------------------------------------------------
+; Ddiv                                                    $C169
+;
+; Function:  Divide unsigned destination word by source word,
+;            and store quotient in destination. Store remainder
+;            in r8.
+;
+; Pass:      x   add. of zpage: destination
+;            y   add. of zpage: source
+; Return:    destination zpage: 16 bit result
+;            r8 remainder
+; Destroyed: a, r9
+;---------------------------------------------------------------
 _Ddiv:
 	LoadW_ r8, 0
 	LoadB r9L, 16
-Ddivl0:
-	asl zpage,X
-	rol zpage+1,X
+@1:	asl zpage,x
+	rol zpage+1,x
 	rol r8L
 	rol r8H
 	lda r8L
@@ -104,19 +140,29 @@ Ddivl0:
 	sta r9H
 	lda r8H
 	sbc zpage+1,Y
-	bcc Ddivl1
-	inc zpage,X
+	bcc @2
+	inc zpage,x
 	sta r8H
 	lda r9H
 	sta r8L
-Ddivl1:
-	dec r9L
-	bne Ddivl0
-Ddivl2:
+@2:	dec r9L
+	bne @1
 	rts
 
+;---------------------------------------------------------------
+; DSdiv                                                   $C16C
+;
+; Function:  Divide signed source word by signed destination
+;            word. Store quotient in destination. Store
+;            remainder in r8.
+;
+; Pass:      x   add of destination zpage Reg
+;            y   add of source zpage Reg
+; Return:    r8  the remainder
+; Destroyed: a, r9
+;---------------------------------------------------------------
 _DSDiv:
-	lda zpage+1,X
+	lda zpage+1,x
 	eor zpage+1,Y
 	php
 	jsr _Dabs
@@ -127,101 +173,136 @@ _DSDiv:
 	ldx r8L
 	jsr _Ddiv
 	plp
-	bpl DSDiv1
+	bpl @1
 	jsr _Dnegate
-DSDiv1:
-	rts
+@1:	rts
 
+;---------------------------------------------------------------
+; Dabs                                                    $C16F
+;
+; Function:  Compute the absolute value of a twos-complement
+;            word.
+;
+; Pass:      x   add. of zpage contaning the nbr
+; Return:    x   zpage : contains the absolute value
+; Destroyed: a
+;---------------------------------------------------------------
 _Dabs:
-	lda zpage+1,X
+	lda zpage+1,x
 	bmi _Dnegate
 	rts
+;---------------------------------------------------------------
+; Dnegate                                                 $C172
+;
+; Function:  Negate a twos-complement word
+;
+; Pass:      x   add. of zpage : word
+; Return:    destination zpage gets negated
+; Destroyed: a, y
+;---------------------------------------------------------------
 _Dnegate:
-	lda zpage+1,X
+	lda zpage+1,x
 	eor #$FF
-	sta zpage+1,X
-	lda zpage,X
+	sta zpage+1,x
+	lda zpage,x
 	eor #$FF
-	sta zpage,X
-	inc zpage,X
-	bne Dnegate1
-	inc zpage+1,X
-Dnegate1:
-	rts
+	sta zpage,x
+	inc zpage,x
+	bne @1
+	inc zpage+1,x
+@1:	rts
 
+;---------------------------------------------------------------
+; Ddec                                                    $C175
+;
+; Function:  Decrements an unsigned word
+;
+; Pass:      x   add. of zpage contaning the nbr
+; Return:    x   zpage: contains the decremented nbr
+; Destroyed: a
+;---------------------------------------------------------------
 _Ddec:
-	lda zpage,X
-	bne Ddecl0
-	dec zpage+1,X
-Ddecl0:
-	dec zpage,X
-	lda zpage,X
-	ora zpage+1,X
+	lda zpage,x
+	bne @1
+	dec zpage+1,x
+@1:	dec zpage,x
+	lda zpage,x
+	ora zpage+1,x
 	rts
 
+;---------------------------------------------------------------
+; GetRandom                                               $C187
+;
+; Function:  Get 16 bit pseudorandom number.
+;
+; Pass:      nothing
+; Return:    ramdom - contains new 16 bit nbr
+; Destroyed: a
+;---------------------------------------------------------------
 _GetRandom:
 	inc random
-	bne GRandl0
+	bne @1
 	inc random+1
-GRandl0:
-	asl random
+@1:	asl random
 	rol random+1
-	bcc GRandl2
+	bcc @3
 	clc
 	lda #$0F
 	adc random
 	sta random
-	bcc GRandl1
+	bcc @2
 	inc random+1
-GRandl1:
-	rts
-GRandl2:
-	CmpBI random+1, $ff
-	bcc GRandl3
+@2:	rts
+@3:	CmpBI random+1, $ff
+	bcc @4
 	lda random
 	subv $f1
-	bcc GRandl3
+	bcc @4
 	sta random
 	lda #0
 	sta random+1
-GRandl3:
-	rts
+@4:	rts
 
 .segment "math2"
 
+;---------------------------------------------------------------
+; CRC                                                     $C20E
+;
+; Function:  CRC performs a checksum on specified data
+;
+; Pass:      r0  ptr to data
+;            r1  nbr of bytes to check
+; Return:    r2  checksum
+; Destroyed: a, x, y, r0, r1, r3l
+;---------------------------------------------------------------
 _CRC:
 	ldy #$ff
 	sty r2L
 	sty r2H
 	iny
-CRC1:
-	lda #$80
+@1:	lda #$80
 	sta r3L
-CRC2:
-	asl r2L
+@2:	asl r2L
 	rol r2H
 	lda (r0),y
 	and r3L
-	bcc CRC3
+	bcc @3
 	eor r3L
-CRC3:
-	beq CRC4
+@3:	beq @4
 	lda r2L
 	eor #$21
 	sta r2L
 	lda r2H
 	eor #$10
 	sta r2H
-CRC4:
-	lsr r3L
-	bcc CRC2
+@4:	lsr r3L
+	bcc @2
 	iny
-	bne CRC5
+	bne @5
 	inc r0H
-CRC5:
-	ldx #r1
+@5:	ldx #r1
 	jsr Ddec
 	lda r1L
 	ora r1H
-	bne CRC1
+	bne @1
 	rts

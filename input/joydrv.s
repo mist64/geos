@@ -6,6 +6,7 @@
 .include "geossym.inc"
 .include "geosmac.inc"
 .include "jumptab.inc"
+.include "c64.inc"
 
 .segment "joydrv"
 

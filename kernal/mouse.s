@@ -19,63 +19,65 @@
 ; sprite.s
 .import _DisablSprite
 
-; keyboarddrv.s
+; keyboard.s
 .import KbdScanHelp3
 
+; used by mainloop.s
 .global ProcessMouse
-.global ResetMseRegion
-.global _ClearMouseMode
 .global _DoCheckButtons
+
+; used by hw.s, icon.s, menu.s
+.global ResetMseRegion
+
+; used by conio.s
+; just a "rts" that is used elsewhere :(
+.global DoESC_RULER
+
+; syscalls
+.global _ClearMouseMode
 .global _IsMseInRegion
 .global _MouseOff
 .global _MouseUp
 .global _StartMouseMode
-.global DoESC_RULER
 
 .segment "mouse1"
 
 _IsMseInRegion:
 	lda mouseYPos
 	cmp r2L
-	bcc IMIRl4
+	bcc @5
 	cmp r2H
-	beq IMIRl0
-	bcs IMIRl4
-IMIRl0:
-	lda mouseXPos+1
+	beq @1
+	bcs @5
+@1:	lda mouseXPos+1
 	cmp r3H
-	bne IMIRl1
+	bne @2
 	lda mouseXPos
 	cmp r3L
-IMIRl1:
-	bcc IMIRl4
+@2:	bcc @5
 	lda mouseXPos+1
 	cmp r4H
-	bne IMIRl2
+	bne @3
 	lda mouseXPos
 	cmp r4L
-IMIRl2:
-	beq IMIRl3
-	bcs IMIRl4
-IMIRl3:
-	lda #$ff
+@3:	beq @4
+	bcs @5
+@4:	lda #$ff
 	rts
-IMIRl4:
-	lda #0
+@5:	lda #0
 	rts
 
 .segment "mouse2"
 
 _StartMouseMode:
-	bcc SMousMd1
+	bcc @1
 	lda r11L
 	ora r11H
-	beq SMousMd1
+	beq @1
 	MoveW r11, mouseXPos
 	sty mouseYPos
 	jsr SlowMouse
-SMousMd1:
-	lda #>CheckClickPos
+@1:	lda #>CheckClickPos
 	sta mouseVector+1
 	lda #<CheckClickPos
 	sta mouseVector
@@ -98,12 +100,11 @@ _MouseOff:
 
 _MouseUp:
 	smbf MOUSEON_BIT, mouseOn
-MseUp1:
 	rts
 
 ProcessMouse:
 	jsr UpdateMouse
-	bbrf MOUSEON_BIT, mouseOn, ProcessMouse1
+	bbrf MOUSEON_BIT, mouseOn, @1
 	jsr CheckMsePos
 	LoadB r3L, 0
 	MoveW msePicPtr, r4
@@ -112,124 +113,105 @@ ProcessMouse:
 	MoveB mouseYPos, r5L
 	jsr PosSprite
 	jsr EnablSprite
-ProcessMouse1:
-	rts
+@1:	rts
 
 CheckMsePos:
 	ldy mouseLeft
 	ldx mouseLeft+1
 	lda mouseXPos+1
-	bmi ChMsePs2
+	bmi @2
 	cpx mouseXPos+1
-	bne ChMsePs1
+	bne @1
 	cpy mouseXPos
-ChMsePs1:
-	bcc ChMsePs3
-	beq ChMsePs3
-ChMsePs2:
-	smbf OFFLEFT_BIT, faultData
+@1:	bcc @3
+	beq @3
+@2:	smbf OFFLEFT_BIT, faultData
 	sty mouseXPos
 	stx mouseXPos+1
-ChMsePs3:
-	ldy mouseRight
+@3:	ldy mouseRight
 	ldx mouseRight+1
 	cpx mouseXPos+1
-	bne ChMsePs4
+	bne @4
 	cpy mouseXPos
-ChMsePs4:
-	bcs ChMsePs5
+@4:	bcs @5
 	smbf OFFRIGHT_BIT, faultData
 	sty mouseXPos
 	stx mouseXPos+1
-ChMsePs5:
-	ldy mouseTop
+@5:	ldy mouseTop
 	CmpBI mouseYPos, 228
-	bcs ChMsePs6
+	bcs @6
 	cpy mouseYPos
-	bcc ChMsePs7
-	beq ChMsePs7
-ChMsePs6:
-	smbf OFFTOP_BIT, faultData
+	bcc @7
+	beq @7
+@6:	smbf OFFTOP_BIT, faultData
 	sty mouseYPos
-ChMsePs7:
-	ldy mouseBottom
+@7:	ldy mouseBottom
 	cpy mouseYPos
-	bcs ChMsePs8
+	bcs @8
 	smbf OFFBOTTOM_BIT, faultData
 	sty mouseYPos
-ChMsePs8:
-	bbrf MENUON_BIT, mouseOn, ChMsePs11
+@8:	bbrf MENUON_BIT, mouseOn, @B
 	lda mouseYPos
 	cmp menuTop
-	bcc ChMsePs10
+	bcc @A
 	cmp menuBottom
-	beq ChMsePs9
-	bcs ChMsePs10
-ChMsePs9:
-	CmpW mouseXPos, menuLeft
-	bcc ChMsePs10
+	beq @9
+	bcs @A
+@9:	CmpW mouseXPos, menuLeft
+	bcc @A
 	CmpW mouseXPos, menuRight
-	bcc ChMsePs11
-	beq ChMsePs11
-ChMsePs10:
-	smbf OFFMENU_BIT, faultData
-ChMsePs11:
-	rts
+	bcc @B
+	beq @B
+@A:	smbf OFFMENU_BIT, faultData
+@B:	rts
 
 CheckClickPos:
 	lda mouseData
-	bmi ChClkPos4
+	bmi @4
 	lda mouseOn
 	and #SET_MSE_ON
-	beq ChClkPos4
+	beq @4
 	lda mouseOn
 	and #SET_MENUON
-	beq ChClkPos3
+	beq @3
 	CmpB mouseYPos, menuTop
-	bcc ChClkPos3
+	bcc @3
 	cmp menuBottom
-	beq ChClkPos1
-	bcs ChClkPos3
-ChClkPos1:
-	CmpW mouseXPos, menuLeft
-	bcc ChClkPos3
+	beq @1
+	bcs @3
+@1:	CmpW mouseXPos, menuLeft
+	bcc @3
 	CmpW mouseXPos, menuRight
-	beq ChClkPos2
-	bcs ChClkPos3
-ChClkPos2:
-	jmp Menu_5
-ChClkPos3:
-	bbrf ICONSON_BIT, mouseOn, ChClkPos4
+	beq @2
+	bcs @3
+@2:	jmp Menu_5
+@3:	bbrf ICONSON_BIT, mouseOn, @4
 	jmp ProcessClick
-ChClkPos4:
-	lda otherPressVec
+@4:	lda otherPressVec
 	ldx otherPressVec+1
 	jmp CallRoutine
 
-	rts
+	rts ; ???
 
 DoMouseFault:
 	lda #$c0
-	bbrf MOUSEON_BIT, mouseOn, DoMseFlt3
-	bvc DoMseFlt3
+	bbrf MOUSEON_BIT, mouseOn, @3
+	bvc @3
 	lda menuNumber
-	beq DoMseFlt3
-	bbsf OFFMENU_BIT, faultData, DoMseFlt2
+	beq @3
+	bbsf OFFMENU_BIT, faultData, @2
 	ldx #SET_OFFTOP
 	lda #$C0
 	tay
-	bbsf 7, menuOptNumber, DoMseFlt1
+	bbsf 7, menuOptNumber, @1
 	ldx #SET_OFFLEFT
-DoMseFlt1:
-	txa
+@1:	txa
 	and faultData
-	bne DoMseFlt2
+	bne @2
 	tya
-	bbsf 6, menuOptNumber, DoMseFlt3
-DoMseFlt2:
-	jsr _DoPreviousMenu
-DoMseFlt3:
-	rts
+	bbsf 6, menuOptNumber, @3
+@2:	jsr _DoPreviousMenu
+@3:	rts
 
 .segment "mouse3"
 
@@ -245,25 +227,22 @@ ResetMseRegion:
 .segment "mouse4"
 
 _DoCheckButtons:
-	bbrf INPUT_BIT, pressFlag, DoChkBtns1
+	bbrf INPUT_BIT, pressFlag, @1
 	rmbf INPUT_BIT, pressFlag
 	lda inputVector
 	ldx inputVector+1
 	jsr CallRoutine
-DoChkBtns1:
-	bbrf MOUSE_BIT, pressFlag, DoChkBtns2
+@1:	bbrf MOUSE_BIT, pressFlag, @2
 	rmbf MOUSE_BIT, pressFlag
 	lda mouseVector
 	ldx mouseVector+1
 	jsr CallRoutine
-DoChkBtns2:
-	bbrf KEYPRESS_BIT, pressFlag, DoChkBtns3
+@2:	bbrf KEYPRESS_BIT, pressFlag, @3
 	jsr KbdScanHelp3
 	lda keyVector
 	ldx keyVector+1
 	jsr CallRoutine
-DoChkBtns3:
-	lda faultData
+@3:	lda faultData
 	beq DoESC_RULER
 	lda mouseFaultVec
 	ldx mouseFaultVec+1

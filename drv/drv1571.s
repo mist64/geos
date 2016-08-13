@@ -7,6 +7,7 @@
 .include "geosmac.inc"
 .include "kernal.inc"
 .include "jumptab.inc"
+.include "c64.inc"
 
 .segment "drv1571"
 
@@ -991,7 +992,7 @@ Hst_SendByte_2:
 	ldx z8d
 	lda NibbleTab2,x
 	sta cia2base
-	lda E96F8,X
+	lda E96F8,x
 	cpy #0
 	sta cia2base
 	bne Hst_SendByte_0

@@ -1,6 +1,6 @@
 ; GEOS KERNAL
 ;
-; Start a program in BASIC mode
+; C64: Start a program in BASIC mode
 
 .include "const.inc"
 .include "geossym.inc"
@@ -8,8 +8,9 @@
 .include "config.inc"
 .include "kernal.inc"
 .include "jumptab.inc"
+.include "c64.inc"
 
-; files.s
+; filesys.s
 .import _ReadFile
 
 ; hw.s

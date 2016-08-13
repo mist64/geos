@@ -12,6 +12,8 @@
 
 .segment "header"
 
+.assert * = $C000, error, "Header not at $C000"
+
 BootKernal:
 	jmp _BootKernal
 	jmp InitKernal

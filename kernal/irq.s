@@ -8,8 +8,9 @@
 .include "config.inc"
 .include "kernal.inc"
 .include "jumptab.inc"
+.include "c64.inc"
 
-; keyboarddrv.s
+; keyboard.s
 .import _DoKeyboardScan
 
 .segment "irq"
@@ -42,6 +43,7 @@ IRQHand2:
 	cpx #32
 	bne IRQHand2
 	PushB CPU_DATA
+ASSERT_NOT_BELOW_IO
 	LoadB CPU_DATA, IO_IN
 	lda dblClickCount
 	beq IRQHand3
@@ -67,6 +69,7 @@ IRQHand5:
 	lda #1
 	sta grirq
 	PopB CPU_DATA
+ASSERT_NOT_BELOW_IO
 .if (use2MHz)
 	lda #>IRQ2Handler
 	sta $ffff
@@ -95,6 +98,7 @@ IRQ2Handler:
 	txa
 	pha
 	ldx CPU_DATA
+ASSERT_NOT_BELOW_IO
 	LoadB CPU_DATA, IO_IN
 	lda rasreg
 	and #%11110000
@@ -108,6 +112,7 @@ IRQ2NoBord:
 	LoadW $fffe, _IRQHandler
 	inc grirq
 	stx CPU_DATA
+ASSERT_NOT_BELOW_IO
 	pla
 	tax
 	pla

@@ -7,6 +7,7 @@
 .include "geosmac.inc"
 .include "kernal.inc"
 .include "jumptab.inc"
+.include "c64.inc"
 
 .segment "drv1581"
 
