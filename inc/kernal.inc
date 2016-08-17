@@ -99,8 +99,41 @@ RecordTableTS   =       $8865
 verifyFlag      =       $8867
 TempCurDrive    =       $8868
 
+savedmoby2      =       $88bb ; ---
+scr80polar      =       $88bc ; ---
+scr80colors     =       $88bd ; ---
+vdcClrMode      =       $88be ; ---
+driveData       =       $88bf ; drv
+ramExpSize      =       $88c3 ; reu
+sysRAMFlg       =       $88c4 ; drv, filesys, memory, tobasic
+firstBoot       =       $88c5 ; filesys
+curType         =       $88c6 ; drv, filesys, boot
+ramBase         =       $88c7 ; ---
+inputDevName    =       $88cb ; ---
+memBase         =       $88cf ; ---
+DrCCurDkNm      =       $88dc ; files
+DrDCurDkNm      =       $88ee ; files
+dir2Head        =       $8900 ; drv
+;
+spr0pic         =       SPRITE_PICS+0*64 ; sprites
+spr1pic         =       SPRITE_PICS+1*64 ; sprites
+spr2pic         =       SPRITE_PICS+2*64 ; sprites
+spr3pic         =       SPRITE_PICS+3*64 ; sprites
+spr4pic         =       SPRITE_PICS+4*64 ; sprites
+spr5pic         =       SPRITE_PICS+5*64 ; sprites
+spr6pic         =       SPRITE_PICS+6*64 ; sprites
+spr7pic         =       SPRITE_PICS+7*64 ; sprites
+;
+obj0Pointer     =       $8ff8 ; init
+obj1Pointer     =       $8ff9 ; ---
+obj2Pointer     =       $8ffa ; ---
+obj3Pointer     =       $8ffb ; ---
+obj4Pointer     =       $8ffc ; ---
+obj5Pointer     =       $8ffd ; ---
+obj6Pointer     =       $8ffe ; ---
+obj7Pointer     =       $8fff ; ---
+
 ; GEOS BOOT and REU reboot adresses
-InitKernal      =       $5000
 BVBuff          =       $0400
 RunREU          =       $6000
 

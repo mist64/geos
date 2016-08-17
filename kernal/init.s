@@ -54,12 +54,11 @@ _FirstInit:
 	LoadB minMouseSpeed, iniMinMouseSpeed
 	LoadB mouseAccel, iniMouseAccel
 	LoadB screencolors, (DKGREY << 4)+LTGREY
-	sta FItempColor
+	sta @1
 	jsr i_FillRam
 	.word 1000
 	.word COLOR_MATRIX
-FItempColor:
-	.byte (DKGREY << 4)+LTGREY
+@1:	.byte (DKGREY << 4)+LTGREY
 	ldx CPU_DATA
 ASSERT_NOT_BELOW_IO
 	LoadB CPU_DATA, IO_IN
@@ -69,15 +68,15 @@ ASSERT_NOT_BELOW_IO
 	stx CPU_DATA
 ASSERT_NOT_BELOW_IO
 	ldy #62
-:	lda #0
+@2:	lda #0
 	sta mousePicData,Y
 	dey
-	bpl :-
+	bpl @2
 	ldx #24
-:	lda InitMsePic-1,x
+@3:	lda InitMsePic-1,x
 	sta mousePicData-1,x
 	dex
-	bne :-
+	bne @3
 	jmp UNK_6
 
 .segment "init3"
@@ -87,9 +86,9 @@ UNK_6:
 	sta A8FF0
 	ldx #7
 	lda #$bb
-:	sta A8FE8,x
+@1:	sta A8FE8,x
 	dex
-	bpl :-
+	bpl @1
 	rts
 
 .segment "init4"
@@ -97,33 +96,52 @@ UNK_6:
 InitRamTab:
 	.word currentMode
 	.byte 12
-	.byte NULL
-	.byte ST_WR_FORE | ST_WR_BACK
-	.byte NULL
-	.word mousePicData
-	.byte NULL, SC_PIX_HEIGHT-1
-	.word NULL, SC_PIX_WIDTH-1
-	.byte NULL
+	.byte 0                       ; currentMode
+	.byte ST_WR_FORE | ST_WR_BACK ; dispBufferOn
+	.byte 0                       ; mouseOn
+	.word mousePicData            ; msePicPtr
+	.byte 0                       ; windowTop
+    .byte SC_PIX_HEIGHT-1         ; windowBottom
+	.word 0                       ; leftMargin
+    .word SC_PIX_WIDTH-1          ; rightMargin
+	.byte 0                       ; pressFlag
+
 	.word appMain
 	.byte 28
-	.word NULL, _InterruptMain
-	.word NULL, NULL, NULL, NULL
-	.word NULL, NULL, NULL, NULL
-	.word _Panic, _RecoverRectangle
-	.byte SelectFlashDelay, NULL
-	.byte ST_FLASH, NULL
+	.word 0                       ; appMain
+    .word _InterruptMain          ; intTopVector
+	.word 0                       ; intBotVector
+    .word 0                       ; mouseVector
+    .word 0                       ; keyVector
+    .word 0                       ; inputVector
+	.word 0                       ; mouseFaultVec
+    .word 0                       ; otherPressVec
+    .word 0                       ; StringFaultVec
+    .word 0                       ; alarmTmtVector
+	.word _Panic                  ; BRKVector
+    .word _RecoverRectangle       ; RecoverVector
+	.byte SelectFlashDelay        ; selectionFlash
+    .byte 0                       ; alphaFlag
+	.byte ST_FLASH                ; iconSelFlg
+    .byte 0                       ; faultData
+
 	.word NumTimers
 	.byte 2
-	.byte NULL, NULL
+	.byte 0                       ; NumTimers
+    .byte 0                       ; menuNumber
+
 	.word clkBoxTemp
 	.byte 1
-	.byte NULL
+	.byte 0                       ; clkBoxTemp
+
 	.word IconDescVecH
 	.byte 1
-	.byte NULL
+	.byte 0                       ; IconDescVecH
+
 	.word obj0Pointer
 	.byte 8
 	.byte $28, $29, $2a, $2b
 	.byte $2c, $2d, $2e, $2f
-	.word NULL
+
+	.word 0
 

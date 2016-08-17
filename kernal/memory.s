@@ -5,6 +5,7 @@
 .include "const.inc"
 .include "geossym.inc"
 .include "geosmac.inc"
+.include "kernal.inc"
 .include "config.inc"
 .include "jumptab.inc"
 

@@ -6,7 +6,10 @@
 .include "geosmac.inc"
 .include "kernal.inc"
 
-.global BootKernal
+; init.s
+.import _ResetHandle
+
+.global BootGEOS
 .global dateCopy
 .global sysFlgCopy
 
@@ -14,9 +17,10 @@
 
 .assert * = $C000, error, "Header not at $C000"
 
-BootKernal:
-	jmp _BootKernal
-	jmp InitKernal
+BootGEOS:
+	jmp _BootGEOS
+ResetHandle:
+	jmp _ResetHandle
 
 bootName:
 	.byte "GEOS BOOT"
@@ -38,7 +42,7 @@ dateCopy:
 	.byte 88,4,20
 .endif
 
-_BootKernal:
+_BootGEOS:
 	bbsf 5, sysFlgCopy, BootREU
 	jsr $FF90
 	lda #version-bootName

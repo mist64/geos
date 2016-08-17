@@ -13,61 +13,56 @@
 .import _DoFirstInitIO
 .import _EnterDeskTop
 
+; used by header.s
+.global _ResetHandle
+
 .segment "init"
 
-Init:
+_ResetHandle:
 	sei
 	cld
 	ldx #$ff
 	jsr _DoFirstInitIO
 	jsr InitGEOEnv
 	jsr GetDirHead
-Init7:
 	MoveB bootSec, r1H
 	MoveB bootTr, r1L
 	AddVB 32, bootOffs
-	bne Init10
-Init8:
-	MoveB bootSec2, r1H
+	bne @3
+@1:	MoveB bootSec2, r1H
 	MoveB bootTr2, r1L
-	bne Init10
+	bne @3
 	lda NUMDRV
-	bne Init9
+	bne @2
 	inc NUMDRV
-Init9:
-	LoadW EnterDeskTop+1, _EnterDeskTop
+@2:	LoadW EnterDeskTop+1, _EnterDeskTop
 	jmp EnterDeskTop
 
-Init10:
-	MoveB r1H, bootSec
+@3:	MoveB r1H, bootSec
 	MoveB r1L, bootTr
 	LoadW r4, diskBlkBuf
 	jsr GetBlock
-	bnex Init9
+	bnex @2
 	MoveB diskBlkBuf+1, bootSec2
 	MoveB diskBlkBuf, bootTr2
-Init101:
-	ldy bootOffs
+@4:	ldy bootOffs
 	lda diskBlkBuf+2,y
-	beq Init11
+	beq @5
 	lda diskBlkBuf+$18,y
 	cmp #AUTO_EXEC
-	beq Init12
-Init11:
-	AddVB 32, bootOffs
-	bne Init101
-	beq Init8
-Init12:
-	ldx #0
-Init13:
-	lda diskBlkBuf+2,y
+	beq @6
+@5:	AddVB 32, bootOffs
+	bne @4
+	beq @1
+@6:	ldx #0
+@7:	lda diskBlkBuf+2,y
 	sta dirEntryBuf,x
 	iny
 	inx
 	cpx #30
-	bne Init13
+	bne @7
 	LoadW r9, dirEntryBuf
-	LoadW EnterDeskTop+1, Init
+	LoadW EnterDeskTop+1, _ResetHandle
 	LoadB r0L, 0
 	jsr LdApplic
 bootTr:
@@ -81,4 +76,4 @@ bootSec2:
 bootOffs:
 	brk
 
-	.byte $4c, $98, $2c, $90
+	.byte $4c, $98, $2c, $90 ; ???

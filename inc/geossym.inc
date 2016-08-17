@@ -192,47 +192,12 @@ alarmSetFlag            =       $851c ; time
 sysDBData               =       $851d ; dlgbox
 screencolors            =       $851e ; init
 dlgBoxRamBuf            =       $851f ; dlgbox; to $8697
-;
-; $8698 - $8877 - various system data (keyboard queue, VLIR t&s, DBox, Menu, timers)
-;
-savedmoby2              =       $88bb ; ---
-scr80polar              =       $88bc ; ---
-scr80colors             =       $88bd ; ---
-vdcClrMode              =       $88be ; ---
-driveData               =       $88bf ; drv
-ramExpSize              =       $88c3 ; reu
-sysRAMFlg               =       $88c4 ; drv, filesys, memory, tobasic
-firstBoot               =       $88c5 ; filesys
-curType                 =       $88c6 ; drv, filesys, boot
-ramBase                 =       $88c7 ; ---
-inputDevName            =       $88cb ; ---
-memBase                 =       $88cf ; ---
-DrCCurDkNm              =       $88dc ; files
-DrDCurDkNm              =       $88ee ; files
-dir2Head                =       $8900 ; drv
-;
-SPRITE_PICS             =       $8a00
-spr0pic                 =       $8a00 ; sprites
-spr1pic                 =       $8a40 ; sprites
-spr2pic                 =       $8a80 ; sprites
-spr3pic                 =       $8ac0 ; sprites
-spr4pic                 =       $8b00 ; sprites
-spr5pic                 =       $8b40 ; sprites
-spr6pic                 =       $8b80 ; sprites
-spr7pic                 =       $8bc0 ; sprites
-COLOR_MATRIX            =       $8c00 ; init
-;
-obj0Pointer             =       $8ff8 ; init
-obj1Pointer             =       $8ff9 ; ---
-obj2Pointer             =       $8ffa ; ---
-obj3Pointer             =       $8ffb ; ---
-obj4Pointer             =       $8ffc ; ---
-obj5Pointer             =       $8ffd ; ---
-obj6Pointer             =       $8ffe ; ---
-obj7Pointer             =       $8fff ; ---
+
 ;
 DISK_BASE               =       $9000 ; files
 SCREEN_BASE             =       $a000 ; graph, boot
+SPRITE_PICS             =       $8a00 ; ---
+COLOR_MATRIX            =       $8c00 ; init
 OS_ROM                  =       $c000 ; ---
 OS_JUMPTAB              =       $c100 ; ---
 EXP_BASE                =       $df00; reu, header

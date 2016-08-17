@@ -17,7 +17,7 @@
 .import Init_KRNLVec
 
 ; header.s
-.import BootKernal
+.import BootGEOS
 .import sysFlgCopy
 
 .global _ToBASIC
@@ -90,7 +90,7 @@ execBASIC:
 	dec LKIntTimer
 	bne exeBAS4
 	LoadB cia2base+13, $7f
-	LoadW nmivec, BootKernal
+	LoadW nmivec, BootGEOS
 	ldy #2
 exeBAS1:
 	lda LKSaveBASIC, y
