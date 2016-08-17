@@ -21,83 +21,7 @@ DBoxDesc        =       $43
 DBoxDescL       =       $43
 DBoxDescH       =       $44
 
-; Commodore Kernal equates
-tapeBuffVec     =       $b2
-curScrLine      =       $d1
-curPos          =       $d3
-kbdQuePos       =       $c6
-kbdQue          =       $0277
-BASICMemBot     =       $0282
-BASICMemTop     =       $0284
-scrAddyHi       =       $0288
-PALNTSCFLAG     =       $02a6
-BASICspace      =       $0800
-BASIC_START     =       $a000
-curScrLineColor =       $d8f0
-KERNALVecTab    =       $fd30
-KERNALCIAInit   =       $fda3
-KERNALVICInit   =       $ff81
-
 ; GEOS Kernal internal vars (not for use by apps)
-menuOptNumber   =       $86c0
-menuTop         =       $86c1
-menuBottom      =       $86c2
-menuLeft        =       $86c3
-menuRight       =       $86c5
-menuStackL      =       $86c7
-menuStackH      =       $86cb
-menuOptionTab   =       $86cf
-menuLimitTabL   =       $86d3
-menuLimitTabH   =       $86e2
-TimersTab       =       $86f1
-TimersCMDs      =       $8719
-TimersRtns      =       $872d
-TimersVals      =       $8755
-NumTimers       =       $877d
-DelaySP         =       $877e
-DelayValL       =       $877f
-DelayValH       =       $8793
-DelayRtnsL      =       $87a7
-DelayRtnsH      =       $87bb
-stringLen       =       $87cf
-stringMaxLen    =       $87d0
-tmpKeyVector    =       $87d1
-stringMargCtrl  =       $87d3
-GraphPenX       =       $87d4
-GraphPenXL      =       $87d4
-GraphPenXH      =       $87d5
-GraphPenY       =       $87d6
-KbdQueHead      =       $87d7
-KbdQueTail      =       $87d8
-KbdQueFlag      =       $87d9
-KbdQueue        =       $87da
-KbdNextKey      =       $87ea
-KbdDBncTab      =       $87eb
-KbdDMltTab      =       $87f3
-
-PrvCharWidth    =       $8807
-clkBoxTemp      =       $8808
-clkBoxTemp2     =       $8809
-alarmWarnFlag   =       $880a
-tempIRQAcc      =       $880b
-defIconTab      =       $880c
-
-DeskAccPC       =       $8850
-DeskAccSP       =       $8852
-dlgBoxCallerPC  =       $8853
-dlgBoxCallerSP  =       $8855
-DBGFilesFound   =       $8856
-DBGFOffsLeft    =       $8857
-DBGFOffsTop     =       $8858
-DBGFNameTable   =       $8859
-DBGFTableIndex  =       $885b
-DBGFileSelected =       $885c
-
-RecordDirTS     =       $8861
-RecordDirOffs   =       $8863
-RecordTableTS   =       $8865
-verifyFlag      =       $8867
-TempCurDrive    =       $8868
 
 savedmoby2      =       $88bb ; ---
 scr80polar      =       $88bc ; ---
@@ -113,6 +37,7 @@ inputDevName    =       $88cb ; ---
 memBase         =       $88cf ; ---
 DrCCurDkNm      =       $88dc ; files
 DrDCurDkNm      =       $88ee ; files
+
 dir2Head        =       $8900 ; drv
 ;
 spr0pic         =       SPRITE_PICS+0*64 ; sprites

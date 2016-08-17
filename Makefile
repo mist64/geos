@@ -6,6 +6,7 @@ ASFLAGS=-I inc -I .
 KERNAL_SOURCES= \
 init/init.s \
 kernal/init.s \
+kernal/vars.s \
 kernal/misc.s \
 kernal/bitmask.s \
 kernal/bswfont.s \

@@ -26,6 +26,10 @@
 ; main.s
 .import _MNLP
 
+; var.s
+.import DeskAccSP
+.import DeskAccPC
+
 ; syscalls
 .global _GetFile
 .global _LdFile

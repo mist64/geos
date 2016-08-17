@@ -12,6 +12,9 @@
 ; header.s
 .import dateCopy
 
+; var.s
+.import alarmWarnFlag
+
 ; called by main loop
 .global _DoUpdateTime
 

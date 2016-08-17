@@ -35,6 +35,18 @@
 .import _GetSerialNumber
 .endif
 
+; var.s
+.import menuOptNumber
+.import menuBottom
+.import menuTop
+.import menuRight
+.import menuLeft
+.import menuLimitTabH
+.import menuLimitTabL
+.import menuStackH
+.import menuStackL
+.import menuOptionTab
+
 ; syscalls
 .global _DoMenu
 .global _DoPreviousMenu

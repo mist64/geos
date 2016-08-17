@@ -21,6 +21,10 @@
 ; process.s
 .import _Sleep
 
+; var.s
+.import clkBoxTemp2
+.import clkBoxTemp
+
 ; used by dlgbox
 .global CalcIconDescTab
 

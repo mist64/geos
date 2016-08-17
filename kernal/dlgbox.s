@@ -25,6 +25,19 @@
 ; mouse.s
 .import _StartMouseMode
 
+; var.s
+.import menuOptNumber
+.import TimersTab
+.import DBGFTableIndex
+.import DBGFileSelected
+.import DBGFilesFound
+.import DBGFNameTable
+.import DBGFOffsTop
+.import DBGFOffsLeft
+.import dlgBoxCallerSP
+.import dlgBoxCallerPC
+.import defIconTab
+
 .global Dialog_2
 .global DlgBoxPrep
 .global _DoDlgBox

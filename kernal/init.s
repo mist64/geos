@@ -31,6 +31,10 @@
 ; panic.s
 .import _Panic
 
+; var.s
+.import NumTimers
+.import clkBoxTemp
+
 .global InitGEOEnv
 .global InitGEOS
 .global _FirstInit

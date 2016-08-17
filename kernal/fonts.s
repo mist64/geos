@@ -16,6 +16,9 @@
 .import BitMaskLeadingSet
 .import BitMaskLeadingClear
 
+; var.s
+.import PrvCharWidth
+
 ; used by conio.s
 .global FontPutChar
 

@@ -7,6 +7,18 @@
 .include "geosmac.inc"
 .include "kernal.inc"
 
+; var.s
+.import DelayRtnsL
+.import DelayRtnsH
+.import DelayValH
+.import DelayValL
+.import DelaySP
+.import TimersTab
+.import TimersVals
+.import TimersRtns
+.import TimersCMDs
+.import NumTimers
+
 ; called from main loop
 .global _DoCheckDelays
 .global _ExecuteProcesses

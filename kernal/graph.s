@@ -20,6 +20,12 @@
 ; patterns.s
 .import PatternTab
 
+; var.s
+.import GraphPenX
+.import GraphPenXH
+.import GraphPenXL
+.import GraphPenY
+
 ; used by filesys.s
 .global ClrScr
 

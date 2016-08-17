@@ -1,3 +1,20 @@
+; Commodore Kernal equates
+tapeBuffVec     =       $b2
+curScrLine      =       $d1
+curPos          =       $d3
+kbdQuePos       =       $c6
+kbdQue          =       $0277
+BASICMemBot     =       $0282
+BASICMemTop     =       $0284
+scrAddyHi       =       $0288
+PALNTSCFLAG     =       $02a6
+BASICspace      =       $0800
+BASIC_START     =       $a000
+curScrLineColor =       $d8f0
+KERNALVecTab    =       $fd30
+KERNALCIAInit   =       $fda3
+KERNALVICInit   =       $ff81
+
 ;
 vicbase                 =       $d000
 sidbase                 =       $d400

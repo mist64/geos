@@ -27,6 +27,13 @@
 .global UNK_4
 .global UNK_5
 
+; var.s
+.import RecordDirOffs
+.import RecordDirTS
+.import RecordTableTS
+.import TempCurDrive
+.import verifyFlag
+
 .if (trap)
 .global SerialHiCompare
 .endif

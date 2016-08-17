@@ -11,6 +11,15 @@
 ; bitmask.s
 .import BitMaskPow2
 
+; var.s
+.import KbdQueHead
+.import KbdQueue
+.import KbdQueTail
+.import KbdDMltTab
+.import KbdDBncTab
+.import KbdNextKey
+.import KbdQueFlag
+
 ; used by irq.s
 .global _DoKeyboardScan
 

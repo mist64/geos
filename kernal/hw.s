@@ -12,6 +12,13 @@
 ; mouse.s
 .import ResetMseRegion
 
+; var.s
+.import KbdQueTail
+.import KbdQueHead
+.import KbdQueFlag
+.import KbdDBncTab
+.import KbdDMltTab
+
 ; used by tobasic.s
 .global Init_KRNLVec
 

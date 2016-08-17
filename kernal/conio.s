@@ -28,6 +28,13 @@
 .import _EnablSprite
 .import _PosSprite
 
+; var.s
+.import tmpKeyVector
+.import stringLen
+.import stringMaxLen
+.import stringMargCtrl
+.import PrvCharWidth
+
 .if (trap)
 ; filesys.s
 .import SerialHiCompare

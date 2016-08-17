@@ -13,6 +13,11 @@
 ; keyboard.s
 .import _DoKeyboardScan
 
+; var.s
+.import KbdQueFlag
+.import alarmWarnFlag
+.import tempIRQAcc
+
 .segment "irq"
 
 _IRQHandler:

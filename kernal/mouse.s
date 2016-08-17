@@ -33,6 +33,13 @@
 ; just a "rts" that is used elsewhere :(
 .global DoESC_RULER
 
+; var.s
+.import menuOptNumber
+.import menuBottom
+.import menuTop
+.import menuRight
+.import menuLeft
+
 ; syscalls
 .global _ClearMouseMode
 .global _IsMseInRegion
