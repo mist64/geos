@@ -914,22 +914,20 @@ FreeBlC4:
 FindNDelete:
 	MoveW r0, r6
 	jsr FindFile
-	bnex :+
+	bnex @1
 	lda #0
 	tay
 	sta (r5),y
 	jsr WriteBuff
-:
-	rts
+@1:	rts
 
 _FastDelFile:
 	PushW r3
 	jsr FindNDelete
 	PopW r3
-	bnex :+
+	bnex @1
 	jsr FreeChainByTab
-:
-	rts
+@1:	rts
 
 FreeChainByTab:
 	PushW r3
@@ -1146,13 +1144,13 @@ DelRecord3:
 _InsertRecord:
 	ldx #INV_RECORD
 	lda curRecord
-	bmi :+
+	bmi @1
 	jsr ReadyForUpdVLIR
-	bnex :+
+	bnex @1
 	lda curRecord
 	sta r0L
 	jsr MoveForwVLIRTab
-:	rts
+@1:	rts
 
 _AppendRecord:
 	jsr ReadyForUpdVLIR
@@ -1240,15 +1238,15 @@ WriRecord5:
 
 GetVLIRTab:
 	jsr SetVLIRTable
-	bnex :+
+	bnex @1
 	jsr GetBlock
-:	rts
+@1:	rts
 
 PutVLIRTab:
 	jsr SetVLIRTable
-	bnex :+
+	bnex @1
 	jsr PutBlock
-:	rts
+@1:	rts
 
 SetVLIRTable:
 	ldx #UNOPENED_VLIR

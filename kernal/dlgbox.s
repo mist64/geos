@@ -137,7 +137,7 @@ ASSERT_NOT_BELOW_IO
 	PushB CPU_DATA
 	LoadB CPU_DATA, IO_IN
 	LoadW r4, dlgBoxRamBuf
-	jsr Dialog_3
+	jsr DialogSave
 	LoadB mobenble, 1
 	PopB CPU_DATA
 ASSERT_NOT_BELOW_IO
@@ -306,53 +306,47 @@ ASSERT_NOT_BELOW_IO
 	PushB CPU_DATA
 	LoadB CPU_DATA, IO_IN
 	LoadW r4, dlgBoxRamBuf
-	jsr Dialog_4
+	jsr DialogRestore
 	PopB CPU_DATA
 ASSERT_NOT_BELOW_IO
 	rts
 
-Dialog_3:
+DialogSave:
 	ldx #0
 	ldy #0
-Dialog_31:
-	jsr Dialog_5
-	beq Dialog_33
-Dialog_32:
-	lda (r2),y
+@1:	jsr DialogNextSaveRestoreEntry
+	beq @3
+@2:	lda (r2),y
 	sta (r4),y
 	iny
 	dec r3L
-	bne Dialog_32
-	beq Dialog_31
-Dialog_33:
-	rts
+	bne @2
+	beq @1
+@3:	rts
 
-Dialog_4:
+DialogRestore:
 	php
 	sei
 	ldx #0
 	ldy #0
-Dialog_41:
-	jsr Dialog_5
-	beq Dialog_43
-Dialog_42:
-	lda (r4),y
+@1:	jsr DialogNextSaveRestoreEntry
+	beq @3
+@2:	lda (r4),y
 	sta (r2),y
 	iny
 	dec r3L
-	bne Dialog_42
-	beq Dialog_41
-Dialog_43:
-	plp
+	bne @2
+	beq @1
+@3:	plp
 	rts
 
-Dialog_5:
+DialogNextSaveRestoreEntry:
 	tya
 	add r4L
 	sta r4L
-	bcc @X
+	bcc @1
 	inc r4H
-@X:	ldy #0
+@1:	ldy #0
 	lda DialogCopyTab,x
 	sta r2L
 	inx
@@ -360,13 +354,13 @@ Dialog_5:
 	sta r2H
 	inx
 	ora r2L
-	beq Dialog_51
+	beq @2
 	lda DialogCopyTab,x
 	sta r3L
 	inx
-Dialog_51:
-	rts
+@2:	rts
 
+; pointer & length tuples of memory regions to save and restore
 DialogCopyTab:
 	.word curPattern
 	.byte 23

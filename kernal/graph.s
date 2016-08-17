@@ -122,13 +122,11 @@ _HorizontalLine:
 	jsr PrepareXCoord
 	ldy r3L
 	lda r3H
-	beq HLin0
+	beq @1
 	inc r5H
 	inc r6H
-HLin0:
-	CmpW r3, r4
-HLin1:
-	beq HLin4
+@1:	CmpW r3, r4
+	beq @4
 	SubW r3, r4
 	lsr r4H
 	ror r4L
@@ -136,32 +134,27 @@ HLin1:
 	lsr r4L
 	lda r8L
 	jsr HLineHelp
-HLin2:
-	sta (r6),Y
+@2:	sta (r6),Y
 	sta (r5),Y
 	tya
 	addv 8
 	tay
-	bcc HLin3
+	bcc @3
 	inc r5H
 	inc r6H
-HLin3:
-	dec r4L
-	beq HLin5
+@3:	dec r4L
+	beq @5
 	lda r7L
-	bra HLin2
-HLin4:
-	lda r8L
+	bra @2
+@4:	lda r8L
 	ora r8H
-	bra HLin6
-HLin5:
-	lda r8H
-HLin6:
-	jsr HLineHelp
-HLin7:
+	bra @6
+@5:	lda r8H
+@6:	jsr HLineHelp
+HLinEnd1:
 	sta (r6),Y
 	sta (r5),Y
-HLin8:
+HLinEnd2:
 	PopW r4
 	PopW r3
 	rts
@@ -190,13 +183,11 @@ _InvertLine:
 	jsr PrepareXCoord
 	ldy r3L
 	lda r3H
-	beq ILin0
+	beq @1
 	inc r5H
 	inc r6H
-ILin0:
-	CmpW r3, r4
-ILin1:
-	beq ILin4
+@1:	CmpW r3, r4
+	beq @4
 	SubW r3, r4
 	lsr r4H
 	ror r4L
@@ -204,31 +195,26 @@ ILin1:
 	lsr r4L
 	lda r8L
 	eor (r5),Y
-ILin2:
-	eor #$FF
+@2:	eor #$FF
 	sta (r6),Y
 	sta (r5),Y
 	tya
 	addv 8
 	tay
-	bcc ILin3
+	bcc @3
 	inc r5H
 	inc r6H
-ILin3:
-	dec r4L
-	beq ILin5
+@3:	dec r4L
+	beq @5
 	lda (r5),Y
-	bra ILin2
-ILin4:
-	lda r8L
+	bra @2
+@4:	lda r8L
 	ora r8H
-	bra ILin6
-ILin5:
-	lda r8H
-ILin6:
-	eor #$FF
+	bra @6
+@5:	lda r8H
+@6:	eor #$FF
 	eor (r5),Y
-	jmp HLin7
+	jmp HLinEnd1
 
 ImprintLine:
 	PushW r3
@@ -270,13 +256,11 @@ _RecoverLine:
 RLin0:
 	ldy r3L
 	lda r3H
-	beq RLin1
+	beq @1
 	inc r5H
 	inc r6H
-RLin1:
-	CmpW r3, r4
-RLin2:
-	beq RLin5
+@1:	CmpW r3, r4
+	beq @4
 	SubW r3, r4
 	lsr r4H
 	ror r4L
@@ -284,28 +268,23 @@ RLin2:
 	lsr r4L
 	lda r8L
 	jsr RecLineHelp
-RLin3:
-	tya
+@2:	tya
 	addv 8
 	tay
-	bcc RLin4
+	bcc @3
 	inc r5H
 	inc r6H
-RLin4:
-	dec r4L
-	beq RLin6
+@3:	dec r4L
+	beq @5
 	lda (r6),Y
 	sta (r5),Y
-	bra RLin3
-RLin5:
-	lda r8L
+	bra @2
+@4:	lda r8L
 	ora r8H
-	bra RLin7
-RLin6:
-	lda r8H
-RLin7:
-	jsr RecLineHelp
-	jmp HLin8
+	bra @6
+@5:	lda r8H
+@6:	jsr RecLineHelp
+	jmp HLinEnd2
 
 RecLineHelp:
 	sta r7L
@@ -340,8 +319,7 @@ _VerticalLine:
 	sta r4L
 	ldy #0
 	ldx r3L
-VLin0:
-	stx r7L
+@1:	stx r7L
 	jsr _GetScanLine
 	AddW r4, r5
 	AddW r4, r6
@@ -350,22 +328,20 @@ VLin0:
 	tax
 	lda BitMaskPow2Rev,x
 	and r8L
-	bne VLin1
+	bne @2
 	lda r7H
 	eor #$FF
 	and (r6),Y
-	bra VLin2
-VLin1:
-	lda r7H
+	bra @3
+@2:	lda r7H
 	ora (r6),Y
-VLin2:
-	sta (r6),Y
+@3:	sta (r6),Y
 	sta (r5),Y
 	ldx r7L
 	inx
 	cpx r3H
-	beq VLin0
-	bcc VLin0
+	beq @1
+	bcc @1
 	PopB r4L
 	rts
 
@@ -393,8 +369,7 @@ _i_Rectangle:
 ;---------------------------------------------------------------
 _Rectangle:
 	MoveB r2L, r11L
-Rect1:
-	lda r11L
+@1:	lda r11L
 	and #$07
 	tay
 	lda (curPattern),Y
@@ -402,7 +377,7 @@ Rect1:
 	lda r11L
 	inc r11L
 	cmp r2H
-	bne Rect1
+	bne @1
 	rts
 
 ;---------------------------------------------------------------
@@ -417,12 +392,11 @@ Rect1:
 ;---------------------------------------------------------------
 _InvertRectangle:
 	MoveB r2L, r11L
-IRect1:
-	jsr _InvertLine
+@1:	jsr _InvertLine
 	lda r11L
 	inc r11L
 	cmp r2H
-	bne IRect1
+	bne @1
 	rts
 
 ;---------------------------------------------------------------
@@ -449,12 +423,11 @@ _i_RecoverRectangle:
 ;---------------------------------------------------------------
 _RecoverRectangle:
 	MoveB r2L, r11L
-RRect1:
-	jsr _RecoverLine
+@1:	jsr _RecoverLine
 	lda r11L
 	inc r11L
 	cmp r2H
-	bne RRect1
+	bne @1
 	rts
 
 ;---------------------------------------------------------------
@@ -481,12 +454,11 @@ _i_ImprintRectangle:
 ;---------------------------------------------------------------
 _ImprintRectangle:
 	MoveB r2L, r11L
-ImRec1:
-	jsr ImprintLine
+@1:	jsr ImprintLine
 	lda r11L
 	inc r11L
 	cmp r2H
-	bne ImRec1
+	bne @1
 	rts
 
 ;---------------------------------------------------------------
@@ -557,7 +529,6 @@ GetInlineDrwParms:
 	lda (returnAddress),Y
 	sta r4H
 	PushW r5
-GtDrwPrmsEnd:
 	rts
 
 ;---------------------------------------------------------------
@@ -569,10 +540,9 @@ _i_GraphicsString:
 	PopB r0L
 	pla
 	inc r0L
-	bne i_GStr0
+	bne @1
 	addv 1
-i_GStr0:
-	sta r0H
+@1:	sta r0H
 	jsr _GraphicsString
 	jmp (r0)
 
@@ -595,15 +565,14 @@ i_GStr0:
 ;---------------------------------------------------------------
 _GraphicsString:
 	jsr Getr0AndInc
-	beq _GraphicsStringEnd
+	beq @1
 	tay
 	dey
 	lda GStrTL,Y
 	ldx GStrTH,Y
 	jsr CallRoutine
 	bra _GraphicsString
-_GraphicsStringEnd:
-	rts
+@1:	rts
 
 .define GStrT _DoMovePenTo, _DoLineTo, _DoRectangleTo, _DoNothing, _DoNewPattern, _DoESC_PutString, _DoFrame_RecTo, _DoPenXDelta, _DoPenYDelta, _DoPenXYDelta
 GStrTL:
@@ -684,47 +653,41 @@ DPYD1:
 	tya
 	add r0L
 	sta r0L
-	bcc DPYD2
+	bcc @1
 	inc r0H
-DPYD2:
-	rts
+@1:	rts
 
 GrStSetCoords:
 	jsr GetCoords
 	cmp GraphPenY
-	bcs GSSC0
+	bcs @1
 	sta r2L
 	pha
 	lda GraphPenY
 	sta r2H
-	bra GSSC1
-GSSC0:
-	sta r2H
+	bra @2
+@1:	sta r2H
 	pha
 	lda GraphPenY
 	sta r2L
-GSSC1:
-	PopB GraphPenY
+@2:	PopB GraphPenY
 	cpy GraphPenXH
-	beq GSSC2
-	bcs GSSC4
-GSSC2:
-	bcc GSSC3
+	beq @3
+	bcs @5
+@3:	bcc @4
 	cpx GraphPenXL
-	bcs GSSC4
-GSSC3:
-	stx r3L
+	bcs @5
+@4:	stx r3L
 	sty r3H
 	MoveW GraphPenX, r4
-	bra GSSC5
-GSSC4:
-	stx r4L
+	bra @6
+@5:	stx r4L
 	sty r4H
 	MoveW GraphPenX, r3
-GSSC5:
-	stx GraphPenXL
+@6:	stx GraphPenXL
 	sty GraphPenXH
 	rts
+
 ;---------------------------------------------------------------
 ; SetPattern                                              $C139
 ;
@@ -756,10 +719,9 @@ Getr0AndInc:
 	ldy #0
 	lda (r0),Y
 	inc r0L
-	bne Gr0AI0
+	bne @1
 	inc r0H
-Gr0AI0:
-	cmp #0
+@1:	cmp #0
 	rts
 
 ;---------------------------------------------------------------
@@ -855,6 +817,7 @@ LineTabH:
 _BitOtherClip:
 	ldx #$ff
 	jmp BitmClp1
+
 ;---------------------------------------------------------------
 ; BitmapClip                                              $C2AA
 ;
@@ -879,10 +842,9 @@ BitmClp1:
 	lda #0
 	sta r3L
 	sta r4L
-BitmClp2:
-	lda r12L
+@1:	lda r12L
 	ora r12H
-	beq BitmClp4
+	beq @3
 	lda r11L
 	jsr BitmHelpClp
 	lda r2L
@@ -890,32 +852,29 @@ BitmClp2:
 	lda r11H
 	jsr BitmHelpClp
 	lda r12L
-	bne BitmClp3
+	bne @2
 	dec r12H
-BitmClp3:
-	dec r12L
-	bra BitmClp2
-BitmClp4:
-	lda r11L
+@2:	dec r12L
+	bra @1
+@3:	lda r11L
 	jsr BitmHelpClp
 	jsr BitmapUpHelp
 	lda r11H
 	jsr BitmHelpClp
 	inc r1H
 	dec r2H
-	bne BitmClp4
+	bne @3
 	rts
 
 BitmHelpClp:
 	cmp #0
-	beq BitmHClp1
+	beq @1
 	pha
 	jsr BitmapDecode
 	pla
 	subv 1
 	bne BitmHelpClp
-BitmHClp1:
-	rts
+@1:	rts
 
 ;---------------------------------------------------------------
 ; i_BitmapUp                                              $C1AB
@@ -964,11 +923,10 @@ _BitmapUp:
 	lda #0
 	sta r3L
 	sta r4L
-BitmUp1:
-	jsr BitmapUpHelp
+@1:	jsr BitmapUpHelp
 	inc r1H
 	dec r2H
-	bne BitmUp1
+	bne @1
 	PopB r9H
 	rts
 
@@ -977,53 +935,47 @@ BitmapUpHelp:
 	jsr _GetScanLine
 	MoveB r2L, r3H
 	CmpBI r1L, $20
-	bcc BitmUpH1
+	bcc @1
 	inc r5H
 	inc r6H
-BitmUpH1:
-	asl
+@1:	asl
 	asl
 	asl
 	tay
-BitmUpH2:
-	sty r9L
+@2:	sty r9L
 	jsr BitmapDecode
 	ldy r9L
 	sta (r5),y
 	sta (r6),y
 	tya
 	addv 8
-	bcc BitmUpH3
+	bcc @3
 	inc r5H
 	inc r6H
-BitmUpH3:
-	tay
+@3:	tay
 	dec r3H
-	bne BitmUpH2
+	bne @2
 	rts
 
 BitmapDecode:
 	lda r3L
 	and #%01111111
-	beq BitmDe2
-	bbrf 7, r3L, BitmDe1
+	beq @2
+	bbrf 7, r3L, @1
 	jsr BitmapDecode2
 	dec r3L
 	rts
-BitmDe1:
-	lda r7H
+@1:	lda r7H
 	dec r3L
 	rts
-BitmDe2:
-	lda r4L
-	bne BitmDe3
-	bbrf 7, r9H, BitmDe3
+@2:	lda r4L
+	bne @3
+	bbrf 7, r9H, @3
 	jsr IndirectR14
-BitmDe3:
-	jsr BitmapDecode2
+@3:	jsr BitmapDecode2
 	sta r3L
 	cmp #$dc
-	bcc BitmDe4
+	bcc @4
 	sbc #$dc
 	sta r7L
 	sta r4H
@@ -1031,9 +983,8 @@ BitmDe3:
 	subv 1
 	sta r4L
 	MoveW r0, r8
-	bra BitmDe2
-BitmDe4:
-	cmp #$80
+	bra @2
+@4:	cmp #$80
 	bcs BitmapDecode
 	jsr BitmapDecode2
 	sta r7H
@@ -1041,18 +992,18 @@ BitmDe4:
 
 BitmapDecode2:
 	bit r9H
-	bpl BitmDe21
+	bpl @1
 	jsr IndirectR13
-BitmDe21:
+@1:
 	ldy #0
 	lda (r0),y
 	inc r0L
-	bne @X
+	bne @2
 	inc r0H
-@X:	ldx r4L
-	beq BitmDe22
+@2:	ldx r4L
+	beq @3
 	dec r4H
-	bne BitmDe22
+	bne @3
 	ldx r8H
 	stx r0H
 	ldx r8L
@@ -1060,8 +1011,7 @@ BitmDe21:
 	ldx r7L
 	stx r4H
 	dec r4L
-BitmDe22:
-	rts
+@3:	rts
 
 IndirectR13:
 	jmp (r13)
@@ -1091,12 +1041,11 @@ _DrawLine:
 	lda r11H
 	sub r11L
 	sta r7L
-	bcs DrwLin1
+	bcs @1
 	lda #0
 	sub r7L
 	sta r7L
-DrwLin1:
-	lda r4L
+@1:	lda r4L
 	sub r3L
 	sta r12L
 	lda r4H
@@ -1105,10 +1054,9 @@ DrwLin1:
 	ldx #r12
 	jsr Dabs
 	CmpW r12, r7
-	bcs DrwLin2
-	jmp DrawLine2
-DrwLin2:
-	lda r7L
+	bcs @2
+	jmp @9
+@2:	lda r7L
 	asl
 	sta r9L
 	lda r7H
@@ -1130,45 +1078,40 @@ DrwLin2:
 	rol r10H
 	LoadB r13L, $ff
 	CmpW r3, r4
-	bcc DrwLin4
+	bcc @4
 	CmpB r11L, r11H
-	bcc DrwLin3
+	bcc @3
 	LoadB r13L, $01
-DrwLin3:
-	ldy r3H
+@3:	ldy r3H
 	ldx r3L
 	MoveW r4, r3
 	sty r4H
 	stx r4L
 	MoveB r11H, r11L
-	bra DrwLin5
-DrwLin4:
-	ldy r11H
+	bra @5
+@4:	ldy r11H
 	cpy r11L
-	bcc DrwLin5
+	bcc @5
 	LoadB r13L, 1
-DrwLin5:
-	plp
+@5:	plp
 	php
 	jsr _DrawPoint
 	CmpW r3, r4
-	bcs DrwLin7
+	bcs @8
 	inc r3L
-	bne @X
+	bne @6
 	inc r3H
-@X:	bbrf 7, r8H, DrwLin6
+@6:	bbrf 7, r8H, @7
 	AddW r9, r8
-	bra DrwLin5
-DrwLin6:
-	AddB_ r13L, r11L
+	bra @5
+@7:	AddB_ r13L, r11L
 	AddW r10, r8
-	bra DrwLin5
-DrwLin7:
+	bra @5
+@8:
 	plp
 	rts
 
-DrawLine2:
-	lda r12L
+@9:	lda r12L
 	asl
 	sta r9L
 	lda r12H
@@ -1190,37 +1133,32 @@ DrawLine2:
 	rol r10H
 	LoadW r13, $ffff
 	CmpB r11L, r11H
-	bcc Drw2Lin2
+	bcc @B
 	CmpW r3, r4
-	bcc Drw2Lin1
+	bcc @A
 	LoadW r13, $0001
-Drw2Lin1:
-	MoveW r4, r3
+@A:	MoveW r4, r3
 	ldx r11L
 	lda r11H
 	sta r11L
 	stx r11H
-	bra Drw2Lin3
-Drw2Lin2:
-	CmpW r3, r4
-	bcs Drw2Lin3
+	bra @C
+@B:	CmpW r3, r4
+	bcs @C
 	LoadW r13, $0001
-Drw2Lin3:
-	plp
+@C:	plp
 	php
 	jsr _DrawPoint
 	CmpB r11L, r11H
-	bcs Drw2Lin5
+	bcs @E
 	inc r11L
-	bbrf 7, r8H, Drw2Lin4
+	bbrf 7, r8H, @D
 	AddW r9, r8
-	bra Drw2Lin3
-Drw2Lin4:
-	AddW r13, r3
+	bra @C
+@D:	AddW r13, r3
 	AddW r10, r8
-	bra Drw2Lin3
-Drw2Lin5:
-	plp
+	bra @C
+@E:	plp
 	rts
 
 ;---------------------------------------------------------------
@@ -1238,28 +1176,24 @@ _DrawPoint:
 	and #%11111000
 	tay
 	lda r3H
-	beq DrwPoi1
+	beq @1
 	inc r5H
 	inc r6H
-DrwPoi1:
-	lda r3L
+@1:	lda r3L
 	and #%00000111
 	tax
-	lda BitMaskPow2Rev, x
+	lda BitMaskPow2Rev,x
 	plp
-	bmi DrwPoi4
-	bcc DrwPoi2
+	bmi @4
+	bcc @2
 	ora (r6),y
-	bra DrwPoi3
-DrwPoi2:
-	eor #$ff
+	bra @3
+@2:	eor #$ff
 	and (r6),y
-DrwPoi3:
-	sta (r6),y
+@3:	sta (r6),y
 	sta (r5),y
 	rts
-DrwPoi4:
-	pha
+@4:	pha
 	eor #$ff
 	and (r5),y
 	sta (r5),y
@@ -1285,16 +1219,15 @@ _TestPoint:
 	and #%11111000
 	tay
 	lda r3H
-	beq @X
+	beq @1
 	inc r6H
-@X:	lda r3L
+@1:	lda r3L
 	and #%00000111
 	tax
 	lda BitMaskPow2Rev,x
 	and (r6),y
-	beq TestPoi1
+	beq @2
 	sec
 	rts
-TestPoi1:
-	clc
+@2:	clc
 	rts

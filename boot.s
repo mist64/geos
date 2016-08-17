@@ -123,9 +123,9 @@ L2D35:
 CheckJiffyDOS:
 	lda $E0A9
 	cmp #$78
-	beq :+
+	beq @1
 	rts
-:	ldx #<DisableParallelCommand
+@1:	ldx #<DisableParallelCommand
 	ldy #>DisableParallelCommand
 	stx $7A ; CHRGET pointer
 	sty $7B
@@ -139,9 +139,9 @@ DisableParallelCommand:
 
 L2DAB:
 	cmp #$23
-	beq :+
+	beq @1
 	rts
-:	lda #$83
+@1:	lda #$83
 	sta driveType-8,y
 	jsr L2DCB
 	bcc L2DCA
@@ -196,12 +196,12 @@ L2E02:
 	cmp #$05
 	bne L2DEC
 	lda r9L
-	beq :+
+	beq @1
 	lda r8L
 	ldx r8H
 	sec
 	rts
-:	clc
+@1:	clc
 	rts
 
 L2E20:

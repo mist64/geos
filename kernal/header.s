@@ -43,7 +43,7 @@ dateCopy:
 .endif
 
 _BootGEOS:
-	bbsf 5, sysFlgCopy, BootREU
+	bbsf 5, sysFlgCopy, @1
 	jsr $FF90
 	lda #version-bootName
 	ldx #<bootName
@@ -57,16 +57,13 @@ _BootGEOS:
 	jsr $FFD5
 	bcc _RunREU
 	jmp ($0302)
-BootREU:
-	ldy #8
-BootREU1:
-	lda BootREUTab,Y
+@1:	ldy #8
+@2:	lda BootREUTab,Y
 	sta EXP_BASE+1,Y
 	dey
-	bpl BootREU1
-BootREU2:
-	dey
-	bne BootREU2
+	bpl @2
+@3:	dey
+	bne @3
 _RunREU:
 	jmp RunREU
 BootREUTab:
