@@ -50,6 +50,14 @@ InitGEOEnv:
 
 .segment "init2"
 
+;---------------------------------------------------------------
+; FirstInit                                               $C271
+;
+; Function:  Initialize GEOS
+;
+; Pass:      nothing
+; Destroyed: a, y, r0 - r2l
+;---------------------------------------------------------------
 _FirstInit:
 	sei
 	cld

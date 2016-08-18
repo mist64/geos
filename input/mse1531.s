@@ -10,7 +10,7 @@
 
 .segment "mse1531"
 
-MouseJMP:
+MouseInit:
 	jmp _MouseInit
 SlowMouse:
 	jmp _SlowMouse

@@ -12,7 +12,7 @@
 
 .segment "lightpen"
 
-MouseJMP:
+MouseInit:
 	jmp _MouseInit
 SlowMouse:
 	jmp _SlowMouse

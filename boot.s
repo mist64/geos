@@ -5,6 +5,7 @@
 .include "config.inc"
 .include "kernal.inc"
 .include "jumptab.inc"
+.include "inputdrv.inc"
 
 kernal_offset      := $2F40
 kernal_start       := $BF40
@@ -30,14 +31,13 @@ L2C98:
 	sta CPU_DATA
 	lda #$00
 	tax
-L2CA7:
-	sta $8400,x
+@1:	sta $8400,x
 	sta $8500,x
 	sta $8600,x
 	sta $8700,x
 	sta $8800,x
 	dex
-	bne L2CA7
+	bne @1
 	LoadW r0, kernal_offset
 	LoadW r1, kernal_start
 	LoadW r2, kernal_end - kernal_start + 1
@@ -53,29 +53,31 @@ L2CA7:
 	sta r1L
 	sta r2L
 	jsr MoveData
+
 	lda #IO_IN
 	sta CPU_DATA
+
+	; draw background pattern
 	LoadW r0, SCREEN_BASE
 	ldx #$7D
-L2CF9:
-	ldy #$3F
-L2CFB:
-	lda #$55
+@2:	ldy #$3F
+@3:	lda #$55
 	sta (r0),y
 	dey
 	lda #$AA
 	sta (r0),y
 	dey
-	bpl L2CFB
+	bpl @3
 	lda #$40
 	clc
 	adc r0L
 	sta r0L
-	bcc L2D12
+	bcc @4
 	inc r0H
-L2D12:
-	dex
-	bne L2CF9
+@4:	dex
+	bne @2
+
+	; set up CIA1
 	lda $DC0F
 	and #$7F
 	sta $DC0F
@@ -87,16 +89,19 @@ L2D12:
 	sta $DC08
 	lda #RAM_64K
 	sta CPU_DATA
+
+	; same as UNK_6
 	ldx #$07
 	lda #$BB
-L2D35:
-	sta A8FE8,x
+@5:	sta A8FE8,x
 	dex
-	bpl L2D35
+	bpl @5
 	lda #$BF
 	sta A8FF0
+
+	;
 	jsr FirstInit
-	jsr MOUSE_JMP
+	jsr MouseInit
 	lda #$08
 	sta interleave
 	lda #23
@@ -113,7 +118,7 @@ L2D35:
 	sta curType
 	sta driveType-8,y
 	jsr L2DAB
-	jsr $C247
+	jsr GetDirHead
 	LoadW r0, init_offset
 	LoadW r1, init_start
 	LoadW r2, init_end - init_start + 1
@@ -144,26 +149,25 @@ L2DAB:
 @1:	lda #$83
 	sta driveType-8,y
 	jsr L2DCB
-	bcc L2DCA
-	ldy $8489
-	sta $88BF,y
+	bcc @2
+	ldy curDrive
+	sta driveData,y
 	txa
-	sta $88C2
+	sta $88C2 ; ???
 	sec
 	lda #$FF
-	sta $88C3
-L2DCA:
-	rts
+	sta $88C3 ; ramExpSize
+@2:	rts
 
+; do something with a hardware extension at $DE00
 L2DCB:
-	lda #$00
+	lda #0
 	sta r5L
-	lda #$00
+	lda #0
 	sta r9L
 	lda #$01
 	sta L2E88
 	lda #$00
-L2DDA:
 	sta L2E89
 	lda #$FF
 	sta L2E8A
@@ -171,12 +175,10 @@ L2DDA:
 	sta L2E8C
 	lda #$00
 	sta L2E8B
-L2DEC:
-	jsr L2E44
+@1:	jsr L2E44
 	lda #$00
 	sta r0L
-L2DF3:
-	lda r0L
+@2:	lda r0L
 	asl a
 	asl a
 	asl a
@@ -185,31 +187,28 @@ L2DF3:
 	tay
 	lda $8002,y
 	cmp #$04
-	beq L2E20
-L2E02:
-	inc r0L
+	beq @5
+@3:	inc r0L
 	lda r0L
 	cmp #$08
-	bne L2DF3
+	bne @2
 	inc L2E89
 	lda L2E89
 	cmp #$05
-	bne L2DEC
+	bne @4
 	lda r9L
-	beq @1
+	beq @4
 	lda r8L
 	ldx r8H
 	sec
 	rts
-@1:	clc
+@4:	clc
 	rts
-
-L2E20:
-	lda $8004,y
+@5:	lda $8004,y
 	cmp $0C
-	beq L2E3C
+	beq @6
 	lda r9L
-	bne L2E02
+	bne @3
 	lda $8016,y
 	sta r8L
 	lda $8017,y
@@ -217,13 +216,13 @@ L2E20:
 	lda #$01
 	sta r9L
 	clv
-	bvc L2E02
-L2E3C:
-	lda $8016,y
+	bvc @3
+@6:	lda $8016,y
 	ldx $8017,y
 	sec
 	rts
 
+; IDE64 related?
 L2E44:
 	php
 	sei
@@ -248,20 +247,20 @@ L2E44:
 	sta $DE20
 	lda #$00
 	sta $DE1A
-	jsr $FE09
-	jsr $FE0F
+	jsr $FE09 ; read I/O status word
+	jsr $FE0F ; ???
 	pla
 	sta CPU_DATA
 	plp
 	rts
 
 L2E88:
-	brk
+	.byte 0
 L2E89:
-	brk
+	.byte 0
 L2E8A:
-	brk
+	.byte 0
 L2E8B:
-	brk
+	.byte 0
 L2E8C:
-	brk
+	.byte 0
