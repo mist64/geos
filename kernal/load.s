@@ -1,4 +1,5 @@
-; GEOS KERNAL
+; GEOS KERNAL by Berkeley Softworks
+; reverse engineered by Maciej 'YTM/Elysium' Witkowiak; Michael Steil
 ;
 ; File, application and desk accessory launching
 
@@ -10,18 +11,23 @@
 .include "diskdrv.inc"
 .include "jumptab.inc"
 
+; conio.s
+.import _UseSystemFont
+
 ; dlgbox.s:
 .import Dialog_2
 .import DlgBoxPrep
 
 ; filesys.s
-.import GetStartHAddy
-.import UNK_4
-.import UNK_5
+.import GetStartHAddr
 .import _SaveFile
+
+; graph.s
+.import ClrScr
 
 ; init.s
 .import InitGEOEnv
+.import InitGEOS
 
 ; main.s
 .import _MNLP
@@ -29,38 +35,172 @@
 ; var.s
 .import DeskAccSP
 .import DeskAccPC
+.import TempCurDrive
 
 ; syscalls
+.global _EnterDeskTop
 .global _GetFile
 .global _LdFile
 .global _LdApplic
 .global _LdDeskAcc
 .global _RstrAppl
+.global _StartAppl
 
-.segment "file1"
+.segment "load1"
+
+_EnterDeskTop:
+	sei
+	cld
+	ldx #$ff
+	stx firstBoot
+	txs
+	jsr ClrScr
+	jsr InitGEOS
+.if (useRamExp)
+	MoveW DeskTopStart, r0
+	MoveB DeskTopLgh, r2H
+	LoadW r1, 1
+	jsr RamExpRead
+	LoadB r0L, NULL
+	MoveW DeskTopExec, r7
+.else
+	MoveB curDrive, TempCurDrive
+	eor #1
+	tay
+	lda _driveType,Y
+	php
+	lda TempCurDrive
+	plp
+	bpl EDT1
+	tya
+EDT1:
+	jsr EDT3
+	ldy NUMDRV
+	cpy #2
+	bcc EDT2
+	lda curDrive
+	eor #1
+	jsr EDT3
+EDT2:
+	LoadW r0, _EnterDT_DB
+	jsr DoDlgBox
+	lda TempCurDrive
+	bne EDT1
+EDT3:
+	jsr SetDevice
+	jsr OpenDisk
+	beqx EDT5
+EDT4:
+	rts
+EDT5:
+	sta r0L
+	LoadW r6, DeskTopName
+	jsr GetFile
+	bnex EDT4
+	lda fileHeader+O_GHFNAME+13
+	cmp #'1'
+	bcc EDT4
+	bne EDT6
+	lda fileHeader+O_GHFNAME+15
+	cmp #'5'
+	bcc EDT4
+EDT6:
+	lda TempCurDrive
+	jsr SetDevice
+	LoadB r0L, NULL
+	MoveW fileHeader+O_GHST_VEC, r7
+.endif
+
+_StartAppl:
+	sei
+	cld
+	ldx #$FF
+	txs
+	jsr UNK_5
+	jsr InitGEOS
+	jsr _UseSystemFont
+	jsr UNK_4
+	ldx r7H
+	lda r7L
+	jmp _MNLP
+
+.if (!useRamExp)
+_EnterDT_DB:
+	.byte DEF_DB_POS | 1
+	.byte DBTXTSTR, TXT_LN_X, TXT_LN_1_Y+6
+	.word _EnterDT_Str0
+	.byte DBTXTSTR, TXT_LN_X, TXT_LN_2_Y+6
+	.word _EnterDT_Str1
+	.byte OK, DBI_X_2, DBI_Y_2
+	.byte NULL
+.endif
+
+DeskTopName:
+	.byte "DESK TOP", NULL
+
+_EnterDT_Str0:
+	.byte BOLDON, "Please insert a disk", NULL
+_EnterDT_Str1:
+	.byte "with deskTop V1.5 or higher", NULL
+
+.segment "load2"
+
+UNK_4:
+	MoveB A885D, r10L
+	MoveB A885E, r0L
+	and #1
+	beq U_40
+	MoveW A885F, r7
+U_40:
+	LoadW r2, dataDiskName
+	LoadW r3, dataFileName
+U_41:
+	rts
+
+UNK_5:
+	MoveW r7, A885F
+	MoveB r10L, A885D
+	MoveB r0L, A885E
+	and #%11000000
+	beq U_51
+	ldy #>dataDiskName
+	lda #<dataDiskName
+	ldx #r2
+	jsr U_50
+	ldy #>dataFileName
+	lda #<dataFileName
+	ldx #r3
+U_50:
+	sty r4H
+	sta r4L
+	ldy #r4
+	lda #16
+	jsr CopyFString
+U_51:
+	rts
+
+.segment "load3"
 
 _GetFile:
 	jsr UNK_5
 	jsr FindFile
-	bnex GFile5
+	bnex GetFile_rts
 	jsr UNK_4
 	LoadW r9, dirEntryBuf
 	CmpBI dirEntryBuf + OFF_GFILE_TYPE, DESK_ACC
-	bne GFile0
+	bne @1
 	jmp LdDeskAcc
-GFile0:
-	cmp #APPLICATION
-	beq GFile1
+@1:	cmp #APPLICATION
+	beq @2
 	cmp #AUTO_EXEC
 	bne _LdFile
-GFile1:
-	jmp LdApplic
+@2:	jmp LdApplic
 
 _LdFile:
 	jsr GetFHdrInfo
-	bnex GFile5
+	bnex GetFile_rts
 	CmpBI fileHeader + O_GHSTR_TYPE, VLIR
-	bne GFile3
+	bne @1
 	ldy #OFF_DE_TR_SC
 	lda (r9),y
 	sta r1L
@@ -68,25 +208,23 @@ _LdFile:
 	lda (r9),y
 	sta r1H
 	jsr ReadBuff
-	bnex GFile5
+	bnex GetFile_rts
 	ldx #INV_RECORD
 	lda diskBlkBuf + 2
 	sta r1L
-	beq GFile5
+	beq GetFile_rts
 	lda diskBlkBuf + 3
 	sta r1H
-GFile3:
-	bbrf 0, A885E, GFile4
+@1:	bbrf 0, A885E, @2
 	MoveW A885F, r7
-GFile4:
-	lda #$ff
+@2:	lda #$ff
 	sta r2L
 	sta r2H
 	jsr ReadFile
-GFile5:
+GetFile_rts:
 	rts
 
-.segment "file2"
+.segment "load4"
 
 _LdDeskAcc:
 	MoveB r10L, A885D
@@ -112,7 +250,7 @@ _LdDeskAcc:
 	PopW r1
 	bnex LDAcc1
 .endif
-	jsr GetStartHAddy
+	jsr GetStartHAddr
 	lda #$ff
 	sta r2L
 	sta r2H
@@ -149,7 +287,7 @@ _RstrAppl:
 	sta r6L
 	LoadB r0L, NULL
 	jsr GetFile
-	bnex RsApp1
+	bnex @1
 	jsr Dialog_2
 	lda #>SwapFileName
 	sta r0H
@@ -159,31 +297,28 @@ _RstrAppl:
 	jsr FastDelFile
 	txa
 .endif
-RsApp1:
-	ldx DeskAccSP
+@1:	ldx DeskAccSP
 	txs
 	tax
 	PushW DeskAccPC
-RsApp2:
 	rts
 
 _LdApplic:
 	jsr UNK_5
 	jsr LdFile
-	bnex LdApplic1
-	bbsf 0, A885E, LdApplic1
+	bnex @1
+	bbsf 0, A885E, @1
 	jsr UNK_4
 	MoveW_ fileHeader+O_GHST_VEC, r7
 	jmp StartAppl
-LdApplic1:
-	rts
+@1:	rts
 
 .if (!useRamExp)
 SwapFileName:
 	.byte $1b,"Swap File", NULL
 .endif
 
-.segment "file3"
+.segment "load5"
 
 SaveSwapFile:
 	LoadB fileHeader+O_GHGEOS_TYPE, TEMPORARY

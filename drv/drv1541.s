@@ -1,4 +1,5 @@
-; GEOS
+; GEOS by Berkeley Softworks
+; reverse engineered by Maciej 'YTM/Elysium' Witkowiak; Michael Steil
 ;
 ; Commodore 1541 disk driver
 

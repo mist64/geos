@@ -1,4 +1,5 @@
-; GEOS KERNAL
+; GEOS KERNAL by Berkeley Softworks
+; reverse engineered by Maciej 'YTM/Elysium' Witkowiak; Michael Steil
 ;
 ; Console I/O
 
@@ -39,7 +40,7 @@
 ; filesys.s
 .import SerialHiCompare
 ; serial.s
-.import _GetSerialNumber2
+.import GetSerialNumber2
 .endif
 
 .global GetChWdth1
@@ -288,7 +289,7 @@ _LoadCharSet:
     ; copy high-byte of serial
 	lda SerialHiCompare
 	bne @2
-	jsr _GetSerialNumber2
+	jsr GetSerialNumber2
 	sta SerialHiCompare
 .endif
 @2:	rts

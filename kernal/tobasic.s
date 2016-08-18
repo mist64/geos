@@ -1,4 +1,5 @@
-; GEOS KERNAL
+; GEOS KERNAL by Berkeley Softworks
+; reverse engineered by Maciej 'YTM/Elysium' Witkowiak; Michael Steil
 ;
 ; C64: Start a program in BASIC mode
 
@@ -20,34 +21,30 @@
 .import BootGEOS
 .import sysFlgCopy
 
+; syscall
 .global _ToBASIC
 
 .segment "tobasic1"
 
 .if (!removeToBASIC)
-LoKernalBuf:
-	.byte 0, 0, 0, 0, 0, 0, 0, 0
-	.byte 0, 0, 0, 0, 0, 0, 0, 0
-	.byte 0, 0, 0, 0, 0, 0, 0, 0
-	.byte 0, 0, 0, 0, 0, 0, 0, 0
-	.byte 0, 0, 0, 0, 0, 0, 0, 0
-LKIntTimer:
+ToBASICBuf:
+	.res 40, 0
+IntTimer:
 	.byte 0
-LKSaveBASIC:
+SaveBASIC:
 	.byte 0, 0, 0
-LKSaveR7:
-	.byte 0, 0
+SaveR7:
+	.word 0
 
-LoKernal1:
+ToBASIC2:
 	sei
 	LoadB CPU_DATA, KRNL_IO_IN
 	ldy #2
-LKernal1:
-	lda BASICspace,y
-	sta LKSaveBASIC,y
+@1:	lda BASICspace,y
+	sta SaveBASIC,y
 	dey
-	bpl LKernal1
-	MoveW r7, LKSaveR7
+	bpl @1
+	MoveW r7, SaveR7
 	inc CPU_DATA
 	ldx #$ff
 	txs
@@ -56,25 +53,24 @@ LKernal1:
 	ldx curDevice
 	lda #0
 	tay
-LKernal2:
-	sta zpage+2,y
+@2:	sta zpage+2,y
 	sta zpage+$0200, y
 	sta zpage+$0300, y
 	iny
-	bne LKernal2
+	bne @2
 	stx curDevice
 	LoadB BASICMemTop, $a0
 	LoadW_ tapeBuffVec, $03c3
 	LoadB BASICMemBot, $08
 	lsr
-	sta scrAddyHi
+	sta scrAddrHi
 	jsr Init_KRNLVec
 	jsr KERNALVICInit
 	lda #>execBASIC
 	sta nmivec+1
 	lda #<execBASIC
 	sta nmivec
-	LoadB LKIntTimer, 6
+	LoadB IntTimer, 6
 	lda cia2base+13
 	LoadB cia2base+4, $ff
 	sta cia2base+5
@@ -87,34 +83,30 @@ execBASIC:
 	tya
 	pha
 	lda cia2base+13
-	dec LKIntTimer
-	bne exeBAS4
+	dec IntTimer
+	bne @4
 	LoadB cia2base+13, $7f
 	LoadW nmivec, BootGEOS
 	ldy #2
-exeBAS1:
-	lda LKSaveBASIC, y
-	sta BASICspace, y
+@1:	lda SaveBASIC,y
+	sta BASICspace,y
 	dey
-	bpl exeBAS1
-	MoveW LKSaveR7, cardDataPntr+1
+	bpl @1
+	MoveW SaveR7, $2d ; VARTAB
 	iny
-exeBAS2:
-	lda LoKernalBuf,y
-	beq exeBAS3
+@2:	lda ToBASICBuf,y
+	beq @3
 	sta (curScrLine),y
 	lda #14
 	sta curScrLineColor,y
 	iny
-	bne exeBAS2
-exeBAS3:
-	tya
-	beq exeBAS4
-	LoadB curPos, $28
+	bne @2
+@3:	tya
+	beq @4
+	LoadB curPos, 40
 	LoadB kbdQuePos, 1
 	LoadB kbdQue, CR
-exeBAS4:
-	pla
+@4:	pla
 	tay
 	pla
 	rti
@@ -139,25 +131,22 @@ _ToBASIC:
 	jmp $fce2
 .else
 	ldy #39
-TB1:
-	lda (r0),Y
+@1:	lda (r0),Y
 	cmp #'A'
-	bcc TB2
+	bcc @2
 	cmp #'Z'+1
-	bcs TB2
+	bcs @2
 	sbc #$3F
-TB2:
-	sta LoKernalBuf,Y
+@2:	sta ToBASICBuf,Y
 	dey
-	bpl TB1
+	bpl @1
 	lda r5H
-	beq TB4
+	beq @4
 	iny
 	tya
-TB3:
-	sta BASICspace,Y
+@3:	sta BASICspace,Y
 	iny
-	bne TB3
+	bne @3
 	SubVW $0002,r7
 	lda (r7),Y
 	pha
@@ -179,25 +168,24 @@ TB3:
 	dey
 	pla
 	sta (r0),Y
-TB4:
-	jsr GetDirHead
+@4:	jsr GetDirHead
 	jsr PurgeTurbo
 	lda sysRAMFlg
 	sta sysFlgCopy
 	and #%00100000
-	beq TB6
-	ldy #6
-TB5:
-	lda ToBASICTab,Y
+	beq @6
+	ldy #ToBASICTab_end - ToBASICTab - 1
+@5:	lda ToBASICTab,Y
 	sta r0,Y
 	dey
-	bpl TB5
+	bpl @5
 	jsr StashRAM
-TB6:
-	jmp LoKernal1
+@6:	jmp ToBASIC2
+
 ToBASICTab:
 	.word dirEntryBuf
 	.word REUOsVarBackup
 	.word OS_VARS_LGH
 	.byte $00
+ToBASICTab_end:
 .endif

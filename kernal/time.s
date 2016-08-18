@@ -1,4 +1,5 @@
-; GEOS KERNAL
+; GEOS KERNAL by Berkeley Softworks
+; reverse engineered by Maciej 'YTM/Elysium' Witkowiak; Michael Steil
 ;
 ; C64/CIA clock driver
 
@@ -30,22 +31,19 @@ ASSERT_NOT_BELOW_IO
 	sta cia1base+15
 	lda hour
 	cmp #12
-	bmi DoUpdTime1
-	bbsf 7, cia1base+11, DoUpdTime1
+	bmi @1
+	bbsf 7, cia1base+11, @1
 	jsr DateUpdate
-DoUpdTime1:
-	lda cia1base+11
+@1:	lda cia1base+11
 	and #%00011111
 	cmp #$12
-	bne DoUpdTime2
+	bne @2
 	lda #0
-DoUpdTime2:
-	bbrf 7, cia1base+11, DoUpdTime3
+@2:	bbrf 7, cia1base+11, @3
 	sed
 	addv $12
 	cld
-DoUpdTime3:
-	jsr ConvertBCD
+@3:	jsr ConvertBCD
 	sta hour
 	lda cia1base+10
 	jsr ConvertBCD
@@ -55,68 +53,60 @@ DoUpdTime3:
 	sta seconds
 	lda cia1base+8
 	ldy #2
-DoUpdTime4:
-	lda year,y
+@4:	lda year,y
 	sta dateCopy,y
 	dey
-	bpl DoUpdTime4
+	bpl @4
 	MoveB cia1base+13, r1L
 	stx CPU_DATA
 ASSERT_NOT_BELOW_IO
-	bbrf 7, alarmSetFlag, DoUpdTime5
+	bbrf 7, alarmSetFlag, @5
 	and #ALARMMASK
-	beq DoUpdTime6
+	beq @6
 	lda #$4a
 	sta alarmSetFlag
 	lda alarmTmtVector
 	ora alarmTmtVector+1
-	beq DoUpdTime5
+	beq @5
 	jmp (alarmTmtVector)
-
-DoUpdTime5:
-	bbrf 6, alarmSetFlag, DoUpdTime6
+@5:	bbrf 6, alarmSetFlag, @6
 	jsr DoClockAlarm
-DoUpdTime6:
-	cli
+@6:	cli
 	rts
 
 DateUpdate:
 	jsr CheckMonth
 	cmp day
-	beq DateUpd1
+	beq @1
 	inc day
 	rts
-DateUpd1:
-	ldy #1
+@1:	ldy #1
 	sty day
 	inc month
 	lda month
 	cmp #13
-	bne DateUpd2
+	bne @2
 	sty month
 	inc year
 	lda year
 	cmp #100
-	bne DateUpd2
+	bne @2
 	dey
 	sty year
-DateUpd2:
-	rts
+@2:	rts
 
 CheckMonth:
 	ldy month
 	lda daysTab-1, y
 	cpy #2
-	bne CheckMonth2
+	bne @2
 	tay
 	lda year
 	and #3
-	bne CheckMonth1
+	bne @1
 	iny
-CheckMonth1:
-	tya
-CheckMonth2:
-	rts
+@1:	tya
+@2:	rts
 
 daysTab:
 	.byte 31, 28, 31, 30, 31, 30
@@ -133,40 +123,35 @@ ConvertBCD:
 	pla
 	and #%00001111
 	clc
-CvtBCD1:
-	dey
-	bmi CvtBCD2
+@1:	dey
+	bmi @2
 	adc #10
-	bne CvtBCD1
-CvtBCD2:
-	rts
+	bne @1
+@2:	rts
 
 DoClockAlarm:
 	lda alarmWarnFlag
-	bne DoClkAlrm3
+	bne @3
 	ldy CPU_DATA
 ASSERT_NOT_BELOW_IO
 	LoadB CPU_DATA, IO_IN
 	ldx #24
-DoClkAlrm1:
-	lda pingTab,x
+@1:	lda pingTab,x
 	sta sidbase,x
 	dex
-	bpl DoClkAlrm1
+	bpl @1
 	ldx #$21
 	lda alarmSetFlag
 	and #%00111111
-	bne DoClkAlrm2
+	bne @2
 	tax
-DoClkAlrm2:
-	stx sidbase+4
+@2:	stx sidbase+4
 	sty CPU_DATA
 ASSERT_NOT_BELOW_IO
 	lda #$1e
 	sta alarmWarnFlag
 	dec alarmSetFlag
-DoClkAlrm3:
-	rts
+@3:	rts
 
 pingTab:
 	.byte $00, $10, $00, $08, $40, $08, $00, $00

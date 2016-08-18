@@ -1,6 +1,8 @@
-; GEOS
+; GEOS by Berkeley Softworks
+; reverse engineered by Maciej 'YTM/Elysium' Witkowiak; Michael Steil
 ;
-; lightpen input driver
+; Lightpen input driver
+;
 
 .include "const.inc"
 .include "geossym.inc"

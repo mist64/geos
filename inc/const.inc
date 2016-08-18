@@ -1,5 +1,8 @@
-; GeosConst - various system constans sorted by function
-; reassembled by Maciej 'YTM/Alliance' Witkowiak
+; GEOS by Berkeley Softworks
+; reverse engineered by Maciej 'YTM/Elysium' Witkowiak; Michael Steil
+;
+; various system constans sorted by function
+;
 
 NULL                    =       0
 

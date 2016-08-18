@@ -1,4 +1,5 @@
-; GEOS KERNAL
+; GEOS KERNAL by Berkeley Softworks
+; reverse engineered by Maciej 'YTM/Elysium' Witkowiak; Michael Steil
 ;
 ; Misc 6502 helpers
 
@@ -18,23 +19,20 @@
 ;---------------------------------------------------------------
 _CallRoutine:
 	cmp #0
-	bne CRou1
+	bne @1
 	cpx #0
-	beq CRou2
-CRou1:
-	sta CallRLo
+	beq @2
+@1:	sta CallRLo
 	stx CallRHi
 	jmp (CallRLo)
-CRou2:
-	rts
+@2:	rts
 
 ;---------------------------------------------------------------
 ;---------------------------------------------------------------
 _DoInlineReturn:
 	add returnAddress
 	sta returnAddress
-	bcc DILR1
+	bcc @1
 	inc returnAddress+1
-DILR1:
-	plp
+@1:	plp
 	jmp (returnAddress)

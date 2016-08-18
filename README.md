@@ -1,50 +1,34 @@
 
 
-GEOS KERNAL v2.0 - commented source code
-========================================
-by Maciej 'YTM/Elysium' Witkowiak
-6-6-99, 18-8-99, 18/29-2-2000, 2014
+# GEOS Source Code
+
+by Berkeley Softworks, reverse engineered by Maciej 'YTM/Elysium' Witkowiak; Michael Steil
 
 
 
-#DESCRIPTION
-This archive contains FULL source code of GEOS KERNAL v2.0, english version.
-It is identical to original in critical points but the code is revised,
-optimized, reorganized and first steps towards modularizing are made.
+## Description
+
+This is the reverse engineered source code of the KERNAL as well as disk and input drivers of the English version of GEOS 2.0 for Commodore 64.
+
+The source has been heavily reorganized and modularized, nevertheless, a standard compile will generate binaries that are identical with the GEOS 2.0 distrbution binaries.
 
 
+# Requirements
 
-#DISCLAIMER
-This package comes from full disassembling of GEOS KERNAL. I did it for my
-own pleasure and purposes in my spare time. It is meant for customizing the
-code and not for making big bucks on it. If you want to use GEOS KERNAL
-generated from these sources you need to have an original copy of GEOS,
-because you can do nothing without DeskTop, applications and so.
+* [cc65](https://github.com/cc65/cc65) for assembling and linking
+* [pucrunch](https://github.com/mist64/pucrunch) for generating a compressed executable
+* [c1541](http://vice-emu.sourceforge.net) for generating the disk image
 
-Although I have throughly tested it I cannot guarantee that it will work on
-any hardware configuration and with any applications.
+# Copy protection
 
+The original GEOS was copy protected in three ways:
 
-
-#REQUIREMENTS
-The only tool required is ACME (version at least 0.07). It may be obtained
-from:
-http://home.pages.de/~mac_bacon/acme/
-Bash shell is helpful and existance of c1541 from VICE package will be good
-too. You will probably want to have pucrunch from 
-http://www.cs.tut.fi/~albert/Dev/
-Base distribution of these sources is intended for UNIX systems, but ACME in
-DOS will do too.
-To compile the kernel simply do
-```
-make
-```
-It will work flawlessly if you have c1541 and pucrunch. Anyway if you only
-have ACME make will stop after assembling the system and you will have
-geoskernal.bin file ready for loading into c64 and SYS $5000.
+* The original loader [decrypted the KERNAL at load time](http://www.root.org/%7Enate/c64/KrackerJax/pg106.htm) and refused to do so if the floppy disk was a copy. Like the cbmfiles.com version, this version doesn't use the original loader, and the kernel is available in plaintext.
+* deskTop assigned a random serial number to the kernel on first boot and keyed all major applications to itself. This version comes with a serial number of 0x58B5 pre-filled, which matches the cbmfiles.com version.
+* To counter tampering with the serial number logic, the KERNAL contained [two traps](http://www.pagetable.com/?p=865) that could sabotage the kernel. The code is included in this version, but can be removed by setting trap = 0.
 
 
-#CUSTOMIZATION
+# Customization
 
 Look into inc/equ.inc file - there are many true/false defines, you are free
 to change them. But read the comments. You can compile-in input and disk
@@ -88,82 +72,23 @@ make clean
 will remove all output files from the source tree.
 
 
-#MS-DOS INSTALL
-
-Execute MAKEGEOS.BAT file, it will try to assemble the whole thing. I don't have pucrunch for
-DOS, so you will have uncompressed output file - geoskern.bin. Move it to a disk (image) and
-compress on c64 or execute - start and load address is $5000 - e.g.
-```
-LOAD "GEOSKERN.BIN",8,1
-SYS20480
-```
-
-#THE SOURCES
-
-Source code is organized in a specific way. You can browse through it easier
-by using some keypoints:
-
-##1) Labels
-All global labels are identical to those from geosSym and geosMac files. All
-OS_JUMPTAB functions are preceded with '_'. For example EnterDeskTop is placed
-in jumptab as:
-```
-EnterDeskTop		JMP _EnterDeskTop
-(...)
-_EnterDeskTOp		; code for handling this function
-```
-
-All other labels are meant to descript the purpose of a subroutine. It was not
-always possible, so you may find some UNK_xxx, xxxHelp_xx and lots of
-procedures with the same name but different number e.g. Font11, Font12 etc.
-In current version all labels are global and these which should be local are
-made by abbreviation of the subroutine with a number on its end.
-In future releases it will be fixed and named ACME !zone(s) will be used.
-
-##2) Indentation
-This goes like that:
-```
-		[tab2]				[tab6]
-Label		LDA #0				;$xxxx
-```
-
-CPU opcodes are always on 1st or 2nd tab. If it is 1st tab position, it means
-that the purpose of current/called subroutine/memory location is unknown.
-Comments are always on 6th tab position. The source is full of ;$xxxx
-comments. It is relict from disassembling the KERNAL - those marks helped me
-a lot when debugging. Currently the values there are wrong because code is
-optimized and reorganized. They will be removed in future releases.
-
 #SOURCE TREE
 
-./bin	-	all binary files goes there
-./inc	-	all include files
-./src	-	all source files
+* `./drv`: disk drive driver source
+* `./inc`: include files: macros and symbols
+* `./init`: purgeable KERNAL init source
+* `./input`: input driver source
+* `./kernal`: kernal source
+* `./reference`: original binaries from the cbmfiles.com version
 
-subdirectories of ./bin and ./src
-./drv	-	disk drivers code/binary
-./input	-	input drivers code/binary
+# References
 
-Description of sources can be found at top of each file.
+* [The Official GEOS Programmers Reference Guide](http://lyonlabs.org/commodore/onrequest/The_Official_GEOS_Programmers_Reference_Guide.pdf)
+* [The Hitchhikers Guide to GEOS](http://lyonlabs.org/commodore/onrequest/geos-manuals/The_Hitchhikers_Guide_to_GEOS.pdf)
+* [Boyce, Alexander Donald: GEOS Programmer's Reference Guide ](http://www.zimmers.net/geos/docs/geotech.txt)
 
+# Authors
 
+The original reverse-engineering was done by [Maciej Witkowiak](mailto:ytm@elysium.pl) in 1999/2000, targeted the ACME assembler and was released as [GEOS 2000](https://github.com/ytmytm/c64-GEOS2000), which included several code optimizations and code layout differences.
 
-#COMMENTS
-Well, the sources are not yet commented very much, but the labels are very
-descriptive (as for me anyway). You should obtain the GEOS Programmer's
-Reference Book (by Alexander Boyce) for full description of all jumptab
-functions and many GEOS data structures. This document is available in text
-and HTML format from
-ftp.funet.fi/pub/cbm/[somewhere...]
-ftp.elysium.pl/tools/systems/geos/docs [or /programming]
-
-
-
-#AUTHOR
-And reverse-engineer :}
-Maciej Witkowiak
-ytm@elysium.pl
-
-
-#END WORDS
-Have fun!
+In 2015/2016, [Michael Steil](mailto:mist64@mac.com) ported the sources to cc65, reconstructed the original code layout, did some more reverse-engineering and cleanups, and modularized the code aggressively.

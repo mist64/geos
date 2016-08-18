@@ -1,4 +1,5 @@
-; GEOS KERNAL
+; GEOS KERNAL by Berkeley Softworks
+; reverse engineered by Maciej 'YTM/Elysium' Witkowiak; Michael Steil
 ;
 ; Dialog box
 
@@ -48,42 +49,37 @@
 _DoDlgBox:
 	MoveW r0, DBoxDesc
 	ldx #0
-DDlgB1:
-	lda r5L,x
+@1:	lda r5L,x
 	pha
 	inx
 	cpx #12
-	bne DDlgB1
+	bne @1
 	jsr DlgBoxPrep
 	jsr DrawDlgBox
 	LoadW__ r11, 0
 	jsr _StartMouseMode
 	jsr _UseSystemFont
 	ldx #11
-DDlgB2:
-	pla
+@2:	pla
 	sta r5L,x
 	dex
-	bpl DDlgB2
+	bpl @2
 	ldy #0
 	ldx #7
 	lda (DBoxDesc),y
-	bpl DDlgB3
+	bpl @3
 	ldx #1
-DDlgB3:
-	txa
+@3:	txa
 	tay
-DDlgB31:
-	lda (DBoxDesc),y
+@4:	lda (DBoxDesc),y
 	sta r0L
-	beq DDlgB6
+	beq @7
 	ldx #0
-DDlgB4:
-	lda r5L,x
+@5:	lda r5L,x
 	pha
 	inx
 	cpx #12
-	bne DDlgB4
+	bne @5
 	iny
 	sty r1L
 	ldy r0L
@@ -91,46 +87,34 @@ DDlgB4:
 	ldx DlgBoxProcH-1,y
 	jsr CallRoutine
 	ldx #11
-DDlgB5:
-	pla
+@6:	pla
 	sta r5L,x
 	dex
-	bpl DDlgB5
+	bpl @6
 	ldy r1L
-	bra DDlgB31
-DDlgB6:
-	lda defIconTab
-	beq DDlgB7
+	bra @4
+@7:	lda defIconTab
+	beq @8
 	LoadW r0, defIconTab
 	jsr DoIcons
-DDlgB7:
-	PopW dlgBoxCallerPC
+@8:	PopW dlgBoxCallerPC
 	tsx
 	stx dlgBoxCallerSP
 	jmp MainLoop
 
+.define DlgBoxProc1 DBDoIcons, DBDoIcons, DBDoIcons, DBDoIcons, DBDoIcons, DBDoIcons
+.define DlgBoxProc2 DBDoIcons, DBDoIcons, DBDoIcons, DBDoIcons
+.define DlgBoxProc3 DBDoTXTSTR, DBDoVARSTR, DBDoGETSTR, DBDoSYSOPV, DBDoGRPHSTR, DBDoGETFILES, DBDoOPVEC, DBDoUSRICON, DBDoUSR_ROUT
+
+
 DlgBoxProcL:
-	.byte <DBDoIcons, <DBDoIcons
-	.byte <DBDoIcons, <DBDoIcons
-	.byte <DBDoIcons, <DBDoIcons
-	.byte <DBDoIcons, <DBDoIcons ; not used
-	.byte <DBDoIcons, <DBDoIcons ; not used
-	.byte <DBDoTXTSTR, <DBDoVARSTR
-	.byte <DBDoGETSTR, <DBDoSYSOPV
-	.byte <DBDoGRPHSTR, <DBDoGETFILES
-	.byte <DBDoOPVEC, <DBDoUSRICON
-	.byte <DBDoUSR_ROUT
+	.lobytes DlgBoxProc1
+	.lobytes DlgBoxProc2 ; not used
+	.lobytes DlgBoxProc3
 DlgBoxProcH:
-	.byte >DBDoIcons, >DBDoIcons
-	.byte >DBDoIcons, >DBDoIcons
-	.byte >DBDoIcons, >DBDoIcons
-	.byte <DBDoIcons, <DBDoIcons ; not used
-	.byte <DBDoIcons, <DBDoIcons ; not used
-	.byte >DBDoTXTSTR, >DBDoVARSTR
-	.byte >DBDoGETSTR, >DBDoSYSOPV
-	.byte >DBDoGRPHSTR, >DBDoGETFILES
-	.byte >DBDoOPVEC, >DBDoUSRICON
-	.byte >DBDoUSR_ROUT
+	.hibytes DlgBoxProc1
+	.lobytes DlgBoxProc2 ; yes, lobytes!! -- not used
+	.hibytes DlgBoxProc3
 
 DlgBoxPrep:
 ASSERT_NOT_BELOW_IO
@@ -152,7 +136,7 @@ DrawDlgBox:
 	and #%00011111
 .if (speedupDlgBox)
 	bne DrwDlgSpd0
-	jmp DrwDlgBx1
+	jmp @1
 DrwDlgSpd0:
 	;1st: right,right+8,top+8,bottom
 	;2nd: left+8,right+8,bottom,bottom+8
@@ -202,14 +186,13 @@ DrwDlgSpd1:
 	jsr Rectangle
 	PopW DBoxDesc
 .else
-	beq DrwDlgBx1
+	beq @1
 	jsr SetPattern
 	sec
 	jsr CalcDialogCoords
 	jsr Rectangle
 .endif
-DrwDlgBx1:
-	lda #0
+@1:	lda #0
 	jsr SetPattern
 	clc
 	jsr CalcDialogCoords
@@ -229,13 +212,11 @@ Dialog_1:
 	ldy #0
 	lda (DBoxDesc),y
 	and #%00011111
-	beq Dialog_11
+	beq @1
 	sec
-	jsr Dialog_12
-Dialog_11:
-	clc
-Dialog_12:
-	jsr CalcDialogCoords
+	jsr @2
+@1:	clc
+@2:	jsr CalcDialogCoords
 	jmp RcvrMnu0
 
 CalcDialogCoords:
@@ -243,46 +224,42 @@ CalcDialogCoords:
 	LoadB r1H, 0
 .else
 	lda #0
-	bcc ClcDlgCoor1
+	bcc @1
 	lda #8
-ClcDlgCoor1:
-	sta r1H
+@1:	sta r1H
 .endif
 	PushW DBoxDesc
 	ldy #0
 	lda (DBoxDesc),y
-	bpl ClcDlgCoor2
+	bpl @2
 	lda #>(DBDefinedPos-1)
 	sta DBoxDescH
 	lda #<(DBDefinedPos-1)
 	sta DBoxDesc
-ClcDlgCoor2:
-	ldx #0
+@2:	ldx #0
 	ldy #1
-ClcDlgCoor3:
-	lda (DBoxDesc),y
+@3:	lda (DBoxDesc),y
 	clc
 	adc r1H
 	sta r2L,x
 	iny
 	inx
 	cpx #2
-	bne ClcDlgCoor3
-ClcDlgCoor4:
-	lda (DBoxDesc),y
+	bne @3
+@4:	lda (DBoxDesc),y
 	clc
 	adc r1H
 	sta r2L,x
 	iny
 	inx
 	lda (DBoxDesc),y
-	bcc @X
+	bcc @5
 	adc #0
-@X:	sta r2L,x
+@5:	sta r2L,x
 	iny
 	inx
 	cpx #6
-	bne ClcDlgCoor4
+	bne @4
 	PopW DBoxDesc
 	rts
 
@@ -390,16 +367,15 @@ DialogCopyTab:
 
 DBDoIcons:
 	dey
-	bne DBDoIcns1
+	bne @1
 	lda keyVector
 	ora keyVector+1
-	bne DBDoIcns1
+	bne @1
 	lda #>DBKeyVector
 	sta keyVector+1
 	lda #<DBKeyVector
 	sta keyVector
-DBDoIcns1:
-	tya
+@1:	tya
 	asl
 	asl
 	asl
@@ -450,30 +426,26 @@ DBIconsHelp1:
 DBIconsHelp2:
 	ldx defIconTab
 	cpx #8
-	bcs DBIcHlp_23
+	bcs @4
 	txa
 	inx
 	stx defIconTab
 	jsr CalcIconDescTab
 	tax
 	ldy #0
-DBIcHlp_20:
-	lda (r5),y
+@1:	lda (r5),y
 	cpy #2
-	bne DBIcHlp_21
+	bne @2
 	lda r3L
-DBIcHlp_21:
-	cpy #3
-	bne DBIcHlp_22
+@2:	cpy #3
+	bne @3
 	lda r2L
-DBIcHlp_22:
-	sta defIconTab,x
+@3:	sta defIconTab,x
 	inx
 	iny
 	cpy #8
-	bne DBIcHlp_20
-DBIcHlp_23:
-	rts
+	bne @1
+@4:	rts
 
 DBDefIconsTab:
 	.word DBIcPicOK
@@ -540,7 +512,7 @@ DBDoSYSOPV:
 	rts
 
 DBStringFaultVec:
-	bbsf 7, mouseData, DBDoOpVec1
+	bbsf 7, mouseData, DBDoOPVEC_rts
 	lda #DBSYSOPV
 	sta sysDBData
 	jmp RstrFrmDialogue
@@ -554,7 +526,7 @@ DBDoOPVEC:
 	sta otherPressVec+1
 	iny
 	sty r1L
-DBDoOpVec1:
+DBDoOPVEC_rts:
 	rts
 
 
@@ -707,53 +679,46 @@ DBDoGETFILES:
 	sta DBGFilesArrowsIcons+2
 	lda #15
 	sub r7H
-	beq DBDGFls2
+	beq @2
 	sta DBGFilesFound
 	cmp #6
-	bcc DBDGFls1
+	bcc @1
 	lda #>DBGFilesArrowsIcons
 	sta r5H
 	lda #<DBGFilesArrowsIcons
 	sta r5L
 	jsr DBIconsHelp2
-DBDGFls1:
-	lda #>DBGFPressVector
+@1:	lda #>DBGFPressVector
 	sta otherPressVec+1
 	lda #<DBGFPressVector
 	sta otherPressVec
 	jsr DBGFilesHelp1
 	jsr DBGFilesHelp5
 	jsr DBGFilesHelp2
-DBDGFls2:
-	PopB r1L
+@2:	PopB r1L
 	rts
 
 DBGFilesHelp1:
 	PushB DBGFilesFound
-DBGFlsHlp_11:
-	pla
+@1:	pla
 	subv 1
 	pha
-	beq DBGFlsHlp_13
+	beq @3
 	jsr DBGFilesHelp3
 	ldy #0
-DBGFlsHlp_12:
-	lda (r0),y
+@2:	lda (r0),y
 	cmp (r1),y
-	bne DBGFlsHlp_11
+	bne @1
 	tax
-	beq DBGFlsHlp_13
+	beq @3
 	iny
-	bne DBGFlsHlp_12
-DBGFlsHlp_13:
-	PopB DBGFileSelected
+	bne @2
+@3:	PopB DBGFileSelected
 	subv 4
-	bpl DBGFlsHlp_14
+	bpl @4
 	lda #0
-DBGFlsHlp_14:
-	sta DBGFTableIndex
-DBGFlsHlp_15:
-	rts
+@4:	sta DBGFTableIndex
+@5:	rts
 
 DBGFilesArrowsIcons:
 	.word DBGFArrowPic
@@ -780,14 +745,14 @@ DBGFArrowPic:
 
 DBGFPressVector:
 	lda mouseData
-	bmi DBGFPrVec2
+	bmi @2
 	jsr DBGFilesHelp7
 	clc
 	lda r2L
 	adc #$45
 	sta r2H
 	jsr IsMseInRegion
-	beq DBGFPrVec2
+	beq @2
 	jsr DBGFilesHelp6
 	jsr DBGFilesHelp7
 	lda mouseYPos
@@ -802,16 +767,14 @@ DBGFPressVector:
 	lda r0L
 	add DBGFTableIndex
 	cmp DBGFilesFound
-	bcc DBGFPrVec1
+	bcc @1
 	ldx DBGFilesFound
 	dex
 	txa
-DBGFPrVec1:
-	sta DBGFileSelected
+@1:	sta DBGFileSelected
 	jsr DBGFilesHelp6
 	jsr DBGFilesHelp2
-DBGFPrVec2:
-	rts
+@2:	rts
 
 DBGFDoArrow:
 	jsr DBGFilesHelp6
@@ -823,32 +786,27 @@ DBGFDoArrow:
 	rol r0H
 	addv 12
 	sta r0L
-	bcc @X
+	bcc @1
 	inc r0H
-@X:	ldx DBGFTableIndex
+@1:	ldx DBGFTableIndex
 	CmpW r0, mouseXPos
-	bcc DBDoArrow1
+	bcc @2
 	dex
-	bpl DBDoArrow2
-DBDoArrow1:
-	inx
+	bpl @3
+@2:	inx
 	lda DBGFilesFound
 	sub DBGFTableIndex
 	cmp #6
-	bcc DBDoArrow3
-DBDoArrow2:
-	stx DBGFTableIndex
-DBDoArrow3:
-	CmpB DBGFTableIndex, DBGFileSelected
-	bcc DBDoArrow4
+	bcc @4
+@3:	stx DBGFTableIndex
+@4:	CmpB DBGFTableIndex, DBGFileSelected
+	bcc @5
 	sta DBGFileSelected
-DBDoArrow4:
-	addv 4
+@5:	addv 4
 	cmp DBGFileSelected
-	bcs DBDoArrow5
+	bcs @6
 	sta DBGFileSelected
-DBDoArrow5:
-	jsr DBGFilesHelp2
+@6:	jsr DBGFilesHelp2
 	jmp DBGFilesHelp5
 
 DBGFilesHelp2:
@@ -893,8 +851,7 @@ DBGFilesHelp5:
 	ldx #r14
 	jsr DBGFilesHelp4
 	LoadB currentMode, SET_BOLD
-DBGFlsHlp_51:
-	lda r15L
+@1:	lda r15L
 	jsr DBGFilesHelp8
 	jsr Rectangle
 	MoveW r3, r11
@@ -906,7 +863,7 @@ DBGFlsHlp_51:
 	AddVW 17, r14
 	inc r15L
 	CmpBI r15L, 5
-	bne DBGFlsHlp_51
+	bne @1
 	jsr DBGFilesHelp6
 	LoadB currentMode, NULL
 	PopW rightMargin
@@ -922,9 +879,9 @@ DBGFilesHelp7:
 	clc
 	jsr CalcDialogCoords
 	AddB DBGFOffsLeft, r3L
-	bcc @X
+	bcc @1
 	inc r3H
-@X:	addv $7c
+@1:	addv $7c
 	sta r4L
 	lda #0
 	adc r3H
@@ -948,9 +905,9 @@ DBGFilesHelp8:
 	inc r2L
 	dec r2H
 	inc r3L
-	bne @X
+	bne @1
 	inc r3H
-@X:	ldx #r4
+@1:	ldx #r4
 	jsr Ddec
 	rts
 

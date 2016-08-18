@@ -1,4 +1,5 @@
-; GEOS KERNAL
+; GEOS KERNAL by Berkeley Softworks
+; reverse engineered by Maciej 'YTM/Elysium' Witkowiak; Michael Steil
 ;
 ; IRQ/NMI handlers
 
@@ -26,12 +27,10 @@ _IRQHandler:
 	pla
 	pha
 	and #%00010000
-	beq IRQHand1
+	beq @1
 	pla
 	jmp (BRKVector)
-
-IRQHand1:
-	txa
+@1:	txa
 	pha
 	tya
 	pha
@@ -41,31 +40,27 @@ IRQHand1:
 	PushW CallRLo
 	PushW returnAddress
 	ldx #0
-IRQHand2:
-	lda r0,x
+@2:	lda r0,x
 	pha
 	inx
 	cpx #32
-	bne IRQHand2
+	bne @2
 	PushB CPU_DATA
 ASSERT_NOT_BELOW_IO
 	LoadB CPU_DATA, IO_IN
 	lda dblClickCount
-	beq IRQHand3
+	beq @3
 	dec dblClickCount
-IRQHand3:
-	ldy KbdQueFlag
-	beq IRQHand4
+@3:	ldy KbdQueFlag
+	beq @4
 	iny
-	beq IRQHand4
+	beq @4
 	dec KbdQueFlag
-IRQHand4:
-	jsr _DoKeyboardScan
+@4:	jsr _DoKeyboardScan
 	lda alarmWarnFlag
-	beq IRQHand5
+	beq @5
 	dec alarmWarnFlag
-IRQHand5:
-	lda intTopVector
+@5:	lda intTopVector
 	ldx intTopVector+1
 	jsr CallRoutine
 	lda intBotVector
@@ -83,11 +78,10 @@ ASSERT_NOT_BELOW_IO
 	LoadB rasreg, $fc
 .endif
 	ldx #31
-IRQHand6:
-	pla
+@6:	pla
 	sta r0,x
 	dex
-	bpl IRQHand6
+	bpl @6
 	PopW returnAddress
 	PopW CallRLo
 	pla
@@ -107,13 +101,11 @@ ASSERT_NOT_BELOW_IO
 	LoadB CPU_DATA, IO_IN
 	lda rasreg
 	and #%11110000
-	beq IRQ2BordOK
+	beq @1
 	cmp #$f0
-	bne IRQ2NoBord
-IRQ2BordOK:
-	LoadB clkreg, 1
-IRQ2NoBord:
-	LoadB rasreg, $2c
+	bne @2
+@1:	LoadB clkreg, 1
+@2:	LoadB rasreg, $2c
 	LoadW $fffe, _IRQHandler
 	inc grirq
 	stx CPU_DATA

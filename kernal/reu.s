@@ -1,4 +1,5 @@
-; GEOS KERNAL
+; GEOS KERNAL by Berkeley Softworks
+; reverse engineered by Maciej 'YTM/Elysium' Witkowiak; Michael Steil
 ;
 ; C64/REU driver
 
@@ -33,7 +34,7 @@ _DoRAMOp:
 	ldx #DEV_NOT_FOUND
 	lda r3L
 	cmp ramExpSize
-	bcs DRAMOp2
+	bcs @2
 	ldx CPU_DATA
 ASSERT_NOT_BELOW_IO
 	LoadB CPU_DATA, IO_IN
@@ -45,15 +46,13 @@ ASSERT_NOT_BELOW_IO
 	sta EXP_BASE+9
 	sta EXP_BASE+10
 	sty EXP_BASE+1
-DRAMOp1:
-	lda EXP_BASE
+@1:	lda EXP_BASE
 	and #%01100000
-	beq DRAMOp1
+	beq @1
 	stx CPU_DATA
 ASSERT_NOT_BELOW_IO
 	ldx #0
-DRAMOp2:
-	rts
+@2:	rts
 .endif
 
 .if (useRamExp)

@@ -1,5 +1,8 @@
-; GEOS Kernal - init code
-; reassembled by Maciej 'YTM/Alliance' Witkowiak
+; GEOS KERNAL by Berkeley Softworks
+; reverse engineered by Maciej 'YTM/Elysium' Witkowiak; Michael Steil
+;
+; Purgeable init code
+;
 
 .include "const.inc"
 .include "geossym.inc"

@@ -10,7 +10,6 @@ kernal/vars.s \
 kernal/misc.s \
 kernal/bitmask.s \
 kernal/bswfont.s \
-kernal/mouseptr.s \
 kernal/patterns.s \
 kernal/conio.s \
 kernal/dlgbox.s \

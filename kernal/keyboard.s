@@ -1,4 +1,5 @@
-; GEOS KERNAL
+; GEOS KERNAL by Berkeley Softworks
+; reverse engineered by Maciej 'YTM/Elysium' Witkowiak; Michael Steil
 ;
 ; C64 keyboard driver
 
@@ -33,39 +34,34 @@
 
 _DoKeyboardScan:
 	lda KbdQueFlag
-	bne DoKbdScan1
+	bne @1
 	lda KbdNextKey
 	jsr KbdScanHelp2
 	LoadB KbdQueFlag, 15
-DoKbdScan1:
-	LoadB r1H, 0
+@1:	LoadB r1H, 0
 	jsr KbdScanRow
-	bne DoKbdScan5
+	bne @5
 	jsr KbdScanHelp5
 	ldy #7
-DoKbdScan2:
-	jsr KbdScanRow
-	bne DoKbdScan5
+@2:	jsr KbdScanRow
+	bne @5
 	lda KbdTestTab,y
 	sta cia1base+0
 	lda cia1base+1
 	cmp KbdDBncTab,y
 	sta KbdDBncTab,y
-	bne DoKbdScan4
+	bne @4
 	cmp KbdDMltTab,y
-	beq DoKbdScan4
+	beq @4
 	pha
 	eor KbdDMltTab,y
-	beq DoKbdScan3
+	beq @3
 	jsr KbdScanHelp1
-DoKbdScan3:
-	pla
+@3:	pla
 	sta KbdDMltTab,y
-DoKbdScan4:
-	dey
-	bpl DoKbdScan2
-DoKbdScan5:
-	rts
+@4:	dey
+	bpl @2
+@5:	rts
 
 KbdScanRow:
 	LoadB cia1base+0, $ff
@@ -75,71 +71,61 @@ KbdScanRow:
 KbdScanHelp1:
 	sta r0L
 	LoadB r1L, 7
-KbdScanHlp_10:
-	lda r0L
+@1:	lda r0L
 	ldx r1L
 	and BitMaskPow2,x
-	beq KbdScanHlp_19	; really dirty trick...
+	beq @A	; really dirty trick...
 	tya
 	asl
 	asl
 	asl
 	adc r1L
 	tax
-	bbrf 7, r1H, KbdScanHlp_11
+	bbrf 7, r1H, @2
 	lda KbdDecodeTab2,x
-	bra KbdScanHlp_12
-KbdScanHlp_11:
-	lda KbdDecodeTab1,x
-KbdScanHlp_12:
-	sta r0H
-	bbrf 5, r1H, KbdScanHlp_13
+	bra @3
+@2:	lda KbdDecodeTab1,x
+@3:	sta r0H
+	bbrf 5, r1H, @4
 	lda r0H
 	jsr KbdScanHelp6
 	cmp #'A'
-	bcc KbdScanHlp_13
+	bcc @4
 	cmp #'Z'+1
-	bcs KbdScanHlp_13
+	bcs @4
 	subv $40
 	sta r0H
-KbdScanHlp_13:
-	bbrf 6, r1H, KbdScanHlp_14
+@4:	bbrf 6, r1H, @5
 	smbf_ 7, r0H
-KbdScanHlp_14:
-	lda r0H
+@5:	lda r0H
 	sty r0H
 	ldy #8
-KbdScanHlp_15:
-	cmp KbdTab1,y
-	beq KbdScanHlp_16
+@6:	cmp KbdTab1,y
+	beq @7
 	dey
-	bpl KbdScanHlp_15
-	bmi KbdScanHlp_17
-KbdScanHlp_16:
-	lda KbdTab2,y
-KbdScanHlp_17:
-	ldy r0H
+	bpl @6
+	bmi @8
+@7:	lda KbdTab2,y
+@8:	ldy r0H
 	sta r0H
 	and #%01111111
 	cmp #%00011111
-	beq KbdScanHlp_18
+	beq @9
 	ldx r1L
 	lda r0L
 	and BitMaskPow2,x
 	and KbdDMltTab,y
-	beq KbdScanHlp_18
+	beq @9
 	LoadB KbdQueFlag, 15
 	MoveB r0H, KbdNextKey
 	jsr KbdScanHelp2
-	bra KbdScanHlp_19
-KbdScanHlp_18:
-	LoadB KbdQueFlag, $ff
+	bra @A
+@9:	LoadB KbdQueFlag, $ff
 	LoadB KbdNextKey, 0
-KbdScanHlp_19:
-	dec r1L
-	bmi KbdScanHlp_1a
-	jmp KbdScanHlp_10
-KbdScanHlp_1a:
+@A:	dec r1L
+	bmi @B
+	jmp @1
+@B:
 	rts
 
 KbdTab1:
@@ -179,10 +165,9 @@ KbdScanHelp2:
 	sta KbdQueue,x
 	jsr KbdScanHelp4
 	cpx KbdQueHead
-	beq KbdScanHlp_21
+	beq @1
 	stx KbdQueTail
-KbdScanHlp_21:
-	plp
+@1:	plp
 	rts
 
 KbdScanHelp3:
@@ -194,27 +179,24 @@ KbdScanHelp3:
 	jsr KbdScanHelp4
 	stx KbdQueHead
 	cpx KbdQueTail
-	bne KbdScanHlp_31
+	bne @2
 	rmb KEYPRESS_BIT, pressFlag
-KbdScanHlp_31:
-	plp
+@2:	plp
 	rts
 
 KbdScanHelp4:
 	inx
 	cpx #16
-	bne KbdScanHlp_41
+	bne @1
 	ldx #0
-KbdScanHlp_41:
-	rts
+@1:	rts
 
 ;---------------------------------------------------------------
 ;---------------------------------------------------------------
 _GetNextChar:
-	bbrf KEYPRESS_BIT, pressFlag, GetNxtChar1
+	bbrf KEYPRESS_BIT, pressFlag, @1
 	jmp KbdScanHelp3
-GetNxtChar1:
-	lda #0
+@1:	lda #0
 	rts
 
 KbdScanHelp5:
@@ -222,42 +204,37 @@ KbdScanHelp5:
 	lda cia1base+1
 	eor #$ff
 	and #%10000000
-	bne KbdScanHlp_51
+	bne @1
 	LoadB cia1base+0, %10111111
 	lda cia1base+1
 	eor #$ff
 	and #%00010000
-	beq KbdScanHlp_52
-KbdScanHlp_51:
-	smbf 7, r1H
-KbdScanHlp_52:
-	LoadB cia1base+0, %01111111
+	beq @2
+@1:	smbf 7, r1H
+@2:	LoadB cia1base+0, %01111111
 	lda cia1base+1
 	eor #$ff
 	and #%00100000
-	beq KbdScanHlp_53
+	beq @3
 	smbf 6, r1H
-KbdScanHlp_53:
-	LoadB cia1base+0, %01111111
+@3:	LoadB cia1base+0, %01111111
 	lda cia1base+1
 	eor #$ff
 	and #%00000100
-	beq KbdScanHlp_54
+	beq @4
 	smbf 5, r1H
-KbdScanHlp_54:
-	rts
+@4:	rts
 
 KbdScanHelp6:
 	pha
 	and #%01111111
 	cmp #'a'
-	bcc KbdScanHlp_61
+	bcc @1
 	cmp #'z'+1
-	bcs KbdScanHlp_61
+	bcs @1
 	pla
 	subv $20
 	pha
-KbdScanHlp_61:
-	pla
+@1:	pla
 	rts
 

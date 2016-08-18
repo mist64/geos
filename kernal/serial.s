@@ -1,4 +1,5 @@
-; GEOS KERNAL
+; GEOS KERNAL by Berkeley Softworks
+; reverse engineered by Maciej 'YTM/Elysium' Witkowiak; Michael Steil
 ;
 ; Serial number
 
@@ -9,7 +10,7 @@
 
 .global SerialNumber
 .global _GetSerialNumber
-.global _GetSerialNumber2
+.global GetSerialNumber2
 
 .segment "serial1"
 
@@ -34,7 +35,7 @@ SerialNumber:
 _GetSerialNumber:
 	lda SerialNumber
 	sta r0L
-_GetSerialNumber2:
+GetSerialNumber2:
 	lda SerialNumber+1
 	sta r0H
 	rts

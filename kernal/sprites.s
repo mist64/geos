@@ -1,4 +1,5 @@
-; GEOS KERNAL
+; GEOS KERNAL by Berkeley Softworks
+; reverse engineered by Maciej 'YTM/Elysium' Witkowiak; Michael Steil
 ;
 ; C64/VIC-II sprite driver
 
@@ -34,11 +35,10 @@ _DrawSprite:
 	lda SprTabH,Y
 	sta r5H
 	ldy #63
-DSpr0:
-	lda (r4),Y
+@1:	lda (r4),Y
 	sta (r5),Y
 	dey
-	bpl DSpr0
+	bpl @1
 	rts
 
 .define SprTab spr0pic, spr1pic, spr2pic, spr3pic, spr4pic, spr5pic, spr6pic, spr7pic
@@ -81,12 +81,11 @@ ASSERT_NOT_BELOW_IO
 	tay
 	lda #1
 	and r6H
-	beq PSpr0
+	beq @1
 	tya
 	ora BitMaskPow2,x
 	tay
-PSpr0:
-	sty msbxpos
+@1:	sty msbxpos
 	PopB CPU_DATA
 ASSERT_NOT_BELOW_IO
 	rts

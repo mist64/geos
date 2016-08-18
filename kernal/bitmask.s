@@ -1,4 +1,5 @@
-; GEOS KERNAL
+; GEOS KERNAL by Berkeley Softworks
+; reverse engineered by Maciej 'YTM/Elysium' Witkowiak; Michael Steil
 ;
 ; Common bitmasks
 
@@ -17,6 +18,7 @@ BitMaskPow2Rev:
 	.byte %00001000
 	.byte %00000100
 	.byte %00000010
+	;     %00000001 shared with below
 BitMaskPow2:
 	.byte %00000001
 	.byte %00000010

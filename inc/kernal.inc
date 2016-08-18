@@ -77,7 +77,7 @@ A8FE8           =       $8fe8
 A8FF0           =       $8ff0
 
 ; RamExp stats block structure
-DACC_ST_ADDR    =       $80     ;deskAccessory load addy
+DACC_ST_ADDR    =       $80     ;deskAccessory load addr
 DACC_LGH        =       $82     ;deskAccessory lenght
 DTOP_CHNUM      =       $83     ;DeskTop # of chains
 RAM_EXP_1STFREE =       $84     ;# of 1st free block

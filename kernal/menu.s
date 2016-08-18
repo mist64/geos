@@ -1,4 +1,5 @@
-; GEOS KERNAL
+; GEOS KERNAL by Berkeley Softworks
+; reverse engineered by Maciej 'YTM/Elysium' Witkowiak; Michael Steil
 ;
 ; Menus
 
@@ -126,12 +127,11 @@ DoMenu1_1:
 .endif
 	PopB dispBufferOn
 	plp
-	bbsf 6, menuOptNumber, DoMenu2
-	bcc DoMenu5
-DoMenu2:
-	ldx menuNumber
+	bbsf 6, menuOptNumber, @1
+	bcc @4
+@1:	ldx menuNumber
 	ldy menuOptionTab,x
-	bbsf 7, menuOptNumber, DoMenu3
+	bbsf 7, menuOptNumber, @2
 	lda menuLimitTabL,y
 	sta r11L
 	lda menuLimitTabH,y
@@ -150,9 +150,8 @@ DoMenu2:
 	add menuBottom
 	ror
 	tay
-	bra DoMenu4
-DoMenu3:
-	lda menuLimitTabL,y
+	bra @3
+@2:	lda menuLimitTabL,y
 	iny
 	clc
 	adc menuLimitTabL,y
@@ -166,13 +165,10 @@ DoMenu3:
 	sta r11H
 	lsr r11H
 	ror r11L
-DoMenu4:
-	sec
-DoMenu5:
-	bbrf MOUSEON_BIT, mouseOn, DoMenu6
+@3:	sec
+@4:	bbrf MOUSEON_BIT, mouseOn, @5
 	smbf ICONSON_BIT, mouseOn
-DoMenu6:
-	smbf MENUON_BIT, mouseOn
+@5:	smbf MENUON_BIT, mouseOn
 	jmp _StartMouseMode
 
 ;---------------------------------------------------------------
@@ -184,13 +180,11 @@ _ReDoMenu:
 _GotoFirstMenu:
 	php
 	sei
-GFrstMenu1:
-	CmpBI menuNumber, 0
-	beq GFrstMenu2
+@1:	CmpBI menuNumber, 0
+	beq @2
 	jsr _DoPreviousMenu
-	bra GFrstMenu1
-GFrstMenu2:
-	plp
+	bra @1
+@2:	plp
 	rts
 
 _DoPreviousMenu:
@@ -215,7 +209,6 @@ Menu_0:
 	adc r8L
 	adc #7
 	tay
-Menu_01:
 	rts
 
 GetMenuDesc:
@@ -228,12 +221,11 @@ GetMenuDesc:
 	lda (r0),y
 	sta menuOptNumber
 	dey
-GetMnuDsc1:
-	lda (r0),y
+@1:	lda (r0),y
 	sta mouseTop,y
 	sta menuTop,y
 	dey
-	bpl GetMnuDsc1
+	bpl @1
 
 .if (trap)
     ; If the user has changed where GetSerialNumber points to,
@@ -246,10 +238,9 @@ GetMnuDsc1:
 
 	MoveW menuLeft, r11
 	MoveB menuTop, r1H
-	bbsf 6, menuOptNumber, GetMnuDsc2
+	bbsf 6, menuOptNumber, @2
 	jsr ResetMseRegion
-GetMnuDsc2:
-	rts
+@2:	rts
 
 Menu_1:
 	jsr MenuStoreFont
@@ -258,14 +249,13 @@ Menu_1:
 	sta currentMode
 	sec
 	jsr Menu_4
-Menu_11:
-	jsr Menu_3
+@1:	jsr Menu_3
 	clc
 	jsr Menu_4
 	jsr Menu_2
 	clc
 	jsr Menu_4
-	bbrf 7, menuOptNumber, Menu_12
+	bbrf 7, menuOptNumber, @2
 	lda r1H
 	sec
 	adc curHeight
@@ -273,12 +263,11 @@ Menu_11:
 	MoveW menuLeft, r11
 	sec
 	jsr Menu_4
-Menu_12:
-	AddVB 1, r10H
+@2:	AddVB 1, r10H
 	lda menuOptNumber
 	and #%00011111
 	cmp r10H
-	bne Menu_11
+	bne @1
 	jsr MenuRestoreFont
 	jmp Menu_3
 
@@ -325,35 +314,30 @@ MenuStringFault:
 Menu_3:
 	ldy r10H
 	ldx r1H
-	bbsf 7, menuOptNumber, Menu_31
+	bbsf 7, menuOptNumber, @1
 	lda r11H
 	sta menuLimitTabH,y
 	ldx r11L
-Menu_31:
-	txa
+@1:	txa
 	sta menuLimitTabL,y
 	rts
 
 Menu_4:
-	bcc Menu_41
-	bbrf 7, menuOptNumber, Menu_42
-	bra Menu_43
-Menu_41:
-	bbrf 7, menuOptNumber, Menu_43
-Menu_42:
-	AddVB 2, r1H
+	bcc @1
+	bbrf 7, menuOptNumber, @2
+	bra @3
+@1:	bbrf 7, menuOptNumber, @3
+@2:	AddVB 2, r1H
 	rts
-Menu_43:
-	AddVW_ 4, r11
+@3:	AddVW_ 4, r11
 	rts
 
 ;---------------------------------------------------------------
 _RecoverAllMenus:
-RcvrAllMns1:
 	jsr GetMenuDesc
 	jsr _RecoverMenu
 	dec menuNumber
-	bpl RcvrAllMns1
+	bpl _RecoverAllMenus
 	lda #0
 	sta menuNumber
 	rts
@@ -364,21 +348,20 @@ _RecoverMenu:
 RcvrMnu0:
 	lda RecoverVector
 	ora RecoverVector+1
-	bne RcvrMnu1
+	bne @1
 	lda #0
 	jsr SetPattern
 	jmp Rectangle
-RcvrMnu1:
-	jmp (RecoverVector)
+@1:	jmp (RecoverVector)
 
 .if ((menuVSeparator | menuHSeparator)<>0)
 DrawMenu:
 	lda menuOptNumber
 	and #%00011111
 	subv 1
-	beq DrawMenu4
+	beq @5
 	sta r2L
-	bbsf 7, menuOptNumber, DrawMenu2
+	bbsf 7, menuOptNumber, @2
 .if (menuVSeparator<>0)
 	lda menuTop
 	addv 1
@@ -386,8 +369,7 @@ DrawMenu:
 	lda menuBottom
 	subv 1
 	sta r3H
-DrawMenu1:
-	ldx r2L
+@1:	ldx r2L
 	lda menuLimitTabL,x
 	sta r4L
 	lda menuLimitTabH,x
@@ -395,40 +377,37 @@ DrawMenu1:
 	lda #menuVSeparator
 	jsr _VerticalLine
 	dec r2L
-	bne DrawMenu1
+	bne @1
 .endif
 .if (menuHSeparator<>0)
 	rts
 .endif
-DrawMenu2:
+@2:
 .if (menuHSeparator<>0)
 	MoveW menuLeft, r3
 	inc r3L
-	bne @X
+	bne @3
 	inc r3H
-@X:	MoveW menuRight, r4
+@3:	MoveW menuRight, r4
 	ldx #r4
 	jsr Ddec
-DrawMenu3:
-	ldx r2L
+@4:	ldx r2L
 	lda menuLimitTabL,x
 	sta r11L
 	lda #menuHSeparator
 	jsr _HorizontalLine
 	dec r2L
-	bne DrawMenu3
+	bne @4
 .endif
-DrawMenu4:
-	rts
+@5:	rts
 .endif
 
 CopyMenuCoords:
 	ldx #6
-CpyMnuCrds1:
-	lda menuTop-1,x
+@1:	lda menuTop-1,x
 	sta r2-1,x
 	dex
-	bne CpyMnuCrds1
+	bne @1
 	rts
 
 .if (oldMenu_5)
@@ -504,16 +483,14 @@ Menu_7:
 	and #%00011111
 	tay
 	lda menuOptNumber
-	bmi Menu_74
-Menu_71:
-	dey
+	bmi @4
+@1:	dey
 	lda mouseXPos+1
 	cmp menuLimitTabH,y
-	bne Menu_72
+	bne @2
 	lda mouseXPos
 	cmp menuLimitTabL,y
-Menu_72:
-	bcc Menu_71
+@2:	bcc @1
 	iny
 	lda menuLimitTabL,y
 	sta r4L
@@ -526,24 +503,21 @@ Menu_72:
 	sta r3H
 	sty r9L
 	cpy #0
-	bne Menu_73
+	bne @3
 	inc r3L
-	bne Menu_73
+	bne @3
 	inc r3H
-Menu_73:
-	ldx menuTop
+@3:	ldx menuTop
 	inx
 	stx r2L
 	ldx menuBottom
 	dex
 	stx r2H
 	rts
-Menu_74:
-	lda mouseYPos
-Menu_75:
-	dey
+@4:	lda mouseYPos
+@5:	dey
 	cmp menuLimitTabL,y
-	bcc Menu_75
+	bcc @5
 	iny
 	lda menuLimitTabL,y
 	sta r2H
@@ -552,14 +526,13 @@ Menu_75:
 	sta r2L
 	sty r9L
 	cpy #0
-	bne Menu_76
+	bne @6
 	inc r2L
-Menu_76:
-	MoveW menuLeft, r3
+@6:	MoveW menuLeft, r3
 	inc r3L
-	bne @X
+	bne @7
 	inc r3H
-@X:	MoveW menuRight, r4
+@7:	MoveW menuRight, r4
 	ldx #r4
 	jsr Ddec
 	rts
@@ -588,18 +561,16 @@ MenuDoInvert:
 
 MenuStoreFont:
 	ldx #9
-MnuDStrFnt1:
-	lda baselineOffset-1,x
+@1:	lda baselineOffset-1,x
 	sta saveFontTab-1,x
 	dex
-	bne MnuDStrFnt1
+	bne @1
 	rts
 
 MenuRestoreFont:
 	ldx #9
-MnuDRstrFnt1:
-	lda saveFontTab-1,x
+@1:	lda saveFontTab-1,x
 	sta baselineOffset-1,x
 	dex
-	bne MnuDRstrFnt1
+	bne @1
 	rts

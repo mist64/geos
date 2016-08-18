@@ -1,4 +1,5 @@
-; GEOS KERNAL
+; GEOS KERNAL by Berkeley Softworks
+; reverse engineered by Maciej 'YTM/Elysium' Witkowiak; Michael Steil
 ;
 ; Mouse
 
@@ -46,6 +47,19 @@
 .global _MouseOff
 .global _MouseUp
 .global _StartMouseMode
+.global InitMsePic
+
+.segment "mouseptr"
+
+InitMsePic:
+	.byte %11111100, %00000000, %00000000
+	.byte %11111000, %00000000, %00000000
+	.byte %11110000, %00000000, %00000000
+	.byte %11111000, %00000000, %00000000
+	.byte %11011100, %00000000, %00000000
+	.byte %10001110, %00000000, %00000000
+	.byte %00000111, %00000000, %00000000
+	.byte %00000011, %00000000, %00000000
 
 .segment "mouse1"
 

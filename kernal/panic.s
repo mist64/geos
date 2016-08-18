@@ -1,4 +1,5 @@
-; GEOS KERNAL
+; GEOS KERNAL by Berkeley Softworks
+; reverse engineered by Maciej 'YTM/Elysium' Witkowiak; Michael Steil
 ;
 ; Panic
 
@@ -25,33 +26,29 @@ _Panic:
 	SubVW 2, r0
 	lda r0H
 	ldx #0
-	jsr Panil0
+	jsr @1
 	lda r0L
-	jsr Panil0
+	jsr @1
 	LoadW r0, _PanicDB_DT
 	jsr DoDlgBox
-Panil0:
-	pha
+@1:	pha
 	lsr
 	lsr
 	lsr
 	lsr
-	jsr Panil1
+	jsr @2
 	inx
 	pla
 	and #%00001111
-	jsr Panil1
+	jsr @2
 	inx
 	rts
-Panil1:
-	cmp #10
-	bcs Panil2
+@2:	cmp #10
+	bcs @3
 	addv ('0')
-	bne Panil3
-Panil2:
-	addv ('0'+7)
-Panil3:
-	sta _PanicAddy,x
+	bne @4
+@3:	addv ('0'+7)
+@4:	sta _PanicAddr,x
 	rts
 
 _PanicDB_DT:
@@ -63,6 +60,6 @@ _PanicDB_DT:
 _PanicDB_Str:
 	.byte BOLDON
 	.byte "System error near $"
-_PanicAddy:
+_PanicAddr:
 	.byte "xxxx"
 	.byte NULL

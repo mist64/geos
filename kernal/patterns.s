@@ -1,4 +1,5 @@
-; GEOS KERNAL
+; GEOS KERNAL by Berkeley Softworks
+; reverse engineered by Maciej 'YTM/Elysium' Witkowiak; Michael Steil
 ;
 ; Patterns
 
@@ -7,7 +8,7 @@
 .segment "patterns"
 
 ; There are 34 patterns. Only the first 32 are
-; accesible from geoPaint.
+; accessible from geoPaint.
 PatternTab:
 	; 0
 	.byte %00000000
