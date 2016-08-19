@@ -52,11 +52,44 @@ The original GEOS was copy protected in three ways:
 * deskTop assigned a random serial number to the kernel on first boot and keyed all major applications to itself. This version comes with a serial number of 0x58B5 pre-filled, which matches the cbmfiles.com version.
 * To counter tampering with the serial number logic, the KERNAL contained [two traps](http://www.pagetable.com/?p=865) that could sabotage the kernel. The code is included in this version, but can be removed by setting trap = 0.
 
+# Contributing
+
+Pull requests are greatly appreciated. Please keep in mind that a default build should always recreate the orginal binaries (use `regress.sh` to check), so for smaller changes use conditional assembly using `.if`, and for larger changes create new source files that are conditionally compiled.
+
+# TODO
+
+* Reconstruction/cleanup:
+	* `boot.s` should be based on the original GEOS version
+	* REU detection is missing from `boot.s`
+	* The 1541 driver is hardcoded. We should create one version per drive.
+	* Most of Maciej's original changes/improvements have bitrotten and need to be resurrected
+* Integrate other versions as compile time options
+	* Localized versions
+	* Plus/4 version
+	* C128 version (includes 640px support, linear framebuffer graphics, new APIs)
+	* Apple II version (includes new APIs)
+* Integrate existing patches as compile time options
+	* gateWay
+	* megaPatch
+	* Wheels
+	* SuperCPU
+	* Flash 8
+	* [misc](http://www.zimmers.net/anonftp/pub/cbm/geos/patches/index.html)
+* Add third party disk drivers
+	* CMD hardware
+	* Modern hardware
+* Optimizations
+	* Faster (with size tradeoff) `font.s` and `graph.s` code
+	* Alternate code paths for 65C02, 65CE02, 65816
+* Reverse-engineer other components, like deskTop
+* Port to new systems. :)
+
 # References
 
 * Farr, M.: [The Official GEOS Programmer's Reference Guide](http://lyonlabs.org/commodore/onrequest/The_Official_GEOS_Programmers_Reference_Guide.pdf) (1987)
 * Berkeley Softworks: [The Hitchhiker's Guide to GEOS](http://lyonlabs.org/commodore/onrequest/geos-manuals/The_Hitchhikers_Guide_to_GEOS.pdf) (1988)
 * Boyce, A. D.; Zimmerman, B.: [GEOS Programmer's Reference Guide ](http://www.zimmers.net/geos/docs/geotech.txt) (2000)
+* Zimmerman, B.: [The Commodore GEOS F.A.Q.](http://www.zimmers.net/geos/GEOSFAQ.html)
 
 # Authors
 
