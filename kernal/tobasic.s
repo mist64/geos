@@ -112,7 +112,7 @@ execBASIC:
 	rti
 
  ; ???
-.ifdef maurice
+.ifdef cbmfiles
 	.byte $ff
 .else
 	.byte $40

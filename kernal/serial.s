@@ -15,13 +15,10 @@
 .segment "serial1"
 
 SerialNumber:
-.ifdef maurice
+	; This matches the serial in the cbmfiles.com GEOS64.D64
 	.word $58B5
-.else
-	.word $8F5E
-.endif
 
-    .byte $FF ; ???
+	.byte $FF ; ???
 
 .segment "serial2"
 

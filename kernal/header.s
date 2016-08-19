@@ -37,7 +37,10 @@ c128Flag:
 	.byte $05,$00,$00,$00 ; ???
 
 dateCopy:
-.ifdef maurice
+.ifdef cbmfiles
+	; The cbmfiles version was created by dumping
+	; KERNAL from memory after it had been running,
+	; so it a different date here.
 	.byte 92,3,23
 .else
 	.byte 88,4,20

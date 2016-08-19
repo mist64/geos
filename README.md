@@ -59,6 +59,7 @@ Pull requests are greatly appreciated. Please keep in mind that a default build 
 # TODO
 
 * Reconstruction/cleanup:
+	* complete inline documentation of KERNAL calls
 	* `boot.s` should be based on the original GEOS version
 	* REU detection is missing from `boot.s`
 	* The 1541 driver is hardcoded. We should create one version per drive.
@@ -81,6 +82,13 @@ Pull requests are greatly appreciated. Please keep in mind that a default build 
 * Optimizations
 	* Faster (with size tradeoff) `font.s` and `graph.s` code
 	* Alternate code paths for 65C02, 65CE02, 65816
+* Extensions
+	* upgrade `DlgBox` to support more than 16 files
+	* support +60K and RamCart simultaneousy (hell!)
+	* support swapping KERNAL modules to/from expansion
+	* disk cache (at least dir cache) (hell!)
+	* try to rewrite 1571/81 to use burst commands instead of turbodos (only on
+  burst-enabled C64/128 in C64 mode - see Pasi Ojala's design)
 * Reverse-engineer other components, like deskTop
 * Port to new systems. :)
 

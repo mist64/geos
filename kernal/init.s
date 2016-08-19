@@ -114,34 +114,34 @@ InitRamTab:
 	.byte 0                       ; mouseOn
 	.word mousePicData            ; msePicPtr
 	.byte 0                       ; windowTop
-    .byte SC_PIX_HEIGHT-1         ; windowBottom
+	.byte SC_PIX_HEIGHT-1         ; windowBottom
 	.word 0                       ; leftMargin
-    .word SC_PIX_WIDTH-1          ; rightMargin
+	.word SC_PIX_WIDTH-1          ; rightMargin
 	.byte 0                       ; pressFlag
 
 	.word appMain
 	.byte 28
 	.word 0                       ; appMain
-    .word _InterruptMain          ; intTopVector
+	.word _InterruptMain          ; intTopVector
 	.word 0                       ; intBotVector
-    .word 0                       ; mouseVector
-    .word 0                       ; keyVector
-    .word 0                       ; inputVector
+	.word 0                       ; mouseVector
+	.word 0                       ; keyVector
+	.word 0                       ; inputVector
 	.word 0                       ; mouseFaultVec
-    .word 0                       ; otherPressVec
-    .word 0                       ; StringFaultVec
-    .word 0                       ; alarmTmtVector
+	.word 0                       ; otherPressVec
+	.word 0                       ; StringFaultVec
+	.word 0                       ; alarmTmtVector
 	.word _Panic                  ; BRKVector
-    .word _RecoverRectangle       ; RecoverVector
+	.word _RecoverRectangle       ; RecoverVector
 	.byte SelectFlashDelay        ; selectionFlash
-    .byte 0                       ; alphaFlag
+	.byte 0                       ; alphaFlag
 	.byte ST_FLASH                ; iconSelFlg
-    .byte 0                       ; faultData
+	.byte 0                       ; faultData
 
 	.word NumTimers
 	.byte 2
 	.byte 0                       ; NumTimers
-    .byte 0                       ; menuNumber
+	.byte 0                       ; menuNumber
 
 	.word clkBoxTemp
 	.byte 1

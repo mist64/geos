@@ -286,7 +286,7 @@ _LoadCharSet:
 	AddW r0, cardDataPntr
 
 .if (trap)
-    ; copy high-byte of serial
+	; copy high-byte of serial
 	lda SerialHiCompare
 	bne @2
 	jsr GetSerialNumber2

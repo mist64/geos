@@ -797,12 +797,12 @@ FontGt4_2:
 FontTVar1:
 	.byte 0
 FontTVar2:
-.ifdef maurice
-    ; This should be initialized to 0, and will
-    ; be changed at runtime.
-    ; Maurice's version was created by dumping
-    ; KERNAL from memory after it had been running,
-    ; so it has a random value here.
+.ifdef cbmfiles
+	; This should be initialized to 0, and will
+	; be changed at runtime.
+	; The cbmfiles version was created by dumping
+	; KERNAL from memory after it had been running,
+	; so it has a random value here.
 	.word $34
 .else
 	.word 0

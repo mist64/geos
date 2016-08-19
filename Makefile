@@ -71,7 +71,7 @@ clean:
 geos.d64: compressed.prg
 	if [ -e GEOS64.D64 ]; then \
 		cp GEOS64.D64 geos.d64; \
-		echo delete geos geosboot | c1541 geos.d64 >/dev/null; \
+		echo delete geos geoboot | c1541 geos.d64 >/dev/null; \
 		echo write compressed.prg geos | c1541 geos.d64 >/dev/null; \
 		echo \*\*\* Created geos.d64 based on GEOS64.D64.; \
 	else \

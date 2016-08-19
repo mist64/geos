@@ -252,8 +252,8 @@ FFTypesStart:
 	bnex @7
 
 .if (trap)
-    ; sabotage code: breaks LdDeskAcc if
-    ; _UseSystemFont hasn't been called before this
+	; sabotage code: breaks LdDeskAcc if
+	; _UseSystemFont hasn't been called before this
 	ldx #>GetSerialNumber
 	lda #<GetSerialNumber
 	jsr CallRoutine
@@ -397,12 +397,12 @@ PrepForFetch:
 
 SetDevTab:
 	.word DISK_BASE
-.ifdef maurice
-    ; This should be initialized to 0, and will
-    ; be changed at runtime.
-    ; Maurice's version was created by dumping
-    ; KERNAL from memory after it had been running,
-    ; so it has a different value here.
+.ifdef cbmfiles
+	; This should be initialized to 0, and will
+	; be changed at runtime.
+	; The cbmfiles version was created by dumping
+	; KERNAL from memory after it had been running,
+	; so it has a different value here.
 	.word REUDskDrvSPC
 .else
 	.word 0
@@ -466,12 +466,12 @@ GetHeaderFileName:
 
 .if (trap)
 SerialHiCompare:
-.ifdef maurice
-    ; This should be initialized to 0, and will
-    ; be changed at runtime.
-    ; Maurice's version was created by dumping
-    ; KERNAL from memory after it had been running,
-    ; so it has a pre-filled value here.
+.ifdef cbmfiles
+	; This should be initialized to 0, and will
+	; be changed at runtime.
+	; The cbmfiles version was created by dumping
+	; KERNAL from memory after it had been running,
+	; so it has a pre-filled value here.
 	.byte $58
 .else
 	.byte 0

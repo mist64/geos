@@ -228,8 +228,8 @@ GetMenuDesc:
 	bpl @1
 
 .if (trap)
-    ; If the user has changed where GetSerialNumber points to,
-    ; this will sabotage the KERNAL call GraphicsString.
+	; If the user has changed where GetSerialNumber points to,
+	; this will sabotage the KERNAL call GraphicsString.
 	lda GetSerialNumber + 1 - $FF,y
 	clc
 	adc #<(_GraphicsString - _GetSerialNumber)
