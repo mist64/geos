@@ -4,7 +4,6 @@ LD=ld65
 ASFLAGS=-I inc -I .
 
 KERNAL_SOURCES= \
-boot.s \
 init/init.s \
 kernal/init.s \
 kernal/vars.s \
@@ -53,7 +52,7 @@ geos.d64: compressed.prg
 	c1541 geos.d64 <c1541.in >/dev/null
 
 compressed.prg: combined.prg
-	pucrunch -f -c64 -x0x6000 $< $@
+	pucrunch -f -c64 -x0x5000 $< $@
 
 combined.prg: $(ALL_BINS)
 	printf "\x00\x50" > tmp.bin

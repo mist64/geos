@@ -10,6 +10,8 @@
 .include "config.inc"
 .include "kernal.inc"
 .include "jumptab.inc"
+.include "inputdrv.inc"
+.include "c64.inc"
 
 ; main.s
 .import InitGEOEnv
@@ -19,9 +21,108 @@
 ; used by header.s
 .global _ResetHandle
 
+; header.s
+.import dateCopy
+
+; irq.s
+.import _IRQHandler
+.import _NMIHandler
+
 .segment "init"
 
+; The original version of GEOS 2.0 has purgeable init code
+; at $5000 that is run once. It does some initialization
+; and handles application auto-start.
+;
+; The cbmfiles version of GEOS does some init inside
+; "BOOTGEOS" right after copying the components to their
+; respective locations, then jumps to $500D, which contains
+; a different version of the code, and skipping the first
+; five instructions.
+;
+; This version is based on the cbmfiles version.
+; "OrigResetHandle" below is the original cbmfiles code at
+; $5000, and the code here at _ResetHandle is some additional
+; initialization derived from the code in BOOTGEOS to make
+; everything work.
+;
+; TODO: Put original GEOS 2.0 code here.
+
 _ResetHandle:
+	sei
+	cld
+	ldx #$FF
+	txs
+
+	lda #IO_IN
+	sta CPU_DATA
+
+	LoadW $fffa, _NMIHandler
+	LoadW $fffe, _IRQHandler
+
+	; draw background pattern
+	LoadW r0, SCREEN_BASE
+	ldx #$7D
+@2:	ldy #$3F
+@3:	lda #$55
+	sta (r0),y
+	dey
+	lda #$AA
+	sta (r0),y
+	dey
+	bpl @3
+	lda #$40
+	clc
+	adc r0L
+	sta r0L
+	bcc @4
+	inc r0H
+@4:	dex
+	bne @2
+
+	; set clock in CIA1
+	lda cia1base+15
+	and #$7F
+	sta cia1base+15 ; prepare for setting time
+	lda #$81
+	sta cia1base+11 ; hour: 1 + PM
+	lda #0
+	sta cia1base+10 ; minute: 0
+	sta cia1base+9 ; seconds: 0
+	sta cia1base+8 ; 10ths: 0
+
+	lda #RAM_64K
+	sta CPU_DATA
+
+	jsr i_FillRam
+	.word $0500
+	.word dirEntryBuf
+	.byte 0
+
+	; set date
+	ldy #2
+@6:	lda dateCopy,y
+	sta year,y
+	dey
+	bpl @6
+
+	;
+	jsr FirstInit
+	jsr MouseInit
+	lda #currentInterleave
+	sta interleave
+
+	lda #1
+	sta NUMDRV
+	ldy $BA
+	sty curDrive
+	lda #DRV_1541
+	sta curType
+	sta _driveType,y
+
+; This is the original code the cbmfiles version
+; has at $5000.
+OrigResetHandle:
 	sei
 	cld
 	ldx #$ff
@@ -69,14 +170,12 @@ _ResetHandle:
 	LoadB r0L, 0
 	jsr LdApplic
 bootTr:
-	.byte $12
+	.byte DIR_TRACK
 bootSec:
-	.byte $01
+	.byte 1
 bootTr2:
-	brk
+	.byte 0
 bootSec2:
-	brk
+	.byte 0
 bootOffs:
-	brk
-
-	.byte $4c, $98, $2c, $90 ; ???
+	.byte 0
