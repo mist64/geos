@@ -4,7 +4,7 @@ by Berkeley Softworks, reverse engineered by Maciej 'YTM/Elysium' Witkowiak; Mic
 
 ## Description
 
-This is the reverse engineered source code of the KERNAL as well as disk and input drivers of the English version of GEOS 2.0 for Commodore 64.
+This is the reverse engineered source code of the KERNAL (plus disk and input drivers) of the English version of GEOS 2.0 for Commodore 64.
 
 The source has been heavily reorganized and modularized, nevertheless, a standard compile will generate binaries that are identical with the GEOS 2.0 distrbution binaries.
 

@@ -72,8 +72,11 @@ clean:
 	rm -f $(KERNAL_OBJECTS) drv/*.o input/*.o $(ALL_BINS) combined.prg
 
 geos.d64: compressed.prg
-	cp GEOS64.D64 geos.d64
-	c1541 geos.d64 <c1541.in >/dev/null
+	c1541 <c1541.in >/dev/null
+	if [ -e desktop.cvt ]; then echo geoswrite desktop.cvt | c1541 geos.d64; fi >/dev/null
+# Alternatively, we could add the file to a GEOS boot disk with "GEOS" app deleted:
+#	cp GEOS64.D64 geos.d64
+#	c1541 geos.d64 <c1541.in >/dev/null
 
 compressed.prg: combined.prg
 	pucrunch -f -c64 -x0x5000 $< $@
@@ -95,31 +98,31 @@ lokernal.bin: kernal.bin
 
 init.bin: kernal.bin
 
-drv1541.bin: drv/drv1541.o drv/drv1541.cfg
+drv1541.bin: drv/drv1541.o drv/drv1541.cfg $(DEPS)
 	$(LD) -C drv/drv1541.cfg drv/drv1541.o -o $@
 
-drv1571.bin: drv/drv1571.o drv/drv1571.cfg
+drv1571.bin: drv/drv1571.o drv/drv1571.cfg $(DEPS)
 	$(LD) -C drv/drv1571.cfg drv/drv1571.o -o $@
 
-drv1581.bin: drv/drv1581.o drv/drv1581.cfg
+drv1581.bin: drv/drv1581.o drv/drv1581.cfg $(DEPS)
 	$(LD) -C drv/drv1581.cfg drv/drv1581.o -o $@
 
-amigamse.bin: input/amigamse.o input/amigamse.cfg
+amigamse.bin: input/amigamse.o input/amigamse.cfg $(DEPS)
 	$(LD) -C input/amigamse.cfg input/amigamse.o -o $@
 
-joydrv.bin: input/joydrv.o input/joydrv.cfg
+joydrv.bin: input/joydrv.o input/joydrv.cfg $(DEPS)
 	$(LD) -C input/joydrv.cfg input/joydrv.o -o $@
 
-lightpen.bin: input/lightpen.o input/lightpen.cfg
+lightpen.bin: input/lightpen.o input/lightpen.cfg $(DEPS)
 	$(LD) -C input/lightpen.cfg input/lightpen.o -o $@
 
-mse1531.bin: input/mse1531.o input/mse1531.cfg
+mse1531.bin: input/mse1531.o input/mse1531.cfg $(DEPS)
 	$(LD) -C input/mse1531.cfg input/mse1531.o -o $@
 
-koalapad.bin: input/koalapad.o input/koalapad.cfg
+koalapad.bin: input/koalapad.o input/koalapad.cfg $(DEPS)
 	$(LD) -C input/koalapad.cfg input/koalapad.o -o $@
 
-pcanalog.bin: input/pcanalog.o input/pcanalog.cfg
+pcanalog.bin: input/pcanalog.o input/pcanalog.cfg $(DEPS)
 	$(LD) -C input/pcanalog.cfg input/pcanalog.o -o $@
 
 %.o: %.s $(DEPS)
