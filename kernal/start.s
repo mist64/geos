@@ -1,7 +1,7 @@
 ; GEOS KERNAL by Berkeley Softworks
 ; reverse engineered by Maciej 'YTM/Elysium' Witkowiak; Michael Steil
 ;
-; Purgeable init code
+; Purgeable start code; first entry
 ;
 
 .include "const.inc"
@@ -18,15 +18,15 @@
 .import _DoFirstInitIO
 .import _EnterDeskTop
 
-; used by header.s
-.global _ResetHandle
-
 ; header.s
 .import dateCopy
 
 ; irq.s
 .import _IRQHandler
 .import _NMIHandler
+
+; used by header.s
+.global _ResetHandle
 
 .segment "init"
 
@@ -46,7 +46,11 @@
 ; initialization derived from the code in BOOTGEOS to make
 ; everything work.
 ;
-; TODO: Put original GEOS 2.0 code here.
+; TODO: * REU detection seems to be currently missing.
+;       * This is hardcoded to a 1541 drive.
+;       * It would be best to put the original GEOS 2.0 code
+;         here.
+;
 
 _ResetHandle:
 	sei

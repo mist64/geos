@@ -4,43 +4,67 @@ LD=ld65
 ASFLAGS=-I inc -I .
 
 KERNAL_SOURCES= \
-init/init.s \
-kernal/init.s \
-kernal/vars.s \
-kernal/misc.s \
-kernal/bitmask.s \
-kernal/bswfont.s \
-kernal/patterns.s \
-kernal/conio.s \
-kernal/dlgbox.s \
-kernal/load.s \
-kernal/filesys.s \
-kernal/fonts.s \
-kernal/graph.s \
-kernal/hw.s \
-kernal/icon.s \
-kernal/jumptable.s \
-kernal/keyboard.s \
-kernal/header.s \
-kernal/mainloop.s \
-kernal/math.s \
-kernal/memory.s \
-kernal/menu.s \
-kernal/mouse.s \
-kernal/panic.s \
-kernal/process.s \
-kernal/reu.s \
-kernal/serial.s \
-kernal/sprites.s \
-kernal/irq.s \
-kernal/time.s \
-kernal/tobasic.s
+	kernal/bitmask.s \
+	kernal/bswfont.s \
+	kernal/conio.s \
+	kernal/dlgbox.s \
+	kernal/filesys.s \
+	kernal/fonts.s \
+	kernal/graph.s \
+	kernal/header.s \
+	kernal/hw.s \
+	kernal/icon.s \
+	kernal/init.s \
+	kernal/irq.s \
+	kernal/jumptable.s \
+	kernal/keyboard.s \
+	kernal/load.s \
+	kernal/mainloop.s \
+	kernal/math.s \
+	kernal/memory.s \
+	kernal/menu.s \
+	kernal/misc.s \
+	kernal/mouse.s \
+	kernal/panic.s \
+	kernal/patterns.s \
+	kernal/process.s \
+	kernal/reu.s \
+	kernal/serial.s \
+	kernal/sprites.s \
+	kernal/start.s \
+	kernal/time.s \
+	kernal/tobasic.s \
+	kernal/vars.s
 
-DEPS=inc/const.inc inc/diskdrv.inc inc/equ.inc inc/geosmac.inc inc/geossym.inc inc/kernal.inc inc/printdrv.inc
+DEPS= \
+	inc/c64.inc \
+	inc/const.inc \
+	inc/diskdrv.inc \
+	inc/geosmac.inc \
+	inc/geossym.inc \
+	inc/inputdrv.inc \
+	inc/jumptab.inc \
+	inc/kernal.inc \
+	inc/printdrv.inc
 
 KERNAL_OBJECTS=$(KERNAL_SOURCES:.s=.o)
 
-ALL_BINS=kernal.bin lokernal.bin init.bin drv1541.bin drv1571.bin drv1581.bin amigamse.bin joydrv.bin lightpen.bin mse1531.bin koalapad.bin pcanalog.bin combined.prg compressed.prg geos.d64
+ALL_BINS= \
+	kernal.bin \
+	lokernal.bin \
+	init.bin \
+	drv1541.bin \
+	drv1571.bin \
+	drv1581.bin \
+	amigamse.bin \
+	joydrv.bin \
+	lightpen.bin \
+	mse1531.bin \
+	koalapad.bin \
+	pcanalog.bin \
+	combined.prg \
+	compressed.prg \
+	geos.d64
 
 all: geos.d64
 

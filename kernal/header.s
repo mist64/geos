@@ -7,7 +7,7 @@
 .include "geosmac.inc"
 .include "kernal.inc"
 
-; init.s
+; start.s
 .import _ResetHandle
 
 .global BootGEOS

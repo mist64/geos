@@ -71,6 +71,6 @@ The original GEOS was copy protected in three ways:
 
 # Authors
 
-The original reverse-engineering was done by [Maciej Witkowiak](mailto:ytm@elysium.pl) in 1999/2000, targeted the ACME assembler and was released as [GEOS 2000](https://github.com/ytmytm/c64-GEOS2000), which included several code optimizations and code layout differences.
+The original reverse-engineering was done by [Maciej Witkowiak](mailto:ytm@elysium.pl) in 1999-2002, targeted the ACME assembler and was released as [GEOS 2000](https://github.com/ytmytm/c64-GEOS2000), which included several code optimizations and code layout differences.
 
 In 2015/2016, [Michael Steil](mailto:mist64@mac.com) ported the sources to cc65, reconstructed the original code layout, did some more reverse-engineering and cleanups, and modularized the code aggressively.
