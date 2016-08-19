@@ -28,7 +28,7 @@
 ; used by header.s
 .global _ResetHandle
 
-.segment "init"
+.segment "start"
 
 ; The original version of GEOS 2.0 has purgeable init code
 ; at $5000 that is run once. It does some initialization

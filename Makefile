@@ -52,7 +52,7 @@ KERNAL_OBJECTS=$(KERNAL_SOURCES:.s=.o)
 ALL_BINS= \
 	kernal.bin \
 	lokernal.bin \
-	init.bin \
+	start.bin \
 	drv1541.bin \
 	drv1571.bin \
 	drv1581.bin \
@@ -83,8 +83,7 @@ compressed.prg: combined.prg
 
 combined.prg: $(ALL_BINS)
 	printf "\x00\x50" > tmp.bin
-	cat init.bin /dev/zero | dd bs=1 count=4096 >> tmp.bin
-	cat boot.bin /dev/zero | dd bs=1 count=12288 >> tmp.bin
+	cat start.bin /dev/zero | dd bs=1 count=16384 >> tmp.bin
 	cat drv1541.bin /dev/zero | dd bs=1 count=3456 >> tmp.bin
 	cat lokernal.bin /dev/zero | dd bs=1 count=8640 >> tmp.bin
 	cat kernal.bin /dev/zero | dd bs=1 count=16192 >> tmp.bin
@@ -96,7 +95,7 @@ kernal.bin: $(KERNAL_OBJECTS) kernal/kernal.cfg
 
 lokernal.bin: kernal.bin
 
-init.bin: kernal.bin
+start.bin: kernal.bin
 
 drv1541.bin: drv/drv1541.o drv/drv1541.cfg $(DEPS)
 	$(LD) -C drv/drv1541.cfg drv/drv1541.o -o $@
