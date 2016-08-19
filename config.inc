@@ -1,5 +1,5 @@
 ; GEOS System build configuration
-; by Maciej 'YTM/Elysium' Witkowiak
+; by Maciej Witkowiak
 
 ; The original GEOS binary contains a few traps to counter tampering.
 ; They can be turned off with this global switch

@@ -1,5 +1,5 @@
 ; GEOS system variables
-; by Maciej 'YTM/Elysium' Witkowiak
+; by Maciej Witkowiak
 
 ;addresses defined so-so
 Z45             =       $45

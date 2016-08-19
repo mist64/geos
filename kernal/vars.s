@@ -1,5 +1,5 @@
 ; GEOS by Berkeley Softworks
-; reverse engineered by Maciej 'YTM/Elysium' Witkowiak; Michael Steil
+; reverse engineered by Maciej Witkowiak, Michael Steil
 ;
 ; KERNAL internal variables
 ; These are not part of the API and can be changed.

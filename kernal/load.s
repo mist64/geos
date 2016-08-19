@@ -1,5 +1,5 @@
 ; GEOS KERNAL by Berkeley Softworks
-; reverse engineered by Maciej 'YTM/Elysium' Witkowiak; Michael Steil
+; reverse engineered by Maciej Witkowiak, Michael Steil
 ;
 ; File, application and desk accessory launching
 

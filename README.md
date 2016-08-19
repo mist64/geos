@@ -1,12 +1,12 @@
 # GEOS Source Code
 
-by Berkeley Softworks, reverse engineered by Maciej 'YTM/Elysium' Witkowiak; Michael Steil
+by Berkeley Softworks, reverse engineered by Maciej Witkowiak, Michael Steil
 
 ## Description
 
 This is the reverse engineered source code of the KERNAL (plus disk and input drivers) of the English version of GEOS 2.0 for Commodore 64.
 
-The source has been heavily reorganized and modularized, nevertheless, a standard compile will generate binaries that are identical with the GEOS 2.0 distrbution binaries.
+The source has been heavily reorganized and modularized, nevertheless, a standard compile will generate binaries that are identical with the GEOS 2.0 distribution binaries.
 
 
 ## Requirements
@@ -33,16 +33,18 @@ If you have the [cbmfiles.com](http://www.cbmfiles.com/) `GEOS64.D64` image in t
 
 ## Customization
 
-`config.inc` contains lots of compile time options. Most of them have not been tested recently.
+`config.inc` contains lots of compile time options. Most of them have not been tested recently and may not work.
 
 ## Source Tree
 
-* `./drv`: disk drive driver source
-* `./inc`: include files: macros and symbols
-* `./init`: purgeable KERNAL init source
-* `./input`: input driver source
-* `./kernal`: kernal source
-* `./reference`: original binaries from the cbmfiles.com version
+* `Makefile`
+* `config.inc`: kernel config options
+* `regress.sh`: script that compares output with reference
+* `drv/`: disk drive driver source
+* `inc/`: include files: macros and symbols
+* `input/`: input driver source
+* `kernal/`: kernal source
+* `reference/`: original binaries from the cbmfiles.com version
 
 ## Copy protection
 
@@ -99,8 +101,16 @@ Pull requests are greatly appreciated. Please keep in mind that a default build 
 * Boyce, A. D.; Zimmerman, B.: [GEOS Programmer's Reference Guide ](http://www.zimmers.net/geos/docs/geotech.txt) (2000)
 * Zimmerman, B.: [The Commodore GEOS F.A.Q.](http://www.zimmers.net/geos/GEOSFAQ.html)
 
+# License
+
+For the underlying work on GEOS, please respect its license.
+
+The intellectual property added by the reverse-engineering and the subsequent improvements is in the public domain, but the authors request to be credited.
+
 # Authors
 
-The original reverse-engineering was done by [Maciej Witkowiak](mailto:ytm@elysium.pl) in 1999-2002, targeted the ACME assembler and was released as [GEOS 2000](https://github.com/ytmytm/c64-GEOS2000), which included several code optimizations and code layout differences.
+GEOS was initially developed by Berkeley Softworks in 1985-1988.
+
+The original reverse-engineering was done by [Maciej  'YTM/Elysium' Witkowiak](mailto:ytm@elysium.pl) in 1999-2002, targeted the ACME assembler and was released as [GEOS 2000](https://github.com/ytmytm/c64-GEOS2000), which included several code optimizations and code layout differences.
 
 In 2015/2016, [Michael Steil](mailto:mist64@mac.com) ported the sources to cc65, reconstructed the original code layout, did some more reverse-engineering and cleanups, and modularized the code aggressively.
