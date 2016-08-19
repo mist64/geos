@@ -1,4 +1,2 @@
-format geos,00 d64 geos.d64
 write compressed.prg geos
-geoswrite desktop.cvt
 quit

@@ -19,6 +19,10 @@
 .import alarmWarnFlag
 .import tempIRQAcc
 
+; used by boot.s
+.global _IRQHandler
+.global _NMIHandler
+
 .segment "irq"
 
 _IRQHandler:

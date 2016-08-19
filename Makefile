@@ -4,6 +4,7 @@ LD=ld65
 ASFLAGS=-I inc -I .
 
 KERNAL_SOURCES= \
+boot.s \
 init/init.s \
 kernal/init.s \
 kernal/vars.s \
@@ -40,22 +41,24 @@ DEPS=inc/const.inc inc/diskdrv.inc inc/equ.inc inc/geosmac.inc inc/geossym.inc i
 
 KERNAL_OBJECTS=$(KERNAL_SOURCES:.s=.o)
 
-ALL_BINS=boot.bin kernal.bin lokernal.bin init.bin drv1541.bin drv1571.bin drv1581.bin amigamse.bin joydrv.bin lightpen.bin mse1531.bin koalapad.bin pcanalog.bin combined.prg compressed.prg geos.d64
+ALL_BINS=kernal.bin lokernal.bin init.bin drv1541.bin drv1571.bin drv1581.bin amigamse.bin joydrv.bin lightpen.bin mse1531.bin koalapad.bin pcanalog.bin combined.prg compressed.prg geos.d64
 
-all: geos.d64 boot.bin
+all: geos.d64
 
 clean:
 	rm -f $(KERNAL_OBJECTS) drv/*.o input/*.o $(ALL_BINS) combined.prg
 
 geos.d64: compressed.prg
-	c1541 <c1541.in >/dev/null
+	cp GEOS64.D64 geos.d64
+	c1541 geos.d64 <c1541.in >/dev/null
 
 compressed.prg: combined.prg
-	pucrunch -f -c64 -x0x5000 $< $@
+	pucrunch -f -c64 -x0x6000 $< $@
 
 combined.prg: $(ALL_BINS)
 	printf "\x00\x50" > tmp.bin
-	cat init.bin /dev/zero | dd bs=1 count=16384 >> tmp.bin
+	cat init.bin /dev/zero | dd bs=1 count=4096 >> tmp.bin
+	cat boot.bin /dev/zero | dd bs=1 count=12288 >> tmp.bin
 	cat drv1541.bin /dev/zero | dd bs=1 count=3456 >> tmp.bin
 	cat lokernal.bin /dev/zero | dd bs=1 count=8640 >> tmp.bin
 	cat kernal.bin /dev/zero | dd bs=1 count=16192 >> tmp.bin
@@ -68,9 +71,6 @@ kernal.bin: $(KERNAL_OBJECTS) kernal/kernal.cfg
 lokernal.bin: kernal.bin
 
 init.bin: kernal.bin
-
-boot.bin: boot.o boot.cfg
-	ld65 -C boot.cfg boot.o -o boot.bin
 
 drv1541.bin: drv/drv1541.o drv/drv1541.cfg
 	$(LD) -C drv/drv1541.cfg drv/drv1541.o -o $@
