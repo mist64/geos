@@ -33,7 +33,7 @@ If you have the [cbmfiles.com](http://www.cbmfiles.com/) `GEOS64.D64` image in t
 
 ## Customization
 
-`inc/equ.inc` contains lots of compile time options. Most of them have not been tested recently.
+`config.inc` contains lots of compile time options. Most of them have not been tested recently.
 
 ## Source Tree
 

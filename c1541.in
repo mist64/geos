@@ -1,3 +1,0 @@
-format geos,00 d64 geos.d64
-write compressed.prg geos
-quit
