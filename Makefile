@@ -61,33 +61,36 @@ ALL_BINS= \
 	lightpen.bin \
 	mse1531.bin \
 	koalapad.bin \
-	pcanalog.bin \
-	combined.prg \
-	compressed.prg \
-	geos.d64
+	pcanalog.bin
 
 all: geos.d64
 
 clean:
-	rm -f $(KERNAL_OBJECTS) drv/*.o input/*.o $(ALL_BINS) combined.prg
+	rm -f $(KERNAL_OBJECTS) drv/*.o input/*.o $(ALL_BINS) combined.prg compressed.prg geos.d64
 
 geos.d64: compressed.prg
-	c1541 <c1541.in >/dev/null
-	if [ -e desktop.cvt ]; then echo geoswrite desktop.cvt | c1541 geos.d64; fi >/dev/null
-# Alternatively, we could add the file to a GEOS boot disk with "GEOS" app deleted:
-#	cp GEOS64.D64 geos.d64
-#	c1541 geos.d64 <c1541.in >/dev/null
+	if [ -e GEOS64.D64 ]; then \
+		cp GEOS64.D64 geos.d64; \
+		echo delete geos geosboot | c1541 geos.d64 >/dev/null; \
+		echo write compressed.prg geos | c1541 geos.d64 >/dev/null; \
+		echo \*\*\* Created geos.d64 based on GEOS64.D64.; \
+	else \
+		echo format geos,00 d64 geos.d64 | c1541 >/dev/null; \
+		echo write compressed.prg geos | c1541 geos.d64 >/dev/null; \
+		if [ -e desktop.cvt ]; then echo geoswrite desktop.cvt | c1541 geos.d64; fi >/dev/null; \
+		echo \*\*\* Created fresh geos.d64.; \
+	fi;
 
 compressed.prg: combined.prg
 	pucrunch -f -c64 -x0x5000 $< $@
 
 combined.prg: $(ALL_BINS)
 	printf "\x00\x50" > tmp.bin
-	cat start.bin /dev/zero | dd bs=1 count=16384 >> tmp.bin
-	cat drv1541.bin /dev/zero | dd bs=1 count=3456 >> tmp.bin
-	cat lokernal.bin /dev/zero | dd bs=1 count=8640 >> tmp.bin
-	cat kernal.bin /dev/zero | dd bs=1 count=16192 >> tmp.bin
-	cat joydrv.bin >> tmp.bin
+	cat start.bin /dev/zero | dd bs=1 count=16384 >> tmp.bin 2> /dev/null
+	cat drv1541.bin /dev/zero | dd bs=1 count=3456 >> tmp.bin 2> /dev/null
+	cat lokernal.bin /dev/zero | dd bs=1 count=8640 >> tmp.bin 2> /dev/null
+	cat kernal.bin /dev/zero | dd bs=1 count=16192 >> tmp.bin 2> /dev/null
+	cat joydrv.bin >> tmp.bin 2> /dev/null
 	mv tmp.bin combined.prg
 
 kernal.bin: $(KERNAL_OBJECTS) kernal/kernal.cfg

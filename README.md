@@ -27,24 +27,13 @@ Run `make` to build GEOS. This will create the following files:
 * input drivers: `amigamse.bin`, `joydrv.bin`, `lightpen.bin`, `mse1531.bin`, `koalapad.bin`, `pcanalog.bin`
 * combined KERNAL image (`SYS 49155`): `combined.prg`
 * compressed KERNAL image (`RUN`): `compressed.prg`
-* disk image containing compressed kernel and, optionally, deskTop.: `geos.d64`
+* disk image: `geos.d64`
+
+If you have the [cbmfiles.com](http://www.cbmfiles.com/) `GEOS64.D64` image in the current directory, the disk image will be based on that one, with the `GEOS` and `GEOBOOT` files deleted and the newly built kernel added. Otherwise, it will be a new disk image with the kernel, and, if you have a `desktop.cvt` file in the current directory, with `DESK TOP` added.
 
 ## Customization
 
-Look into inc/equ.inc file - there are many true/false defines, you are free
-to change them. But read the comments. You can compile-in input and disk
-drivers so right after boot you will have your drivers (and you can boot from
-1571/81 without any problems). In case that input driver is compiled into
-KERNAL you have to delete all input driver files from boot disk, because
-DeskTop will try to load the first one overriding compiled driver.
-If you have C128 it is worth to enable 2MHz support - CPU is warped into 2MHz
-on the border. This is better than add-on that I saw somewhere, because my
-version will not flicker anytime and that add-on will not work with this
-kernal. (not a single application that modifies GEOS KERNAL directly will not
-work).
-
-
-
+`inc/equ.inc` contains lots of compile time options. Most of them have not been tested recently.
 
 ## Source Tree
 
