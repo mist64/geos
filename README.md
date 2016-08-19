@@ -46,7 +46,50 @@ If you have the [cbmfiles.com](http://www.cbmfiles.com/) `GEOS64.D64` image in t
 * `kernal/`: kernal source
 * `reference/`: original binaries from the cbmfiles.com version
 
-## Copy protection
+## Hacking
+
+### Code layout
+
+Great care was taken to split the KERNAL into small, independent components. This division does not necessarily match the layout of the original binary code, but with the help of `.segments`, the layout in the binary does not have to match the layout in source.
+
+The goal of this division of the source was to keep the number of `.imports` minimal (i.e. to make individual source files as self-contained and independent as possible).
+
+One example of this is the file system and application/accessory loading code. In the original GEOS KERNAL binary, they were not separate, but here, the file system code is in `filesys.s` and the loading code is in `load.s`, with only two symbol dependencies.
+
+Another example is the `ToBasic` logic: In the original kernel, it the binary code was split, a part resided between the header and the jump table ($C000-$C0FF), and different part was in the "lokernal" area ($9000-$9FFF). In the source, both parts are in the same file `tobasic.s`.
+
+### Machine-specific Code
+
+In case you want to adapt the source for other 6502-based systems, you will want to know which parts have C64 dependencies.
+
+All C64-specific code can be easily recognized: Since all C64 symbols have to be imported from `c64.inc`, you can tell which source files have C64 depencency by looking for that include. Remove the include to see which parts of the code are platform-specific.
+
+`InitTextPrompt` in `conio.s`, for example, accesses sprites directly, in the middle of hardware-independent code.
+
+### Memory Layout
+
+The GEOS KERNAL has a quite complicated memory layout:
+
+* $9000-$9FFF: KERNAL ("lokernal")
+* $A000-$BF3F: (graphics bitmap)
+* $BF40-$BFFF: KERNAL
+* $C000-$C01A: KERNAL Header
+* $C01B-$C0FF: KERNAL
+* $C100-$C2E5: KERNAL Jump Table
+* $C2E6-$FFFF: KERNAL
+
+The header and the jump table must be at $C000 and $C100, respectively. Together with the graphics bitmap at $A000, this partitions the KERNAL into four parts: lokernal, below header, between header and jump table, and above jump table.
+
+The linker config file positions the segments from the source files into these parts. If the code of any segment changes, the header and the jump table will remain at their positions. If a part overruns, the linker will report and error, and you can consult the `kernal.map` output file to find out where to best put the extra code.
+
+But it gets more complicated: Code between $D000 and $DFFF is under the I/O registers, so it cannot enable the I/O area to access hardware. The macro `ASSERT_NOT_BELOW_IO` makes sure that the current code is not under the I/O area. Existing code uses this macro just befor turning on the I/O area and just after turning it off. New code should use this macro, too.
+
+### Naming Conventions
+
+* Symbols used outside of the current source file are supposed to be prefixed with an `_`. (This hasn't been done consistently yet.)
+* Labels that are only used within a subroutine should use the `@` notation.
+
+### Copy protection
 
 The original GEOS was copy protected in three ways:
 

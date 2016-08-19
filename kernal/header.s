@@ -6,6 +6,7 @@
 .include "geossym.inc"
 .include "geosmac.inc"
 .include "kernal.inc"
+.include "c64.inc"
 
 ; start.s
 .import _ResetHandle
@@ -48,7 +49,7 @@ dateCopy:
 
 _BootGEOS:
 	bbsf 5, sysFlgCopy, @1
-	jsr $FF90
+	jsr KERNALSETMSG
 	lda #version-bootName
 	ldx #<bootName
 	ldy #>bootName

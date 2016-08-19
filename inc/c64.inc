@@ -14,6 +14,7 @@ curScrLineColor =       $d8f0
 KERNALVecTab    =       $fd30
 KERNALCIAInit   =       $fda3
 KERNALVICInit   =       $ff81
+KERNALSETMSG    =       $ff90
 
 ;
 vicbase                 =       $d000
