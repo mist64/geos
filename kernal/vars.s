@@ -1,5 +1,8 @@
-.segment "vars"
-
+; GEOS by Berkeley Softworks
+; reverse engineered by Maciej 'YTM/Elysium' Witkowiak; Michael Steil
+;
+; KERNAL internal variables
+; These are not part of the API and can be changed.
 
 .global menuOptNumber
 .global menuTop
@@ -60,6 +63,8 @@
 .global verifyFlag
 .global TempCurDrive
 
+.segment "vars"
+
 menuOptNumber:  .byte 0
 menuTop:        .byte 0
 menuBottom:     .byte 0
@@ -85,8 +90,6 @@ stringMaxLen:   .byte 0
 tmpKeyVector:   .word 0
 stringMargCtrl: .byte 0
 GraphPenX:      .word 0
-GraphPenXL      =       GraphPenX
-GraphPenXH      =       GraphPenX+1
 GraphPenY:      .byte 0
 KbdQueHead:     .byte 0
 KbdQueTail:     .byte 0

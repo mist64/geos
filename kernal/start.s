@@ -2,7 +2,6 @@
 ; reverse engineered by Maciej 'YTM/Elysium' Witkowiak; Michael Steil
 ;
 ; Purgeable start code; first entry
-;
 
 .include "const.inc"
 .include "geossym.inc"

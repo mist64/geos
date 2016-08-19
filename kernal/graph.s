@@ -23,8 +23,6 @@
 
 ; var.s
 .import GraphPenX
-.import GraphPenXH
-.import GraphPenXL
 .import GraphPenY
 
 ; used by filesys.s
@@ -55,6 +53,9 @@
 .global _i_ImprintRectangle
 .global _i_RecoverRectangle
 .global _i_Rectangle
+
+GraphPenXL = GraphPenX
+GraphPenXH = GraphPenX+1
 
 .segment "graph1"
 
