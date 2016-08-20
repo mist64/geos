@@ -60,8 +60,8 @@ _ResetHandle:
 	lda #IO_IN
 	sta CPU_DATA
 
-	LoadW $fffa, _NMIHandler
-	LoadW $fffe, _IRQHandler
+	LoadW NMI_VECTOR, _NMIHandler
+	LoadW IRQ_VECTOR, _IRQHandler
 
 	; draw background pattern
 	LoadW r0, SCREEN_BASE

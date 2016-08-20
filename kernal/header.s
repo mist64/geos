@@ -3,6 +3,7 @@
 ;
 ; KERNAL header and reboot from BASIC
 
+.include "config.inc"
 .include "geossym.inc"
 .include "geosmac.inc"
 .include "kernal.inc"
@@ -25,7 +26,12 @@ ResetHandle:
 	jmp _ResetHandle
 
 bootName:
+.if gateway
+	.byte "GATEWAY "
+	.byte 5 ; PADDING
+.else
 	.byte "GEOS BOOT"
+.endif
 version:
 	.byte $20
 nationality:
@@ -38,7 +44,7 @@ c128Flag:
 	.byte $05,$00,$00,$00 ; ???
 
 dateCopy:
-.ifdef cbmfiles
+.if cbmfiles
 	; The cbmfiles version was created by dumping
 	; KERNAL from memory after it had been running,
 	; so it a different date here.

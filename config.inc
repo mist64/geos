@@ -1,6 +1,11 @@
 ; GEOS System build configuration
 ; by Maciej Witkowiak
 
+; which variant to build
+cbmfiles = 0 ; the cbmfiles.com variant
+gateway  = 0 ; the gateWay 2.51 variant
+; if all of these are 0, the BSW variant will be built
+
 ; The original GEOS binary contains a few traps to counter tampering.
 ; They can be turned off with this global switch
 trap = 1

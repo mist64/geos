@@ -490,7 +490,11 @@ ChangeDiskDevice:
 RstrFrmDialogue:
 	jmp _RstrFrmDialogue
 Panic:
+.if gateway
+	jmp _EnterDeskTop
+.else
 	jmp _Panic
+.endif
 BitOtherClip:
 	jmp _BitOtherClip
 .if (REUPresent)

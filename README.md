@@ -88,6 +88,11 @@ If you have the [cbmfiles.com](http://www.cbmfiles.com/) `GEOS64.D64` image in t
 
 `config.inc` contains lots of compile time options. Most of them have not been tested recently and may not work.
 
+By default, the "BSW" version of GEOS is built, which is the same binary as English GEOS 2.0. The following options can be set to 1 to build different versions:
+
+* `cbmfiles = 1`: The [cbmfiles.com](http://www.cbmfiles.com/) version. It starts out with a different date, and has some variables in the kernel pre-filled.
+* `gateway = 1`: The patched KERNEL shipped by gateWay 2.51. It contains a slightly modified BSW font, has the `Panic` code replaced with code to swap the disk driver on a RESTORE press, and it loads `GATEWAY` instead of `DESK TOP` as the shell.
+
 ## Source Tree
 
 * `Makefile`
@@ -168,7 +173,6 @@ Pull requests are greatly appreciated. Please keep in mind that a default build 
 	* C128 version (includes 640px support, linear framebuffer graphics, new APIs)
 	* Apple II version (includes new APIs)
 * Integrate existing patches as compile time options
-	* gateWay
 	* megaPatch
 	* Wheels
 	* SuperCPU

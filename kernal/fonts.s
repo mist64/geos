@@ -3,6 +3,7 @@
 ;
 ; Font drawing
 
+.include "config.inc"
 .include "const.inc"
 .include "geossym.inc"
 .include "geosmac.inc"
@@ -797,7 +798,7 @@ FontGt4_2:
 FontTVar1:
 	.byte 0
 FontTVar2:
-.ifdef cbmfiles
+.if cbmfiles
 	; This should be initialized to 0, and will
 	; be changed at runtime.
 	; The cbmfiles version was created by dumping

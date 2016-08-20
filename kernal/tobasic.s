@@ -112,7 +112,7 @@ execBASIC:
 	rti
 
  ; ???
-.ifdef cbmfiles
+.if cbmfiles || gateway
 	.byte $ff
 .else
 	.byte $40

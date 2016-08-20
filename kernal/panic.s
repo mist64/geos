@@ -15,6 +15,81 @@
 ; syscall
 .global _Panic
 
+.if gateway
+_Panic:
+	; On the gateWay KERNAL, the "Panic" syscall points to
+	; the EnterDesktop implementation. The BRK vector still
+	; points here though.
+	;
+	; This seems to deal with swapping the disk driver from
+	; and to the REU, triggered by the RESTORE key.
+	sei
+	pha
+	txa
+	pha
+	tya
+	pha
+	lda CPU_DATA
+	pha
+	ldx StackPtr
+	bne @1
+	tsx
+@1:	txs
+	stx StackPtr
+	ldx #0
+@2:	dex
+	bne @2
+	jsr SwapMemory
+	jmp DISK_BASE
+
+; ??? no entry?
+	ldx StackPtr
+	txs
+	jsr SwapMemory
+	stx StackPtr
+	LoadW NMI_VECTOR, _Panic
+	pla
+	sta CPU_DATA
+	pla
+	tay
+	pla
+	tax
+	pla
+	rti
+
+SwapRegs:
+	ldx #6
+@1:	lda r0,x
+	tay
+	lda SwapRAMArgs,x
+	sta r0,x
+	tya
+	sta SwapRAMArgs,x
+	dex
+	bpl @1
+	rts
+
+SwapMemory:
+	jsr SwapRegs
+	jsr SwapRAM
+	jsr SwapRegs
+	inx
+	rts
+
+SwapRAMArgs:
+	.word DISK_BASE ; CBM addr
+	.word $c000     ; REU addr
+	.word 0         ; count
+	.byte 0         ; REU bank
+
+	.byte 0, 0 ; XXX
+
+StackPtr:
+	.byte 0
+
+	.byte 0, 0, 0 ; PADDING
+
+.else
 ;---------------------------------------------------------------
 ; Panic                                                   $C2C2
 ;
@@ -59,7 +134,10 @@ _PanicDB_DT:
 
 _PanicDB_Str:
 	.byte BOLDON
-	.byte "System error near $"
+	.byte "System error near "
+.endif
+
+	.byte "$"
 _PanicAddr:
 	.byte "xxxx"
 	.byte NULL

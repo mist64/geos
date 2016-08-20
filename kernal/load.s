@@ -136,12 +136,23 @@ _EnterDT_DB:
 .endif
 
 DeskTopName:
-	.byte "DESK TOP", NULL
+.if gateway
+	.byte "GATEWAY", 0
+	.byte 0 ; PADDING
+.else
+	.byte "DESK TOP", 0
+.endif
 
 _EnterDT_Str0:
 	.byte BOLDON, "Please insert a disk", NULL
 _EnterDT_Str1:
-	.byte "with deskTop V1.5 or higher", NULL
+	.byte "with "
+.if gateway
+	.byte "gateWay"
+.else
+	.byte "deskTop"
+.endif
+	.byte " V1.5 or higher", NULL
 
 .segment "load2"
 

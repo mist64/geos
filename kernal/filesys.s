@@ -397,7 +397,7 @@ PrepForFetch:
 
 SetDevTab:
 	.word DISK_BASE
-.ifdef cbmfiles
+.if cbmfiles
 	; This should be initialized to 0, and will
 	; be changed at runtime.
 	; The cbmfiles version was created by dumping
@@ -466,7 +466,7 @@ GetHeaderFileName:
 
 .if (trap)
 SerialHiCompare:
-.ifdef cbmfiles
+.if cbmfiles
 	; This should be initialized to 0, and will
 	; be changed at runtime.
 	; The cbmfiles version was created by dumping
