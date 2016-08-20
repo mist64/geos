@@ -1,8 +1,61 @@
 # GEOS Source Code
 
-by Berkeley Softworks, reverse engineered by Maciej Witkowiak, Michael Steil
+by Berkeley Softworks, reverse engineered by *Maciej Witkowiak*, *Michael Steil*.
 
 ## Description
+
+[GEOS](https://en.wikipedia.org/wiki/GEOS_(8-bit_operating_system)) is a **graphical user interface for 6502-based computers**. In the 1980s, it was commercially available for the **Commodore 64**, 128 and Plus/4 as well as the Apple II.
+
+GEOS has extremly low hardware requirements:
+
+* a **MOS 6502**-compatible CPU (usually at 1 MHz or higher)
+* **64 KB** of RAM
+* one **disk drive** (capacity application-dependent)
+* a **320x200** monochrome screen
+* a **pointing device**
+
+With just **20 KB** of binary code, the GEOS "KERNAL" has the following features:
+
+* **Application Model**
+	* One full screen application at a time
+	* One "desk accessory" can be launched in a window while an application is running
+	* Multi-segmented applications can be swapped in from disk
+	* Runloop model
+	* Cooperative multithreading
+* **Graphical User Interface**
+	* Menu bar with nested sub-menus
+	* Dialog boxes
+	* Buttons
+	* Loadable proportional fonts at different sizes
+	* Rich text rendering
+	* Text input
+	* Generic graphics drawing library supporting compressed images and fill patterns
+* **Device Driver Interface**
+	* Disk/storage
+	* Mice
+	* Printers
+* **Other**
+	* Multi-fork ("VLIR") file system API
+	* External RAM extension support
+	* Sprite library
+	* Math library
+	* Memory and strings library
+	* Realtime clock with alarm
+
+The default shell of GEOS is *deskTop*, a file manager an application launcher.
+
+Several powerful applications are available for GEOS, including
+
+* geoWrite
+* geoPaint
+* geoPublish
+* geoCalc
+* geoFile
+* geoBASIC
+
+The [cc65](https://github.com/cc65/cc65) compiler suite allows writing GEOS applications in C or assembly.
+
+## Source
 
 This is the reverse engineered source code of the KERNAL (plus disk and input drivers) of the English version of GEOS 2.0 for Commodore 64.
 
