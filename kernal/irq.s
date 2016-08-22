@@ -64,13 +64,23 @@ ASSERT_NOT_BELOW_IO
 	lda alarmWarnFlag
 	beq @5
 	dec alarmWarnFlag
-@5:	lda intTopVector
+@5:
+.ifdef wheels_screensaver
+.import ProcessMouse
+	lda saverStatus
+	lsr
+	bcc @Y ; screensaver not running
+	jsr ProcessMouse
+	jsr GetRandom
+	bra @X
+.endif
+@Y:	lda intTopVector
 	ldx intTopVector+1
 	jsr CallRoutine
 	lda intBotVector
 	ldx intBotVector+1
 	jsr CallRoutine
-	lda #1
+@X:	lda #1
 	sta grirq
 	PopB CPU_DATA
 ASSERT_NOT_BELOW_IO

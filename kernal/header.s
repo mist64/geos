@@ -21,30 +21,57 @@
 .assert * = $C000, error, "Header not at $C000"
 
 BootGEOS:
+.ifdef wheels
+	rts
+	nop
+	nop
+.else
 	jmp _BootGEOS
+.endif
 ResetHandle:
+.ifdef wheels
+	rts
+	nop
+	nop
+.else
 	jmp _ResetHandle
+.endif
 
 bootName:
-.if gateway
+.ifdef gateway
 	.byte "GATEWAY "
 	.byte 5 ; PADDING
 .else
 	.byte "GEOS BOOT"
 .endif
 version:
+.ifdef wheels
+	.byte $41
+.else
 	.byte $20
+.endif
 nationality:
-	.byte $00,$00
+.ifdef wheels
+	.word 1 ; GERMAN
+.else
+	.word 0
+.endif
 sysFlgCopy:
-	.byte $00
+	.byte 0
 c128Flag:
-	.byte $00
+	.byte 0
 
-	.byte $05,$00,$00,$00 ; ???
+.ifdef wheels
+	.byte 0
+.else
+	.byte 5
+.endif
+	.byte 0, 0, 0 ; ???
 
 dateCopy:
-.if cbmfiles
+.ifdef wheels
+	.byte 99,1,1
+.elseif .defined(cbmfiles) || .defined(gateway)
 	; The cbmfiles version was created by dumping
 	; KERNAL from memory after it had been running,
 	; so it a different date here.
@@ -53,6 +80,7 @@ dateCopy:
 	.byte 88,4,20
 .endif
 
+.ifndef wheels
 _BootGEOS:
 	bbsf 5, sysFlgCopy, @1
 	jsr KERNALSETMSG
@@ -83,3 +111,4 @@ BootREUTab:
 	.word $007e
 	.word $0500
 	.word $0000
+.endif

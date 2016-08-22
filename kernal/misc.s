@@ -18,12 +18,18 @@
 ;---------------------------------------------------------------
 ;---------------------------------------------------------------
 _CallRoutine:
+.ifndef wheels_size_and_speed
 	cmp #0
 	bne @1
 	cpx #0
 	beq @2
+.endif
 @1:	sta CallRLo
 	stx CallRHi
+.ifdef wheels_size_and_speed
+	ora CallRHi
+	beq @2
+.endif
 	jmp (CallRLo)
 @2:	rts
 

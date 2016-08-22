@@ -37,16 +37,28 @@
 .import clkBoxTemp
 
 .global InitGEOEnv
-.global InitGEOS
+.ifdef wheels
+.global _InitMachine
+.else
+.global _InitMachine
+.endif
 .global _FirstInit
 
 .segment "init1"
 
-InitGEOS:
+.ifdef wheels
+_InitMachine:
+.else
+_InitMachine:
+.endif
 	jsr _DoFirstInitIO
 InitGEOEnv:
 	LoadW r0, InitRamTab
+.ifdef wheels
+	.assert * = _InitRam, error, "Code must run into _InitRam"
+.else
 	jmp _InitRam
+.endif
 
 .segment "init2"
 
@@ -61,11 +73,26 @@ InitGEOEnv:
 _FirstInit:
 	sei
 	cld
-	jsr InitGEOS
+.ifdef wheels
+	jsr InitMachine
+.else
+	jsr _InitMachine
+.endif
 	LoadW EnterDeskTop+1, _EnterDeskTop
 	LoadB maxMouseSpeed, iniMaxMouseSpeed
+.ifdef wheels_size_and_speed
+	.assert iniMouseAccel = iniMaxMouseSpeed, error, "iniMouseAccel != iniMaxMouseSpeed!"
+	sta mouseAccel
+.endif
 	LoadB minMouseSpeed, iniMinMouseSpeed
+.ifndef wheels_size_and_speed
 	LoadB mouseAccel, iniMouseAccel
+.endif
+
+.ifdef wheels
+.import sysScrnColors
+	MoveB sysScrnColors, screencolors
+.else
 	LoadB screencolors, (DKGREY << 4)+LTGREY
 	sta @1
 	jsr i_FillRam
@@ -80,6 +107,7 @@ ASSERT_NOT_BELOW_IO
 	LoadB extclr, BLACK
 	stx CPU_DATA
 ASSERT_NOT_BELOW_IO
+.endif
 	ldy #62
 @2:	lda #0
 	sta mousePicData,Y
@@ -90,10 +118,39 @@ ASSERT_NOT_BELOW_IO
 	sta mousePicData-1,x
 	dex
 	bne @3
+.ifdef wheels
+.import sysMob0Clr
+.import sysExtClr
+.import DrawCheckeredScreen
+.global _FirstInit2
+.global _FirstInit3
+_FirstInit2:
+	jsr DrawCheckeredScreen
+	lda screencolors
+	sta LC54D
+	jsr i_ColorRectangle
+	.byte 0, 0                 ; origin
+	.byte 40, 25               ; size
+LC54D:  .byte (DKGREY << 4)+LTGREY ; value
+; ----------------------------------------------------------------------------
+_FirstInit3:
+	ldx     CPU_DATA
+ASSERT_NOT_BELOW_IO
+	LoadB CPU_DATA, IO_IN
+	lda sysExtClr
+	sta extclr
+	MoveB sysMob0Clr, mob0clr
+	sta mob1clr
+	stx CPU_DATA
+ASSERT_NOT_BELOW_IO
+        rts
+.else
 	jmp UNK_6
+.endif
 
 .segment "init3"
 
+.ifndef wheels
 UNK_6:
 	lda #$bf
 	sta A8FF0
@@ -103,6 +160,7 @@ UNK_6:
 	dex
 	bpl @1
 	rts
+.endif
 
 .segment "init4"
 
@@ -151,10 +209,14 @@ InitRamTab:
 	.byte 1
 	.byte 0                       ; IconDescVecH
 
+.ifdef wheels_dlgbox_dblclick
+	.word   dblDBData
+	.byte   1
+	.byte   OPEN
+.endif
 	.word obj0Pointer
 	.byte 8
 	.byte $28, $29, $2a, $2b
 	.byte $2c, $2d, $2e, $2f
 
 	.word 0
-

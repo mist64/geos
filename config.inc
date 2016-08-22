@@ -1,14 +1,84 @@
 ; GEOS System build configuration
 ; by Maciej Witkowiak
 
+;------------------------
 ; which variant to build
-cbmfiles = 0 ; the cbmfiles.com variant
-gateway  = 0 ; the gateWay 2.51 variant
-; if all of these are 0, the BSW variant will be built
+;------------------------
+; use "make TARGET=<variant>" to build a specific variant
 
-; The original GEOS binary contains a few traps to counter tampering.
-; They can be turned off with this global switch
-trap = 1
+;------------------------
+; the Berkeley Softworks GEOS 64 2.0 variant
+;------------------------
+.ifdef bsw
+	; BSW traps to counter tampering
+	trap = 1
+.endif
+
+;------------------------
+; the cbmfiles.com variant of GEOS 64 2.0
+;------------------------
+.ifdef cbmfiles
+	trap = 1
+
+	; additionally, there are ".ifdef cbmfiles" checks
+	; throughout the code
+.endif
+
+;------------------------
+; the gateWay 2.51 variant
+;------------------------
+.ifdef gateway
+	trap = 1
+	gateway_font = 1
+
+	; additionally, there are ".ifdef gateway" checks
+	; throughout the code
+.endif
+
+;------------------------
+; the Wheels 64 variant
+;------------------------
+.ifdef wheels
+	; size optimizations that have no significant speed impact
+	wheels_size = 1
+
+	; optimizations that benefit both size and speed
+	wheels_size_and_speed = 1
+
+	; fixes for bugs in the BSW version
+	wheels_fixes = 1
+
+	; dialog box buttons can be selected using "o" for
+	; "Open" etc.
+	wheels_button_shortcuts = 1
+
+	; misc dialog box features, requires RAM extension
+	wheels_dlgbox_features = 1
+
+	; dialog box double click support
+	wheels_dlgbox_dblclick = 1
+
+	; support for chdir in dialogs
+	wheels_dialog_chdir = 1
+
+	; screensaver support
+	wheels_screensaver = 1
+
+	; ReadFile and WriteFile are in a "NewKernal" group
+	wheels_external_readwrite_file = 1
+
+	; allows applications to check whether modifier keys are pressed
+	wheels_expose_mod_keys = 1
+
+	; changes that are actually bad ideas
+	wheels_bad_ideas = 1
+
+	; German keyboard layout
+	german_keyboard = 1
+
+	; additionally, there are ".ifdef wheels" checks
+	; throughout the code
+.endif
 
 ; general code generation/optimization control:
 onlyVLIR        =       0               ; only VLIR and SEQ supported

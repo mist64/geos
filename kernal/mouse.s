@@ -3,6 +3,7 @@
 ;
 ; Mouse
 
+.include "config.inc"
 .include "const.inc"
 .include "geossym.inc"
 .include "geosmac.inc"
@@ -124,8 +125,22 @@ _MouseUp:
 	rts
 
 ProcessMouse:
+.ifdef wheels_bad_ideas
+	; While the mouse pointer is not showing,
+	; Wheels doesn't call the mouse driver.
+	; For a joystick, this means that the 
+	; pointer can't be moved while it's
+	; invisible, and for a 1531 mouse, it means
+	; the input registers may overflow in the
+	; worst case, causing the pointer to jump.
+	;
+	; This is probably not a good idea.
+	bbrf MOUSEON_BIT, mouseOn, @1
+	jsr UpdateMouse
+.else
 	jsr UpdateMouse
 	bbrf MOUSEON_BIT, mouseOn, @1
+.endif
 	jsr CheckMsePos
 	LoadB r3L, 0
 	MoveW msePicPtr, r4
@@ -186,15 +201,32 @@ CheckMsePos:
 @A:	smbf OFFMENU_BIT, faultData
 @B:	rts
 
+.ifdef wheels_size_and_speed ; this got moved :(
+.import ScreenDimensions
+ResetMseRegion:
+	ldy #5
+@1:	lda ScreenDimensions,y
+	sta mouseTop,y
+	dey
+	bpl @1
+	rts
+.endif
+
 CheckClickPos:
 	lda mouseData
 	bmi @4
+.ifdef wheels_size_and_speed
+	bit mouseOn
+	bpl @4
+	bvc @3
+.else
 	lda mouseOn
 	and #SET_MSE_ON
 	beq @4
 	lda mouseOn
 	and #SET_MENUON
 	beq @3
+.endif
 	CmpB mouseYPos, menuTop
 	bcc @3
 	cmp menuBottom
@@ -212,15 +244,31 @@ CheckClickPos:
 	ldx otherPressVec+1
 	jmp CallRoutine
 
+.ifndef wheels
 	rts ; ???
+.endif
 
 DoMouseFault:
+.ifdef wheels_size_and_speed
+	bit mouseOn
+	bpl @3
+	bvc @3
+.else
 	lda #$c0
 	bbrf MOUSEON_BIT, mouseOn, @3
 	bvc @3
+.endif
 	lda menuNumber
 	beq @3
 	bbsf OFFMENU_BIT, faultData, @2
+
+.ifdef wheels_size_and_speed
+	lda #SET_OFFTOP
+	bit menuOptNumber
+	bmi @X
+	lda #SET_OFFLEFT
+@X:	and faultData
+.else
 	ldx #SET_OFFTOP
 	lda #$C0
 	tay
@@ -228,14 +276,18 @@ DoMouseFault:
 	ldx #SET_OFFLEFT
 @1:	txa
 	and faultData
+.endif
 	bne @2
+.ifndef wheels_size_and_speed ; seems unnecessary?
 	tya
+.endif
 	bbsf 6, menuOptNumber, @3
 @2:	jsr _DoPreviousMenu
 @3:	rts
 
 .segment "mouse3"
 
+.ifndef wheels_size_and_speed ; this got moved :(
 ResetMseRegion:
 	lda #NULL
 	sta mouseLeft
@@ -244,6 +296,7 @@ ResetMseRegion:
 	LoadW mouseRight, SC_PIX_WIDTH-1
 	LoadB mouseBottom, SC_PIX_HEIGHT-1
 	rts
+.endif
 
 .segment "mouse4"
 

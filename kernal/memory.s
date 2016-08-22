@@ -22,7 +22,7 @@
 .global _i_FillRam
 .global _i_MoveData
 
-.segment "memory1"
+.segment "memory1a"
 
 ;---------------------------------------------------------------
 ; ClearRam                                                $C178
@@ -63,6 +63,8 @@ _FillRam:
 	cpy #$FF
 	bne @3
 @4:	rts
+
+.segment "memory1b"
 
 ;---------------------------------------------------------------
 ; InitRam                                                 $C181
@@ -105,9 +107,18 @@ _InitRam:
 	tya
 	add r0L
 	sta r0L
+.ifdef wheels
+	bcc _InitRam
+.else
 	bcc @3
+.endif
 	inc r0H
-@3:	bra _InitRam
+@3:
+.ifdef wheels
+	bne _InitRam
+.else
+	bra _InitRam
+.endif
 @4:	rts
 
 .segment "memory2"
@@ -160,11 +171,24 @@ _i_MoveData:
 	lda (returnAddress),Y
 	sta r2H
 	jsr _MoveData
+.ifdef wheels_size
+.import DoInlineReturn7
+	jmp DoInlineReturn7
+.else
 	php
 	lda #7
 	jmp DoInlineReturn
+.endif
 
 GetMDataDatas:
+.ifdef wheels_size
+	ldy #0
+@1:	iny
+	lda (returnAddress),y
+	sta r0-1,y
+	cpy #5
+	bne @1
+.else
 	ldy #1
 	lda (returnAddress),Y
 	sta r0L
@@ -180,6 +204,7 @@ GetMDataDatas:
 	iny
 	lda (returnAddress),Y
 	sta r2L
+.endif
 	rts
 
 ;---------------------------------------------------------------
@@ -197,6 +222,11 @@ _MoveData:
 	PushW r0
 	PushB r1H
 	PushB r2H
+
+.ifdef wheels
+	CmpW r0, r1
+	bcc @8
+.else
 	PushB r3L
 .if (REUPresent)
 	lda sysRAMFlg
@@ -213,6 +243,7 @@ _MoveData:
 @1:	CmpW r0, r1
 @2:	bcs @3
 	bcc @8
+.endif
 @3:	ldy #0
 	lda r2H
 	beq @5
@@ -230,7 +261,10 @@ _MoveData:
 	sta (r1),Y
 	iny
 	bra @5
-@6:	PopB r3L
+@6:
+.ifndef wheels
+	PopB r3L
+.endif
 	PopB r2H
 	PopB r1H
 	PopW r0
@@ -304,7 +338,11 @@ _CmpFString:
 	beqx @1
 	dex
 	bne @1
+.ifdef wheels
+	txa
+.else
 	lda #0
+.endif
 @3:	rts
 
 .segment "memory3"

@@ -62,6 +62,7 @@ ID110:
 ;            a   baseline offset
 ; Destroyed: nothing
 ;---------------------------------------------------------------
+.ifndef wheels ; moved
 _GetRealSize:
 	subv 32
 	jsr GetChWdth1
@@ -84,6 +85,12 @@ _GetRealSize:
 	rts
 @2:	lda baselineOffset
 	rts
+.endif
+
+.ifdef wheels
+FontTVar1 = $8886
+FontTVar2 = $8887
+.endif
 
 Font_1:
 	ldy r1H
@@ -369,6 +376,36 @@ Font_tab2:
 	.byte <(e6-base)
 	.byte <(e7-base)
 
+.ifdef wheels
+	.res 9, 0 ; XXX
+.endif
+
+.ifdef wheels ; xxx moved, but unchanged
+_GetRealSize:
+	subv 32
+	jsr GetChWdth1
+	tay
+	txa
+	ldx curHeight
+	pha
+	and #$40
+	beq @1
+	iny
+@1:	pla
+	and #8
+	beq @2
+	inx
+	inx
+	iny
+	iny
+	lda baselineOffset
+	addv 2
+	rts
+@2:	lda baselineOffset
+	rts
+
+.endif
+
 ; called if currentMode & (SET_UNDERLINE | SET_ITALIC)
 Font_3:
 	lda currentMode
@@ -382,7 +419,15 @@ Font_3:
 @1:	lda r10L
 	eor #$ff
 	sta r10L
-@2:	bbrf ITALIC_BIT, currentMode, clc_rts
+@2:
+.ifdef wheels
+	bbsf ITALIC_BIT, currentMode, @X
+	clc
+	rts
+@X:
+.else
+	bbrf ITALIC_BIT, currentMode, clc_rts
+.endif
 	lda r10H
 	lsr
 	bcs @5
@@ -568,7 +613,9 @@ Font_9:
 ; central character printing, called from conio.s
 ; character - 32 in A
 FontPutChar:
+.ifndef wheels_size_and_speed
 	nop
+.endif
 	tay
 	PushB r1H
 	tya
@@ -795,10 +842,14 @@ FontGt4_2:
 	sta Z45+2,y
 	beq FontGt2_1
 
+.ifndef wheels
 FontTVar1:
+.endif
 	.byte 0
+.ifndef wheels
 FontTVar2:
-.if cbmfiles
+.endif
+.ifdef cbmfiles
 	; This should be initialized to 0, and will
 	; be changed at runtime.
 	; The cbmfiles version was created by dumping

@@ -31,7 +31,7 @@
 .import _StartMouseMode
 .import ResetMseRegion
 
-.if (trap)
+.ifdef trap
 ; serial.s
 .import _GetSerialNumber
 .endif
@@ -118,9 +118,24 @@ DoMenu1_1:
 	jsr _SetPattern
 	jsr _Rectangle
 	PopW curPattern
+.ifdef wheels
+	lda r2H
+	sta r11L
+	lda #$ff
+	bit menuOptNumber
+	bpl @X
+	jsr _FrameRectangle
+	bra @Y
+@X:	jsr _HorizontalLine
+	lda r2L
+	sta r11L
+	lda #$ff
+	jsr _HorizontalLine
+.else
 	lda #$ff
 	jsr _FrameRectangle
-	PopW r11
+.endif
+@Y:	PopW r11
 	jsr Menu_1
 .if ((menuVSeparator | menuHSeparator)<>0)
 	jsr DrawMenu
@@ -167,7 +182,12 @@ DoMenu1_1:
 	ror r11L
 @3:	sec
 @4:	bbrf MOUSEON_BIT, mouseOn, @5
+.ifdef wheels_size_and_speed
+	lda #1 << ICONSON_BIT | 1 << MENUON_BIT
+	.byte $2c ; skip the "LDA #" part of "smbf"
+.else
 	smbf ICONSON_BIT, mouseOn
+.endif
 @5:	smbf MENUON_BIT, mouseOn
 	jmp _StartMouseMode
 
@@ -180,7 +200,12 @@ _ReDoMenu:
 _GotoFirstMenu:
 	php
 	sei
-@1:	CmpBI menuNumber, 0
+@1:
+.ifdef wheels
+	lda menuNumber
+.else
+	CmpBI menuNumber, 0
+.endif
 	beq @2
 	jsr _DoPreviousMenu
 	bra @1
@@ -227,7 +252,7 @@ GetMenuDesc:
 	dey
 	bpl @1
 
-.if (trap)
+.ifdef trap
 	; If the user has changed where GetSerialNumber points to,
 	; this will sabotage the KERNAL call GraphicsString.
 	lda GetSerialNumber + 1 - $FF,y
@@ -263,7 +288,12 @@ Menu_1:
 	MoveW menuLeft, r11
 	sec
 	jsr Menu_4
-@2:	AddVB 1, r10H
+@2:
+.ifdef wheels_size_and_speed
+	inc r10H
+.else
+	AddVB 1, r10H
+.endif
 	lda menuOptNumber
 	and #%00011111
 	cmp r10H
@@ -284,7 +314,13 @@ Menu_2:
 	PushW leftMargin
 	PushW rightMargin
 	PushW StringFaultVec
+.ifdef wheels_size_and_speed
+	lda #$00
+	sta leftMargin+1
+	sta leftMargin
+.else
 	LoadW__ leftMargin, 0
+.endif
 	sec
 	lda menuRight
 	sbc #1
@@ -297,8 +333,22 @@ Menu_2:
 	lda #<MenuStringFault
 	sta StringFaultVec
 	PushB r1H
+.ifdef wheels
+	bit menuOptNumber
+	bmi @1
+	sec
+	lda menuBottom
+	sbc curHeight
+	sbc #1
+	sta r1H
+@1:	clc
+	adc baselineOffset
+	adc #1
+	sta r1H
+.else
 	AddB_ baselineOffset, r1H
 	inc r1H
+.endif
 	jsr _PutString
 	PopB r1H
 	PopW StringFaultVec
@@ -325,7 +375,11 @@ Menu_3:
 Menu_4:
 	bcc @1
 	bbrf 7, menuOptNumber, @2
+.ifdef wheels_size_and_speed
+	bmi @3
+.else
 	bra @3
+.endif
 @1:	bbrf 7, menuOptNumber, @3
 @2:	AddVB 2, r1H
 	rts
@@ -349,13 +403,33 @@ RcvrMnu0:
 	lda RecoverVector
 	ora RecoverVector+1
 	bne @1
+.ifndef wheels_size_and_speed
 	lda #0
+.endif
 	jsr SetPattern
 	jmp Rectangle
 @1:	jmp (RecoverVector)
 
 .if ((menuVSeparator | menuHSeparator)<>0)
 DrawMenu:
+.ifdef wheels
+	lda menuOptNumber
+	bpl LEFAE
+	and #$1F
+	subv 1
+	beq LEFAE
+	sta r2L
+	MoveW menuLeft, r3
+	MoveW menuRight, r4
+LEF9E:	ldx r2L
+	lda menuLimitTabL,x
+	sta r11L
+	lda #$FF
+	jsr _HorizontalLine
+	dec r2L
+	bne LEF9E
+LEFAE:	rts
+.else
 	lda menuOptNumber
 	and #%00011111
 	subv 1
@@ -401,6 +475,7 @@ DrawMenu:
 .endif
 @5:	rts
 .endif
+.endif
 
 CopyMenuCoords:
 	ldx #6
@@ -410,7 +485,6 @@ CopyMenuCoords:
 	bne @1
 	rts
 
-.if (oldMenu_5)
 Menu_5:
 	jsr _MouseOff
 	jsr Menu_7
@@ -420,6 +494,21 @@ Menu_5:
 	sta menuOptionTab,x
 	jsr Menu_8
 	bbsf 7, r1L, Menu_52
+.ifdef wheels
+	bvc LEFE4
+	jsr LEFE4
+	lda r0L
+	ora r0H
+	bne Menu_52
+	rts
+Menu_52:
+	inc menuNumber
+	jmp DoMenu0
+LEFE4:  ldx menuNumber
+	lda menuOptionTab,x
+	jmp (r0)
+.else
+.if (oldMenu_5)
 	bvs Menu_51
 	MoveB selectionFlash, r0L
 	LoadB r0H, NULL
@@ -477,6 +566,18 @@ Menu_6:
 	jsr Menu_8
 	pla
 	jmp (r0)
+.endif
+
+.ifdef wheels ; xxx moved
+MenuDoInvert:
+  	PushB dispBufferOn
+	LoadB dispBufferOn, ST_WR_FORE
+	jsr _InvertRectangle
+	PopB dispBufferOn
+	rts
+
+        .byte 0, 0, 0, 0, 0 ; ???
+.endif
 
 Menu_7:
 	lda menuOptNumber
@@ -502,11 +603,13 @@ Menu_7:
 	lda menuLimitTabH,y
 	sta r3H
 	sty r9L
+.ifndef wheels
 	cpy #0
 	bne @3
 	inc r3L
 	bne @3
 	inc r3H
+.endif
 @3:	ldx menuTop
 	inx
 	stx r2L
@@ -529,13 +632,23 @@ Menu_7:
 	bne @6
 	inc r2L
 @6:	MoveW menuLeft, r3
+.ifdef wheels_size ; code reuse
+.import IncR3
+	jsr IncR3
+.else
 	inc r3L
 	bne @7
 	inc r3H
-@7:	MoveW menuRight, r4
+@7:
+.endif
+	MoveW menuRight, r4
 	ldx #r4
+.ifdef wheels_size_and_speed
+	jmp Ddec
+.else
 	jsr Ddec
 	rts
+.endif
 
 Menu_8:
 	jsr Menu_0
@@ -552,12 +665,14 @@ Menu_8:
 	stx r0L
 	rts
 
+.ifndef wheels ; xxx moved
 MenuDoInvert:
 	PushB dispBufferOn
 	LoadB dispBufferOn, ST_WR_FORE
 	jsr _InvertRectangle
 	PopB dispBufferOn
 	rts
+.endif
 
 MenuStoreFont:
 	ldx #9

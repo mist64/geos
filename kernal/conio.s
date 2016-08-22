@@ -36,7 +36,7 @@
 .import stringMargCtrl
 .import PrvCharWidth
 
-.if (trap)
+.ifdef trap
 ; filesys.s
 .import SerialHiCompare
 ; serial.s
@@ -118,12 +118,15 @@ _SmallPutChar:
 	jmp FontPutChar
 
 DoTAB:
-	lda #0
+.ifndef wheels_size_and_speed ; no-op
+	lda #0 ; XXX was this a constant in the source?
 	add r11L
 	sta r11L
 	bcc @1
 	inc r11H
-@1:	rts
+@1:
+.endif
+	rts
 
 DoLF:
 	lda r1H
@@ -230,8 +233,12 @@ DoESC_GRAPHICS:
 	ldx #r0
 	jsr Ddec
 	ldx #r0
+.ifdef wheels_size_and_speed ; tail call
+	jmp Ddec
+.else
 	jsr Ddec
 	rts
+.endif
 
 _i_PutString:
 	PopB r0L
@@ -285,7 +292,7 @@ _LoadCharSet:
 	AddW r0, curIndexTable
 	AddW r0, cardDataPntr
 
-.if (trap)
+.ifdef trap
 	; copy high-byte of serial
 	lda SerialHiCompare
 	bne @2
@@ -388,7 +395,12 @@ GSSkeyVector:
 	beq @5
 	sta (string),y
 	PushB dispBufferOn
+.ifdef wheels_size_and_speed ; duplicate read of dispBufferOn
+	and #$20
+        beq @3
+.else
 	bbrf 5, dispBufferOn, @3
+.endif
 	LoadB dispBufferOn, (ST_WR_FORE | ST_WRGS_FORE)
 @3:	PushB r1H
 	clc
@@ -406,7 +418,9 @@ GSSkeyVector:
 	stx stringX
 	bra @5
 @4:	jsr GSHelp1
+.ifndef wheels_size_and_speed ; no op
 	bra @5
+.endif
 @5:	jmp _PromptOn
 @6:	sei
 	jsr _PromptOff
@@ -532,7 +546,11 @@ CalcDecimal:
 	bcc @3
 	sta r0H
 	iny
+.ifdef wheels_size_and_speed ; Y can't be 0
+	bne @2
+.else
 	bra @2
+.endif
 @3:	lda r0L
 	adc DecTabL,x
 	sta r0L
@@ -580,8 +598,13 @@ DecTabH:
 ;---------------------------------------------------------------
 _PutDecimal:
 	jsr CalcDecimal
+.ifdef wheels_size_and_speed ; duplicate load
+	lda r2L
+	bmi @1
+.else
 	bbsf 7, r2L, @1
 	lda r2L
+.endif
 	and #$3f
 	sub r3H
 	add r11L

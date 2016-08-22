@@ -10,6 +10,9 @@
 .include "kernal.inc"
 .include "diskdrv.inc"
 .include "jumptab.inc"
+.ifdef wheels
+.include "jumptab_wheels.inc"
+.endif
 
 ; conio.s
 .import _UseSystemFont
@@ -27,7 +30,9 @@
 
 ; init.s
 .import InitGEOEnv
-.import InitGEOS
+.ifndef wheels ; it's a syscall on Wheels
+.import _InitMachine
+.endif
 
 ; main.s
 .import _MNLP
@@ -60,17 +65,28 @@
 .global _LdDeskAcc
 .global _RstrAppl
 .global _StartAppl
+.ifdef wheels
+.global DeskTopName
+.endif
 
 .segment "load1"
 
 _EnterDeskTop:
+.ifdef wheels
+.import GetNewKernal
+.import _FirstInit2
+	jsr _FirstInit2
+	lda #$C0 + 10
+	jsr GetNewKernal
+	jsr OEnterDesktop
+.else
 	sei
 	cld
 	ldx #$ff
 	stx firstBoot
 	txs
 	jsr ClrScr
-	jsr InitGEOS
+	jsr _InitMachine
 .if (useRamExp)
 	MoveW DeskTopStart, r0
 	MoveB DeskTopLgh, r2H
@@ -125,6 +141,7 @@ EDT6:
 	LoadB r0L, NULL
 	MoveW fileHeader+O_GHST_VEC, r7
 .endif
+.endif
 
 _StartAppl:
 	sei
@@ -132,13 +149,20 @@ _StartAppl:
 	ldx #$FF
 	txs
 	jsr UNK_5
-	jsr InitGEOS
+.ifdef wheels
+.import _FirstInit3
+	jsr InitMachine
+	jsr _FirstInit3
+.else
+	jsr _InitMachine
+.endif
 	jsr _UseSystemFont
 	jsr UNK_4
 	ldx r7H
 	lda r7L
 	jmp _MNLP
 
+.ifndef wheels
 _EnterDT_DB:
 	.byte DEF_DB_POS | 1
 	.byte DBTXTSTR, TXT_LN_X, TXT_LN_1_Y+6
@@ -147,10 +171,26 @@ _EnterDT_DB:
 	.word _EnterDT_Str1
 	.byte OK, DBI_X_2, DBI_Y_2
 	.byte NULL
+.endif
+
+.ifdef wheels
+.global IncR0JmpInd
+.global JmpR0Ind
+.import IncR0
+IncR0JmpInd:
+	jsr IncR0
+JmpR0Ind:
+	jmp (r0)
+.endif
+
+.segment "load1c"
 
 DeskTopName:
-.if gateway
+.ifdef gateway
 	.byte "GATEWAY", 0
+	.byte 0 ; PADDING
+.elseif .defined(wheels)
+	.byte "DESKTOP", 0
 	.byte 0 ; PADDING
 .else
 	.byte "DESK TOP", 0
@@ -160,12 +200,18 @@ _EnterDT_Str0:
 	.byte BOLDON, "Please insert a disk", NULL
 _EnterDT_Str1:
 	.byte "with "
-.if gateway
+.ifdef gateway
 	.byte "gateWay"
 .else
 	.byte "deskTop"
 .endif
-	.byte " V1.5 or higher", NULL
+	.byte " V"
+.ifdef wheels
+	.byte "3.0"
+.else
+	.byte "1.5"
+.endif
+	.byte " or higher", NULL
 
 .segment "load2"
 
@@ -205,7 +251,12 @@ U_51:
 
 .segment "load3"
 
+.ifdef wheels
+.global _GetFileOld
+_GetFileOld:
+.else
 _GetFile:
+.endif
 	jsr UNK_5
 	jsr FindFile
 	bnex GetFile_rts
@@ -226,6 +277,12 @@ _LdFile:
 	CmpBI fileHeader + O_GHSTR_TYPE, VLIR
 	bne @1
 	ldy #OFF_DE_TR_SC
+.ifdef wheels
+.import ReadR9
+	jsr ReadR9
+	jsr ReadBuff
+	bne GetFile_rts
+.else
 	lda (r9),y
 	sta r1L
 	iny
@@ -233,6 +290,7 @@ _LdFile:
 	sta r1H
 	jsr ReadBuff
 	bnex GetFile_rts
+.endif
 	ldx #INV_RECORD
 	lda diskBlkBuf + 2
 	sta r1L
@@ -251,6 +309,47 @@ GetFile_rts:
 .segment "load4"
 
 _LdDeskAcc:
+.ifdef wheels
+.import LD8D3
+LD7C3:	jsr GetFHdrInfo
+	bnex LD818
+	lda r7H
+	sta r0H
+	sta r1H
+	sta tmp1
+	lda r7L
+	sta r0L
+	sta r1L
+	sta tmp0
+	jsr LD8D3
+	lda r2H
+	sta tmp3
+	lda r2L
+	sta tmp2
+	lda #0
+	sta r3L
+	jsr StashRAM
+	ldy #1
+	jsr ReadR9
+	jsr ReadFile
+	txa
+	bne LD818
+	jsr DlgBoxPrep
+	jsr UseSystemFont
+	jsr InitGEOEnv
+	PopW $8850
+	tsx
+	stx $8852
+	ldx $814C
+	lda $814B
+	jmp _MNLP
+LD818:	rts
+
+tmp0:	.byte 0
+tmp1:	.byte 0
+tmp2:	.byte 0
+tmp3:	.byte 0
+.else
 	MoveB r10L, A885D
 	jsr GetFHdrInfo
 	bnex LDAcc1
@@ -293,8 +392,33 @@ _LdDeskAcc:
 	PopW r1
 LDAcc1:
 	rts
+.endif
 
 _RstrAppl:
+.ifdef wheels
+LD81D:	lda tmp1
+	sta r0H
+	sta r1H
+	lda tmp0
+	sta r0L
+	sta r1L
+	lda tmp3
+	sta r2H
+	lda tmp2
+	sta r2L
+	lda #$00
+	sta r3L
+	jsr FetchRAM
+	jsr Dialog_2
+	ldx $8852
+	txs
+	ldx #$00
+	lda $8851
+	pha
+	lda $8850
+	pha
+	rts
+.else
 .if (useRamExp)
 	jsr RamExpGetStat
 	MoveW diskBlkBuf+DACC_ST_ADDR, r0
@@ -326,6 +450,7 @@ _RstrAppl:
 	tax
 	PushW DeskAccPC
 	rts
+.endif
 
 _LdApplic:
 	jsr UNK_5
@@ -337,20 +462,23 @@ _LdApplic:
 	jmp StartAppl
 @1:	rts
 
+.ifndef wheels
 .if (!useRamExp)
 SwapFileName:
 	.byte $1b,"Swap File", NULL
 .endif
+.endif
 
 .segment "load5"
 
+.ifndef wheels
 .if (!useRamExp)
 SaveSwapFile:
 	LoadB fileHeader+O_GHGEOS_TYPE, TEMPORARY
 	LoadW fileHeader, SwapFileName
 	LoadW r9, fileHeader
 	LoadB r10L, NULL
-
+.endif
 .endif
 
 

@@ -3,6 +3,7 @@
 ;
 ; Math library
 
+.include "config.inc"
 .include "geossym.inc"
 .include "geosmac.inc"
 .include "jumptab.inc"
@@ -36,21 +37,33 @@
 ;---------------------------------------------------------------
 _DShiftLeft:
 	dey
+.ifdef wheels
+	bmi BBMult_ret
+.else
 	bmi @1
+.endif
 	asl zpage,x
 	rol zpage+1,x
 	jmp _DShiftLeft
+.ifndef wheels
 @1:	rts
+.endif
 
 ;---------------------------------------------------------------
 ;---------------------------------------------------------------
 _DShiftRight:
 	dey
+.ifdef wheels
+	bmi BBMult_ret
+.else
 	bmi @1
+.endif
 	lsr zpage+1,x
 	ror zpage,x
 	jmp _DShiftRight
+.ifndef wheels
 @1:	rts
+.endif
 
 ;---------------------------------------------------------------
 ; BBMult                                                  $C160
@@ -81,6 +94,7 @@ _BBMult:
 	lda r7L
 	sta zpage,x
 	ldy r8L
+BBMult_ret:
 	rts
 
 ;---------------------------------------------------------------
@@ -254,10 +268,19 @@ _GetRandom:
 	bcc @2
 	inc random+1
 @2:	rts
-@3:	CmpBI random+1, $ff
+@3:
+.ifdef wheels
+	CmpBI random+1, $f1
+.else
+	CmpBI random+1, $ff
+.endif
 	bcc @4
 	lda random
+.ifdef wheels
+	sbc #$f1
+.else
 	subv $f1
+.endif
 	bcc @4
 	sta random
 	lda #0

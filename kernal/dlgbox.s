@@ -10,6 +10,9 @@
 .include "kernal.inc"
 .include "jumptab.inc"
 .include "c64.inc"
+.ifdef wheels_dlgbox_features
+.include "jumptab_wheels.inc"
+.endif
 
 ; conio.s
 .import _UseSystemFont
@@ -25,6 +28,11 @@
 
 ; mouse.s
 .import _StartMouseMode
+
+.ifdef wheels_fixes
+; mouse.s
+.import DoESC_RULER
+.endif
 
 ; var.s
 .import menuOptNumber
@@ -56,7 +64,13 @@ _DoDlgBox:
 	bne @1
 	jsr DlgBoxPrep
 	jsr DrawDlgBox
+.ifdef wheels_size_and_speed ; duplicate LDA #0
+	lda #0
+	sta r11H
+	sta r11L
+.else
 	LoadW__ r11, 0
+.endif
 	jsr _StartMouseMode
 	jsr _UseSystemFont
 	ldx #11
@@ -103,9 +117,12 @@ _DoDlgBox:
 	jmp MainLoop
 
 .define DlgBoxProc1 DBDoIcons, DBDoIcons, DBDoIcons, DBDoIcons, DBDoIcons, DBDoIcons
+.ifdef wheels_fixes ; fix: have commands 7-10 (undefined) point to RTS
+.define DlgBoxProc2 DoESC_RULER, DoESC_RULER, DoESC_RULER, DoESC_RULER
+.else
 .define DlgBoxProc2 DBDoIcons, DBDoIcons, DBDoIcons, DBDoIcons
+.endif
 .define DlgBoxProc3 DBDoTXTSTR, DBDoVARSTR, DBDoGETSTR, DBDoSYSOPV, DBDoGRPHSTR, DBDoGETFILES, DBDoOPVEC, DBDoUSRICON, DBDoUSR_ROUT
-
 
 DlgBoxProcL:
 	.lobytes DlgBoxProc1
@@ -113,10 +130,37 @@ DlgBoxProcL:
 	.lobytes DlgBoxProc3
 DlgBoxProcH:
 	.hibytes DlgBoxProc1
+.ifdef wheels_fixes ; fix: correct pointers
+	.hibytes DlgBoxProc2
+.else
 	.lobytes DlgBoxProc2 ; yes, lobytes!! -- not used
+.endif
 	.hibytes DlgBoxProc3
 
 DlgBoxPrep:
+.ifdef wheels_size ; Dialog_2 was folded into this
+	sec
+	jsr DlgBoxPrep2
+	LoadB sysDBData, NULL
+	jmp InitGEOEnv
+
+Dialog_2:
+	clc
+DlgBoxPrep2:
+	PushB CPU_DATA
+ASSERT_NOT_BELOW_IO
+	LoadB CPU_DATA, IO_IN
+	LoadW r4, dlgBoxRamBuf
+	bcc @1
+	jsr DialogSave
+	LoadB mobenble, 1
+	bne @2
+@1:	jsr DialogRestore
+@2:	pla
+	sta CPU_DATA
+ASSERT_NOT_BELOW_IO
+	rts
+.else
 ASSERT_NOT_BELOW_IO
 	PushB CPU_DATA
 	LoadB CPU_DATA, IO_IN
@@ -128,6 +172,7 @@ ASSERT_NOT_BELOW_IO
 	jsr InitGEOEnv
 	LoadB sysDBData, NULL
 	rts
+.endif
 
 DrawDlgBox:
 	LoadB dispBufferOn, ST_WR_FORE | ST_WRGS_FORE
@@ -198,14 +243,18 @@ DrwDlgSpd1:
 	jsr CalcDialogCoords
 	MoveW r4, rightMargin
 	jsr Rectangle
+.ifndef wheels_size_and_speed ; redundant
 	clc
 	jsr CalcDialogCoords
+.endif
 	lda #$ff
 	jsr FrameRectangle
 	lda #0
 	sta defIconTab
+.ifndef wheels_size_and_speed ; single 0 = no icons
 	sta defIconTab+1
 	sta defIconTab+2
+.endif
 	rts
 
 Dialog_1:
@@ -278,6 +327,7 @@ _RstrFrmDialogue:
 	PushW dlgBoxCallerPC
 	rts
 
+.ifndef wheels_size ; folded into DlgBoxPrep
 Dialog_2:
 ASSERT_NOT_BELOW_IO
 	PushB CPU_DATA
@@ -287,6 +337,7 @@ ASSERT_NOT_BELOW_IO
 	PopB CPU_DATA
 ASSERT_NOT_BELOW_IO
 	rts
+.endif
 
 DialogSave:
 	ldx #0
@@ -324,6 +375,15 @@ DialogNextSaveRestoreEntry:
 	bcc @1
 	inc r4H
 @1:	ldy #0
+.ifdef wheels_size_and_speed ; 17 vs. 21 bytes and faster
+	lda DialogCopyTab3,x
+	beq @2
+	sta r3L
+	lda DialogCopyTab1,x
+	sta r2L
+	lda DialogCopyTab2,x
+	sta r2H
+.else
 	lda DialogCopyTab,x
 	sta r2L
 	inx
@@ -334,10 +394,32 @@ DialogNextSaveRestoreEntry:
 	beq @2
 	lda DialogCopyTab,x
 	sta r3L
+.endif
 	inx
 @2:	rts
 
 ; pointer & length tuples of memory regions to save and restore
+.ifdef wheels_size_and_speed
+.define DialogCopyTab curPattern, appMain, IconDescVec, menuOptNumber, TimersTab, obj0Pointer, mob0xpos, mobenble, mobprior, mcmclr0, mob1clr, moby2
+DialogCopyTab1:
+	.lobytes DialogCopyTab
+DialogCopyTab2:
+	.hibytes DialogCopyTab
+DialogCopyTab3:
+	.byte 23
+	.byte 38
+	.byte 2
+	.byte 49
+	.byte 227
+	.byte 8
+	.byte 17
+	.byte 1
+	.byte 3
+	.byte 2
+	.byte 7
+	.byte 1
+	.byte NULL
+.else
 DialogCopyTab:
 	.word curPattern
 	.byte 23
@@ -364,18 +446,28 @@ DialogCopyTab:
 	.word moby2
 	.byte 1
 	.word NULL
+.endif
 
+; handler for commands 1-6
 DBDoIcons:
-	dey
-	bne @1
+.ifdef wheels_button_shortcuts ; install keyVector for all button types
+	lda keyVector+1
+.else
+	dey ; command-1: "OK"==0
+	bne @1 ; not "OK"
 	lda keyVector
 	ora keyVector+1
+.endif
 	bne @1
 	lda #>DBKeyVector
 	sta keyVector+1
 	lda #<DBKeyVector
 	sta keyVector
-@1:	tya
+@1:
+.ifdef wheels_button_shortcuts
+	dey
+.endif
+	tya
 	asl
 	asl
 	asl
@@ -451,6 +543,7 @@ DBDefIconsTab:
 	.word DBIcPicOK
 	.word 0
 	.byte 6, 16
+DBDefIconsTabRoutine:
 	.word DBIcOK
 
 	.word DBIcPicCANCEL
@@ -479,9 +572,90 @@ DBDefIconsTab:
 	.word DBIcDISK
 
 DBKeyVector:
+.ifdef wheels_button_shortcuts
+	lda keyData
+	ldy #ShortcutKeysEnd - ShortcutKeys - 1
+@1:	cmp ShortcutKeys,y
+	beq DoKeyboardShortcut
+	dey
+	bpl @1
+	rts
+
+DoKeyboardShortcut:
+	tya
+	asl
+	asl
+	asl
+	tay
+	lda #0
+	sta r0L
+LF4AC:	tax
+	lda defIconTab+4,x
+	cmp DBDefIconsTab,y
+	bne LF4BD
+	lda defIconTab+4+1,x
+	cmp DBDefIconsTab+1,y
+	beq LF4CC
+LF4BD:	inc r0L
+	lda r0L
+	cmp defIconTab
+	bcs LF4CB
+	asl
+	asl
+	asl
+	bne LF4AC
+LF4CB:	rts
+LF4CC:	lda DBDefIconsTabRoutine,y
+	ldx DBDefIconsTabRoutine+1,y
+	jmp CallRoutine
+
+ShortcutKeys:
+	.byte 13, "cynod"; ok, cancel, yes, no, open, disk
+ShortcutKeysEnd:
+.else
 	CmpBI keyData, CR
 	beq DBIcOK
 	rts
+.endif
+
+.ifdef wheels_size
+DBIcDISK:
+.ifdef wheels_dialog_chdir ; "Disk" button can change directory
+; Maurice says: If your application includes a dialogue box
+; with the "DISK" icon, that's all you really need to let the
+; user select any partition or subdirectory on a CMD device or
+; a subdirectory on a native ramdisk.
+; ATTN: *requires* wheels_size!!!
+.import GetNewKernal
+.import RstrKernal
+	lda #$40 + 5
+	jsr GetNewKernal
+	jsr ChDiskDirectory
+	jsr RstrKernal
+.endif
+	lda #DISK
+	.byte $2c
+DBIcOK:
+	lda #OK
+	.byte $2c
+DBIcCANCEL:
+	lda #CANCEL
+	.byte $2c
+DBIcYES:
+	lda #YES
+	.byte $2c
+DBIcNO:
+	lda #NO
+	.byte $2c
+DBIcOPEN:
+	lda #OPEN
+	.byte $2c
+DBStringFaultVec2:
+	lda #DBSYSOPV
+	.byte $2c
+DBKeyVector2:
+	lda #DBGETSTRING
+.else
 DBIcOK:
 	lda #OK
 	bne DBKeyVec1
@@ -499,8 +673,9 @@ DBIcOPEN:
 	bne DBKeyVec1
 DBIcDISK:
 	lda #DISK
-	bne DBKeyVec1
+	bne DBKeyVec1 ; ???
 DBKeyVec1:
+.endif
 	sta sysDBData
 	jmp RstrFrmDialogue
 
@@ -513,9 +688,13 @@ DBDoSYSOPV:
 
 DBStringFaultVec:
 	bbsf 7, mouseData, DBDoOPVEC_rts
+.ifdef wheels_size ; reuse common code
+	jmp DBStringFaultVec2
+.else
 	lda #DBSYSOPV
 	sta sysDBData
 	jmp RstrFrmDialogue
+.endif
 
 DBDoOPVEC:
 	ldy r1L
@@ -532,6 +711,9 @@ DBDoOPVEC_rts:
 
 DBDoGRPHSTR:
 	ldy r1L
+.ifdef wheels_size
+	jsr StringGetNext
+.else
 	lda (DBoxDesc),y
 	sta r0L
 	iny
@@ -539,6 +721,7 @@ DBDoGRPHSTR:
 	sta r0H
 	iny
 	tya
+.endif
 	pha
 	jsr GraphicsString
 	PopB r1L
@@ -546,6 +729,17 @@ DBDoGRPHSTR:
 
 DBDoUSR_ROUT:
 	ldy r1L
+.ifdef wheels_size_and_speed ; 13->11 bytes, 25->23 cycles
+	iny
+	iny
+	tya
+	pha
+	dey
+	lda (DBoxDesc),y
+	tax
+	dey
+	lda (DBoxDesc),y
+.else
 	lda (DBoxDesc),y
 	sta r0L
 	iny
@@ -555,6 +749,7 @@ DBDoUSR_ROUT:
 	tya
 	pha
 	lda r0L
+.endif
 	jsr CallRoutine
 	PopB r1L
 	rts
@@ -563,6 +758,9 @@ DBDoTXTSTR:
 	clc
 	jsr CalcDialogCoords
 	jsr DBTextCoords
+.ifdef wheels_size
+	jsr StringGetNext
+.else
 	lda (DBoxDesc),y
 	sta r0L
 	iny
@@ -570,10 +768,23 @@ DBDoTXTSTR:
 	sta r0H
 	iny
 	tya
+.endif
 	pha
 	jsr PutString
 	PopB r1L
 	rts
+
+.ifdef wheels_size
+StringGetNext:
+	lda (DBoxDesc),y
+	sta r0L
+	iny
+	lda (DBoxDesc),y
+	sta r0H
+	iny
+	tya
+	rts
+.endif
 
 DBDoVARSTR:
 	clc
@@ -617,9 +828,11 @@ DBDoGETSTR:
 	PopB r1L
 	rts
 
+.ifndef wheels_size ; code reuse
 DBKeyVector2:
 	LoadB sysDBData, DBGETSTRING
 	jmp RstrFrmDialogue
+.endif
 
 DBTextCoords:
 	ldy r1L
@@ -654,10 +867,18 @@ DBDoGETFILES:
 	ror
 	lsr
 	lsr
+.ifdef wheels_dlgbox_features ; ???
+	addv 4
+.else
 	addv 7
+.endif
 	pha
 	lda r2H
+.ifdef wheels_dlgbox_features ; ???
+	subv 12
+.else
 	subv 14
+.endif
 	pha
 	PushB r7L
 	PushW r10
@@ -671,6 +892,38 @@ DBDoGETFILES:
 	jsr HorizontalLine
 	PopW r10
 	PopB r7L
+.ifdef wheels_dlgbox_features ; ???
+.import extKrnlIn
+.import TmpFilename
+	lda extKrnlIn
+	cmp #5
+	beq @B
+	PushB r10L ; r10: source string
+	sta r5L
+	PushB r10H
+	sta r5H
+	ora r5L
+	beq @A ; null ptr
+	LoadW r10, TmpFilename
+	ldx #r5
+	ldy #r10
+	jsr CopyString
+@A:	lda #$40 + 5
+	jsr GetNewKernal
+	jsr GetFEntries
+	jsr RstrKernal
+	PopW r10
+	bra @C
+@B:	jsr GetFEntries
+@C:	PopB r2L
+	PopB r3L
+	sta DBGFArrowX
+	lda #0
+	sta DBGFileSelected
+	sta DBGFTableIndex
+	lda DBGFilesFound
+	beq @2
+.else
 	LoadB r7H, 15
 	LoadW r6, fileTrScTab
 	jsr FindFTypes
@@ -681,23 +934,27 @@ DBDoGETFILES:
 	sub r7H
 	beq @2
 	sta DBGFilesFound
+.endif
 	cmp #6
 	bcc @1
-	lda #>DBGFilesArrowsIcons
-	sta r5H
-	lda #<DBGFilesArrowsIcons
-	sta r5L
+	LoadW r5, DBGFilesArrowsIcons
 	jsr DBIconsHelp2
-@1:	lda #>DBGFPressVector
-	sta otherPressVec+1
-	lda #<DBGFPressVector
-	sta otherPressVec
+@1:
+.ifdef wheels_dlgbox_features ; ???
+	lda #0
+	jsr SetupRAMOpCall
+	jsr FetchRAM
+.endif
+	LoadW otherPressVec, DBGFPressVector
+.ifndef wheels_dlgbox_features ; ???
 	jsr DBGFilesHelp1
+.endif
 	jsr DBGFilesHelp5
 	jsr DBGFilesHelp2
 @2:	PopB r1L
 	rts
 
+.ifndef wheels_dlgbox_features ; xxx
 DBGFilesHelp1:
 	PushB DBGFilesFound
 @1:	pla
@@ -719,15 +976,39 @@ DBGFilesHelp1:
 	lda #0
 @4:	sta DBGFTableIndex
 @5:	rts
+.endif
 
 DBGFilesArrowsIcons:
 	.word DBGFArrowPic
 DBGFArrowX:
 	.word 0
+.ifdef wheels_dlgbox_features
+	.byte 8, 8
+.else
 	.byte 3, 12
+.endif
 	.word DBGFDoArrow
 
 DBGFArrowPic:
+.ifdef wheels_dlgbox_features
+	.byte 10, %11111111 ; repeat 10
+	.byte $80+2 ; 2 data bytes
+	.byte                     %10000000, %00000001
+	.byte 4, %10000001 ; repeat 4
+	.byte $80 + 36
+	;     %11111111,%11111111,%11111111,%11111111,%11111111,%11111111,%11111111,%11111111
+	;     %11111111,%11111111,%10000000,%00000001,%10000001,%10000001,%10000001,%10000001
+	.byte %11111111,%11111111,%10000000,%00000001,%10000011,%11000001,%10000001,%10000001
+	.byte %10000000,%00000001,%10000000,%00000001,%10000111,%11100001,%10001111,%11110001
+	.byte %10000000,%00000001,%10000000,%00000001,%10001111,%11110001,%10000111,%11100001
+	.byte %10000000,%00000001,%11111111,%11111111,%10000001,%10000001,%10000011,%11000001
+	.byte %10000000,%00000001,%11111111,%11111111;%10000001,%10000001,%10000001,%10000001
+	;     %11111111,%11111111,%11111111,%11111111,%11111111,%11111111,%11111111,%11111111
+	.byte 4, %10000001 ; repeat 4
+	.byte 8, %11111111 ; repeat 8
+
+	.byte 8, $bf ; ??? unused
+.else
 	.byte 3, %11111111, $80+(10*3)
 	     ;%11111111, %11111111, %11111111
 	.byte %10000000, %00000000, %00000001 ;1
@@ -742,6 +1023,7 @@ DBGFArrowPic:
 	.byte %10000000, %00000000, %00000001 ;10
 	     ;%11111111, %11111111, %11111111
 	.byte 3, %11111111
+.endif
 
 DBGFPressVector:
 	lda mouseData
@@ -774,9 +1056,116 @@ DBGFPressVector:
 @1:	sta DBGFileSelected
 	jsr DBGFilesHelp6
 	jsr DBGFilesHelp2
+.ifdef wheels_dlgbox_dblclick
+	lda dblClickCount
+	beq @X
+	ldy dblDBData
+	dey
+	jmp DoKeyboardShortcut
+@X:	lda #CLICK_COUNT
+	sta dblClickCount
+.endif
 @2:	rts
 
 DBGFDoArrow:
+.ifdef wheels_dlgbox_features
+.import dbFieldWidth
+	; which icon inside the top/bot/up/down image was the mouse on?
+	lda mouseXPos+1
+	lsr
+	lda mouseXPos
+	ror
+	lsr
+	lsr ; / 16
+	sec
+	sbc DBGFArrowX
+	lsr
+	tay
+	cpy #4
+	bcc @1
+	rts
+@1:	lda DoArrowTabL,y
+	ldx DoArrowTabH,y
+	jmp CallRoutine
+
+.define DoArrowTab DBGFDoArrowTop, DBGFDoArrowBottom, DBGFDoArrowUp, DBGFDoArrowDown
+
+DoArrowTabL:
+	.lobytes DoArrowTab
+DoArrowTabH:
+	.hibytes DoArrowTab
+
+DBGFDoArrowTop:
+	lda DBGFTableIndex
+	bne @1
+	rts
+@1:	lda #0
+	beq DBGFDoArrowFuncCommon
+
+DBGFDoArrowBottom:
+	ldx DBGFilesFound
+	dex
+	stx r0L
+	lda #0
+	sta r0H
+	sta r1H
+	lda #5
+	sta r1L
+	ldx #r0
+	ldy #r1
+	jsr Ddiv
+	jsr BBMult
+	lda r0L
+	bra DBGFDoArrowFuncCommon
+
+DBGFDoArrowDown:
+	lda DBGFTableIndex
+	clc
+	adc #5
+	cmp DBGFilesFound
+	bcc DBGFDoArrowFuncCommon
+	rts
+
+DBGFDoArrowUp:
+	lda DBGFTableIndex
+	bne @1
+	rts
+@1:	sec
+	sbc #5
+DBGFDoArrowFuncCommon:
+	sta DBGFTableIndex+1
+	sta DBGFTableIndex
+	jsr SetupRAMOpCall
+	jsr FetchRAM
+	jsr DBGFilesHelp2
+	jmp DBGFilesHelp5
+
+SetupRAMOpCall:
+	sta r1L
+	lda #5
+	sta r0L
+	lda dbFieldWidth
+	sta r2L
+	ldx #r2
+	ldy #r0L
+	jsr BBMult ; r2 = 5 * dbFieldWidth (count)
+	lda dbFieldWidth
+	sta r0L
+	ldx #r1
+	ldy #r0L
+	jsr BBMult ; r1 = arg * dbFieldWidth (REU offset)
+	clc
+	lda r1L
+	adc #<$E080
+	sta r1L
+	lda r1H
+	adc #>$E080 ; REU address
+	sta r1H
+	LoadW r0, fileTrScTab ; CBM address
+	sta r3L ; REU bank 0
+	rts
+.else
+; DBGFDoArrow:
 	jsr DBGFilesHelp6
 	LoadB r0H, 0
 	lda DBGFArrowX
@@ -808,8 +1197,19 @@ DBGFDoArrow:
 	sta DBGFileSelected
 @6:	jsr DBGFilesHelp2
 	jmp DBGFilesHelp5
+.endif
 
 DBGFilesHelp2:
+.ifdef wheels_dlgbox_features
+	lda DBGFTableIndex+1
+	sec
+	sbc DBGFTableIndex
+	ldx #r0
+	jsr DBGFilesHelp4
+	MoveW DBGFNameTable, r5
+	ldy #r5
+	jmp CopyString
+.else
 	lda DBGFileSelected
 	jsr DBGFilesHelp3
 	ldy #r1
@@ -820,10 +1220,15 @@ DBGFilesHelp3:
 	jsr DBGFilesHelp4
 	MoveW DBGFNameTable, r1
 	rts
+.endif
 
 DBGFilesHelp4:
 	sta r0L
+.ifdef wheels_dlgbox_features
+	MoveB dbFieldWidth, r1L
+.else
 	LoadB r1L, 17
+.endif
 	txa
 	pha
 	ldy #r0
@@ -832,27 +1237,87 @@ DBGFilesHelp4:
 	pla
 	tax
 	lda r1L
+.ifdef wheels_size_and_speed
+	sta zpage,x
+	.assert <fileTrScTab = 0, error, "fileTrScTab must be page-aligned!"
+	lda #>fileTrScTab
+.else
 	clc
 	adc #<fileTrScTab
 	sta zpage,x
 	lda #>fileTrScTab
 	adc #0
+.endif
 	sta zpage+1,x
 	rts
 
 DBGFilesHelp5:
+.ifdef wheels_dlgbox_features
+	PushW rightMargin
+	PushB currentMode
+	LoadB currentMode, $40
+	lda #0
+	jsr DBGFilesHelp8
+	clc
+	lda r2H
+	adc #$38
+	sta r2H
+	lda #0
+	jsr SetPattern
+	jsr Rectangle
+	lda #0
+	lda r4H
+	sta rightMargin+1
+	lda r4L
+	sta rightMargin
+	lda #0
+	sta r15L
+	ldx #30
+	jsr DBGFilesHelp4
+LF843:	lda r15L
+	jsr DBGFilesHelp8
+	lda r3H
+	sta r11H
+	lda r3L
+	sta r11L
+	lda r2L
+	clc
+	adc #9
+	sta r1H
+	lda r14H
+	sta r0H
+	lda r14L
+	sta r0L
+	jsr PutString
+	clc
+	lda dbFieldWidth
+	adc r14L
+	sta r14L
+	bcc LF86E
+	inc r14H
+LF86E:	inc r15L
+	lda r15L
+	cmp #5
+	bne LF843
+	jsr DBGFilesHelp6
+	PopB currentMode
+	PopW rightMargin
+	rts
+.else
 	PushW rightMargin
 	lda #0
 	jsr DBGFilesHelp8
 	MoveW r4, rightMargin
 	LoadB r15L, 0
 	jsr SetPattern
+
 	lda DBGFTableIndex
 	ldx #r14
 	jsr DBGFilesHelp4
 	LoadB currentMode, SET_BOLD
 @1:	lda r15L
 	jsr DBGFilesHelp8
+
 	jsr Rectangle
 	MoveW r3, r11
 	lda r2L
@@ -868,6 +1333,7 @@ DBGFilesHelp5:
 	LoadB currentMode, NULL
 	PopW rightMargin
 	rts
+.endif
 
 DBGFilesHelp6:
 	lda DBGFileSelected
@@ -900,16 +1366,36 @@ DBGFilesHelp8:
 	jsr DBGFilesHelp7
 	AddB r0L, r2L
 	clc
+.ifdef wheels_dlgbox_features
+	adc #13
+.else
 	adc #14
+.endif
 	sta r2H
 	inc r2L
+.ifdef wheels_size ; code reuse
+	jsr IncR3
+.else
 	dec r2H
 	inc r3L
 	bne @1
 	inc r3H
+.endif
 @1:	ldx #r4
+.ifdef wheels_size_and_speed
+	jmp Ddec
+.else
 	jsr Ddec
 	rts
+.endif
+
+.ifdef wheels_size ; code reuse
+.global IncR3
+IncR3:	inc r3L
+	bne @1
+	inc r3H
+@1:	rts
+.endif
 
 DBIcPicNO:
 	.byte 5, %11111111, $80+1, %11111110, $db+8, 2, $80+6

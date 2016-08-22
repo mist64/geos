@@ -21,12 +21,27 @@ DBoxDesc        =       $43
 DBoxDescL       =       $43
 DBoxDescH       =       $44
 
+; Wheels internal vars
+
+; bit 7    = time out, run the screensaver.
+; bit 6    = saver blocked, don't run it yet.
+; bit 5    = stop the timer.
+; bit 4    = timer off. Screensaver will never run.
+; bits 2,3 = unused.
+; bit 1    = if set then ignore mouse movement.
+; bit 0    = screensaver is running.
+saverStatus     =       $88b4
+saverTimer      =       $88b5 ; time remaining before screensaver.
+saverCount      =       $88b7 ; user defined countdown to screensaver.
+saverBank       =       $88b9 ; bank in reu holding screensaver.
+vdcRamType      =       $88ba ; bit7 1=64K VDC ram, 0=16K ram.
+
 ; GEOS Kernal internal vars (not for use by apps)
 
 savedmoby2      =       $88bb ; ---
 scr80polar      =       $88bc ; ---
 scr80colors     =       $88bd ; ---
-vdcClrMode      =       $88be ; ---
+vdcClrMode      =       $88be ; --- (used with 128 only)
 driveData       =       $88bf ; drv
 ramExpSize      =       $88c3 ; reu
 sysRAMFlg       =       $88c4 ; drv, filesys, memory, tobasic
@@ -62,7 +77,7 @@ obj7Pointer     =       $8fff ; ---
 BVBuff          =       $0400
 RunREU          =       $6000
 
-; locations to be defined later
+keyScanChar     =       $87ea ; character fetched during the last interrupt. (Wheels)
 E87FC           =       $87fc
 E87FD           =       $87fd
 E87FE           =       $87fe
@@ -72,9 +87,19 @@ A885D           =       $885d
 A885E           =       $885e
 A885F           =       $885f
 A8860           =       $8860
-e88b7           =       $88b7   ;4 bytes indexed by curDrive, 1571 disk type (SS/DS)
+dblDBData       =       $88a7   ; icon number used for double clicking
+                                ; in the file requestor. Default is OPEN.
+minKeyRepeat    =       $88b0   ; minimum key repeat value during accel. (Wheels)
+keyAccFlag      =       $88b1   ; zero turns off key acceleration. (Wheels)
+keyAccel        =       $88b2   ; used during key acceleration. (Wheels)
+keyRptCount     =       $88b3   ; user defined key repeat delay. (Wheels)
+e88b7           =       $88b7   ; 4 bytes indexed by curDrive, 1571 disk type (SS/DS)
 A8FE8           =       $8fe8
 A8FF0           =       $8ff0
+
+; Wheels
+prtHdrStorage   =       $f700   ; print driver header stored here.
+prtCodeStorage  =       $f800   ; print driver code stored here.
 
 ; RamExp stats block structure
 DACC_ST_ADDR    =       $80     ;deskAccessory load addr

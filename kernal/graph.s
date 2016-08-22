@@ -59,6 +59,7 @@ GraphPenXH = GraphPenX+1
 
 .segment "graph1"
 
+.ifndef wheels
 ;---------------------------------------------------------------
 ; used by EnterDesktop
 ;---------------------------------------------------------------
@@ -83,6 +84,7 @@ ClrScr2:
 	dex
 	bne ClrScr1
 	rts
+.endif
 
 .segment "graph2"
 
@@ -107,6 +109,82 @@ PrepareXCoord:
 	sta r4L
 	rts
 
+.ifdef wheels_size
+.import WheelsTemp
+_HorizontalLine:
+	sta r7L
+	lda #0
+	.byte $2c
+_InvertLine:
+	lda #$80
+	sta WheelsTemp
+	PushW r3
+	PushW r4
+	jsr PrepareXCoord
+	ldy r3L
+	lda r3H
+	beq @1
+	inc r5H
+	inc r6H
+@1:	lda r3H
+	cmp r4H
+	bne @2
+	lda r3L
+	cmp r4L
+@2:	beq @7
+	jsr LineHelp2
+	lda r8L
+	bit WheelsTemp
+	bmi @3
+	jsr LineCommon
+	bra @4
+@3:	eor (r5),y
+@4:	bit WheelsTemp
+	bpl @5
+	eor #$FF
+@5:	sta (r6),y
+	sta (r5),y
+	tya
+	clc
+	adc #8
+	tay
+	bcc @6
+	inc r5H
+	inc r6H
+@6:	dec r4L
+	beq @8
+	lda r7L
+	bit WheelsTemp
+	bpl @4
+	lda (r5),y
+	bra @4
+@7:	lda r8L
+	ora r8H
+	bra @9
+@8:	lda r8H
+@9:	bit WheelsTemp
+	bmi @A
+	jsr LineCommon
+	jmp @B
+@A:	eor #$FF
+	eor (r5),y
+@B:	sta (r6),y
+	sta (r5),y
+LineEnd:
+	PopW r4
+	PopW r3
+	rts
+
+LineCommon:
+	sta r11H
+	and (r6),y
+	sta r7H
+	lda r11H
+	eor #$FF
+	and r7L
+	ora r7H
+	rts
+.else
 ;---------------------------------------------------------------
 ; HorizontalLine                                          $C118
 ;
@@ -170,6 +248,7 @@ HLineHelp:
 	and r7L
 	ora r7H
 	rts
+
 ;---------------------------------------------------------------
 ; InvertLine                                              $C11B
 ;
@@ -235,6 +314,7 @@ ImprintLine:
 	sta r6H
 	sty r5H
 	bra RLin0
+.endif
 
 ;---------------------------------------------------------------
 ; RecoverLine                                             $C11E
@@ -247,6 +327,79 @@ ImprintLine:
 ; Destroyed: a, x, y, r5 - r8
 ;---------------------------------------------------------------
 _RecoverLine:
+.ifdef wheels_size
+	lda #$18 ; clc
+	.byte $2c
+ImprintLine:
+	lda #$38 ; sec
+	sta @1
+	PushW r3
+	PushW r4
+	lda dispBufferOn
+	pha
+	ora #ST_WR_FORE | ST_WR_BACK
+	sta dispBufferOn
+	jsr PrepareXCoord
+	pla
+	sta dispBufferOn
+@1:	clc
+	bcc @2
+	lda r5L
+	ldy r6L
+	sta r6L
+	sty r5L
+	lda r5H
+	ldy r6H
+	sta r6H
+	sty r5H
+@2:	ldy r3L
+	lda r3H
+	beq @3
+	inc r5H
+	inc r6H
+@3:	CmpW r3, r4
+	beq @6
+	jsr LineHelp2
+	lda r8L
+	jsr LineHelp1
+@4:	tya
+	clc
+	adc #8
+	tay
+	bcc @5
+	inc r5H
+	inc r6H
+@5:	dec r4L
+	beq @7
+	lda (r6),y
+	sta (r5),y
+	bra @4
+@6:	lda r8L
+	ora r8H
+	bra @8
+@7:	lda r8H
+@8:	jsr LineHelp1
+	jmp LineEnd
+
+LineHelp1:
+	sta r7L
+	and (r5),y
+	sta r7H
+	lda r7L
+	eor #$FF
+	and (r6),y
+	ora r7H
+	sta (r5),y
+	rts
+
+LineHelp2:
+	SubW r3, r4
+	lsr r4H
+	ror r4L
+	lsr r4L
+	lsr r4L
+	rts
+.else
 	PushW r3
 	PushW r4
 	PushB dispBufferOn
@@ -254,7 +407,6 @@ _RecoverLine:
 	sta dispBufferOn
 	jsr PrepareXCoord
 	PopB dispBufferOn
-
 RLin0:
 	ldy r3L
 	lda r3H
@@ -298,6 +450,7 @@ RecLineHelp:
 	ora r7H
 	sta (r5),Y
 	rts
+.endif
 
 ;---------------------------------------------------------------
 ; VerticalLine                                            $C121
@@ -355,6 +508,10 @@ _VerticalLine:
 _i_Rectangle:
 	jsr GetInlineDrwParms
 	jsr _Rectangle
+.ifdef wheels_size
+.global DoInlineReturn7
+DoInlineReturn7:
+.endif
 	php
 	lda #7
 	jmp DoInlineReturn
@@ -409,9 +566,13 @@ _InvertRectangle:
 _i_RecoverRectangle:
 	jsr GetInlineDrwParms
 	jsr _RecoverRectangle
+.ifdef wheels_size
+	jmp DoInlineReturn7
+.else
 	php
 	lda #7
 	jmp DoInlineReturn
+.endif
 
 ;---------------------------------------------------------------
 ; RecoverRectangle                                        $C12D
@@ -440,9 +601,13 @@ _RecoverRectangle:
 _i_ImprintRectangle:
 	jsr GetInlineDrwParms
 	jsr _ImprintRectangle
+.ifdef wheels_size
+	jmp DoInlineReturn7
+.else
 	php
 	lda #7
 	jmp DoInlineReturn
+.endif
 
 ;---------------------------------------------------------------
 ; ImprintRectangle                                        $C250
@@ -512,6 +677,14 @@ _FrameRectangle:
 GetInlineDrwParms:
 	PopW r5
 	PopW returnAddress
+.ifdef wheels_size
+	ldy #0
+@1:	iny
+	lda (returnAddress),y
+	sta r1H,y
+	cpy #6
+	bne @1
+.else
 	ldy #1
 	lda (returnAddress),Y
 	sta r2L
@@ -530,6 +703,7 @@ GetInlineDrwParms:
 	iny
 	lda (returnAddress),Y
 	sta r4H
+.endif
 	PushW r5
 	rts
 
@@ -566,12 +740,17 @@ _i_GraphicsString:
 ; Destroyed: a, x, y, r0 - r15
 ;---------------------------------------------------------------
 _GraphicsString:
-	jsr Getr0AndInc
+	jsr GetR0AndInc
+.ifdef wheels_size_and_speed
+	tay
+	beq @1
+.else
 	beq @1
 	tay
+.endif
 	dey
-	lda GStrTL,Y
-	ldx GStrTH,Y
+	lda GStrTL,y
+	ldx GStrTH,y
 	jsr CallRoutine
 	bra _GraphicsString
 @1:	rts
@@ -587,6 +766,9 @@ _DoMovePenTo:
 	sta GraphPenY
 	stx GraphPenXL
 	sty GraphPenXH
+.ifdef wheels_size
+_DoNothing:
+.endif
 	rts
 
 _DoLineTo:
@@ -604,22 +786,28 @@ _DoRectangleTo:
 	jsr GrStSetCoords
 	jmp _Rectangle
 
+.ifndef wheels_size
 _DoNothing:
 	rts
+.endif
 
 _DoNewPattern:
-	jsr Getr0AndInc
+	jsr GetR0AndInc
 	jmp _SetPattern
 
 _DoESC_PutString:
-	jsr Getr0AndInc
+	jsr GetR0AndInc
 	sta r11L
-	jsr Getr0AndInc
+	jsr GetR0AndInc
 	sta r11H
-	jsr Getr0AndInc
+	jsr GetR0AndInc
 	sta r1H
+.ifdef wheels_size_and_speed
+	jmp _PutString
+.else
 	jsr _PutString
 	rts
+.endif
 
 _DoFrame_RecTo:
 	jsr GrStSetCoords
@@ -628,7 +816,11 @@ _DoFrame_RecTo:
 
 _DoPenXYDelta:
 	ldx #1
+.ifdef wheels_size
+	.byte $2c
+.else
 	bne DPXD0
+.endif
 _DoPenXDelta:
 	ldx #0
 DPXD0:
@@ -701,7 +893,11 @@ _SetPattern:
 	asl
 	asl
 	asl
+.ifdef wheels_size_and_speed
+	.assert <PatternTab = 0, error, "PatternTab must be page-aligned!"
+.else
 	adc #<PatternTab
+.endif
 	sta curPattern
 	lda #0
 	adc #>PatternTab
@@ -709,21 +905,28 @@ _SetPattern:
 	rts
 
 GetCoords:
-	jsr Getr0AndInc
+	jsr GetR0AndInc
 	tax
-	jsr Getr0AndInc
+	jsr GetR0AndInc
 	sta r2L
-	jsr Getr0AndInc
+	jsr GetR0AndInc
 	ldy r2L
 	rts ;x/y - x, a - y
 
-Getr0AndInc:
+GetR0AndInc:
 	ldy #0
 	lda (r0),Y
+.ifdef wheels_size
+.global IncR0
+IncR0:
+.endif
 	inc r0L
 	bne @1
 	inc r0H
-@1:	cmp #0
+@1:
+.ifndef wheels_size_and_speed ; only one caller needed this
+	cmp #0
+.endif
 	rts
 
 ;---------------------------------------------------------------
@@ -739,22 +942,36 @@ Getr0AndInc:
 _GetScanLine:
 	txa
 	pha
+.ifndef wheels_size_and_speed
 	pha
+.endif
 	and #%00000111
 	sta r6H
+.ifdef wheels_size_and_speed
+	txa
+.else
 	pla
+.endif
 	lsr
 	lsr
 	lsr
 	tax
 	bbrf 7, dispBufferOn, @2 ; ST_WR_FORE
 	bbsf 6, dispBufferOn, @1 ; ST_WR_BACK
+	; xxx the macros above do "BIT dispBufferOn" twice
 	lda LineTabL,x
 	ora r6H
 	sta r5L
+.ifdef wheels_size_and_speed
+	sta r6L
+.endif
 	lda LineTabH,x
 	sta r5H
+.ifdef wheels_size_and_speed
+	sta r6H
+.else
 	MoveW r5, r6
+.endif
 	pla
 	tax
 	rts
@@ -773,10 +990,17 @@ _GetScanLine:
 	lda LineTabL,x
 	ora r6H
 	sta r6L
+.ifdef wheels_size_and_speed
+	sta r5L
+.endif
 	lda LineTabH,x
 	subv >(SCREEN_BASE-BACK_SCR_BASE)
 	sta r6H
+.ifdef wheels_size_and_speed
+	sta r5H
+.else
 	MoveW r6, r5
+.endif
 	pla
 	tax
 	rts
@@ -818,7 +1042,11 @@ LineTabH:
 ;---------------------------------------------------------------
 _BitOtherClip:
 	ldx #$ff
+.ifdef wheels_size
+	.byte $2c
+.else
 	jmp BitmClp1
+.endif
 
 ;---------------------------------------------------------------
 ; BitmapClip                                              $C2AA
@@ -922,7 +1150,9 @@ _i_BitmapUp:
 _BitmapUp:
 	PushB r9H
 	LoadB r9H, NULL
+.ifndef wheels_size_and_speed
 	lda #0
+.endif
 	sta r3L
 	sta r4L
 @1:	jsr BitmapUpHelp
@@ -992,6 +1222,14 @@ BitmapDecode:
 	sta r7H
 	bra BitmapDecode
 
+.ifdef wheels ; moved, but identical
+IndirectR13:
+	jmp (r13)
+
+IndirectR14:
+	jmp (r14)
+.endif
+
 BitmapDecode2:
 	bit r9H
 	bpl @1
@@ -1015,11 +1253,13 @@ BitmapDecode2:
 	dec r4L
 @3:	rts
 
+.ifndef wheels ; moved
 IndirectR13:
 	jmp (r13)
 
 IndirectR14:
 	jmp (r14)
+.endif
 
 .segment "graph4"
 

@@ -23,7 +23,7 @@
 .import RecordTableTS
 .import verifyFlag
 
-.if (trap)
+.ifdef trap
 .global SerialHiCompare
 .endif
 
@@ -67,18 +67,30 @@
 .global _WriteFile
 .global _WriteRecord
 
-.segment "files1"
+.segment "files1a"
 
+.ifndef wheels
 Add2:
 	AddVW 2, r6
 return:
 	rts
+.endif
 
 ASSERT_NOT_BELOW_IO
 
+.ifdef wheels_external_readwrite_file
+OReadFile:
+.else
 _ReadFile:
+.endif
 	jsr EnterTurbo
+.ifdef wheels
+	beqx @X
+	rts
+@X:
+.else
 	bnex return
+.endif
 	jsr InitForIO
 	PushW r0
 	LoadW r4, diskBlkBuf
@@ -90,6 +102,9 @@ _ReadFile:
 	lda diskBlkBuf
 	bne @2
 	ldy diskBlkBuf+1
+.ifdef wheels
+	beq @6
+.endif
 	dey
 	beq @6
 @2:	lda r2H
@@ -101,11 +116,20 @@ _ReadFile:
 	bne @7
 @3:	sty r1L
 	LoadB CPU_DATA, RAM_64K
+.ifdef wheels
+	lda r7H
+	cmp #$4F
+	bcc @4
+	cmp #$52
+	bcs @4
+	jsr L50A4
+	bra @Y
+.endif
 @4:	lda diskBlkBuf+1,y
 	dey
 	sta (r7),y
 	bne @4
-	LoadB CPU_DATA, KRNL_IO_IN
+@Y:	LoadB CPU_DATA, KRNL_IO_IN
 	AddB r1L, r7L
 	bcc @5
 	inc r7H
@@ -124,20 +148,164 @@ _ReadFile:
 @7:	PopW r0
 	jmp DoneWithIO
 
+.ifdef wheels
+L50A4:	PushB r10L
+	PushW r9
+	PushW r3
+	PushW r2
+	PushW r1
+	PushW r0
+	ldx #0
+	sty r10L
+	MoveW r7, r9
+@1:	lda r9H
+	cmp #$50
+	bne @2
+	lda r9L
+	cmp #$00
+@2:	bcc @4
+	lda r9H
+	cmp #$51
+	bne @3
+	lda r9L
+	cmp #$C2
+@3:	bcc @6
+@4:	ldy #$00
+	lda diskBlkBuf+2,x
+	sta (r9),y
+	clc
+	lda #$01
+	adc r9L
+	sta r9L
+	bcc @5
+	inc r9H
+@5:	inx
+	cpx r10L
+	bcc @1
+	bcs @8
+@6:	jsr @9
+	clc
+	lda r9L
+	adc r2L
+	sta r9L
+	lda r9H
+	adc r2H
+	sta r9H
+	clc
+	lda r0L
+	adc r2L
+	bcs @8
+	tax
+	dex
+	dex
+	cpx r10L
+	bcs @8
+	ldy #$00
+@7:	lda diskBlkBuf+2,x
+	sta (r9),y
+	iny
+	inx
+	cpx r10L
+	bcc @7
+@8:	PopW r0
+	PopW r1
+	PopW r2
+	PopW r3
+	PopW r9
+	PopB r10L
+	rts
+
+@9:	sec
+	lda r9L
+	sbc #$00
+	sta r1L
+	lda r9H
+	sbc #$50
+	sta r1H
+	txa
+	clc
+	adc #2
+	sta r0L
+	lda #$80
+	sta r0H
+	stx r2L
+	sec
+	lda r10L
+	sbc r2L
+	sta r2L
+	lda #$00
+	sta r2H
+	clc
+	lda r1L
+	adc r2L
+	sta r3L
+	lda r1H
+	adc r2H
+	sta r3H
+	lda r3H
+	cmp #$01
+	bne @A
+	lda r3L
+	cmp #$C2
+@A:	bcc @B
+	sec
+	lda r3L
+	sbc #$C2
+	sta r3L
+	lda r3H
+	sbc #$01
+	sta r3H
+	sec
+	lda r2L
+	sbc r3L
+	sta r2L
+	lda r2H
+	sbc r3H
+	sta r2H
+@B:	clc
+	lda #$27
+	adc r1L
+	sta r1L
+	lda #$06
+	adc r1H
+	sta r1H
+	lda ramExpSize
+	sta r3L
+	inc ramExpSize
+	jsr StashRAM
+	dec ramExpSize
+	rts
+.endif
+
+.ifndef wheels_external_readwrite_file
 FlaggedPutBlock:
 	lda verifyFlag
 	beq @1
 	jmp VerWriteBlock
 @1:	jmp WriteBlock
+.endif
 
+.segment "files1b"
+
+.ifdef wheels_external_readwrite_file
+OWriteFile:
+.else
 _WriteFile:
+.endif
 	jsr EnterTurbo
+.ifdef wheels
+	beqx @X
+	rts
+@X:
+.else
 	bnex @2
 	sta verifyFlag
+.endif
 	jsr InitForIO
 	LoadW r4, diskBlkBuf
 	PushW r6
 	PushW r7
+.ifndef wheels
 	jsr DoWriteFile
 	PopW r7
 	PopW r6
@@ -147,6 +315,7 @@ _WriteFile:
 @1:	jsr DoneWithIO
 @2:	rts
 
+.endif
 DoWriteFile:
 	ldy #0
 	lda (r6),y
@@ -156,7 +325,11 @@ DoWriteFile:
 	lda (r6),y
 	sta r1H
 	dey
+.ifdef wheels ; XXX why?
+	AddVW 2, r6
+.else
 	jsr Add2
+.endif
 	lda (r6),y
 	sta (r4),y
 	iny
@@ -164,18 +337,142 @@ DoWriteFile:
 	sta (r4),y
 	ldy #$fe
 	LoadB CPU_DATA, RAM_64K
+.ifdef wheels
+	lda r7H
+	cmp #$4F
+	bcc @1
+	cmp #$52
+	bcs @1
+	jsr L5086
+	bra @Y
+.endif
 @1:	dey
 	lda (r7),y
 	sta diskBlkBuf+2,y
 	tya
 	bne @1
-	LoadB CPU_DATA, KRNL_IO_IN
+@Y:	LoadB CPU_DATA, KRNL_IO_IN
+.ifdef wheels
+	jsr WriteBlock
+	bnex @3
+	clc
+	lda #$FE
+	adc r7L
+	sta r7L
+	bcc DoWriteFile
+	inc r7H
+	bne DoWriteFile
+.else
 	jsr FlaggedPutBlock
 	bnex @3
 	AddVW $fe, r7
 	bra DoWriteFile
+.endif
 @2:	tax
-@3:	rts
+@3:
+.ifdef wheels
+	PopW r7
+	PopW r6
+	jmp DoneWithIO
+.else
+	rts
+.endif
+
+.ifdef wheels
+L5086:	PushW r9
+	PushW r3
+	PushW r2
+	PushW r1
+	PushW r0
+	ldx #2
+	lda r7H
+	sta r9H
+	lda r7L
+	sta r9L
+@1:	lda r9H
+	cmp #$50
+	bne @2
+	lda r9L
+	cmp #$00
+@2:	bcc @4
+	lda r9H
+	cmp #$51
+	bne @3
+	lda r9L
+	cmp #$5F
+@3:	bcc @6
+@4:	ldy #$00
+	lda (r9),y
+	sta diskBlkBuf,x
+	clc
+	lda #1
+	adc r9L
+	sta r9L
+	bcc @5
+	inc r9H
+@5:	inx
+	bne @1
+	beq @B
+@6:	jsr @C
+	ldx r0L
+@7:	clc
+	lda #$01
+	adc r9L
+	sta r9L
+	bcc @8
+	inc r9H
+@8:	inx
+	beq @B
+	lda r9H
+	cmp #$51
+	bne @9
+	lda r9L
+	cmp #$5F
+@9:	bcc @7
+	ldy #$00
+@A:	lda (r9),y
+	sta diskBlkBuf,x
+	iny
+	inx
+	bne @A
+@B:	PopW r0
+	PopW r1
+	PopW r2
+	PopW r3
+	PopW r9
+	rts
+
+@C:	sec
+	lda r9L
+	sbc #$00
+	sta r1L
+	lda r9H
+	sbc #$50
+	sta r1H
+	stx r0L
+	lda #$80
+	sta r0H
+	dex
+	txa
+	eor #$FF
+	sta r2L
+	lda #$00
+	sta r2H
+	clc
+	lda #$7B
+	adc r1L
+	sta r1L
+	lda #$0D
+	adc r1H
+	sta r1H
+	lda ramExpSize
+	sta r3L
+	inc ramExpSize
+	jsr FetchRAM
+	dec ramExpSize
+	rts
+
+.endif
 
 ASSERT_NOT_BELOW_IO
 
@@ -200,6 +497,42 @@ _GetPtrCurDkNm:
 .segment "files6"
 
 _FollowChain:
+.ifdef wheels
+.import WheelsTemp
+	php
+	sei
+	jsr LoadDiskBlkBuf
+	PushB r3H
+	lda #0
+	sta WheelsTemp
+@1:	jsr GetLink
+@2:	bnex @5
+	ldy WheelsTemp
+	lda r1L
+	sta (r3),y
+	iny
+	lda r1H
+	sta (r3),y
+	iny
+	sty WheelsTemp
+	bne @3
+	inc r3H
+@3:	lda r1L
+	beq @6
+	lda diskBlkBuf
+	bne @4
+	jsr GetBlock
+@4:	lda r3H
+	cmp #>OS_VARS
+	bcs @5
+	MoveW diskBlkBuf, r1
+	bne @1
+	beq @2
+@5:	ldx #BFR_OVERFLOW
+@6:	PopB r3H
+	plp
+	rts
+.else
 	php
 	sei
 	PushB r3H
@@ -226,8 +559,111 @@ _FollowChain:
 @4:	PopB r3H
 	plp
 	rts
+.endif
+
+.ifdef wheels ; common code
+LoadDiskBlkBuf:
+	LoadW r4, diskBlkBuf
+	rts
+.endif
 
 _FindFTypes:
+.ifdef wheels
+.import fftIndicator
+	bit fftIndicator
+	bmi LD5FD
+	lda r6H
+	sta r1H
+	lda r6L
+	sta r1L
+	lda #$00
+	sta r0H
+	lda r7H
+	asl
+	rol r0H
+	asl
+	rol r0H
+	asl
+	rol r0H
+	asl
+	rol r0H
+	adc r7H
+	sta r0L
+	bcc LD5FA
+	inc r0H
+LD5FA:	jsr ClearRam
+LD5FD:	jsr Get1stDirEntry
+	txa
+	bne LD661
+LD603:	ldy #$00
+	lda (r5),y
+	beq LD658
+	ldy #$16
+	lda r7L
+	cmp #$64
+	beq LD624
+	cmp #$65
+	bne LD61B
+	lda (r5),y
+	beq LD658
+	bne LD624
+LD61B:	cmp (r5),y
+	bne LD658
+	jsr GetHeaderFileName
+	bne LD658
+LD624:	clc
+	lda r5L
+	adc #$03
+	sta r0L
+	lda r5H
+	adc #$00
+	sta r0H
+	ldy #$00
+LD633:	lda (r0),y
+	cmp #$A0
+	beq LD640
+	sta (r6),y
+	iny
+	cpy #$10
+	bne LD633
+LD640:	lda #$00
+	sta (r6),y
+	bit fftIndicator
+	bmi LD663
+	clc
+	lda #$11
+	adc r6L
+	sta r6L
+	bcc LD654
+	inc r6H
+LD654:	dec r7H
+	beq LD661
+LD658:	jsr GetNxtDirEntry
+	txa
+	bne LD661
+	tya
+	beq LD603
+LD661:	sec
+	rts
+
+LD663:	lda r5H
+	sta LD685
+	lda r5L
+	sta LD684
+	LoadW r5, LD677
+	clc
+	rts
+
+LD677:	lda LD685
+	sta r5H
+	lda LD684
+	sta r5L
+	jmp LD658
+
+LD684:	.byte 0
+LD685:	.byte 0
+
+.else
 .if (useRamExp)
 	CmpWI r7, ($0100+SYSTEM)
 	bne FFTypesStart
@@ -262,7 +698,7 @@ FFTypesStart:
 	jsr Get1stDirEntry
 	bnex @7
 
-.if (trap)
+.ifdef trap
 	; sabotage code: breaks LdDeskAcc if
 	; _UseSystemFont hasn't been called before this
 	ldx #>GetSerialNumber
@@ -309,6 +745,7 @@ FFTypesStart:
 	beq @2
 @7:	plp
 	rts
+.endif
 
 SetBufTSVector:
 	LoadW r6, fileTrScTab
@@ -323,6 +760,46 @@ SetFHeadVector:
 	rts
 
 _FindFile:
+.ifdef wheels
+	sec
+	lda r6L
+	sbc #3
+	sta r6L
+	bcs @1
+	dec r6H
+@1:	jsr Get1stDirEntry
+	txa
+	bne @8
+@2:	ldy #0
+	lda (r5),y
+	beq @5
+	ldy #3
+@3:	lda (r6),y
+	beq @4
+	cmp (r5),y
+	bne @5
+	iny
+	bne @3
+@4:	cpy #OFF_FNAME + $10
+	beq @6
+	lda (r5),y
+	iny
+	cmp #$A0
+	beq @4
+@5:	jsr GetNxtDirEntry
+	txa
+	bne @8
+	tya
+	beq @2
+	ldx #FILE_NOT_FOUND
+	rts
+@6:	ldy #29
+@7:	lda (r5),y
+	sta dirEntryBuf,y
+	dey
+	bpl @7
+@8:	rts
+.else
 	php
 	sei
 	SubVW 3, r6
@@ -359,8 +836,68 @@ _FindFile:
 	ldx #NULL
 @7:	plp
 	rts
+.endif
 
 _SetDevice:
+.ifdef wheels
+	tax
+	beq @7
+	cmp curDevice
+	beq @2
+	jsr IsCurDeviceValid
+	bcs @1
+	lda curDrive
+	jsr IsDeviceValid
+	bcs @1
+	jsr ExitTurbo
+@1:	stx curDevice
+@2:	jsr IsCurDeviceValid
+	bcs @6
+	tay
+	lda _driveType,y
+	sta curType
+	beq @7
+	cpy curDrive
+	beq @6
+	sty curDrive
+	lda SetDevDrivesTabL-8,y
+	sta SetDevTab + 2
+	lda SetDevDrivesTabH-8,y
+	sta SetDevTab + 3
+	ldx #6
+@3:	lda r0,x
+	pha
+	lda SetDevTab,x
+	sta r0,x
+	dex
+	bpl @3
+	lda curType
+	and #$0F
+	cmp #DRV_1581
+	bne @4
+	dec r2H
+@4:	jsr FetchRAM
+	ldx #0
+@5:	pla
+	sta r0,x
+	inx
+	cpx #7
+	bne @5
+@6:	ldx #0
+	rts
+@7:	ldx #DEV_NOT_FOUND
+	rts
+
+IsCurDeviceValid:
+	lda curDevice
+IsDeviceValid:
+	cmp #8
+	bcc @1
+	cmp #12
+	rts
+@1:	sec
+	rts
+.else
 	nop
 	cmp curDevice
 	beq @2
@@ -395,8 +932,7 @@ _SetDevice:
 
 PrepForFetch:
 	ldy #6
-@1:
-	lda r0,y
+@1:	lda r0,y
 	tax
 	lda SetDevTab,y
 	sta r0,y
@@ -405,10 +941,11 @@ PrepForFetch:
 	dey
 	bpl @1
 	rts
+.endif
 
 SetDevTab:
 	.word DISK_BASE
-.if cbmfiles
+.if .defined(cbmfiles) || .defined(wheels)
 	; This should be initialized to 0, and will
 	; be changed at runtime.
 	; The cbmfiles version was created by dumping
@@ -431,21 +968,46 @@ _GetFHdrInfo:
 	ldy #OFF_GHDR_PTR
 	lda (r9),y
 	sta r1L
+.ifdef wheels
+	sta fileTrScTab
+.endif
 	iny
 	lda (r9),y
 	sta r1H
+.ifdef wheels
+	sta fileTrScTab+1
+.else
 	MoveW r1, fileTrScTab
+.endif
 	jsr SetFHeadVector
 	jsr GetBlock
+.ifdef wheels
+	bne @1
+.else
 	bnex @1
+.endif
 	ldy #OFF_DE_TR_SC
+.ifdef wheels
+	jsr ReadR9
+.else
 	lda (r9),y
 	sta r1L
 	iny
 	lda (r9),y
 	sta r1H
+.endif
 	jsr GetStartHAddr
 @1:	rts
+
+.ifdef wheels
+.global ReadR9
+ReadR9:	lda (r9),y
+	sta r1L
+	iny
+	lda (r9),y
+	sta r1H
+	rts
+.endif
 
 GetHeaderFileName:
 	ldx #0
@@ -460,7 +1022,11 @@ GetHeaderFileName:
 	sta r1H
 	jsr SetFHeadVector
 	jsr GetBlock
+.ifdef wheels
+        bne @4
+.else
 	bnex @4
+.endif
 	tay
 @1:	lda (r10),y
 	beq @2
@@ -475,9 +1041,10 @@ GetHeaderFileName:
 
 .segment "files7"
 
-.if (trap)
+.ifdef trap
 SerialHiCompare:
-.if cbmfiles
+.ifndef wheels
+.ifdef cbmfiles
 	; This should be initialized to 0, and will
 	; be changed at runtime.
 	; The cbmfiles version was created by dumping
@@ -486,6 +1053,7 @@ SerialHiCompare:
 	.byte $58
 .else
 	.byte 0
+.endif
 .endif
 .endif
 
@@ -498,7 +1066,11 @@ _SaveFile:
 	iny
 	bne @1
 	jsr GetDirHead
+.ifdef wheels
+	bne @2
+.else
 	bnex @2
+.endif
 	jsr GetDAccLength
 	jsr SetBufTSVector
 	jsr BlkAlloc
@@ -507,12 +1079,24 @@ _SaveFile:
 	jsr SetGDirEntry
 	bnex @2
 	jsr PutDirHead
+.ifdef wheels
+	bne @2
+.else
 	bnex @2
+.endif
 	sta fileHeader+O_GHINFO_TXT
+.ifdef wheels
+	MoveW_ dirEntryBuf+OFF_GHDR_PTR, r1
+.else
 	MoveW dirEntryBuf+OFF_GHDR_PTR, r1
+.endif
 	jsr SetFHeadVector
 	jsr PutBlock
+.ifdef wheels
+	bne @2
+.else
 	bnex @2
+.endif
 	jsr ClearNWrite
 	bnex @2
 	jsr GetStartHAddr
@@ -520,6 +1104,19 @@ _SaveFile:
 @2:	rts
 
 GetDAccLength:
+.ifdef wheels
+	jsr LD8D3
+	jsr @1
+	CmpBI fileHeader+O_GHSTR_TYPE, VLIR
+	bne @2
+@1:	clc
+	lda #$fe
+	adc r2L
+	sta r2L
+	bcc @2
+	inc r2H
+@2:	rts
+.else
 	lda fileHeader+O_GHEND_ADDR
 	sub fileHeader+O_GHST_ADDR
 	sta r2L
@@ -531,6 +1128,18 @@ GetDAccLength:
 	bne @2
 @1:	AddVW $fe, r2
 @2:	rts
+.endif
+
+.ifdef wheels ; reused code
+.global LD8D3
+LD8D3:	lda fileHeader+O_GHEND_ADDR
+	sub fileHeader+O_GHST_ADDR
+	sta r2L
+	lda fileHeader+O_GHEND_ADDR+1
+	sbc fileHeader+O_GHST_ADDR+1
+	sta r2H
+	rts
+.endif
 
 ClearNWrite:
 	ldx #0
@@ -551,11 +1160,18 @@ _SetGDirEntry:
 	jsr BldGDirEntry
 	jsr GetFreeDirBlk
 	bnex SGDCopyDate_rts
+.ifdef wheels
+	sty r5L
+	.assert <diskBlkBuf = 0, error, "diskBlkBuf must be page-aligned!"
+.else
 	tya
 	addv <diskBlkBuf
 	sta r5L
+.endif
 	lda #>diskBlkBuf
+.ifndef wheels
 	adc #0
+.endif
 	sta r5H
 	ldy #$1d
 @1:	lda dirEntryBuf,y
@@ -575,12 +1191,42 @@ SGDCopyDate:
 SGDCopyDate_rts:
 	rts
 
+.ifdef wheels ; moved and optimized
+Add2:	clc
+        lda     #2
+        adc     r6L
+        sta     r6L
+        bcc     @1
+        inc     r6H
+@1:	rts
+.endif
+
 _BldGDirEntry:
 	ldy #$1d
-	lda #NULL
+	lda #0
 @1:	sta dirEntryBuf,y
 	dey
 	bpl @1
+.ifdef wheels
+	ldy #1
+	lda (r9),y
+	sta r3H
+	dey
+	lda (r9),y
+	sta r3L
+@2:	lda (r3),y
+	beq @3
+	sta dirEntryBuf+OFF_FNAME,y
+	iny
+	cpy #16
+	bcc @2
+	bcs @5
+@3:	lda #$a0
+@4:	sta dirEntryBuf+OFF_FNAME,y
+	iny
+	cpy #16
+	bcc @4
+.else
 	tay
 	lda (r9),y
 	sta r3L
@@ -602,12 +1248,15 @@ _BldGDirEntry:
 	lda r1H
 	bne @2
 	beq @3
+.endif
 @5:	ldy #O_GHCMDR_TYPE
 	lda (r9),y
 	sta dirEntryBuf+OFF_CFILE_TYPE
+.ifndef wheels
 	ldy #O_GHSTR_TYPE
 	lda (r9),y
 	sta dirEntryBuf+OFF_GSTRUC_TYPE
+.endif
 	ldy #NULL
 	sty fileHeader
 	dey
@@ -615,7 +1264,14 @@ _BldGDirEntry:
 	MoveW fileTrScTab, dirEntryBuf+OFF_GHDR_PTR
 	jsr Add2
 	MoveW fileTrScTab+2, dirEntryBuf+OFF_DE_TR_SC
+.ifdef wheels
+	ldy #O_GHSTR_TYPE
+	lda (r9),y
+	sta dirEntryBuf+OFF_GSTRUC_TYPE
+	cmp #VLIR
+.else
 	CmpBI dirEntryBuf+OFF_GSTRUC_TYPE, VLIR
+.endif
 	bne @6
 	jsr Add2
 @6:	ldy #O_GHGEOS_TYPE
@@ -633,7 +1289,11 @@ _FreeFile:
 	php
 	sei
 	jsr GetDirHead
+.ifdef wheels
+	bne @3
+.else
 	bnex @3
+.endif
 	ldy #OFF_GHDR_PTR
 	lda (r9),y
 	beq @1
@@ -644,11 +1304,18 @@ _FreeFile:
 	jsr FreeBlockChain
 	bnex @3
 @1:	ldy #OFF_DE_TR_SC
+.ifdef wheels
+	jsr ReadR9
+	jsr SetFHeadVector
+	jsr GetBlock
+	bne @3
+.else
 	lda (r9),y
 	sta r1L
 	iny
 	lda (r9),y
 	sta r1H
+.endif
 	jsr FreeBlockChain
 	bnex @3
 	ldy #OFF_GSTRUC_TYPE
@@ -666,6 +1333,25 @@ _FreeFile:
 	rts
 
 DeleteVlirChains:
+.ifdef wheels
+	ldx #2
+@1:	lda fileHeader+1,x
+	sta r1H
+	lda fileHeader,x
+	sta r1L
+	beq @2
+	txa
+	pha
+	jsr FreeBlockChain
+	pla
+	cpx #0
+	bne @3
+	tax
+@2:	inx
+	inx
+	bne @1
+@3:	rts
+.else
 	ldy #0
 @1:	lda diskBlkBuf,y
 	sta fileHeader,y
@@ -689,8 +1375,35 @@ DeleteVlirChains:
 	tay
 	beqx @2
 @3:	rts
+.endif
 
 FreeBlockChain:
+.ifdef wheels
+	php
+	sei
+	MoveW r1, r6
+	jsr LoadDiskBlkBuf
+	LoadW_ r2, 0
+@1:	jsr FreeBlock
+	beqx @2
+	cpx #BAD_BAM
+	bne @4
+@2:	inc r2L
+	bne @3
+	inc r2H
+@3:	jsr GetLink
+	txa
+	bne @4
+	lda diskBlkBuf+1
+	sta r6H
+	sta r1H
+	lda diskBlkBuf
+	sta r6L
+	sta r1L
+	bne @1
+@4:	plp
+	rts
+.else
 	MoveW r1, r6
 	LoadW_ r2, 0
 @1:	jsr FreeBlock
@@ -711,21 +1424,55 @@ FreeBlockChain:
 	bra @1
 @3:	ldx #NULL
 @4:	rts
+.endif
 
 FindNDelete:
 	MoveW r0, r6
 	jsr FindFile
+.ifdef wheels
+	bnex LDAB8
+.else
 	bnex @1
 	lda #0
+.endif
 	tay
 	sta (r5),y
+.ifdef wheels
+	jmp WriteBuff
+.else
 	jsr WriteBuff
 @1:	rts
+.endif
 
 _FastDelFile:
 	PushW r3
 	jsr FindNDelete
 	PopW r3
+.ifdef wheels_size_and_speed ; inlined
+	bnex LDAB8
+	PushW r3
+	jsr GetDirHead
+	PopW r3
+@X:	ldy #0
+	lda (r3),y
+	beq @Y
+	sta r6L
+	iny
+	lda (r3),y
+	sta r6H
+	jsr FreeBlock
+	txa
+	bne LDAB8
+	clc
+	lda #2
+	adc r3L
+	sta r3L
+	bcc @X
+	inc r3H
+	bne @X
+@Y:	jmp PutDirHead
+LDAB8:	rts
+.else
 	bnex @1
 	jsr FreeChainByTab
 @1:	rts
@@ -745,8 +1492,11 @@ FreeChainByTab:
 	bnex @3
 	AddVW 2, r3
 	bra @1
-@2:	jsr PutDirHead
-@3:	rts
+@2:
+	jsr PutDirHead
+@3:
+	rts
+.endif
 
 _RenameFile:
 	PushW r0
@@ -767,7 +1517,12 @@ _RenameFile:
 	iny
 	cpy #16
 	bcc @2
-@3:	jsr WriteBuff
+@3:
+.ifdef wheels
+	jmp WriteBuff
+.else
+	jsr WriteBuff
+.endif
 @4:	rts
 
 _OpenRecordFile:
@@ -845,7 +1600,11 @@ _UpdateRecordFile:
 	bnex @1
 	MoveW RecordDirTS, r1
 	jsr ReadBuff
+.ifdef wheels
+	bne @1
+.else
 	bnex @1
+.endif
 	MoveW RecordDirOffs, r5
 	jsr SGDCopyDate
 	ldy #OFF_SIZE
@@ -855,7 +1614,11 @@ _UpdateRecordFile:
 	lda fileSize+1
 	sta (r5),y
 	jsr WriteBuff
+.ifdef wheels
+	bne @1
+.else
 	bnex @1
+.endif
 	jsr PutDirHead
 	lda #NULL
 	sta fileWritten
@@ -895,7 +1658,11 @@ _PointRecord:
 	bcs @1
 	sta curRecord
 	jsr GetVLIRChainTS
+.ifdef wheels
+	tay
+.else
 	ldy r1L
+.endif
 	ldx #0
 	beq @2
 @1:	ldx #INV_RECORD
@@ -903,30 +1670,45 @@ _PointRecord:
 	rts
 
 _DeleteRecord:
+.ifdef wheels
+	jsr ReadyForUpdVLIR2
+.else
 	ldx #INV_RECORD
 	lda curRecord
-	bmi @3
+	bmi return2
 	jsr ReadyForUpdVLIR
-	bnex @3
+.endif
+	bnex return2
 	jsr GetVLIRChainTS
 	MoveB curRecord, r0L
 	jsr MoveBackVLIRTab
-	bnex @3
+	bnex return2
 	CmpB curRecord, usedRecords
 	bcc @1
 	dec curRecord
 @1:	ldx #NULL
 	lda r1L
-	beq @3
+	beq return2
 	jsr FreeBlockChain
-	bnex @3
+	bnex return2
 	SubB r2L, fileSize
 	bcs @2
 	dec fileSize+1
-@2:	ldx #NULL
-@3:	rts
+@2:
+.ifndef wheels
+	ldx #NULL
+.endif
+return2:
+	rts
 
 _InsertRecord:
+.ifdef wheels_size ; use common code
+	jsr ReadyForUpdVLIR2
+	bnex return2
+	lda curRecord
+	sta r0L
+	jmp MoveForwVLIRTab
+.else
 	ldx #INV_RECORD
 	lda curRecord
 	bmi @1
@@ -936,6 +1718,15 @@ _InsertRecord:
 	sta r0L
 	jsr MoveForwVLIRTab
 @1:	rts
+.endif
+
+.ifdef wheels ; reused code
+ReadyForUpdVLIR2:
+	ldx #INV_RECORD
+	lda curRecord
+	bmi return2
+	jmp ReadyForUpdVLIR
+.endif
 
 _AppendRecord:
 	jsr ReadyForUpdVLIR
@@ -970,7 +1761,9 @@ ReaRec0:
 	lda curRecord
 	bmi @1
 	jsr GetVLIRChainTS
+.ifndef wheels
 	lda r1L
+.endif
 	tax
 	beq @1
 	jsr ReadFile
@@ -978,21 +1771,34 @@ ReaRec0:
 @1:	rts
 
 _WriteRecord:
+.ifndef wheels
 	ldx #INV_RECORD
 	lda curRecord
 	bmi @5
+.endif
 	PushW r2
+.ifdef wheels
+	jsr ReadyForUpdVLIR2
+.else
 	jsr ReadyForUpdVLIR
+.endif
 	PopW r2
 	bnex @5
 	jsr GetVLIRChainTS
+.ifndef wheels
 	lda r1L
+.endif
 	bne @1
 	ldx #0
 	lda r2L
 	ora r2H
+.ifdef wheels
+	bne @3
+@5:	rts
+.else
 	beq @5
 	bne @3
+.endif
 @1:	PushW r2
 	PushW r7
 	jsr FreeBlockChain
@@ -1011,8 +1817,12 @@ _WriteRecord:
 	sty r1H
 	iny
 	sty r1L
+.ifdef wheels
+	jmp PutVLIRChainTS
+.else
 	jsr PutVLIRChainTS
 @5:	rts
+.endif
 
 GetVLIRTab:
 	jsr SetVLIRTable
@@ -1087,10 +1897,17 @@ GetVLIRChainTS:
 	lda curRecord
 	asl
 	tay
+.ifdef wheels
+	lda fileHeader+3,y
+	sta r1H
+	lda fileHeader+2,y
+	sta r1L
+.else
 	lda fileHeader+2,y
 	sta r1L
 	lda fileHeader+3,y
 	sta r1H
+.endif
 	rts
 
 PutVLIRChainTS:
@@ -1127,7 +1944,11 @@ ReadyForUpdVLIR:
 	lda fileWritten
 	bne @1
 	jsr GetDirHead
+.ifdef wheels
+	bne @1
+.else
 	bnex @1
+.endif
 	lda #$ff
 	sta fileWritten
 @1:	rts
@@ -1144,7 +1965,11 @@ _ReadByte:
 	lda r1L
 	beq @1
 	jsr GetBlock
+.ifdef wheels
+	bne @1
+.else
 	bnex @1
+.endif
 	ldy #2
 	sty r5H
 	dey

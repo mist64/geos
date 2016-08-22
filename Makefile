@@ -1,3 +1,6 @@
+
+VARIANT ?= bsw
+
 AS=ca65
 LD=ld65
 
@@ -35,7 +38,30 @@ KERNAL_SOURCES= \
 	kernal/start.s \
 	kernal/time.s \
 	kernal/tobasic.s \
-	kernal/vars.s
+	kernal/vars.s \
+	kernal/wheels/wheels.s \
+	kernal/wheels/ram.s \
+	kernal/wheels/devnum.s \
+	kernal/wheels/format.s \
+	kernal/wheels/partition.s \
+	kernal/wheels/directory.s \
+	kernal/wheels/validate.s \
+	kernal/wheels/copydisk.s \
+	kernal/wheels/copyfile.s \
+	kernal/wheels/loadb.s \
+	kernal/wheels/tobasicb.s \
+	kernal/wheels/reux.s \
+
+DRIVER_SOURCES= \
+	drv/drv1541.bin \
+	drv/drv1571.bin \
+	drv/drv1581.bin \
+	input/joydrv.bin \
+	input/amigamse.bin \
+	input/lightpen.bin \
+	input/mse1531.bin \
+	input/koalapad.bin \
+	input/pcanalog.bin
 
 DEPS= \
 	inc/c64.inc \
@@ -48,88 +74,100 @@ DEPS= \
 	inc/kernal.inc \
 	inc/printdrv.inc
 
-KERNAL_OBJECTS=$(KERNAL_SOURCES:.s=.o)
+KERNAL_OBJS=$(KERNAL_SOURCES:.s=.o)
+DRIVER_OBJS=$(DRIVER_SOURCES:.s=.o)
+ALL_OBJS=$(KERNAL_OBJS) $(DRIVER_OBJS)
+
+BUILD_DIR=build/$(VARIANT)
+
+PREFIXED_KERNAL_OBJS = $(addprefix $(BUILD_DIR)/, $(KERNAL_OBJS))
 
 ALL_BINS= \
-	kernal.bin \
-	lokernal.bin \
-	start.bin \
-	drv1541.bin \
-	drv1571.bin \
-	drv1581.bin \
-	amigamse.bin \
-	joydrv.bin \
-	lightpen.bin \
-	mse1531.bin \
-	koalapad.bin \
-	pcanalog.bin
+	$(BUILD_DIR)/kernal/kernal.bin \
+	$(BUILD_DIR)/drv/drv1541.bin \
+	$(BUILD_DIR)/drv/drv1571.bin \
+	$(BUILD_DIR)/drv/drv1581.bin \
+	$(BUILD_DIR)/input/joydrv.bin \
+	$(BUILD_DIR)/input/amigamse.bin \
+	$(BUILD_DIR)/input/lightpen.bin \
+	$(BUILD_DIR)/input/mse1531.bin \
+	$(BUILD_DIR)/input/koalapad.bin \
+	$(BUILD_DIR)/input/pcanalog.bin
 
-all: geos.d64
+
+all: $(BUILD_DIR)/geos.d64
+
+regress:
+	@echo "********** Building variant 'bsw'"
+	@$(MAKE) VARIANT=bsw all
+	./regress.sh bsw
+	@echo "********** Building variant 'wheels'"
+	@$(MAKE) VARIANT=wheels all
+	./regress.sh wheels
 
 clean:
-	rm -f $(KERNAL_OBJECTS) drv/*.o input/*.o $(ALL_BINS) combined.prg compressed.prg geos.d64
+	rm -rf build
 
-geos.d64: compressed.prg
-	if [ -e GEOS64.D64 ]; then \
-		cp GEOS64.D64 geos.d64; \
-		echo delete geos geoboot | c1541 geos.d64 >/dev/null; \
-		echo write compressed.prg geos | c1541 geos.d64 >/dev/null; \
-		echo \*\*\* Created geos.d64 based on GEOS64.D64.; \
+$(BUILD_DIR)/geos.d64: $(BUILD_DIR)/kernal_compressed.prg
+	@if [ -e GEOS64.D64 ]; then \
+		cp GEOS64.D64 $@; \
+		echo delete geos geoboot | c1541 $@ >/dev/null; \
+		echo write $< geos | c1541 $@ >/dev/null; \
+		echo \*\*\* Created $@ based on GEOS64.D64.; \
 	else \
-		echo format geos,00 d64 geos.d64 | c1541 >/dev/null; \
-		echo write compressed.prg geos | c1541 geos.d64 >/dev/null; \
-		if [ -e desktop.cvt ]; then echo geoswrite desktop.cvt | c1541 geos.d64; fi >/dev/null; \
-		echo \*\*\* Created fresh geos.d64.; \
+		echo format geos,00 d64 $@ | c1541 >/dev/null; \
+		echo write $< geos | c1541 $@ >/dev/null; \
+		if [ -e desktop.cvt ]; then echo geoswrite desktop.cvt | c1541 $@; fi >/dev/null; \
+		echo \*\*\* Created fresh $@.; \
 	fi;
 
-compressed.prg: combined.prg
-	pucrunch -f -c64 -x0x5000 $< $@
+$(BUILD_DIR)/kernal_compressed.prg: $(BUILD_DIR)/kernal_combined.prg
+	@echo Creating $@
+	pucrunch -f -c64 -x0x5000 $< $@ 2> /dev/null
 
-combined.prg: $(ALL_BINS)
-	printf "\x00\x50" > tmp.bin
-	cat start.bin /dev/zero | dd bs=1 count=16384 >> tmp.bin 2> /dev/null
-	cat drv1541.bin /dev/zero | dd bs=1 count=3456 >> tmp.bin 2> /dev/null
-	cat lokernal.bin /dev/zero | dd bs=1 count=8640 >> tmp.bin 2> /dev/null
-	cat kernal.bin /dev/zero | dd bs=1 count=16192 >> tmp.bin 2> /dev/null
-	cat joydrv.bin >> tmp.bin 2> /dev/null
-	mv tmp.bin combined.prg
+$(BUILD_DIR)/kernal_combined.prg: $(ALL_BINS)
+	@echo Creating $@
+	@printf "\x00\x50" > $(BUILD_DIR)/tmp.bin
+	@dd if=$(BUILD_DIR)/kernal/kernal.bin bs=1 count=16384 >> $(BUILD_DIR)/tmp.bin 2> /dev/null
+	@cat $(BUILD_DIR)/drv/drv1541.bin /dev/zero | dd bs=1 count=3456 >> $(BUILD_DIR)/tmp.bin 2> /dev/null
+	@cat $(BUILD_DIR)/kernal/kernal.bin /dev/zero | dd bs=1 count=24832 skip=19840 >> $(BUILD_DIR)/tmp.bin 2> /dev/null
+	@cat $(BUILD_DIR)/input/joydrv.bin >> $(BUILD_DIR)/tmp.bin 2> /dev/null
+	@mv $(BUILD_DIR)/tmp.bin $(BUILD_DIR)/kernal_combined.prg
 
-kernal.bin: $(KERNAL_OBJECTS) kernal/kernal.cfg
-	$(LD) -C kernal/kernal.cfg $(KERNAL_OBJECTS) -o $@ -m kernal.map
+$(BUILD_DIR)/drv/drv1541.bin: $(BUILD_DIR)/drv/drv1541.o drv/drv1541.cfg $(DEPS)
+	$(LD) -C drv/drv1541.cfg $(BUILD_DIR)/drv/drv1541.o -o $@
 
-lokernal.bin: kernal.bin
+$(BUILD_DIR)/drv/drv1571.bin: $(BUILD_DIR)/drv/drv1571.o drv/drv1571.cfg $(DEPS)
+	$(LD) -C drv/drv1571.cfg $(BUILD_DIR)/drv/drv1571.o -o $@
 
-start.bin: kernal.bin
+$(BUILD_DIR)/drv/drv1581.bin: $(BUILD_DIR)/drv/drv1581.o drv/drv1581.cfg $(DEPS)
+	$(LD) -C drv/drv1581.cfg $(BUILD_DIR)/drv/drv1581.o -o $@
 
-drv1541.bin: drv/drv1541.o drv/drv1541.cfg $(DEPS)
-	$(LD) -C drv/drv1541.cfg drv/drv1541.o -o $@
+$(BUILD_DIR)/input/amigamse.bin: $(BUILD_DIR)/input/amigamse.o input/amigamse.cfg $(DEPS)
+	$(LD) -C input/amigamse.cfg $(BUILD_DIR)/input/amigamse.o -o $@
 
-drv1571.bin: drv/drv1571.o drv/drv1571.cfg $(DEPS)
-	$(LD) -C drv/drv1571.cfg drv/drv1571.o -o $@
+$(BUILD_DIR)/input/joydrv.bin: $(BUILD_DIR)/input/joydrv.o input/joydrv.cfg $(DEPS)
+	$(LD) -C input/joydrv.cfg $(BUILD_DIR)/input/joydrv.o -o $@
 
-drv1581.bin: drv/drv1581.o drv/drv1581.cfg $(DEPS)
-	$(LD) -C drv/drv1581.cfg drv/drv1581.o -o $@
+$(BUILD_DIR)/input/lightpen.bin: $(BUILD_DIR)/input/lightpen.o input/lightpen.cfg $(DEPS)
+	$(LD) -C input/lightpen.cfg $(BUILD_DIR)/input/lightpen.o -o $@
 
-amigamse.bin: input/amigamse.o input/amigamse.cfg $(DEPS)
-	$(LD) -C input/amigamse.cfg input/amigamse.o -o $@
+$(BUILD_DIR)/input/mse1531.bin: $(BUILD_DIR)/input/mse1531.o input/mse1531.cfg $(DEPS)
+	$(LD) -C input/mse1531.cfg $(BUILD_DIR)/input/mse1531.o -o $@
 
-joydrv.bin: input/joydrv.o input/joydrv.cfg $(DEPS)
-	$(LD) -C input/joydrv.cfg input/joydrv.o -o $@
+$(BUILD_DIR)/input/koalapad.bin: $(BUILD_DIR)/input/koalapad.o input/koalapad.cfg $(DEPS)
+	$(LD) -C input/koalapad.cfg $(BUILD_DIR)/input/koalapad.o -o $@
 
-lightpen.bin: input/lightpen.o input/lightpen.cfg $(DEPS)
-	$(LD) -C input/lightpen.cfg input/lightpen.o -o $@
+$(BUILD_DIR)/input/pcanalog.bin: $(BUILD_DIR)/input/pcanalog.o input/pcanalog.cfg $(DEPS)
+	$(LD) -C input/pcanalog.cfg $(BUILD_DIR)/input/pcanalog.o -o $@
 
-mse1531.bin: input/mse1531.o input/mse1531.cfg $(DEPS)
-	$(LD) -C input/mse1531.cfg input/mse1531.o -o $@
+$(BUILD_DIR)/%.o: %.s
+	@mkdir -p `dirname $@`
+	$(AS) -D $(VARIANT)=1 $(ASFLAGS) $< -o $@
 
-koalapad.bin: input/koalapad.o input/koalapad.cfg $(DEPS)
-	$(LD) -C input/koalapad.cfg input/koalapad.o -o $@
-
-pcanalog.bin: input/pcanalog.o input/pcanalog.cfg $(DEPS)
-	$(LD) -C input/pcanalog.cfg input/pcanalog.o -o $@
-
-%.o: %.s $(DEPS)
-	$(AS) $(ASFLAGS) $< -o $@
+$(BUILD_DIR)/kernal/kernal.bin: $(PREFIXED_KERNAL_OBJS) kernal/kernal_$(VARIANT).cfg
+	@mkdir -p $$(dirname $@)
+	$(LD) -C kernal/kernal_$(VARIANT).cfg $(PREFIXED_KERNAL_OBJS) -o $@ -m $(BUILD_DIR)/kernal/kernal.map
 
 # a must!
 love:	

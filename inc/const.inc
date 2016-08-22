@@ -398,6 +398,8 @@ SET_SURPRESS            =       %01000000
 SET_RIGHTJUST           =       %00000000
 SET_LEFTJUST            =       %10000000
 
+CLICK_COUNT             =       30
+
 ; icons, menus status flags
 ST_FLASH                =       $80
 ST_INVERT               =       $40

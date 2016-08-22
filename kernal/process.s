@@ -3,10 +3,12 @@
 ;
 ; Multitasking (processes, sleep, delays)
 
+.include "config.inc"
 .include "const.inc"
 .include "geossym.inc"
 .include "geosmac.inc"
 .include "kernal.inc"
+.include "jumptab.inc"
 
 ; var.s
 .import DelayRtnsL
@@ -101,13 +103,20 @@ _ExecuteProcesses:
 	sta r0L
 	lda TimersRtns+1,x
 	sta r0H
+.ifdef wheels_size ; code reuse
+.import JmpR0Ind
+	jsr JmpR0Ind
+.else
 	jsr @4
+.endif
 	pla
 	tax
 @2:	dex
 	bpl @1
 @3:	rts
+.ifndef wheels_size ; code reuse
 @4:	jmp (r0)
+.endif
 
 ;---------------------------------------------------------------
 ; called from main loop
@@ -133,15 +142,41 @@ _ProcessTimers:
 	ora TimersTab+1,Y
 	bne @3
 	jsr RProc0
+.ifdef wheels_size
+	jsr EnableProcess
+.else
 	lda TimersCMDs,x
 	ora #SET_RUNABLE
 	sta TimersCMDs,x
+.endif
 @3:	iny
 	iny
 	inx
 	cpx NumTimers
 	bne @1
-@4:	rts
+
+@4:
+.ifdef wheels_screensaver
+	lda saverStatus
+	and #$30
+	bne @Y
+	jsr @Z
+	beq @Y
+	lda saverTimer
+	bne @X
+	dec $88B6
+@X:	dec saverTimer
+	jsr @Z
+	bne @Y
+	lda saverStatus
+	ora #$80
+	sta saverStatus
+@Y:	rts
+
+@Z:	lda saverTimer
+	ora $88B6
+.endif
+	rts
 
 ;---------------------------------------------------------------
 ; RestartProcess                                          $C106
@@ -151,9 +186,14 @@ _ProcessTimers:
 ; Destroyed: a
 ;---------------------------------------------------------------
 _RestartProcess:
+.ifdef wheels_size
+	jsr UnblockProcess
+	jsr UnfreezeProcess
+.else
 	lda TimersCMDs,x
 	and #(SET_BLOCKED | SET_FROZEN) ^ $ff
 	sta TimersCMDs,x
+.endif
 RProc0:
 	txa
 	pha
@@ -167,6 +207,26 @@ RProc0:
 	tax
 	rts
 
+.ifdef wheels_size
+_FreezeProcess:
+	lda #$20
+	.byte $2c
+_BlockProcess:
+	lda #$40
+	.byte $2c
+_EnableProcess:
+	lda #$80
+	ora TimersCMDs,x
+	bne LCBBD
+_UnBlockProcess:
+	lda #$BF
+	.byte $2c
+_UnFreezeProcess:
+	lda #$DF
+	and TimersCMDs,x
+LCBBD:  sta TimersCMDs,x
+	rts
+.else
 ;---------------------------------------------------------------
 ; EnableProcess                                           $C109
 ;
@@ -224,6 +284,7 @@ _UnFreezeProcess:
 	lda TimersCMDs,x
 	and #SET_FROZEN ^ $ff
 	bra EnProc0
+.endif
 
 ;---------------------------------------------------------------
 ; called from main loop
@@ -256,18 +317,25 @@ _DoCheckDelays:
 	txa
 	pha
 	jsr _RemoveDelay
+.ifdef wheels_size ; code reuse
+.import IncR0JmpInd
+	jsr IncR0JmpInd
+.else
 	jsr _DoExecDelay
+.endif
 	pla
 	tax
 @2:	dex
 	bpl @1
 @3:	rts
 
+.ifndef wheels_size
 _DoExecDelay:
 	inc r0L
 	bne @1
 	inc r0H
 @1:	jmp (r0)
+.endif
 
 _RemoveDelay:
 	php

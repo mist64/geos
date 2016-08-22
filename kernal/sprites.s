@@ -3,6 +3,7 @@
 ;
 ; C64/VIC-II sprite driver
 
+.include "config.inc"
 .include "const.inc"
 .include "geossym.inc"
 .include "geosmac.inc"
@@ -97,9 +98,31 @@ ASSERT_NOT_BELOW_IO
 ; Return:    sprite activated
 ; Destroyed: a, x
 ;---------------------------------------------------------------
+.ifdef wheels_size
 _EnablSprite:
+	sec
+	bcs EnablSpriteCommon
+_DisablSprite:
+	clc
+EnablSpriteCommon:
+	PushB CPU_DATA
+	LoadB CPU_DATA, IO_IN
 	ldx r3L
 	lda BitMaskPow2,x
+	bcs @1
+	eor #$FF
+	and mobenble
+	bra @2
+@1:	ora mobenble
+@2:	sta mobenble
+	PopB CPU_DATA
+        rts
+.else
+_EnablSprite:
+
+	ldx r3L
+	lda BitMaskPow2,x
+
 	tax
 	PushB CPU_DATA
 ASSERT_NOT_BELOW_IO
@@ -133,3 +156,4 @@ ASSERT_NOT_BELOW_IO
 	stx CPU_DATA
 ASSERT_NOT_BELOW_IO
 	rts
+.endif

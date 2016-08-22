@@ -26,7 +26,8 @@
 
 .segment "tobasic1"
 
-.if (!removeToBASIC)
+.ifndef wheels
+.if !removeToBASIC
 ToBASICBuf:
 	.res 40, 0
 IntTimer:
@@ -112,16 +113,18 @@ execBASIC:
 	rti
 
  ; ???
-.if cbmfiles || gateway
+.if .defined(cbmfiles) || .defined(gateway)
 	.byte $ff
 .else
 	.byte $40
 .endif
 
 .endif
+.endif
 
 .segment "tobasic2"
 
+.ifndef wheels
 _ToBASIC:
 .if (removeToBASIC)
 	sei
@@ -188,4 +191,5 @@ ToBASICTab:
 	.word OS_VARS_LGH
 	.byte $00
 ToBASICTab_end:
+.endif
 .endif

@@ -40,22 +40,46 @@
 
 .segment "mainloop1"
 
-;---------------------------------------------------------------
-;---------------------------------------------------------------
 _MainLoop:
+.ifdef wheels_screensaver
+.import RunScreensaver
+	bit     saverStatus
+        bpl     @1 ; no time out
+        bvs     @1 ; blocked
+        bit     alphaFlag
+        bvs     @1 ; text input active
+        sei
+        lda     saverStatus
+        and     #$7F
+        ora     #$01
+        sta     saverStatus ; enable
+        jsr     RunScreensaver
+        cli
+@1:
+.endif
 	jsr _DoCheckButtons
 	jsr _ExecuteProcesses
 	jsr _DoCheckDelays
 	jsr _DoUpdateTime
 	lda appMain+0
 	ldx appMain+1
-_MNLP:
-	jsr CallRoutine
+_MNLP:	jsr CallRoutine
 	cli
+.ifdef wheels
+	ldx     CPU_DATA
+	LoadB CPU_DATA, IO_IN
+	lda     grcntrl1
+	and     #$7F
+	sta     grcntrl1
+        stx CPU_DATA
+	jmp _MainLoop
+.else
 	jmp _MainLoop2
+.endif
 
 .segment "mainloop2"
 
+.ifndef wheels
 _MainLoop2:
 	ldx CPU_DATA
 ASSERT_NOT_BELOW_IO
@@ -66,6 +90,7 @@ ASSERT_NOT_BELOW_IO
 	stx CPU_DATA
 ASSERT_NOT_BELOW_IO
 	jmp _MainLoop
+.endif
 
 .segment "mainloop3"
 
@@ -77,4 +102,3 @@ _InterruptMain:
 	jsr _ProcessDelays
 	jsr ProcessCursor
 	jmp _GetRandom
-

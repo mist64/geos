@@ -78,25 +78,35 @@ Without pucrunch/c1541, you can still build an uncompressed KERNAL binary image.
 
 ## Building
 
-Run `make` to build GEOS. This will create the following files:
+Run `make` to build the original "BSW" "GEOS. This will create the following files in directory `build/bsw`:
 
 * raw KERNAL components: `kernal.bin`, `lokernal.bin`, `init.bin`
 * disk drive drivers: `drv1541.bin`, `drv1571.bin`, `drv1581.bin`
 * input drivers: `amigamse.bin`, `joydrv.bin`, `lightpen.bin`, `mse1531.bin`, `koalapad.bin`, `pcanalog.bin`
-* combined KERNAL image (`SYS 49155`): `combined.prg`
-* compressed KERNAL image (`RUN`): `compressed.prg`
+* combined KERNAL image (`SYS 49155`): `kernal_combined.prg`
+* compressed KERNAL image (`RUN`): `kernal_compressed.prg`
 * disk image: `geos.d64`
 
 If you have the [cbmfiles.com](http://www.cbmfiles.com/) `GEOS64.D64` image in the current directory, the disk image will be based on that one, with the `GEOS` and `GEOBOOT` files deleted and the newly built kernel added. Otherwise, it will be a new disk image with the kernel, and, if you have a `desktop.cvt` file in the current directory, with `DESK TOP` added.
 
+## Variants
+
+The build system supports the following variants:
+
+* `bsw` (default): Berkeley Softworks GEOS 64 2.0 variant
+* `cbmfiles`: The [cbmfiles.com](http://www.cbmfiles.com/) version. It starts out with a different date, and has some variables in the kernel pre-filled.
+* `gateway`: The patched KERNEL shipped by gateWay 2.51. It contains a slightly modified BSW font, has the `Panic` code replaced with code to swap the disk driver on a RESTORE press, and it loads `GATEWAY` instead of `DESK TOP` as the shell.
+* `wheels`: The Wheels 64 variant. It is heavily patched, optimized for size and speed, and contains additional features. It requires a RAM extension. The current version compiles into the same binary, but won't actually run because of missing boot code. More work is needed here.
+
+You can build a specific variant like this:
+
+    make VARIANT=<variant>
+
+All output will be put into `build/<variant>`.
+
 ## Customization
 
-`config.inc` contains lots of compile time options. Most of them have not been tested recently and may not work.
-
-By default, the "BSW" version of GEOS is built, which is the same binary as English GEOS 2.0. The following options can be set to 1 to build different versions:
-
-* `cbmfiles = 1`: The [cbmfiles.com](http://www.cbmfiles.com/) version. It starts out with a different date, and has some variables in the kernel pre-filled.
-* `gateway = 1`: The patched KERNEL shipped by gateWay 2.51. It contains a slightly modified BSW font, has the `Panic` code replaced with code to swap the disk driver on a RESTORE press, and it loads `GATEWAY` instead of `DESK TOP` as the shell.
+If you want to customize your KERNAL, you can do so by flipping switches in `config.inc`, which contains lots of compile time options. Some them have not been tested recently and may not work.
 
 The following options can be enabled:
 
@@ -170,7 +180,11 @@ The original GEOS was copy protected in three ways:
 
 ## Contributing
 
-Pull requests are greatly appreciated. Please keep in mind that a default build should always recreate the orginal binaries (use `regress.sh` to check), so for smaller changes use conditional assembly using `.if`, and for larger changes create new source files that are conditionally compiled.
+Pull requests are greatly appreciated. Please keep in mind that a default build should always recreate the orginal binaries, so for smaller changes use conditional assembly using `.if`, and for larger changes create new source files that are conditionally compiled.
+
+The following command line will build the `bsw` and `wheels` variants of GEOS and compare the resulting binaries with reference binaries:
+
+    make regress
 
 ## TODO
 
@@ -179,7 +193,10 @@ Pull requests are greatly appreciated. Please keep in mind that a default build 
 	* `boot.s` should be based on the original GEOS version
 	* REU detection is missing from `boot.s`
 	* The 1541 driver is hardcoded. We should create one version per drive.
-	* Most of Maciej's original changes/improvements have bitrotten and need to be resurrected
+	* Some of Maciej's original changes/improvements have bitrotten and need to be resurrected
+	* Wheels
+		* The Wheels variant needs boot code to start up correctly.
+		* The additional Wheels code needs to be reverse engineered properly.
 * Integrate other versions as compile time options
 	* Localized versions
 	* Plus/4 version
@@ -187,7 +204,6 @@ Pull requests are greatly appreciated. Please keep in mind that a default build 
 	* Apple II version (includes new APIs)
 * Integrate existing patches as compile time options
 	* megaPatch
-	* Wheels
 	* SuperCPU
 	* Flash 8
 	* [misc](http://www.zimmers.net/anonftp/pub/cbm/geos/patches/index.html)

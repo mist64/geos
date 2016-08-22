@@ -490,7 +490,7 @@ ChangeDiskDevice:
 RstrFrmDialogue:
 	jmp _RstrFrmDialogue
 Panic:
-.if gateway
+.ifdef gateway
 	jmp _EnterDeskTop
 .else
 	jmp _Panic
@@ -524,4 +524,75 @@ VerifyRAM:
 DoRAMOp:
 	ldx #DEV_NOT_FOUND
 	rts
+.endif
+
+.ifdef wheels
+
+.macro UNIMPLEMENTED
+	rts
+	nop
+	nop
+.endmacro
+
+; C128 syscalls
+TempHideMouse:
+	UNIMPLEMENTED
+SetMousePicture:
+	UNIMPLEMENTED
+SetNewMode:
+	UNIMPLEMENTED
+NormalizeX:
+	UNIMPLEMENTED
+MoveBData:
+	UNIMPLEMENTED
+SwapBData:
+	UNIMPLEMENTED
+VerifyBData:
+	UNIMPLEMENTED
+DoBOp:
+	UNIMPLEMENTED
+AccessCache:
+	UNIMPLEMENTED
+HideOnlyMouse:
+	UNIMPLEMENTED
+SetColorMode:
+	UNIMPLEMENTED
+ColorCard:
+	UNIMPLEMENTED
+ColorRectangle:
+	UNIMPLEMENTED
+
+; new Wheels syscalls
+.global InitMachine, _i_ColorRectangle
+.import _InitMachine, _GEOSOptimize, _DEFOptimize, _DoOptimize, _FindFTypes, _ReadXYPot, _IRQHandler, _ColorRectangle_W, _i_ColorRectangle, _SaveColorRectangle, _RestoreColorRectangle, _ConvToCards
+InitMachine: ; $C2FE
+	jmp _InitMachine
+GEOSOptimize: ; $C301
+	jmp _GEOSOptimize
+DEFOptimize: ; $C304
+	jmp _DEFOptimize
+DoOptimize: ; $C307
+	jmp _DoOptimize
+NFindFTypes: ; $C30A
+	jmp _FindFTypes
+ReadXYPot: ; $C30D
+	jmp _ReadXYPot
+MainIRQ: ; $C310
+	jmp _IRQHandler
+ColorRectangle_W: ; $C313
+	jmp _ColorRectangle_W
+i_ColorRectangle: ; $C316
+	jmp _i_ColorRectangle
+SaveColorRectangle: ; $C319
+	jmp _SaveColorRectangle
+RestoreColorRectangle: ; $C31C
+	jmp _RestoreColorRectangle
+ConvToCards: ; $C31F
+	jmp _ConvToCards
+
+	.byte 0, 0, 0 ; ???
+
+.global WheelsTemp
+WheelsTemp: ; xxx
+	.byte 0
 .endif

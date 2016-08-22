@@ -19,7 +19,7 @@
 ; called by main loop
 .global _DoUpdateTime
 
-.segment "time"
+.segment "time1"
 
 _DoUpdateTime:
 	sei
@@ -88,16 +88,31 @@ DateUpdate:
 	bne @2
 	sty month
 	inc year
+; The implementation disagrees with the documentation,
+; which says years are 1900-based: This code implies
+; that "2000" is stored as 0, which is the "Excel" way
+; of storing dates. With a cutoff year of 1980, numbers
+; 80-99 would be 1980-1999, and 0-79 would be 2000-2079.
+; It is unknown what the cutoff year should be.
 	lda year
 	cmp #100
-	bne @2
+.ifdef wheels
+	bcc @2 ; new years with an illegal new year? store "0".
+.else
+	bne @2 ; 1999->2000: store "0" as year
+.endif
 	dey
-	sty year
+	sty year ; year 0
 @2:	rts
 
 CheckMonth:
 	ldy month
 	lda daysTab-1, y
+; This code is correct for the years 1901-2099.
+; This is another reason why the year probably should
+; not be considered 1900-based, since this logic is
+; incorrect for 1900, but it would be correct for any
+; cutoff year.
 	cpy #2
 	bne @2
 	tay
@@ -114,7 +129,9 @@ daysTab:
 
 ConvertBCD:
 	pha
+.ifndef wheels_size_and_speed ; no-op
 	and #%11110000
+.endif
 	lsr
 	lsr
 	lsr
@@ -135,7 +152,7 @@ DoClockAlarm:
 	ldy CPU_DATA
 ASSERT_NOT_BELOW_IO
 	LoadB CPU_DATA, IO_IN
-	ldx #24
+	ldx #pingTabEnd - pingTab - 1
 @1:	lda pingTab,x
 	sta sidbase,x
 	dex
@@ -153,8 +170,18 @@ ASSERT_NOT_BELOW_IO
 	dec alarmSetFlag
 @3:	rts
 
+.segment "time2"
+
 pingTab:
 	.byte $00, $10, $00, $08, $40, $08, $00, $00
 	.byte $00, $00, $00, $00, $00, $00, $00, $00
 	.byte $00, $00, $00, $00, $00, $00, $00, $00
-	.byte $0f, $00, $0f
+	.byte $0f
+pingTabEnd:
+
+; ???
+.ifdef wheels
+	.word 0
+.else
+	.word $0f00
+.endif

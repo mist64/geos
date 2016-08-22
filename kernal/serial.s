@@ -4,6 +4,7 @@
 ; Serial number
 
 .include "const.inc"
+.include "kernal.inc"
 .include "geossym.inc"
 .include "geosmac.inc"
 .include "config.inc"
@@ -15,10 +16,14 @@
 .segment "serial1"
 
 SerialNumber:
+.ifdef wheels
+	.word $DF96
+.else
 	; This matches the serial in the cbmfiles.com GEOS64.D64
 	.word $58B5
 
 	.byte $FF ; ???
+.endif
 
 .segment "serial2"
 
@@ -37,4 +42,6 @@ GetSerialNumber2:
 	sta r0H
 	rts
 
+.ifndef wheels
 	.byte 1, $60 ; ???
+.endif

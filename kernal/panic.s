@@ -15,7 +15,7 @@
 ; syscall
 .global _Panic
 
-.if gateway
+.ifdef gateway
 _Panic:
 	; On the gateWay KERNAL, the "Panic" syscall points to
 	; the EnterDesktop implementation. The BRK vector still
@@ -97,15 +97,31 @@ StackPtr:
 ; Return:    does not return
 ;---------------------------------------------------------------
 _Panic:
+.ifdef wheels
+	sec
+	pla
+	sbc #2
+	tay
+	pla
+	sbc #0
+.else
 	PopW r0
 	SubVW 2, r0
 	lda r0H
+.endif
 	ldx #0
 	jsr @1
+.ifdef wheels
+	tya
+.else
 	lda r0L
+.endif
 	jsr @1
 	LoadW r0, _PanicDB_DT
 	jsr DoDlgBox
+.ifdef wheels
+	jmp EnterDeskTop
+.endif
 @1:	pha
 	lsr
 	lsr
@@ -120,9 +136,9 @@ _Panic:
 	rts
 @2:	cmp #10
 	bcs @3
-	addv ('0')
+	addv '0'
 	bne @4
-@3:	addv ('0'+7)
+@3:	addv '0'+7
 @4:	sta _PanicAddr,x
 	rts
 
@@ -130,11 +146,18 @@ _PanicDB_DT:
 	.byte DEF_DB_POS | 1
 	.byte DBTXTSTR, TXT_LN_X, TXT_LN_1_Y
 	.word _PanicDB_Str
+.ifdef wheels
+	.byte DBSYSOPV
+.endif
 	.byte NULL
 
 _PanicDB_Str:
 	.byte BOLDON
+.ifdef wheels_size
+	.byte "Error near "
+.else
 	.byte "System error near "
+.endif
 .endif
 
 	.byte "$"

@@ -3,6 +3,7 @@
 ;
 ; Icons
 
+.include "config.inc"
 .include "const.inc"
 .include "geossym.inc"
 .include "geosmac.inc"
@@ -58,12 +59,19 @@ _DoIcons:
 	jsr Icons_1
 	jsr ResetMseRegion
 	lda mouseOn
+.ifdef wheels_size_and_speed
+	bmi @1
+.else
 	and #SET_MSE_ON
 	bne @1
 	lda mouseOn
+.endif
 	and #%10111111
 	sta mouseOn
-@1:	lda mouseOn
+@1:
+.ifndef wheels_size_and_speed
+	lda mouseOn
+.endif
 	ora #SET_ICONSON
 	sta mouseOn
 	ldy #1
@@ -91,7 +99,10 @@ CalcIconDescTab:
 
 Icons_1:
 	LoadB r10L, NULL
-@1:	lda r10L
+@1:
+.ifndef wheels_size_and_speed
+	lda r10L
+.endif
 	jsr CalcIconDescTab
 	ldx #0
 @2:	lda (IconDescVec),y
@@ -164,7 +175,10 @@ ProcessClick:
 
 FindClkIcon:
 	LoadB r0L, NULL
-@1:	lda r0L
+@1:
+.ifndef wheels_size_and_speed
+	lda r0L
+.endif
 	jsr CalcIconDescTab
 	lda (IconDescVec),y
 	iny
@@ -230,5 +244,9 @@ CalcIconCoords:
 	ldx #r4
 	jsr DShiftLeft
 	ldx #r4
+.ifdef wheels_size_and_speed
+	jmp Ddec
+.else
 	jsr Ddec
 	rts
+.endif

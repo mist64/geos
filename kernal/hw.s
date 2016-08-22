@@ -39,6 +39,9 @@ _DoFirstInitIO:
 	LoadB CPU_DDR, $2f
 ASSERT_NOT_BELOW_IO
 	LoadB CPU_DATA, KRNL_IO_IN
+.ifdef wheels
+	sta scpu_turbo
+.endif
 	ldx #7
 	lda #$ff
 @1:	sta KbdDMltTab,x
@@ -68,13 +71,22 @@ ASSERT_NOT_BELOW_IO
 	LoadW r0, VIC_IniTbl
 	ldy #VIC_IniTbl_end - VIC_IniTbl
 	jsr SetVICRegs
+.ifdef wheels_size_and_speed ; inlined
+	ldx #32
+@3:	lda KERNALVecTab-1,x
+	sta irqvec-1,x
+	dex
+	bne @3
+.else
 	jsr Init_KRNLVec
+.endif
 	LoadB CPU_DATA, RAM_64K
 ASSERT_NOT_BELOW_IO
 	jmp ResetMseRegion
 
 .segment "hw2"
 
+.ifndef wheels_size_and_speed ; inlined instead
 Init_KRNLVec:
 	ldx #32
 @1:	lda KERNALVecTab-1,x
@@ -82,6 +94,7 @@ Init_KRNLVec:
 	dex
 	bne @1
 	rts
+.endif
 
 .segment "hw3"
 

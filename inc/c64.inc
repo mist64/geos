@@ -75,6 +75,11 @@ mob7clr                 =       $d02e
 keyreg                  =       $d02f
 clkreg                  =       $d030
 
+scpu_base               =       $d074
+scpu_turbo              =       $d07b
+scpu_hwreg_enable       =       $d07e
+scpu_hwreg_disable      =       $d07f
+
 ;
 vdcreg                  =       $d600
 vdcdata                 =       $d601
