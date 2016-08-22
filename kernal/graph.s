@@ -635,10 +635,14 @@ _RecoverRectangle:
 ;---------------------------------------------------------------
 _i_ImprintRectangle:
 	jsr $C8D2;xxxGetInlineDrwParms
-	jsr $C855;xxx_ImprintRectangle
+	jsr $C86E;xxx_ImprintRectangle
+.if wheels
+	jmp $C81F
+.else
 	php
 	lda #7
 	jmp DoInlineReturn
+.endif
 
 ;---------------------------------------------------------------
 ; ImprintRectangle                                        $C250
@@ -652,7 +656,7 @@ _i_ImprintRectangle:
 ;---------------------------------------------------------------
 _ImprintRectangle:
 	MoveB r2L, r11L
-@1:	jsr ImprintLine
+@1:	jsr LC71E;xxxImprintLine
 	lda r11L
 	inc r11L
 	cmp r2H
