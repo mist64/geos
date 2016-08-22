@@ -352,7 +352,11 @@ _CmpFString:
 	beqx @1
 	dex
 	bne @1
+.if wheels
+	txa
+.else
 	lda #0
+.endif
 @3:	rts
 
 .segment "memory3"
