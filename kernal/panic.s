@@ -89,6 +89,58 @@ StackPtr:
 
 	.byte 0, 0, 0 ; PADDING
 
+.elseif wheels
+_Panic:
+	sec                                     ; CEF0 38                       8
+	pla                                     ; CEF1 68                       h
+	sbc     #$02                            ; CEF2 E9 02                    ..
+	tay                                     ; CEF4 A8                       .
+	pla                                     ; CEF5 68                       h
+	sbc     #$00                            ; CEF6 E9 00                    ..
+	ldx     #$00                            ; CEF8 A2 00                    ..
+	jsr     LCF0F                           ; CEFA 20 0F CF                  ..
+	tya                                     ; CEFD 98                       .
+	jsr     LCF0F                           ; CEFE 20 0F CF                  ..
+	lda     #$CF                            ; CF01 A9 CF                    ..
+	sta     r0H                             ; CF03 85 03                    ..
+	lda     #$30                            ; CF05 A9 30                    .0
+	sta     r0L                           ; CF07 85 02                    ..
+	jsr     DoDlgBox                        ; CF09 20 56 C2                  V.
+	jmp     EnterDeskTop                    ; CF0C 4C 2C C2                 L,.
+
+LCF0F:  pha                                     ; CF0F 48                       H
+        lsr     a                               ; CF10 4A                       J
+        lsr     a                               ; CF11 4A                       J
+        lsr     a                               ; CF12 4A                       J
+        lsr     a                               ; CF13 4A                       J
+        jsr     LCF20                           ; CF14 20 20 CF                   .
+        inx                                     ; CF17 E8                       .
+        pla                                     ; CF18 68                       h
+        and     #$0F                            ; CF19 29 0F                    ).
+        jsr     LCF20                           ; CF1B 20 20 CF                   .
+        inx                                     ; CF1E E8                       .
+        rts                                     ; CF1F 60                       `
+
+LCF20:  cmp     #$0A                            ; CF20 C9 0A                    ..
+        bcs     LCF29                           ; CF22 B0 05                    ..
+        clc                                     ; CF24 18                       .
+        adc     #$30                            ; CF25 69 30                    i0
+        bne     LCF2C                           ; CF27 D0 03                    ..
+LCF29:  clc                                     ; CF29 18                       .
+        adc     #$37                            ; CF2A 69 37                    i7
+LCF2C:  sta     LCF45,x                         ; CF2C 9D 45 CF                 .E.
+        rts                                     ; CF2F 60                       `
+
+        .byte   $81,$0B,$10,$10,$38,$CF,$0E,$00 ; CF30 81 0B 10 10 38 CF 0E 00  ....8...
+        .byte   $18,$45,$72,$72,$6F,$72,$20,$6E ; CF38 18 45 72 72 6F 72 20 6E  .Error n
+        .byte   $65,$61,$72,$20,$24             ; CF40 65 61 72 20 24           ear $
+
+LCF45:  sei                                     ; CF45 78                       x
+        sei                                     ; CF46 78                       x
+        sei                                     ; CF47 78                       x
+        sei                                     ; CF48 78                       x
+        brk                                     ; CF49 00                       .
+
 .else
 ;---------------------------------------------------------------
 ; Panic                                                   $C2C2
