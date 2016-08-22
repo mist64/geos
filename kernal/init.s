@@ -61,11 +61,16 @@ InitGEOEnv:
 _FirstInit:
 	sei
 	cld
-	jsr InitGEOS
-	LoadW EnterDeskTop+1, _EnterDeskTop
+	jsr $C2FE;xxxInitGEOS
+	LoadW EnterDeskTop+1, $C326;xxx_EnterDeskTop
 	LoadB maxMouseSpeed, iniMaxMouseSpeed
+.if wheels
+	sta mouseAccel
+.endif
 	LoadB minMouseSpeed, iniMinMouseSpeed
+.if !wheels
 	LoadB mouseAccel, iniMouseAccel
+.endif
 	LoadB screencolors, (DKGREY << 4)+LTGREY
 	sta @1
 	jsr i_FillRam
