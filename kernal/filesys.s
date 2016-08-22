@@ -840,14 +840,14 @@ _SaveFile:
 .else
 	MoveW dirEntryBuf+OFF_GHDR_PTR, r1
 .endif
-	jsr SetFHeadVector
+	jsr $D69A;xxxSetFHeadVector
 	jsr PutBlock
 .if wheels
 	bne @2
 .else
 	bnex @2
 .endif
-	jsr ClearNWrite
+	jsr $D8E5;xxxClearNWrite
 	bnex @2
 	jsr GetStartHAddr
 	jsr WriteFile
