@@ -567,7 +567,7 @@ _Rectangle:
 	and #$07
 	tay
 	lda (curPattern),Y
-	jsr _HorizontalLine
+	jsr $C681;xxx_HorizontalLine
 	lda r11L
 	inc r11L
 	cmp r2H
