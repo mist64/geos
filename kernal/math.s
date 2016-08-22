@@ -3,6 +3,7 @@
 ;
 ; Math library
 
+.include "config.inc"
 .include "geossym.inc"
 .include "geosmac.inc"
 .include "jumptab.inc"
@@ -36,21 +37,33 @@
 ;---------------------------------------------------------------
 _DShiftLeft:
 	dey
+.if wheels
+	bmi BBMult_ret
+.else
 	bmi @1
+.endif
 	asl zpage,x
 	rol zpage+1,x
 	jmp _DShiftLeft
+.if !wheels
 @1:	rts
+.endif
 
 ;---------------------------------------------------------------
 ;---------------------------------------------------------------
 _DShiftRight:
 	dey
+.if wheels
+	bmi BBMult_ret
+.else
 	bmi @1
+.endif
 	lsr zpage+1,x
 	ror zpage,x
 	jmp _DShiftRight
+.if !wheels
 @1:	rts
+.endif
 
 ;---------------------------------------------------------------
 ; BBMult                                                  $C160
@@ -81,6 +94,7 @@ _BBMult:
 	lda r7L
 	sta zpage,x
 	ldy r8L
+BBMult_ret:
 	rts
 
 ;---------------------------------------------------------------

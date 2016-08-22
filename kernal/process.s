@@ -191,9 +191,14 @@ LCB88:  lda     $88B5                           ; CB88 AD B5 88                 
 ; Destroyed: a
 ;---------------------------------------------------------------
 _RestartProcess:
+.if wheels
+LCB8F:  jsr     UnblockProcess                  ; CB8F 20 0F C1                  ..
+        jsr     UnfreezeProcess                 ; CB92 20 15 C1                  ..
+.else
 	lda TimersCMDs,x
 	and #(SET_BLOCKED | SET_FROZEN) ^ $ff
 	sta TimersCMDs,x
+.endif
 RProc0:
 	txa
 	pha
@@ -207,6 +212,21 @@ RProc0:
 	tax
 	rts
 
+.if wheels
+LCBA8:  lda     #$20                            ; CBA8 A9 20                    . 
+        .byte   $2C                             ; CBAA 2C                       ,
+LCBAB:  lda     #$40                            ; CBAB A9 40                    .@
+        .byte   $2C                             ; CBAD 2C                       ,
+LCBAE:  lda     #$80                            ; CBAE A9 80                    ..
+        ora     $8719,x                         ; CBB0 1D 19 87                 ...
+        bne     LCBBD                           ; CBB3 D0 08                    ..
+LCBB5:  lda     #$BF                            ; CBB5 A9 BF                    ..
+        .byte   $2C                             ; CBB7 2C                       ,
+LCBB8:  lda     #$DF                            ; CBB8 A9 DF                    ..
+        and     $8719,x                         ; CBBA 3D 19 87                 =..
+LCBBD:  sta     $8719,x                         ; CBBD 9D 19 87                 ...
+        rts                                     ; CBC0 60                       `
+.else
 ;---------------------------------------------------------------
 ; EnableProcess                                           $C109
 ;
@@ -264,6 +284,7 @@ _UnFreezeProcess:
 	lda TimersCMDs,x
 	and #SET_FROZEN ^ $ff
 	bra EnProc0
+.endif
 
 ;---------------------------------------------------------------
 ; called from main loop
@@ -295,8 +316,8 @@ _DoCheckDelays:
 	sta r0L
 	txa
 	pha
-	jsr _RemoveDelay
-	jsr _DoExecDelay
+	jsr $CC01;xxx_RemoveDelay
+	jsr $C34C;xxx_DoExecDelay
 	pla
 	tax
 @2:	dex
@@ -304,10 +325,12 @@ _DoCheckDelays:
 @3:	rts
 
 _DoExecDelay:
+.if !wheels
 	inc r0L
 	bne @1
 	inc r0H
 @1:	jmp (r0)
+.endif
 
 _RemoveDelay:
 	php

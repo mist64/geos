@@ -3,6 +3,7 @@
 ;
 ; C64/VIC-II sprite driver
 
+.include "config.inc"
 .include "const.inc"
 .include "geossym.inc"
 .include "geosmac.inc"
@@ -97,6 +98,30 @@ ASSERT_NOT_BELOW_IO
 ; Return:    sprite activated
 ; Destroyed: a, x
 ;---------------------------------------------------------------
+.if wheels
+LC359 = $C359
+_EnablSprite:
+	sec                                     ; CCB1 38                       8
+        bcs     LCCB5                           ; CCB2 B0 01                    ..
+_DisablSprite:
+	clc                                     ; CCB4 18                       .
+LCCB5:  lda     $01                             ; CCB5 A5 01                    ..
+        pha                                     ; CCB7 48                       H
+        lda     #$35                            ; CCB8 A9 35                    .5
+        sta     $01                             ; CCBA 85 01                    ..
+        ldx     $08                             ; CCBC A6 08                    ..
+        lda     LC359,x                         ; CCBE BD 59 C3                 .Y.
+        bcs     LCCCB                           ; CCC1 B0 08                    ..
+        eor     #$FF                            ; CCC3 49 FF                    I.
+        and     $D015                           ; CCC5 2D 15 D0                 -..
+        clv                                     ; CCC8 B8                       .
+        bvc     LCCCE                           ; CCC9 50 03                    P.
+LCCCB:  ora     $D015                           ; CCCB 0D 15 D0                 ...
+LCCCE:  sta     $D015                           ; CCCE 8D 15 D0                 ...
+        pla                                     ; CCD1 68                       h
+        sta     $01                             ; CCD2 85 01                    ..
+        rts                                     ; CCD4 60                       `
+.else
 _EnablSprite:
 	ldx r3L
 	lda BitMaskPow2,x
@@ -133,3 +158,4 @@ ASSERT_NOT_BELOW_IO
 	stx CPU_DATA
 ASSERT_NOT_BELOW_IO
 	rts
+.endif
