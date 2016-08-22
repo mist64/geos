@@ -4240,12 +4240,14 @@ LD57C:  php                                     ; D57C 08                       
         jsr     LD5CA                           ; D57E 20 CA D5                  ..
         lda     $09                             ; D581 A5 09                    ..
         pha                                     ; D583 48                       H
+
         lda     #$00                            ; D584 A9 00                    ..
         sta     LC325                           ; D586 8D 25 C3                 .%.
 LD589:  jsr     L9069                           ; D589 20 69 90                  i.
 LD58C:  txa                                     ; D58C 8A                       .
         bne     LD5C3                           ; D58D D0 34                    .4
         ldy     LC325                           ; D58F AC 25 C3                 .%.
+
         lda     $04                             ; D592 A5 04                    ..
         sta     ($08),y                         ; D594 91 08                    ..
         iny                                     ; D596 C8                       .
@@ -4257,18 +4259,22 @@ LD58C:  txa                                     ; D58C 8A                       
         inc     $09                             ; D5A1 E6 09                    ..
 LD5A3:  lda     $04                             ; D5A3 A5 04                    ..
         beq     LD5C5                           ; D5A5 F0 1E                    ..
+
         lda     $8000                           ; D5A7 AD 00 80                 ...
         bne     LD5AF                           ; D5AA D0 03                    ..
         jsr     GetBlock                        ; D5AC 20 E4 C1                  ..
 LD5AF:  lda     $09                             ; D5AF A5 09                    ..
         cmp     #$80                            ; D5B1 C9 80                    ..
         bcs     LD5C3                           ; D5B3 B0 0E                    ..
+
         lda     $8001                           ; D5B5 AD 01 80                 ...
         sta     $05                             ; D5B8 85 05                    ..
         lda     $8000                           ; D5BA AD 00 80                 ...
         sta     $04                             ; D5BD 85 04                    ..
+
         bne     LD589                           ; D5BF D0 C8                    ..
         beq     LD58C                           ; D5C1 F0 C9                    ..
+
 LD5C3:  ldx     #$0B                            ; D5C3 A2 0B                    ..
 LD5C5:  pla                                     ; D5C5 68                       h
         sta     $09                             ; D5C6 85 09                    ..
