@@ -514,7 +514,7 @@ _VerticalLine:
 	ldy #0
 	ldx r3L
 @1:	stx r7L
-	jsr _GetScanLine
+	jsr $CA2D;xxx_GetScanLine
 	AddW r4, r5
 	AddW r4, r6
 	lda r7L
@@ -545,8 +545,8 @@ _VerticalLine:
 ; Same as Rectangle with data after the jsr
 ;---------------------------------------------------------------
 _i_Rectangle:
-	jsr GetInlineDrwParms
-	jsr _Rectangle
+	jsr $C8D2;xxxGetInlineDrwParms
+	jsr $C825;xxx_Rectangle
 	php
 	lda #7
 	jmp DoInlineReturn
