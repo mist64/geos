@@ -49,6 +49,7 @@
 .segment "load1a"
 
 _EnterDeskTop:
+.if !wheels ;xxx
 	sei
 	cld
 	ldx #$ff
@@ -109,6 +110,7 @@ EDT6:
 	jsr SetDevice
 	LoadB r0L, NULL
 	MoveW fileHeader+O_GHST_VEC, r7
+.endif
 .endif
 
 .segment "load1b"

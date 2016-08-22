@@ -64,6 +64,15 @@ _FillRam:
 	bne @3
 @4:	rts
 
+.if wheels
+LC428 = $C428
+LC58C:  jsr     LC428                           ; C58C 20 28 C4                  (.
+LC58F:  lda     #$E9                            ; C58F A9 E9                    ..
+        sta     r0H                             ; C591 85 03                    ..
+        lda     #$2B                            ; C593 A9 2B                    .+
+        sta     r0L                           ; C595 85 02                    ..
+.endif
+
 ;---------------------------------------------------------------
 ; InitRam                                                 $C181
 ;
@@ -105,9 +114,18 @@ _InitRam:
 	tya
 	add r0L
 	sta r0L
+.if wheels
+	bcc _InitRam
+.else
 	bcc @3
+.endif
 	inc r0H
-@3:	bra _InitRam
+@3:
+.if wheels
+	bne _InitRam
+.else
+	bra _InitRam
+.endif
 @4:	rts
 
 .segment "memory2"

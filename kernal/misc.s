@@ -18,12 +18,18 @@
 ;---------------------------------------------------------------
 ;---------------------------------------------------------------
 _CallRoutine:
+.if !wheels
 	cmp #0
 	bne @1
 	cpx #0
 	beq @2
+.endif
 @1:	sta CallRLo
 	stx CallRHi
+.if wheels
+	ora CallRHi
+	beq @2
+.endif
 	jmp (CallRLo)
 @2:	rts
 
