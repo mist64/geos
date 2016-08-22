@@ -790,6 +790,7 @@ GetHeaderFileName:
 
 .if (trap)
 SerialHiCompare:
+.if !wheels
 .if cbmfiles
 	; This should be initialized to 0, and will
 	; be changed at runtime.
@@ -799,6 +800,7 @@ SerialHiCompare:
 	.byte $58
 .else
 	.byte 0
+.endif
 .endif
 .endif
 
@@ -811,21 +813,33 @@ _SaveFile:
 	iny
 	bne @1
 	jsr GetDirHead
+.if wheels
+	bne @2
+.else
 	bnex @2
-	jsr GetDAccLength
-	jsr SetBufTSVector
+.endif
+	jsr $D8BA;xxxGetDAccLength
+	jsr $D686;xxxSetBufTSVector
 	jsr BlkAlloc
 	bnex @2
-	jsr SetBufTSVector
+	jsr $D686;xxxSetBufTSVector
 	jsr SetGDirEntry
 	bnex @2
 	jsr PutDirHead
+.if wheels
+	bne @2
+.else
 	bnex @2
+.endif
 	sta fileHeader+O_GHINFO_TXT
 	MoveW dirEntryBuf+OFF_GHDR_PTR, r1
 	jsr SetFHeadVector
 	jsr PutBlock
+.if wheels
+	bne @2
+.else
 	bnex @2
+.endif
 	jsr ClearNWrite
 	bnex @2
 	jsr GetStartHAddr

@@ -615,17 +615,21 @@ LD86E:  rts                                     ; D86E 60                       
 @1:	rts
 .endif
 
+.if (!wheels)
 .if (!useRamExp)
 SwapFileName:
 	.byte $1b,"Swap File", NULL
 .endif
+.endif
 
 .segment "load5"
 
+.if !wheels
 SaveSwapFile:
 	LoadB fileHeader+O_GHGEOS_TYPE, TEMPORARY
 	LoadW fileHeader, SwapFileName
 	LoadW r9, fileHeader
 	LoadB r10L, NULL
+.endif
 
 .assert * = _SaveFile, error, "Code must run into _SaveFile"
