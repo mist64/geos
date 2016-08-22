@@ -128,18 +128,12 @@ LCF20:  cmp     #$0A                            ; CF20 C9 0A                    
         bne     LCF2C                           ; CF27 D0 03                    ..
 LCF29:  clc                                     ; CF29 18                       .
         adc     #$37                            ; CF2A 69 37                    i7
-LCF2C:  sta     LCF45,x                         ; CF2C 9D 45 CF                 .E.
+LCF2C:  sta     _PanicAddr,x                         ; CF2C 9D 45 CF                 .E.
         rts                                     ; CF2F 60                       `
 
         .byte   $81,$0B,$10,$10,$38,$CF,$0E,$00 ; CF30 81 0B 10 10 38 CF 0E 00  ....8...
         .byte   $18,$45,$72,$72,$6F,$72,$20,$6E ; CF38 18 45 72 72 6F 72 20 6E  .Error n
-        .byte   $65,$61,$72,$20,$24             ; CF40 65 61 72 20 24           ear $
-
-LCF45:  sei                                     ; CF45 78                       x
-        sei                                     ; CF46 78                       x
-        sei                                     ; CF47 78                       x
-        sei                                     ; CF48 78                       x
-        brk                                     ; CF49 00                       .
+        .byte   $65,$61,$72,$20
 
 .else
 ;---------------------------------------------------------------

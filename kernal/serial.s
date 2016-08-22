@@ -30,10 +30,10 @@ SerialNumber:
 ; Destroyed: a
 ;---------------------------------------------------------------
 _GetSerialNumber:
-	lda SerialNumber
+	lda $9FF4;xxxSerialNumber
 	sta r0L
 GetSerialNumber2:
-	lda SerialNumber+1
+	lda $9FF5;xxxSerialNumber+1
 	sta r0H
 	rts
 
