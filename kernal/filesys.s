@@ -274,6 +274,129 @@ LD5CA:  lda     #$80                            ; D5CA A9 80                    
 .endif
 
 _FindFTypes:
+.if wheels
+L9033 = $9033
+LD795 = $D795
+L9030 = $9030
+L9FF3 = $9FF3
+LD5D3:  bit     L9FF3                           ; D5D3 2C F3 9F                 ,..
+        bmi     LD5FD                           ; D5D6 30 25                    0%
+        lda     $0F                             ; D5D8 A5 0F                    ..
+        sta     $05                             ; D5DA 85 05                    ..
+        lda     $0E                             ; D5DC A5 0E                    ..
+        sta     $04                             ; D5DE 85 04                    ..
+        lda     #$00                            ; D5E0 A9 00                    ..
+        sta     $03                             ; D5E2 85 03                    ..
+        lda     $11                             ; D5E4 A5 11                    ..
+        asl     a                               ; D5E6 0A                       .
+        rol     $03                             ; D5E7 26 03                    &.
+        asl     a                               ; D5E9 0A                       .
+        rol     $03                             ; D5EA 26 03                    &.
+        asl     a                               ; D5EC 0A                       .
+        rol     $03                             ; D5ED 26 03                    &.
+        asl     a                               ; D5EF 0A                       .
+        rol     $03                             ; D5F0 26 03                    &.
+        adc     $11                             ; D5F2 65 11                    e.
+        sta     r0L                           ; D5F4 85 02                    ..
+        bcc     LD5FA                           ; D5F6 90 02                    ..
+        inc     $03                             ; D5F8 E6 03                    ..
+LD5FA:  jsr     ClearRam                        ; D5FA 20 78 C1                  x.
+LD5FD:  jsr     L9030                           ; D5FD 20 30 90                  0.
+        txa                                     ; D600 8A                       .
+        bne     LD661                           ; D601 D0 5E                    .^
+LD603:  ldy     #$00                            ; D603 A0 00                    ..
+        lda     ($0C),y                         ; D605 B1 0C                    ..
+        beq     LD658                           ; D607 F0 4F                    .O
+        ldy     #$16                            ; D609 A0 16                    ..
+        lda     $10                             ; D60B A5 10                    ..
+        cmp     #$64                            ; D60D C9 64                    .d
+        beq     LD624                           ; D60F F0 13                    ..
+        cmp     #$65                            ; D611 C9 65                    .e
+        bne     LD61B                           ; D613 D0 06                    ..
+        lda     ($0C),y                         ; D615 B1 0C                    ..
+        beq     LD658                           ; D617 F0 3F                    .?
+        bne     LD624                           ; D619 D0 09                    ..
+LD61B:  cmp     ($0C),y                         ; D61B D1 0C                    ..
+        bne     LD658                           ; D61D D0 39                    .9
+        jsr     LD795                           ; D61F 20 95 D7                  ..
+        bne     LD658                           ; D622 D0 34                    .4
+LD624:  clc                                     ; D624 18                       .
+        lda     $0C                             ; D625 A5 0C                    ..
+        adc     #$03                            ; D627 69 03                    i.
+        sta     r0L                           ; D629 85 02                    ..
+        lda     $0D                             ; D62B A5 0D                    ..
+        adc     #$00                            ; D62D 69 00                    i.
+        sta     $03                             ; D62F 85 03                    ..
+        ldy     #$00                            ; D631 A0 00                    ..
+LD633:  lda     (r0L),y                       ; D633 B1 02                    ..
+        cmp     #$A0                            ; D635 C9 A0                    ..
+        beq     LD640                           ; D637 F0 07                    ..
+        sta     ($0E),y                         ; D639 91 0E                    ..
+        iny                                     ; D63B C8                       .
+        cpy     #$10                            ; D63C C0 10                    ..
+        bne     LD633                           ; D63E D0 F3                    ..
+LD640:  lda     #$00                            ; D640 A9 00                    ..
+        sta     ($0E),y                         ; D642 91 0E                    ..
+        bit     L9FF3                           ; D644 2C F3 9F                 ,..
+        bmi     LD663                           ; D647 30 1A                    0.
+        clc                                     ; D649 18                       .
+        lda     #$11                            ; D64A A9 11                    ..
+        adc     $0E                             ; D64C 65 0E                    e.
+        sta     $0E                             ; D64E 85 0E                    ..
+        bcc     LD654                           ; D650 90 02                    ..
+        inc     $0F                             ; D652 E6 0F                    ..
+LD654:  dec     $11                             ; D654 C6 11                    ..
+        beq     LD661                           ; D656 F0 09                    ..
+LD658:  jsr     L9033                           ; D658 20 33 90                  3.
+        txa                                     ; D65B 8A                       .
+        bne     LD661                           ; D65C D0 03                    ..
+        tya                                     ; D65E 98                       .
+        beq     LD603                           ; D65F F0 A2                    ..
+LD661:  sec                                     ; D661 38                       8
+        rts                                     ; D662 60                       `
+
+; ----------------------------------------------------------------------------
+LD663:  lda     $0D                             ; D663 A5 0D                    ..
+        sta     LD685                           ; D665 8D 85 D6                 ...
+        lda     $0C                             ; D668 A5 0C                    ..
+        sta     LD684                           ; D66A 8D 84 D6                 ...
+        lda     #$D6                            ; D66D A9 D6                    ..
+        sta     $0D                             ; D66F 85 0D                    ..
+        lda     #$77                            ; D671 A9 77                    .w
+        sta     $0C                             ; D673 85 0C                    ..
+        clc                                     ; D675 18                       .
+        rts                                     ; D676 60                       `
+
+; ----------------------------------------------------------------------------
+        lda     LD685                           ; D677 AD 85 D6                 ...
+        sta     $0D                             ; D67A 85 0D                    ..
+        lda     LD684                           ; D67C AD 84 D6                 ...
+        sta     $0C                             ; D67F 85 0C                    ..
+        jmp     LD658                           ; D681 4C 58 D6                 LX.
+
+; ----------------------------------------------------------------------------
+LD684:  brk                                     ; D684 00                       .
+LD685:  brk                                     ; D685 00                       .
+LD686:  lda     #$83                            ; D686 A9 83                    ..
+        sta     $0F                             ; D688 85 0F                    ..
+        lda     #$00                            ; D68A A9 00                    ..
+        sta     $0E                             ; D68C 85 0E                    ..
+        rts                                     ; D68E 60                       `
+
+; ----------------------------------------------------------------------------
+LD68F:  lda     $8148                           ; D68F AD 48 81                 .H.
+        sta     $11                             ; D692 85 11                    ..
+        lda     $8147                           ; D694 AD 47 81                 .G.
+        sta     $10                             ; D697 85 10                    ..
+        rts                                     ; D699 60                       `
+
+; ----------------------------------------------------------------------------
+LD69A:  lda     #$81                            ; D69A A9 81                    ..
+        sta     $0B                             ; D69C 85 0B                    ..
+        lda     #$00                            ; D69E A9 00                    ..
+        sta     $0A                             ; D6A0 85 0A                    ..
+        rts                                     ; D6A2 60                       `
+.else
 .if (useRamExp)
 	CmpWI r7, ($0100+SYSTEM)
 	bne FFTypesStart
@@ -367,8 +490,51 @@ GetStartHAddr:
 SetFHeadVector:
 	LoadW r4, fileHeader
 	rts
+.endif
 
 _FindFile:
+.if wheels
+LD6A3:  sec                                     ; D6A3 38                       8
+        lda     $0E                             ; D6A4 A5 0E                    ..
+        sbc     #$03                            ; D6A6 E9 03                    ..
+        sta     $0E                             ; D6A8 85 0E                    ..
+        bcs     LD6AE                           ; D6AA B0 02                    ..
+        dec     $0F                             ; D6AC C6 0F                    ..
+LD6AE:  jsr     L9030                           ; D6AE 20 30 90                  0.
+        txa                                     ; D6B1 8A                       .
+        bne     LD6E8                           ; D6B2 D0 34                    .4
+LD6B4:  ldy     #$00                            ; D6B4 A0 00                    ..
+        lda     ($0C),y                         ; D6B6 B1 0C                    ..
+        beq     LD6D2                           ; D6B8 F0 18                    ..
+        ldy     #$03                            ; D6BA A0 03                    ..
+LD6BC:  lda     ($0E),y                         ; D6BC B1 0E                    ..
+        beq     LD6C7                           ; D6BE F0 07                    ..
+        cmp     ($0C),y                         ; D6C0 D1 0C                    ..
+        bne     LD6D2                           ; D6C2 D0 0E                    ..
+        iny                                     ; D6C4 C8                       .
+        bne     LD6BC                           ; D6C5 D0 F5                    ..
+LD6C7:  cpy     #$13                            ; D6C7 C0 13                    ..
+        beq     LD6DE                           ; D6C9 F0 13                    ..
+        lda     ($0C),y                         ; D6CB B1 0C                    ..
+        iny                                     ; D6CD C8                       .
+        cmp     #$A0                            ; D6CE C9 A0                    ..
+        beq     LD6C7                           ; D6D0 F0 F5                    ..
+LD6D2:  jsr     L9033                           ; D6D2 20 33 90                  3.
+        txa                                     ; D6D5 8A                       .
+        bne     LD6E8                           ; D6D6 D0 10                    ..
+        tya                                     ; D6D8 98                       .
+        beq     LD6B4                           ; D6D9 F0 D9                    ..
+        ldx     #$05                            ; D6DB A2 05                    ..
+        rts                                     ; D6DD 60                       `
+
+; ----------------------------------------------------------------------------
+LD6DE:  ldy     #$1D                            ; D6DE A0 1D                    ..
+LD6E0:  lda     ($0C),y                         ; D6E0 B1 0C                    ..
+        sta     $8400,y                         ; D6E2 99 00 84                 ...
+        dey                                     ; D6E5 88                       .
+        bpl     LD6E0                           ; D6E6 10 F8                    ..
+LD6E8:  rts                                     ; D6E8 60                       `
+.else
 	php
 	sei
 	SubVW 3, r6
@@ -405,8 +571,80 @@ _FindFile:
 	ldx #NULL
 @7:	plp
 	rts
+.endif
 
 _SetDevice:
+.if wheels
+LD6E9:  tax                                     ; D6E9 AA                       .
+        beq     LD74C                           ; D6EA F0 60                    .`
+        cmp     $BA                             ; D6EC C5 BA                    ..
+        beq     LD702                           ; D6EE F0 12                    ..
+        jsr     LD74F                           ; D6F0 20 4F D7                  O.
+        bcs     LD700                           ; D6F3 B0 0B                    ..
+        lda     $8489                           ; D6F5 AD 89 84                 ...
+        jsr     LD751                           ; D6F8 20 51 D7                  Q.
+        bcs     LD700                           ; D6FB B0 03                    ..
+        jsr     ExitTurbo                       ; D6FD 20 32 C2                  2.
+LD700:  stx     $BA                             ; D700 86 BA                    ..
+LD702:  jsr     LD74F                           ; D702 20 4F D7                  O.
+        bcs     LD749                           ; D705 B0 42                    .B
+        tay                                     ; D707 A8                       .
+        lda     $8486,y                         ; D708 B9 86 84                 ...
+        sta     $88C6                           ; D70B 8D C6 88                 ...
+        beq     LD74C                           ; D70E F0 3C                    .<
+        cpy     $8489                           ; D710 CC 89 84                 ...
+        beq     LD749                           ; D713 F0 34                    .4
+        sty     $8489                           ; D715 8C 89 84                 ...
+        lda     LD759,y                         ; D718 B9 59 D7                 .Y.
+        sta     LD75C                           ; D71B 8D 5C D7                 .\.
+        lda     LD75D,y                         ; D71E B9 5D D7                 .].
+        sta     LD75D                           ; D721 8D 5D D7                 .].
+        ldx     #$06                            ; D724 A2 06                    ..
+LD726:  lda     r0L,x                         ; D726 B5 02                    ..
+        pha                                     ; D728 48                       H
+        lda     LD75A,x                         ; D729 BD 5A D7                 .Z.
+        sta     r0L,x                         ; D72C 95 02                    ..
+        dex                                     ; D72E CA                       .
+        bpl     LD726                           ; D72F 10 F5                    ..
+        lda     $88C6                           ; D731 AD C6 88                 ...
+        and     #$0F                            ; D734 29 0F                    ).
+        cmp     #$03                            ; D736 C9 03                    ..
+        bne     LD73C                           ; D738 D0 02                    ..
+        dec     $07                             ; D73A C6 07                    ..
+LD73C:  jsr     FetchRAM                        ; D73C 20 CB C2                  ..
+        ldx     #$00                            ; D73F A2 00                    ..
+LD741:  pla                                     ; D741 68                       h
+        sta     r0L,x                         ; D742 95 02                    ..
+        inx                                     ; D744 E8                       .
+        cpx     #$07                            ; D745 E0 07                    ..
+        bne     LD741                           ; D747 D0 F8                    ..
+LD749:  ldx     #$00                            ; D749 A2 00                    ..
+        rts                                     ; D74B 60                       `
+
+; ----------------------------------------------------------------------------
+LD74C:  ldx     #$0D                            ; D74C A2 0D                    ..
+        rts                                     ; D74E 60                       `
+
+; ----------------------------------------------------------------------------
+LD74F:  lda     $BA                             ; D74F A5 BA                    ..
+LD751:  cmp     #$08                            ; D751 C9 08                    ..
+        bcc     LD758                           ; D753 90 03                    ..
+        cmp     #$0C                            ; D755 C9 0C                    ..
+        rts                                     ; D757 60                       `
+
+; ----------------------------------------------------------------------------
+LD758:  sec                                     ; D758 38                       8
+LD759:  rts                                     ; D759 60                       `
+
+; ----------------------------------------------------------------------------
+LD75A:  .byte   $00,$90                         ; D75A 00 90                    ..
+LD75C:  .byte   $00                             ; D75C 00                       .
+LD75D:  .byte   $83,$80,$0D,$00,$00,$80,$00,$80 ; D75D 83 80 0D 00 00 80 00 80  ........
+        .byte   $83,$90                         ; D765 83 90                    ..
+; ----------------------------------------------------------------------------
+        .byte   $9E                             ; D767 9E                       .
+        .byte   $AB                             ; D768 AB                       .
+.else
 	nop
 	cmp curDevice
 	beq @2
@@ -472,6 +710,7 @@ SetDevDrivesTabL:
 	.lobytes SetDevDrivesTab
 SetDevDrivesTabH:
 	.hibytes SetDevDrivesTab
+.endif
 
 _GetFHdrInfo:
 	ldy #OFF_GHDR_PTR
@@ -481,7 +720,7 @@ _GetFHdrInfo:
 	lda (r9),y
 	sta r1H
 	MoveW r1, fileTrScTab
-	jsr SetFHeadVector
+;xxx	jsr SetFHeadVector
 	jsr GetBlock
 	bnex @1
 	ldy #OFF_DE_TR_SC
@@ -504,7 +743,7 @@ GetHeaderFileName:
 	iny
 	lda (r5),y
 	sta r1H
-	jsr SetFHeadVector
+;xxx	jsr SetFHeadVector
 	jsr GetBlock
 	bnex @4
 	tay
@@ -546,17 +785,17 @@ _SaveFile:
 	jsr GetDirHead
 	bnex @2
 	jsr GetDAccLength
-	jsr SetBufTSVector
+;xxx	jsr SetBufTSVector
 	jsr BlkAlloc
 	bnex @2
-	jsr SetBufTSVector
+;xxx	jsr SetBufTSVector
 	jsr SetGDirEntry
 	bnex @2
 	jsr PutDirHead
 	bnex @2
 	sta fileHeader+O_GHINFO_TXT
 	MoveW dirEntryBuf+OFF_GHDR_PTR, r1
-	jsr SetFHeadVector
+;xxx	jsr SetFHeadVector
 	jsr PutBlock
 	bnex @2
 	jsr ClearNWrite
@@ -1079,7 +1318,7 @@ SetVLIRTable:
 	sta r1L
 	lda RecordTableTS+1
 	sta r1H
-	jsr SetFHeadVector
+;xxx	jsr SetFHeadVector
 	ldx #NULL
 @1:	rts
 
@@ -1150,13 +1389,13 @@ PutVLIRChainTS:
 	rts
 
 WriteVLIRChain:
-	jsr SetBufTSVector
+;xxx	jsr SetBufTSVector
 	PushW r7
 	jsr BlkAlloc
 	PopW r7
 	bnex @1
 	PushB r2L
-	jsr SetBufTSVector
+;xxx	jsr SetBufTSVector
 	jsr WriteFile
 	PopB r2L
 	bnex @1
@@ -1221,4 +1460,9 @@ DeskTopExec:
 	.word 0 ;DeskTop replacements - filename of desktop
 DeskTopLgh:
 	.byte 0 ;have to be at $c3cf .IDLE
+.endif
+
+.if wheels
+;xxx
+GetStartHAddr:
 .endif
