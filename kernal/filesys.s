@@ -767,9 +767,13 @@ GetHeaderFileName:
 	iny
 	lda (r5),y
 	sta r1H
-	jsr SetFHeadVector
+	jsr $D69A;xxxSetFHeadVector
 	jsr GetBlock
+.if wheels
+        bne @4
+.else
 	bnex @4
+.endif
 	tay
 @1:	lda (r10),y
 	beq @2

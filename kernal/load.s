@@ -433,7 +433,9 @@ GetFile_rts:
 .segment "load4"
 
 _LdDeskAcc:
+.if !wheels
 	MoveB r10L, A885D
+.endif
 	jsr GetFHdrInfo
 	bnex LDAcc1
 .if (useRamExp)
