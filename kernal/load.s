@@ -433,9 +433,57 @@ GetFile_rts:
 .segment "load4"
 
 _LdDeskAcc:
-.if !wheels
+.if wheels
+LC58F = $C58F
+LF28E = $F28E
+LD8D3 = $D8D3
+LD7C3:  jsr     GetFHdrInfo                     ; D7C3 20 29 C2                  ).
+        txa                                     ; D7C6 8A                       .
+        bne     LD818                           ; D7C7 D0 4F                    .O
+        lda     $11                             ; D7C9 A5 11                    ..
+        sta     $03                             ; D7CB 85 03                    ..
+        sta     $05                             ; D7CD 85 05                    ..
+        sta     LD81A                           ; D7CF 8D 1A D8                 ...
+        lda     $10                             ; D7D2 A5 10                    ..
+        sta     L0002                           ; D7D4 85 02                    ..
+        sta     $04                             ; D7D6 85 04                    ..
+        sta     LD819                           ; D7D8 8D 19 D8                 ...
+        jsr     LD8D3                           ; D7DB 20 D3 D8                  ..
+        lda     $07                             ; D7DE A5 07                    ..
+        sta     LD81C                           ; D7E0 8D 1C D8                 ...
+        lda     $06                             ; D7E3 A5 06                    ..
+        sta     LD81B                           ; D7E5 8D 1B D8                 ...
+        lda     #$00                            ; D7E8 A9 00                    ..
+        sta     $08                             ; D7EA 85 08                    ..
+        jsr     StashRAM                        ; D7EC 20 C8 C2                  ..
+        ldy     #$01                            ; D7EF A0 01                    ..
+        jsr     LD78B                           ; D7F1 20 8B D7                  ..
+        jsr     ReadFile                        ; D7F4 20 FF C1                  ..
+        txa                                     ; D7F7 8A                       .
+        bne     LD818                           ; D7F8 D0 1E                    ..
+        jsr     LF28E                           ; D7FA 20 8E F2                  ..
+        jsr     UseSystemFont                   ; D7FD 20 4B C1                  K.
+        jsr     LC58F                           ; D800 20 8F C5                  ..
+        pla                                     ; D803 68                       h
+        sta     $8850                           ; D804 8D 50 88                 .P.
+        pla                                     ; D807 68                       h
+        sta     $8851                           ; D808 8D 51 88                 .Q.
+        tsx                                     ; D80B BA                       .
+        stx     $8852                           ; D80C 8E 52 88                 .R.
+        ldx     $814C                           ; D80F AE 4C 81                 .L.
+        lda     $814B                           ; D812 AD 4B 81                 .K.
+        jmp     LC064                           ; D815 4C 64 C0                 Ld.
+
+; ----------------------------------------------------------------------------
+LD818:  rts                                     ; D818 60                       `
+
+; ----------------------------------------------------------------------------
+LD819:  .byte   $00                             ; D819 00                       .
+LD81A:  .byte   $00                             ; D81A 00                       .
+LD81B:  .byte   $00                             ; D81B 00                       .
+LD81C:  .byte   $00                             ; D81C 00                       .
+.else
 	MoveB r10L, A885D
-.endif
 	jsr GetFHdrInfo
 	bnex LDAcc1
 .if (useRamExp)
@@ -477,8 +525,34 @@ _LdDeskAcc:
 	PopW r1
 LDAcc1:
 	rts
+.endif
 
 _RstrAppl:
+.if wheels
+LF29A = $F29A
+LD81D:  lda     LD81A                           ; D81D AD 1A D8                 ...
+        sta     $03                             ; D820 85 03                    ..
+        sta     $05                             ; D822 85 05                    ..
+        lda     LD819                           ; D824 AD 19 D8                 ...
+        sta     L0002                           ; D827 85 02                    ..
+        sta     $04                             ; D829 85 04                    ..
+        lda     LD81C                           ; D82B AD 1C D8                 ...
+        sta     $07                             ; D82E 85 07                    ..
+        lda     LD81B                           ; D830 AD 1B D8                 ...
+        sta     $06                             ; D833 85 06                    ..
+        lda     #$00                            ; D835 A9 00                    ..
+        sta     $08                             ; D837 85 08                    ..
+        jsr     FetchRAM                        ; D839 20 CB C2                  ..
+        jsr     LF29A                           ; D83C 20 9A F2                  ..
+        ldx     $8852                           ; D83F AE 52 88                 .R.
+        txs                                     ; D842 9A                       .
+        ldx     #$00                            ; D843 A2 00                    ..
+        lda     $8851                           ; D845 AD 51 88                 .Q.
+        pha                                     ; D848 48                       H
+        lda     $8850                           ; D849 AD 50 88                 .P.
+        pha                                     ; D84C 48                       H
+        rts                                     ; D84D 60                       `
+.else
 .if (useRamExp)
 	jsr RamExpGetStat
 	MoveW diskBlkBuf+DACC_ST_ADDR, r0
@@ -510,8 +584,27 @@ _RstrAppl:
 	tax
 	PushW DeskAccPC
 	rts
+.endif
 
 _LdApplic:
+.if wheels
+LD84E:  jsr     LC623                           ; D84E 20 23 C6                  #.
+        jsr     LdFile                          ; D851 20 11 C2                  ..
+        txa                                     ; D854 8A                       .
+        bne     LD86E                           ; D855 D0 17                    ..
+        lda     $885E                           ; D857 AD 5E 88                 .^.
+        and     #$01                            ; D85A 29 01                    ).
+        bne     LD86E                           ; D85C D0 10                    ..
+        jsr     LC5FA                           ; D85E 20 FA C5                  ..
+        lda     $814B                           ; D861 AD 4B 81                 .K.
+        sta     $10                             ; D864 85 10                    ..
+        lda     $814C                           ; D866 AD 4C 81                 .L.
+        sta     $11                             ; D869 85 11                    ..
+        jmp     StartAppl                       ; D86B 4C 2F C2                 L/.
+
+; ----------------------------------------------------------------------------
+LD86E:  rts                                     ; D86E 60                       `
+.else
 	jsr UNK_5
 	jsr LdFile
 	bnex @1
@@ -520,6 +613,7 @@ _LdApplic:
 	MoveW_ fileHeader+O_GHST_VEC, r7
 	jmp StartAppl
 @1:	rts
+.endif
 
 .if (!useRamExp)
 SwapFileName:
