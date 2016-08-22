@@ -4211,6 +4211,7 @@ LD53C:  jsr     GetFHdrInfo                     ; D53C 20 29 C2                 
         cmp     #$01                            ; D545 C9 01                    ..
         bne     LD561                           ; D547 D0 18                    ..
         ldy     #$01                            ; D549 A0 01                    ..
+
         jsr     LD78B                           ; D54B 20 8B D7                  ..
         jsr     L903C                           ; D54E 20 3C 90                  <.
         bne     LD57B                           ; D551 D0 28                    .(

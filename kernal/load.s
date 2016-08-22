@@ -378,10 +378,10 @@ U_51:
 .segment "load3"
 
 _GetFile:
-	jsr UNK_5
+	jsr $C623;xxxUNK_5
 	jsr FindFile
 	bnex GetFile_rts
-	jsr UNK_4
+	jsr $C5FA;xxxUNK_4
 	LoadW r9, dirEntryBuf
 	CmpBI dirEntryBuf + OFF_GFILE_TYPE, DESK_ACC
 	bne @1
@@ -392,12 +392,21 @@ _GetFile:
 	bne _LdFile
 @2:	jmp LdApplic
 
+.if wheels
+LD78B = $D78B
+L903C = $903C
+.endif
 _LdFile:
 	jsr GetFHdrInfo
 	bnex GetFile_rts
 	CmpBI fileHeader + O_GHSTR_TYPE, VLIR
 	bne @1
 	ldy #OFF_DE_TR_SC
+.if wheels
+        jsr     LD78B                           ; D54B 20 8B D7                  ..
+        jsr     L903C                           ; D54E 20 3C 90                  <.
+        bne     GetFile_rts                           ; D551 D0 28                    .(
+.else
 	lda (r9),y
 	sta r1L
 	iny
@@ -405,6 +414,7 @@ _LdFile:
 	sta r1H
 	jsr ReadBuff
 	bnex GetFile_rts
+.endif
 	ldx #INV_RECORD
 	lda diskBlkBuf + 2
 	sta r1L
