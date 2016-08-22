@@ -268,10 +268,19 @@ _GetRandom:
 	bcc @2
 	inc random+1
 @2:	rts
-@3:	CmpBI random+1, $ff
+@3:
+.if wheels
+	CmpBI random+1, $f1
+.else
+	CmpBI random+1, $ff
+.endif
 	bcc @4
 	lda random
+.if wheels
+	sbc #$f1
+.else
 	subv $f1
+.endif
 	bcc @4
 	sta random
 	lda #0
