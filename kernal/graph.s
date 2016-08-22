@@ -790,14 +790,25 @@ _GraphicsString:
 	bra _GraphicsString
 @1:	rts
 
+.if wheels
+;xxx
+GStrTL:  .byte   $2C,$39,$57,$38,$5D,$63,$75,$80 ; C918 2C 39 57 38 5D 63 75 80  ,9W8]cu.
+        .byte   $9C,$7D                         ; C920 9C 7D                    .}
+GStrTH:  .byte   $C9,$C9,$C9,$C9,$C9,$C9,$C9,$C9 ; C922 C9 C9 C9 C9 C9 C9 C9 C9  ........
+        .byte   $C9                             ; C92A C9                       .
+; ----------------------------------------------------------------------------
+        .byte   $C9                             ; C92B C9                       .
+.else
+
 .define GStrT _DoMovePenTo, _DoLineTo, _DoRectangleTo, _DoNothing, _DoNewPattern, _DoESC_PutString, _DoFrame_RecTo, _DoPenXDelta, _DoPenYDelta, _DoPenXYDelta
 GStrTL:
 	.lobytes GStrT
 GStrTH:
 	.hibytes GStrT
+.endif
 
 _DoMovePenTo:
-	jsr GetCoords
+	jsr $CA13;xxxGetCoords
 	sta GraphPenY
 	stx GraphPenXL
 	sty GraphPenXH
