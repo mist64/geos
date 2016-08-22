@@ -775,9 +775,14 @@ _i_GraphicsString:
 ; Destroyed: a, x, y, r0 - r15
 ;---------------------------------------------------------------
 _GraphicsString:
-	jsr Getr0AndInc
+	jsr $CA22;xxxGetr0AndInc
+.if wheels
+	tay
+	beq @1
+.else
 	beq @1
 	tay
+.endif
 	dey
 	lda GStrTL,Y
 	ldx GStrTH,Y
