@@ -71,6 +71,43 @@ _FirstInit:
 .if !wheels
 	LoadB mouseAccel, iniMouseAccel
 .endif
+
+.if wheels
+L9FDA = $9FDA
+L9FDC = $9fdc
+L9FDD = $9fdd
+LC316 = $c316
+LC499 = $C499
+LBF3F = $bf3f
+	MoveB L9FDA, screencolors
+        ldy     #$3E                            ; C528 A0 3E                    .>
+LC52A:  lda     #$00                            ; C52A A9 00                    ..
+        sta     $84C1,y                         ; C52C 99 C1 84                 ...
+        dey                                     ; C52F 88                       .
+        bpl     LC52A                           ; C530 10 F8                    ..
+        ldx     #$18                            ; C532 A2 18                    ..
+LC534:  lda     LBF3F,x                         ; C534 BD 3F BF                 .?.
+        sta     $84C0,x                         ; C537 9D C0 84                 ...
+        dex                                     ; C53A CA                       .
+        bne     LC534                           ; C53B D0 F7                    ..
+LC53D:  jsr     LC499                           ; C53D 20 99 C4                  ..
+        lda     $851E                           ; C540 AD 1E 85                 ...
+        sta     LC54D                           ; C543 8D 4D C5                 .M.
+        jsr     LC316                           ; C546 20 16 C3                  ..
+        .byte   $00,$00,$28,$19                 ; C549 00 00 28 19              ..(.
+LC54D:  .byte   $BF                             ; C54D BF                       .
+; ----------------------------------------------------------------------------
+LC54E:  ldx     $01                             ; C54E A6 01                    ..
+        lda     #$35                            ; C550 A9 35                    .5
+        sta     $01                             ; C552 85 01                    ..
+        lda     L9FDD                           ; C554 AD DD 9F                 ...
+        sta     $D020                           ; C557 8D 20 D0                 . .
+        lda     L9FDC                           ; C55A AD DC 9F                 ...
+        sta     $D027                           ; C55D 8D 27 D0                 .'.
+        sta     $D028                           ; C560 8D 28 D0                 .(.
+        stx     $01                             ; C563 86 01                    ..
+        rts                                     ; C565 60                       `
+.else
 	LoadB screencolors, (DKGREY << 4)+LTGREY
 	sta @1
 	jsr i_FillRam
@@ -96,6 +133,7 @@ ASSERT_NOT_BELOW_IO
 	dex
 	bne @3
 	jmp UNK_6
+.endif
 
 .segment "init3"
 
