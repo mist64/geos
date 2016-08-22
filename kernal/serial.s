@@ -37,4 +37,6 @@ GetSerialNumber2:
 	sta r0H
 	rts
 
+.if !wheels
 	.byte 1, $60 ; ???
+.endif
