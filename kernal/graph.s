@@ -997,13 +997,13 @@ _GetScanLine:
 	tax
 	bbrf 7, dispBufferOn, @2 ; ST_WR_FORE
 	bbsf 6, dispBufferOn, @1 ; ST_WR_BACK
-	lda LineTabL,x
+	lda $CA92;xxxLineTabL,x
 	ora r6H
 	sta r5L
 .if wheels
 	sta r6L                             ; CA47 85 0E                    ..
 .endif
-	lda LineTabH,x
+	lda $CAAB;xxxLineTabH,x
 	sta r5H
 .if wheels
 	sta r6H                             ; CA47 85 0E                    ..
