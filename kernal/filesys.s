@@ -910,11 +910,18 @@ _SetGDirEntry:
 	jsr BldGDirEntry
 	jsr GetFreeDirBlk
 	bnex SGDCopyDate_rts
+.if wheels
+        sty     $0C                             ; D911 84 0C                    ..
+	.assert <diskBlkBuf = 0, error, "diskBlkBuf must be page-aligned!"
+.else
 	tya
 	addv <diskBlkBuf
 	sta r5L
+.endif
 	lda #>diskBlkBuf
+.if !wheels
 	adc #0
+.endif
 	sta r5H
 	ldy #$1d
 @1:	lda dirEntryBuf,y
