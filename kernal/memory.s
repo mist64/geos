@@ -178,11 +178,27 @@ _i_MoveData:
 	lda (returnAddress),Y
 	sta r2H
 	jsr _MoveData
+.if wheels
+        jmp     LC81F                           ; CE16 4C 1F C8                 L..
+.else
 	php
 	lda #7
 	jmp DoInlineReturn
+.endif
 
 GetMDataDatas:
+.if wheels
+L003D = $003D
+LC81F = $C81F
+LCE26 = $CE26
+
+	ldy     #$00                            ; CE19 A0 00                    ..
+LCE1B:  iny                                     ; CE1B C8                       .
+        lda     (L003D),y                       ; CE1C B1 3D                    .=
+        sta     $01,y                           ; CE1E 99 01 00                 ...
+        cpy     #$05                            ; CE21 C0 05                    ..
+        bne     LCE1B                           ; CE23 D0 F6                    ..
+.else
 	ldy #1
 	lda (returnAddress),Y
 	sta r0L
@@ -198,6 +214,7 @@ GetMDataDatas:
 	iny
 	lda (returnAddress),Y
 	sta r2L
+.endif
 	rts
 
 ;---------------------------------------------------------------
