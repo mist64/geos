@@ -26,7 +26,7 @@ BootGEOS:
 	nop
 	nop
 .else
-	jmp _BootGEOS
+	jmp BootGEOS
 .endif
 ResetHandle:
 .if wheels
@@ -69,7 +69,9 @@ c128Flag:
 	.byte 0, 0, 0 ; ???
 
 dateCopy:
-.if cbmfiles
+.if wheels
+	.byte $63,$01,$01
+.elseif cbmfiles
 	; The cbmfiles version was created by dumping
 	; KERNAL from memory after it had been running,
 	; so it a different date here.
@@ -78,7 +80,31 @@ dateCopy:
 	.byte 88,4,20
 .endif
 
-_BootGEOS:
+.if wheels
+.include "jumptab.inc"
+LD07F = $D07F
+LD074 = $D074
+LD07E = $D07E
+
+LC01B:  ldy     #$00                            ; C01B A0 00                    ..
+        .byte   $2C                             ; C01D 2C                       ,
+LC01E:  ldy     #$03                            ; C01E A0 03                    ..
+LC020:  php                                     ; C020 08                       .
+        sei                                     ; C021 78                       x
+        lda     $01                             ; C022 A5 01                    ..
+        pha                                     ; C024 48                       H
+        lda     #$35                            ; C025 A9 35                    .5
+        sta     $01                             ; C027 85 01                    ..
+        sta     LD07E                           ; C029 8D 7E D0                 .~.
+        sta     LD074,y                         ; C02C 99 74 D0                 .t.
+        sta     LD07F                           ; C02F 8D 7F D0                 ...
+        pla                                     ; C032 68                       h
+        sta     $01                             ; C033 85 01                    ..
+        plp                                     ; C035 28                       (
+        rts                                     ; C036 60                       `
+
+.else
+BootGEOS:
 	bbsf 5, sysFlgCopy, @1
 	jsr KERNALSETMSG
 	lda #version-bootName
@@ -108,3 +134,4 @@ BootREUTab:
 	.word $007e
 	.word $0500
 	.word $0000
+.endif

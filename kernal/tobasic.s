@@ -123,7 +123,7 @@ execBASIC:
 .segment "tobasic2"
 
 _ToBASIC:
-.if (removeToBASIC)
+.if (1 || removeToBASIC)
 	sei
 	jsr PurgeTurbo
 	LoadB CPU_DATA, KRNL_BAS_IO_IN
