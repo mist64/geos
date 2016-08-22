@@ -21,9 +21,21 @@
 .assert * = $C000, error, "Header not at $C000"
 
 BootGEOS:
+.if wheels
+	rts
+	nop
+	nop
+.else
 	jmp _BootGEOS
+.endif
 ResetHandle:
+.if wheels
+	rts
+	nop
+	nop
+.else
 	jmp _ResetHandle
+.endif
 
 bootName:
 .if gateway
@@ -33,15 +45,28 @@ bootName:
 	.byte "GEOS BOOT"
 .endif
 version:
+.if wheels
+	.byte $41
+.else
 	.byte $20
+.endif
 nationality:
-	.byte $00,$00
+.if wheels
+	.word 1
+.else
+	.word 0
+.endif
 sysFlgCopy:
-	.byte $00
+	.byte 0
 c128Flag:
-	.byte $00
+	.byte 0
 
-	.byte $05,$00,$00,$00 ; ???
+.if wheels
+	.byte 0
+.else
+	.byte 5
+.endif
+	.byte 0, 0, 0 ; ???
 
 dateCopy:
 .if cbmfiles

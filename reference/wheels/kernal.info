@@ -1,0 +1,217 @@
+GLOBAL {
+    OUTPUTNAME      "allkernal.s";
+    INPUTNAME       "allkernal.bin";
+    STARTADDR       $9D80;
+    PAGELENGTH      0;                  # No paging
+    CPU             "6502";
+};
+
+# One segment for the whole stuff
+#SEGMENT { START $9D80;  END   $FFFF; NAME kernal; };
+
+RANGE { START $9d91;    END   $9D9E; TYPE ByteTable; };
+RANGE { START $9f0a;    END   $bfff; TYPE ByteTable; };
+RANGE { START $c006;    END   $C00E; TYPE TextTable; };
+RANGE { START $c00f;    END   $c01a; TYPE ByteTable; };
+
+#RANGE { START $E612;    END   $E631; TYPE Code;      };
+#RANGE { START $E632;    END   $E640; TYPE ByteTable; };
+#RANGE { START $EA51;    END   $EA84; TYPE RtsTable;  };
+#RANGE { START $EC6C;    END   $ECAB; TYPE RtsTable;  };
+#RANGE { START $ED08;    END   $ED11; TYPE AddrTable; };
+
+# Zero page variables
+#LABEL { NAME "fnadr";   ADDR  $90;   SIZE 3;    };
+#LABEL { NAME "sal";     ADDR  $93;   };
+#LABEL { NAME "sah";     ADDR  $94;   };
+#LABEL { NAME "sas";     ADDR  $95;   };
+
+# Stack
+#LABEL { NAME "stack";   ADDR  $100;  SIZE 255;  };
+
+# Indirect vectors
+#LABEL { NAME "cinv";    ADDR  $300;  SIZE 2;    };      # IRQ
+#LABEL { NAME "cbinv";   ADDR  $302;  SIZE 2;    };      # BRK
+#LABEL { NAME "nminv";   ADDR  $304;  SIZE 2;    };      # NMI
+
+# Jump table at end of kernal ROM
+#LABEL { NAME "kscrorg"; ADDR  $FFED; };
+#LABEL { NAME "kplot";   ADDR  $FFF0; };
+#LABEL { NAME "kiobase"; ADDR  $FFF3; };
+#LABEL { NAME "kgbye";   ADDR  $FFF6; };
+
+# Hardware vectors
+#LABEL { NAME "hanmi";   ADDR  $FFFA; };
+#LABEL { NAME "hares";   ADDR  $FFFC; };
+#LABEL { NAME "hairq";   ADDR  $FFFE; };
+
+LABEL { NAME "InterruptMain"; ADDR  $c100; };
+LABEL { NAME "InitProcesses"; ADDR  $c103; };
+LABEL { NAME "RestartProcess"; ADDR  $c106; };
+LABEL { NAME "EnableProcess"; ADDR  $c109; };
+LABEL { NAME "BlockProcess"; ADDR  $c10c; };
+LABEL { NAME "UnblockProcess"; ADDR  $c10f; };
+LABEL { NAME "FreezeProcess"; ADDR  $c112; };
+LABEL { NAME "UnfreezeProcess"; ADDR  $c115; };
+LABEL { NAME "HorizontalLine"; ADDR  $c118; };
+LABEL { NAME "InvertLine"; ADDR  $c11b; };
+LABEL { NAME "RecoverLine"; ADDR  $c11e; };
+LABEL { NAME "VerticalLine"; ADDR  $c121; };
+LABEL { NAME "Rectangle"; ADDR  $c124; };
+LABEL { NAME "FrameRectangle"; ADDR  $c127; };
+LABEL { NAME "InvertRectangle"; ADDR  $c12a; };
+LABEL { NAME "RecoverRectangle"; ADDR  $c12d; };
+LABEL { NAME "DrawLine"; ADDR  $c130; };
+LABEL { NAME "DrawPoint"; ADDR  $c133; };
+LABEL { NAME "GraphicsString"; ADDR  $c136; };
+LABEL { NAME "SetPattern"; ADDR  $c139; };
+LABEL { NAME "GetScanLine"; ADDR  $c13c; };
+LABEL { NAME "TestPoint"; ADDR  $c13f; };
+LABEL { NAME "BitmapUp"; ADDR  $c142; };
+LABEL { NAME "PutChar"; ADDR  $c145; };
+LABEL { NAME "PutString"; ADDR  $c148; };
+LABEL { NAME "UseSystemFont"; ADDR  $c14b; };
+LABEL { NAME "StartMouseMode"; ADDR  $c14e; };
+LABEL { NAME "DoMenu"; ADDR  $c151; };
+LABEL { NAME "RecoverMenu"; ADDR  $c154; };
+LABEL { NAME "RecoverAllMenus"; ADDR  $c157; };
+LABEL { NAME "DoIcons"; ADDR  $c15a; };
+LABEL { NAME "DShiftLeft"; ADDR  $c15d; };
+LABEL { NAME "BBMult"; ADDR  $c160; };
+LABEL { NAME "BMult"; ADDR  $c163; };
+LABEL { NAME "DMult"; ADDR  $c166; };
+LABEL { NAME "Ddiv"; ADDR  $c169; };
+LABEL { NAME "DSdiv"; ADDR  $c16c; };
+LABEL { NAME "Dabs"; ADDR  $c16f; };
+LABEL { NAME "Dnegate"; ADDR  $c172; };
+LABEL { NAME "Ddec"; ADDR  $c175; };
+LABEL { NAME "ClearRam"; ADDR  $c178; };
+LABEL { NAME "FillRam"; ADDR  $c17b; };
+LABEL { NAME "MoveData"; ADDR  $c17e; };
+LABEL { NAME "InitRam"; ADDR  $c181; };
+LABEL { NAME "PutDecimal"; ADDR  $c184; };
+LABEL { NAME "GetRandom"; ADDR  $c187; };
+LABEL { NAME "MouseUp"; ADDR  $c18a; };
+LABEL { NAME "MouseOff"; ADDR  $c18d; };
+LABEL { NAME "DoPreviousMenu"; ADDR  $c190; };
+LABEL { NAME "ReDoMenu"; ADDR  $c193; };
+LABEL { NAME "GetSerialNumber"; ADDR  $c196; };
+LABEL { NAME "Sleep"; ADDR  $c199; };
+LABEL { NAME "ClearMouseMode"; ADDR  $c19c; };
+LABEL { NAME "i_Rectangle"; ADDR  $c19f; };
+LABEL { NAME "i_FrameRectangle"; ADDR  $c1a2; };
+LABEL { NAME "i_RecoverRectangle"; ADDR  $c1a5; };
+LABEL { NAME "i_GraphicsString"; ADDR  $c1a8; };
+LABEL { NAME "i_BitmapUp"; ADDR  $c1ab; };
+LABEL { NAME "i_PutString"; ADDR  $c1ae; };
+LABEL { NAME "GetRealSize"; ADDR  $c1b1; };
+LABEL { NAME "i_FillRam"; ADDR  $c1b4; };
+LABEL { NAME "i_MoveData"; ADDR  $c1b7; };
+LABEL { NAME "GetString"; ADDR  $c1ba; };
+LABEL { NAME "GotoFirstMenu"; ADDR  $c1bd; };
+LABEL { NAME "InitTextPrompt"; ADDR  $c1c0; };
+LABEL { NAME "MainLoop"; ADDR  $c1c3; };
+LABEL { NAME "DrawSprite"; ADDR  $c1c6; };
+LABEL { NAME "GetCharWidth"; ADDR  $c1c9; };
+LABEL { NAME "LoadCharSet"; ADDR  $c1cc; };
+LABEL { NAME "PosSprite"; ADDR  $c1cf; };
+LABEL { NAME "EnablSprite"; ADDR  $c1d2; };
+LABEL { NAME "DisablSprite"; ADDR  $c1d5; };
+LABEL { NAME "CallRoutine"; ADDR  $c1d8; };
+LABEL { NAME "CalcBlksFree"; ADDR  $c1db; };
+LABEL { NAME "ChkDkGEOS"; ADDR  $c1de; };
+LABEL { NAME "NewDisk"; ADDR  $c1e1; };
+LABEL { NAME "GetBlock"; ADDR  $c1e4; };
+LABEL { NAME "PutBlock"; ADDR  $c1e7; };
+LABEL { NAME "SetGEOSDisk"; ADDR  $c1ea; };
+LABEL { NAME "SaveFile"; ADDR  $c1ed; };
+LABEL { NAME "SetGDirEntry"; ADDR  $c1f0; };
+LABEL { NAME "BldGDirEntry"; ADDR  $c1f3; };
+LABEL { NAME "GetFreeDirBlk"; ADDR  $c1f6; };
+LABEL { NAME "WriteFile"; ADDR  $c1f9; };
+LABEL { NAME "BlkAlloc"; ADDR  $c1fc; };
+LABEL { NAME "ReadFile"; ADDR  $c1ff; };
+LABEL { NAME "SmallPutChar"; ADDR  $c202; };
+LABEL { NAME "FollowChain"; ADDR  $c205; };
+LABEL { NAME "GetFile"; ADDR  $c208; };
+LABEL { NAME "FindFile"; ADDR  $c20b; };
+LABEL { NAME "CRC"; ADDR  $c20e; };
+LABEL { NAME "LdFile"; ADDR  $c211; };
+LABEL { NAME "EnterTurbo"; ADDR  $c214; };
+LABEL { NAME "LdDeskAcc"; ADDR  $c217; };
+LABEL { NAME "ReadBlock"; ADDR  $c21a; };
+LABEL { NAME "LdApplic"; ADDR  $c21d; };
+LABEL { NAME "WriteBlock"; ADDR  $c220; };
+LABEL { NAME "VerWriteBlock"; ADDR  $c223; };
+LABEL { NAME "FreeFile"; ADDR  $c226; };
+LABEL { NAME "GetFHdrInfo"; ADDR  $c229; };
+LABEL { NAME "EnterDeskTop"; ADDR  $c22c; };
+LABEL { NAME "StartAppl"; ADDR  $c22f; };
+LABEL { NAME "ExitTurbo"; ADDR  $c232; };
+LABEL { NAME "PurgeTurbo"; ADDR  $c235; };
+LABEL { NAME "DeleteFile"; ADDR  $c238; };
+LABEL { NAME "FindFTypes"; ADDR  $c23b; };
+LABEL { NAME "RstrAppl"; ADDR  $c23e; };
+LABEL { NAME "ToBASIC"; ADDR  $c241; };
+LABEL { NAME "FastDelFile"; ADDR  $c244; };
+LABEL { NAME "GetDirHead"; ADDR  $c247; };
+LABEL { NAME "PutDirHead"; ADDR  $c24a; };
+LABEL { NAME "NxtBlkAlloc"; ADDR  $c24d; };
+LABEL { NAME "ImprintRectangle"; ADDR  $c250; };
+LABEL { NAME "i_ImprintRectangle"; ADDR  $c253; };
+LABEL { NAME "DoDlgBox"; ADDR  $c256; };
+LABEL { NAME "RenameFile"; ADDR  $c259; };
+LABEL { NAME "InitForIO"; ADDR  $c25c; };
+LABEL { NAME "DoneWithIO"; ADDR  $c25f; };
+LABEL { NAME "DShiftRight"; ADDR  $c262; };
+LABEL { NAME "CopyString"; ADDR  $c265; };
+LABEL { NAME "CopyFString"; ADDR  $c268; };
+LABEL { NAME "CmpString"; ADDR  $c26b; };
+LABEL { NAME "CmpFString"; ADDR  $c26e; };
+LABEL { NAME "FirstInit"; ADDR  $c271; };
+LABEL { NAME "OpenRecordFile"; ADDR  $c274; };
+LABEL { NAME "CloseRecordFile"; ADDR  $c277; };
+LABEL { NAME "NextRecord"; ADDR  $c27a; };
+LABEL { NAME "PreviousRecord"; ADDR  $c27d; };
+LABEL { NAME "PointRecord"; ADDR  $c280; };
+LABEL { NAME "DeleteRecord"; ADDR  $c283; };
+LABEL { NAME "InsertRecord"; ADDR  $c286; };
+LABEL { NAME "AppendRecord"; ADDR  $c289; };
+LABEL { NAME "ReadRecord"; ADDR  $c28c; };
+LABEL { NAME "WriteRecord"; ADDR  $c28f; };
+LABEL { NAME "SetNextFree"; ADDR  $c292; };
+LABEL { NAME "UpdateRecordFile"; ADDR  $c295; };
+LABEL { NAME "GetPtrCurDkNm"; ADDR  $c298; };
+LABEL { NAME "PromptOn"; ADDR  $c29b; };
+LABEL { NAME "PromptOff"; ADDR  $c29e; };
+LABEL { NAME "OpenDisk"; ADDR  $c2a1; };
+LABEL { NAME "DoInlineReturn"; ADDR  $c2a4; };
+LABEL { NAME "GetNextChar"; ADDR  $c2a7; };
+LABEL { NAME "BitmapClip"; ADDR  $c2aa; };
+LABEL { NAME "FindBAMBit"; ADDR  $c2ad; };
+LABEL { NAME "SetDevice"; ADDR  $c2b0; };
+LABEL { NAME "IsMseInRegion"; ADDR  $c2b3; };
+LABEL { NAME "ReadByte"; ADDR  $c2b6; };
+LABEL { NAME "FreeBlock"; ADDR  $c2b9; };
+LABEL { NAME "ChangeDiskDevice"; ADDR  $c2bc; };
+LABEL { NAME "RstrFrmDialogue"; ADDR  $c2bf; };
+LABEL { NAME "Panic"; ADDR  $c2c2; };
+LABEL { NAME "BitOtherClip"; ADDR  $c2c5; };
+LABEL { NAME "StashRAM"; ADDR  $c2c8; };
+LABEL { NAME "FetchRAM"; ADDR  $c2cb; };
+LABEL { NAME "SwapRAM"; ADDR  $c2ce; };
+LABEL { NAME "VerifyRAM"; ADDR  $c2d1; };
+LABEL { NAME "DoRAMOp"; ADDR  $c2d4; };
+LABEL { NAME "TempHideMouse"; ADDR  $c2d7; };
+LABEL { NAME "SetMousePicture"; ADDR  $c2da; };
+LABEL { NAME "SetNewMode"; ADDR  $c2dd; };
+LABEL { NAME "NormalizeX"; ADDR  $c2e0; };
+LABEL { NAME "MoveBData"; ADDR  $c2e3; };
+LABEL { NAME "SwapBData"; ADDR  $c2e6; };
+LABEL { NAME "VerifyBData"; ADDR  $c2e9; };
+LABEL { NAME "DoBOp"; ADDR  $c2ec; };
+LABEL { NAME "AccessCache"; ADDR  $c2ef; };
+LABEL { NAME "HideOnlyMouse"; ADDR  $c2f2; };
+LABEL { NAME "SetColorMode"; ADDR  $c2f5; };
+LABEL { NAME "ColorCard"; ADDR  $c2f8; };
+LABEL { NAME "ColorRectangle"; ADDR  $c2fb; };
