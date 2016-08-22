@@ -599,11 +599,15 @@ _InvertRectangle:
 ; Same as RecoverRectangle with data after the jsr
 ;---------------------------------------------------------------
 _i_RecoverRectangle:
-	jsr GetInlineDrwParms
-	jsr _RecoverRectangle
+	jsr $C8D2;xxxGetInlineDrwParms
+	jsr $C855;xxx__RecoverRectangle
+.if wheels
+	jmp $C81F
+.else
 	php
 	lda #7
 	jmp DoInlineReturn
+.endif
 
 ;---------------------------------------------------------------
 ; RecoverRectangle                                        $C12D
@@ -632,13 +636,9 @@ _RecoverRectangle:
 _i_ImprintRectangle:
 	jsr $C8D2;xxxGetInlineDrwParms
 	jsr $C855;xxx_ImprintRectangle
-.if wheels
-	jmp $C81F
-.else
 	php
 	lda #7
 	jmp DoInlineReturn
-.endif
 
 ;---------------------------------------------------------------
 ; ImprintRectangle                                        $C250
