@@ -4741,6 +4741,7 @@ LD8FA:  sta     $8000,y                         ; D8FA 99 00 80                 
 LD907:  rts                                     ; D907 60                       `
 
 ; ----------------------------------------------------------------------------
+; SetGDirEntry
 LD908:  jsr     BldGDirEntry                    ; D908 20 F3 C1                  ..
         jsr     GetFreeDirBlk                   ; D90B 20 F6 C1                  ..
         txa                                     ; D90E 8A                       .

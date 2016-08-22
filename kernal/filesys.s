@@ -854,6 +854,30 @@ _SaveFile:
 @2:	rts
 
 GetDAccLength:
+.if wheels
+LD8BA:  jsr     LD8D3                           ; D8BA 20 D3 D8                  ..
+        jsr     LD8C7                           ; D8BD 20 C7 D8                  ..
+        lda     $8146                           ; D8C0 AD 46 81                 .F.
+        cmp     #$01                            ; D8C3 C9 01                    ..
+        bne     LD8D2                           ; D8C5 D0 0B                    ..
+LD8C7:  clc                                     ; D8C7 18                       .
+        lda     #$FE                            ; D8C8 A9 FE                    ..
+        adc     $06                             ; D8CA 65 06                    e.
+        sta     $06                             ; D8CC 85 06                    ..
+        bcc     LD8D2                           ; D8CE 90 02                    ..
+        inc     $07                             ; D8D0 E6 07                    ..
+LD8D2:  rts                                     ; D8D2 60                       `
+
+; ----------------------------------------------------------------------------
+LD8D3:  lda     $8149                           ; D8D3 AD 49 81                 .I.
+        sec                                     ; D8D6 38                       8
+        sbc     $8147                           ; D8D7 ED 47 81                 .G.
+        sta     $06                             ; D8DA 85 06                    ..
+        lda     $814A                           ; D8DC AD 4A 81                 .J.
+        sbc     $8148                           ; D8DF ED 48 81                 .H.
+        sta     $07                             ; D8E2 85 07                    ..
+        rts                                     ; D8E4 60                       `
+.else
 	lda fileHeader+O_GHEND_ADDR
 	sub fileHeader+O_GHST_ADDR
 	sta r2L
@@ -865,6 +889,7 @@ GetDAccLength:
 	bne @2
 @1:	AddVW $fe, r2
 @2:	rts
+.endif
 
 ClearNWrite:
 	ldx #0
