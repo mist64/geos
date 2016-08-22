@@ -832,7 +832,14 @@ _SaveFile:
 	bnex @2
 .endif
 	sta fileHeader+O_GHINFO_TXT
+.if wheels
+        lda     $8413                           ; D89B AD 13 84                 ...
+        sta     $04                             ; D89E 85 04                    ..
+        lda     $8414                           ; D8A0 AD 14 84                 ...
+        sta     $05                             ; D8A3 85 05                    ..
+.else
 	MoveW dirEntryBuf+OFF_GHDR_PTR, r1
+.endif
 	jsr SetFHeadVector
 	jsr PutBlock
 .if wheels
