@@ -962,7 +962,10 @@ Getr0AndInc:
 	inc r0L
 	bne @1
 	inc r0H
-@1:	cmp #0
+@1:
+.if !wheels
+	cmp #0
+.endif
 	rts
 
 ;---------------------------------------------------------------
@@ -978,10 +981,16 @@ Getr0AndInc:
 _GetScanLine:
 	txa
 	pha
+.if !wheels
 	pha
+.endif
 	and #%00000111
 	sta r6H
+.if wheels
+	txa
+.else
 	pla
+.endif
 	lsr
 	lsr
 	lsr
@@ -991,9 +1000,16 @@ _GetScanLine:
 	lda LineTabL,x
 	ora r6H
 	sta r5L
+.if wheels
+	sta r6L                             ; CA47 85 0E                    ..
+.endif
 	lda LineTabH,x
 	sta r5H
+.if wheels
+	sta r6H                             ; CA47 85 0E                    ..
+.else
 	MoveW r5, r6
+.endif
 	pla
 	tax
 	rts
