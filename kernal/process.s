@@ -3,10 +3,12 @@
 ;
 ; Multitasking (processes, sleep, delays)
 
+.include "config.inc"
 .include "const.inc"
 .include "geossym.inc"
 .include "geosmac.inc"
 .include "kernal.inc"
+.include "jumptab.inc"
 
 ; var.s
 .import DelayRtnsL
@@ -101,18 +103,26 @@ _ExecuteProcesses:
 	sta r0L
 	lda TimersRtns+1,x
 	sta r0H
+.if wheels
+	jsr $c34f;xxx
+.else
 	jsr @4
+.endif
 	pla
 	tax
 @2:	dex
 	bpl @1
 @3:	rts
+.if !wheels
 @4:	jmp (r0)
+.endif
 
 ;---------------------------------------------------------------
 ; called from main loop
 ;---------------------------------------------------------------
 _ProcessTimers:
+LCB33 = $CB33
+LCB95 = $CB95
 	lda #0
 	tay
 	tax
@@ -132,16 +142,46 @@ _ProcessTimers:
 	sta TimersTab,Y
 	ora TimersTab+1,Y
 	bne @3
+.if wheels
+        jsr     LCB95                           ; CB55 20 95 CB                  ..
+        jsr     EnableProcess                   ; CB58 20 09 C1                  ..
+.else
 	jsr RProc0
 	lda TimersCMDs,x
 	ora #SET_RUNABLE
 	sta TimersCMDs,x
+.endif
 @3:	iny
 	iny
 	inx
 	cpx NumTimers
 	bne @1
-@4:	rts
+
+@4:
+.if wheels
+	lda     $88B4                           ; CB63 AD B4 88                 ...
+        and     #$30                            ; CB66 29 30                    )0
+        bne     @Y                           ; CB68 D0 1D                    ..
+        jsr     LCB88                           ; CB6A 20 88 CB                  ..
+        beq     @Y                           ; CB6D F0 18                    ..
+        lda     $88B5                           ; CB6F AD B5 88                 ...
+        bne     @X                           ; CB72 D0 03                    ..
+        dec     $88B6                           ; CB74 CE B6 88                 ...
+@X:	dec     $88B5                           ; CB77 CE B5 88                 ...
+        jsr     LCB88                           ; CB7A 20 88 CB                  ..
+        bne     @Y                           ; CB7D D0 08                    ..
+        lda     $88B4                           ; CB7F AD B4 88                 ...
+        ora     #$80                            ; CB82 09 80                    ..
+        sta     $88B4                           ; CB84 8D B4 88                 ...
+@Y:	rts                                     ; CB87 60                       `
+
+; ----------------------------------------------------------------------------
+LCB88:  lda     $88B5                           ; CB88 AD B5 88                 ...
+        ora     $88B6                           ; CB8B 0D B6 88                 ...
+        rts                                     ; CB8E 60                       `
+.else
+	rts
+.endif
 
 ;---------------------------------------------------------------
 ; RestartProcess                                          $C106

@@ -3311,6 +3311,7 @@ LCB4A:  sec                                     ; CB4A 38                       
         sta     $86F1,y                         ; CB4D 99 F1 86                 ...
         ora     $86F2,y                         ; CB50 19 F2 86                 ...
         bne     LCB5B                           ; CB53 D0 06                    ..
+
         jsr     LCB95                           ; CB55 20 95 CB                  ..
         jsr     EnableProcess                   ; CB58 20 09 C1                  ..
 LCB5B:  iny                                     ; CB5B C8                       .

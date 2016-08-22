@@ -943,7 +943,7 @@ _SetPattern:
 .endif
 	sta curPattern
 	lda #0
-	adc #>PatternTab
+	adc #$D0;xxx#>PatternTab
 	sta curPattern+1
 	rts
 
@@ -1028,10 +1028,17 @@ _GetScanLine:
 	lda $CA92,x;xxxLineTabL,x
 	ora r6H
 	sta r6L
+.if wheels
+	sta r5L
+.endif
 	lda $CAAB,x;xxxLineTabH,x
 	subv >(SCREEN_BASE-BACK_SCR_BASE)
 	sta r6H
+.if wheels
+	sta r5H
+.else
 	MoveW r6, r5
+.endif
 	pla
 	tax
 	rts
