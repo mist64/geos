@@ -997,13 +997,13 @@ _GetScanLine:
 	tax
 	bbrf 7, dispBufferOn, @2 ; ST_WR_FORE
 	bbsf 6, dispBufferOn, @1 ; ST_WR_BACK
-	lda $CA92;xxxLineTabL,x
+	lda $CA92,x;xxxLineTabL,x
 	ora r6H
 	sta r5L
 .if wheels
 	sta r6L                             ; CA47 85 0E                    ..
 .endif
-	lda $CAAB;xxxLineTabH,x
+	lda $CAAB,x;xxxLineTabH,x
 	sta r5H
 .if wheels
 	sta r6H                             ; CA47 85 0E                    ..
@@ -1013,11 +1013,11 @@ _GetScanLine:
 	pla
 	tax
 	rts
-@1:	lda LineTabL,x
+@1:	lda $CA92,x;xxxLineTabL,x
 	ora r6H
 	sta r5L
 	sta r6L
-	lda LineTabH,x
+	lda $CAAB,x;xxxLineTabH,x
 	sta r5H
 	subv >(SCREEN_BASE-BACK_SCR_BASE)
 	sta r6H
@@ -1025,10 +1025,10 @@ _GetScanLine:
 	tax
 	rts
 @2:	bbrf 6, dispBufferOn, @3 ; ST_WR_BACK
-	lda LineTabL,x
+	lda $CA92,x;xxxLineTabL,x
 	ora r6H
 	sta r6L
-	lda LineTabH,x
+	lda $CAAB,x;xxxLineTabH,x
 	subv >(SCREEN_BASE-BACK_SCR_BASE)
 	sta r6H
 	MoveW r6, r5
