@@ -3731,12 +3731,14 @@ LCE26:  lda     $06                             ; CE26 A5 06                    
         pha                                     ; CE34 48                       H
         lda     $07                             ; CE35 A5 07                    ..
         pha                                     ; CE37 48                       H
+
         lda     $03                             ; CE38 A5 03                    ..
         cmp     $05                             ; CE3A C5 05                    ..
         bne     LCE42                           ; CE3C D0 04                    ..
         lda     L0002                           ; CE3E A5 02                    ..
         cmp     $04                             ; CE40 C5 04                    ..
 LCE42:  bcc     LCE72                           ; CE42 90 2E                    ..
+
         ldy     #$00                            ; CE44 A0 00                    ..
         lda     $07                             ; CE46 A5 07                    ..
         beq     LCE59                           ; CE48 F0 0F                    ..

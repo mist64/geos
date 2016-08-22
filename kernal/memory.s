@@ -232,6 +232,15 @@ _MoveData:
 	PushW r0
 	PushB r1H
 	PushB r2H
+
+.if wheels
+        lda     $03                             ; CE38 A5 03                    ..
+        cmp     $05                             ; CE3A C5 05                    ..
+        bne     @X                           ; CE3C D0 04                    ..
+        lda     r2L                           ; CE3E A5 02                    ..
+        cmp     $04                             ; CE40 C5 04                    ..
+@X:	bcc     @8                              ; CE42 90 2E                    ..
+.else
 	PushB r3L
 .if (REUPresent)
 	lda sysRAMFlg
@@ -248,6 +257,7 @@ _MoveData:
 @1:	CmpW r0, r1
 @2:	bcs @3
 	bcc @8
+.endif
 @3:	ldy #0
 	lda r2H
 	beq @5
@@ -265,7 +275,10 @@ _MoveData:
 	sta (r1),Y
 	iny
 	bra @5
-@6:	PopB r3L
+@6:
+.if !wheels
+	PopB r3L
+.endif
 	PopB r2H
 	PopB r1H
 	PopW r0
