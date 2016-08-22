@@ -716,21 +716,44 @@ _GetFHdrInfo:
 	ldy #OFF_GHDR_PTR
 	lda (r9),y
 	sta r1L
+.if wheels
+        sta     $8300                           ; D76F 8D 00 83                 ...
+.endif
 	iny
 	lda (r9),y
 	sta r1H
+.if wheels
+        sta     $8301                           ; D777 8D 01 83                 ...
+.else
 	MoveW r1, fileTrScTab
-;xxx	jsr SetFHeadVector
+.endif
+	jsr LD69A;xxxSetFHeadVector
 	jsr GetBlock
+.if wheels
+        bne     @1                           ; D780 D0 08                    ..
+.else
 	bnex @1
+.endif
 	ldy #OFF_DE_TR_SC
+.if wheels
+        jsr     LD78B                           ; D784 20 8B D7                  ..
+.else
 	lda (r9),y
 	sta r1L
 	iny
 	lda (r9),y
 	sta r1H
+.endif
 	jsr GetStartHAddr
 @1:	rts
+
+.if wheels
+LD78B:  lda     ($14),y                         ; D78B B1 14                    ..
+        sta     $04                             ; D78D 85 04                    ..
+        iny                                     ; D78F C8                       .
+        lda     ($14),y                         ; D790 B1 14                    ..
+        sta     $05                             ; D792 85 05                    ..
+.endif
 
 GetHeaderFileName:
 	ldx #0
@@ -743,7 +766,7 @@ GetHeaderFileName:
 	iny
 	lda (r5),y
 	sta r1H
-;xxx	jsr SetFHeadVector
+	jsr SetFHeadVector
 	jsr GetBlock
 	bnex @4
 	tay
@@ -785,17 +808,17 @@ _SaveFile:
 	jsr GetDirHead
 	bnex @2
 	jsr GetDAccLength
-;xxx	jsr SetBufTSVector
+	jsr SetBufTSVector
 	jsr BlkAlloc
 	bnex @2
-;xxx	jsr SetBufTSVector
+	jsr SetBufTSVector
 	jsr SetGDirEntry
 	bnex @2
 	jsr PutDirHead
 	bnex @2
 	sta fileHeader+O_GHINFO_TXT
 	MoveW dirEntryBuf+OFF_GHDR_PTR, r1
-;xxx	jsr SetFHeadVector
+	jsr SetFHeadVector
 	jsr PutBlock
 	bnex @2
 	jsr ClearNWrite
@@ -1318,7 +1341,7 @@ SetVLIRTable:
 	sta r1L
 	lda RecordTableTS+1
 	sta r1H
-;xxx	jsr SetFHeadVector
+	jsr SetFHeadVector
 	ldx #NULL
 @1:	rts
 
@@ -1389,13 +1412,13 @@ PutVLIRChainTS:
 	rts
 
 WriteVLIRChain:
-;xxx	jsr SetBufTSVector
+	jsr SetBufTSVector
 	PushW r7
 	jsr BlkAlloc
 	PopW r7
 	bnex @1
 	PushB r2L
-;xxx	jsr SetBufTSVector
+	jsr SetBufTSVector
 	jsr WriteFile
 	PopB r2L
 	bnex @1
@@ -1465,4 +1488,6 @@ DeskTopLgh:
 .if wheels
 ;xxx
 GetStartHAddr:
+SetBufTSVector:
+SetFHeadVector:
 .endif
