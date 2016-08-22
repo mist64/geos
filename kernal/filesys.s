@@ -744,7 +744,7 @@ _GetFHdrInfo:
 	lda (r9),y
 	sta r1H
 .endif
-	jsr GetStartHAddr
+	jsr $D68F;xxxGetStartHAddr
 @1:	rts
 
 .if wheels
@@ -753,6 +753,7 @@ LD78B:  lda     ($14),y                         ; D78B B1 14                    
         iny                                     ; D78F C8                       .
         lda     ($14),y                         ; D790 B1 14                    ..
         sta     $05                             ; D792 85 05                    ..
+	rts
 .endif
 
 GetHeaderFileName:
