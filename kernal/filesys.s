@@ -180,9 +180,9 @@ DkNmTabH:
 
 _GetPtrCurDkNm:
 	ldy curDrive
-	lda DkNmTabL-8,Y
+	lda $c073,y;xxxDkNmTabL-8,Y
 	sta zpage,x
-	lda DkNmTabH-8,Y
+	lda $c077,y;xxxDkNmTabH-8,Y
 	sta zpage+1,x
 	rts
 
