@@ -895,7 +895,7 @@ DPYD1:
 @1:	rts
 
 GrStSetCoords:
-	jsr GetCoords
+	jsr $CA13;xxxGetCoords
 	cmp GraphPenY
 	bcs @1
 	sta r2L
@@ -936,7 +936,11 @@ _SetPattern:
 	asl
 	asl
 	asl
+.if wheels
+;xxx	.assert <PatternTab = 0, error, "PatternTab must be page-aligned!"
+.else
 	adc #<PatternTab
+.endif
 	sta curPattern
 	lda #0
 	adc #>PatternTab
