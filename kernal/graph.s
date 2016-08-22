@@ -845,17 +845,25 @@ _DoESC_PutString:
 	sta r11H
 	jsr $CA22;xxxGetr0AndInc
 	sta r1H
+.if wheels
+	jmp $E617;xxx_PutString
+.else
 	jsr _PutString
 	rts
+.endif
 
 _DoFrame_RecTo:
-	jsr GrStSetCoords
+	jsr $C9B4;xxxGrStSetCoords
 	lda #$FF
 	jmp _FrameRectangle
 
 _DoPenXYDelta:
 	ldx #1
+.if wheels
+	.byte $2c
+.else
 	bne DPXD0
+.endif
 _DoPenXDelta:
 	ldx #0
 DPXD0:
