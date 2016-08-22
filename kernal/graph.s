@@ -823,25 +823,27 @@ _DoLineTo:
 	sty r4H
 	sec
 	lda #0
-	jmp _DrawLine
+	jmp $E977;xxx_DrawLine
 
 _DoRectangleTo:
-	jsr GrStSetCoords
+	jsr $C9B4;xxxGrStSetCoords
 	jmp _Rectangle
 
 _DoNothing:
+.if !wheels
 	rts
+.endif
 
 _DoNewPattern:
-	jsr Getr0AndInc
-	jmp _SetPattern
+	jsr $CA22;xxxGetr0AndInc
+	jmp $CA07;xxx_SetPattern
 
 _DoESC_PutString:
-	jsr Getr0AndInc
+	jsr $CA22;xxxGetr0AndInc
 	sta r11L
-	jsr Getr0AndInc
+	jsr $CA22;xxxGetr0AndInc
 	sta r11H
-	jsr Getr0AndInc
+	jsr $CA22;xxxGetr0AndInc
 	sta r1H
 	jsr _PutString
 	rts
