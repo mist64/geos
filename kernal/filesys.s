@@ -849,7 +849,7 @@ _SaveFile:
 .endif
 	jsr $D8E5;xxxClearNWrite
 	bnex @2
-	jsr GetStartHAddr
+	jsr $D68F;xxxGetStartHAddr
 	jsr WriteFile
 @2:	rts
 
