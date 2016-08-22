@@ -49,6 +49,7 @@
 .segment "load1"
 
 _EnterDeskTop:
+.if !wheels
 	sei
 	cld
 	ldx #$ff
@@ -110,8 +111,47 @@ EDT6:
 	LoadB r0L, NULL
 	MoveW fileHeader+O_GHST_VEC, r7
 .endif
+.endif
+
+.if wheels
+L0002 = $0002
+LCA26 = $ca26
+LC064 = $c064
+LC5FA = $c5fa
+LE62A = $e62a
+LC54E = $c54e
+LC2FE = $c2fe
+LC623 = $c623
+L5003 = $5003
+L9D80 = $9d80
+LC53D = $c53d
+
+LC326:  jsr     LC53D                           ; C326 20 3D C5                  =.
+        lda     #$CA                            ; C329 A9 CA                    ..
+        jsr     L9D80                           ; C32B 20 80 9D                  ..
+        jsr     L5003                           ; C32E 20 03 50                  .P
+.endif
 
 _StartAppl:
+.if wheels
+	sei                                     ; C331 78                       x
+        cld                                     ; C332 D8                       .
+        ldx     #$FF                            ; C333 A2 FF                    ..
+        txs                                     ; C335 9A                       .
+        jsr     LC623                           ; C336 20 23 C6                  #.
+        jsr     LC2FE                           ; C339 20 FE C2                  ..
+        jsr     LC54E                           ; C33C 20 4E C5                  N.
+        jsr     LE62A                           ; C33F 20 2A E6                  *.
+        jsr     LC5FA                           ; C342 20 FA C5                  ..
+        ldx     $11                             ; C345 A6 11                    ..
+        lda     $10                             ; C347 A5 10                    ..
+        jmp     LC064                           ; C349 4C 64 C0                 Ld.
+
+; ----------------------------------------------------------------------------
+LC34C:  jsr     LCA26                           ; C34C 20 26 CA                  &.
+LC34F:  jmp     (L0002)                         ; C34F 6C 02 00                 l..
+
+.else
 	sei
 	cld
 	ldx #$FF
@@ -153,6 +193,8 @@ _EnterDT_Str1:
 	.byte "deskTop"
 .endif
 	.byte " V1.5 or higher", NULL
+
+.endif
 
 .segment "load2"
 
