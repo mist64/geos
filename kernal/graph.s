@@ -567,7 +567,7 @@ _Rectangle:
 	and #$07
 	tay
 	lda (curPattern),Y
-	jsr $C681;xxx_HorizontalLine
+	jsr _HorizontalLine
 	lda r11L
 	inc r11L
 	cmp r2H
@@ -586,7 +586,7 @@ _Rectangle:
 ;---------------------------------------------------------------
 _InvertRectangle:
 	MoveB r2L, r11L
-@1:	jsr _InvertLine
+@1:	jsr $C681;xxx_InvertLine
 	lda r11L
 	inc r11L
 	cmp r2H
@@ -630,11 +630,15 @@ _RecoverRectangle:
 ; Same as ImprintRectangle with data after the jsr
 ;---------------------------------------------------------------
 _i_ImprintRectangle:
-	jsr GetInlineDrwParms
-	jsr _ImprintRectangle
+	jsr $C8D2;xxxGetInlineDrwParms
+	jsr $C855;xxx_ImprintRectangle
+.if wheels
+	jmp $C81F
+.else
 	php
 	lda #7
 	jmp DoInlineReturn
+.endif
 
 ;---------------------------------------------------------------
 ; ImprintRectangle                                        $C250
