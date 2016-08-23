@@ -105,7 +105,7 @@ DoMenu1:
 	sta menuStackL,x
 	lda r0H
 	sta menuStackH,x
-	jsr GetMenuDesc
+	jsr $EE12;xxxGetMenuDesc
 	sec
 DoMenu1_1:
 	php
@@ -192,7 +192,7 @@ _DoPreviousMenu:
 	jsr _RecoverMenu
 	dec menuNumber
 DoPrvMn1:
-	jsr GetMenuDesc
+	jsr $EE12;xxxGetMenuDesc
 	clc
 	jmp DoMenu1_1
 
