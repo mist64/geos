@@ -1260,7 +1260,6 @@ LDAB8:  rts                                     ; DAB8 60                       
 	bnex @1
 	jsr FreeChainByTab
 @1:	rts
-.endif
 
 FreeChainByTab:
 	PushW r3
@@ -1274,12 +1273,18 @@ FreeChainByTab:
 	lda (r3),y
 	sta r6H
 	jsr FreeBlock
-	bnex FreeChainByTab_rts
+	bnex @3
 	AddVW 2, r3
 	bra @1
-@2:	jsr PutDirHead
-FreeChainByTab_rts:
+@2:
+.if wheels
+	jmp PutDirHead
+.else
+	jsr PutDirHead
+.endif
+@3:
 	rts
+.endif
 
 _RenameFile:
 	PushW r0
