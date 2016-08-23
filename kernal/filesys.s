@@ -1757,10 +1757,17 @@ GetVLIRChainTS:
 	lda curRecord
 	asl
 	tay
+.if wheels
+	lda fileHeader+3,y
+	sta r1H
+	lda fileHeader+2,y
+	sta r1L
+.else
 	lda fileHeader+2,y
 	sta r1L
 	lda fileHeader+3,y
 	sta r1H
+.endif
 	rts
 
 PutVLIRChainTS:
@@ -1774,13 +1781,13 @@ PutVLIRChainTS:
 	rts
 
 WriteVLIRChain:
-	jsr SetBufTSVector
+	jsr $D686;xxxSetBufTSVector
 	PushW r7
 	jsr BlkAlloc
 	PopW r7
 	bnex @1
 	PushB r2L
-	jsr SetBufTSVector
+	jsr $D686;xxxSetBufTSVector
 	jsr WriteFile
 	PopB r2L
 	bnex @1
