@@ -88,6 +88,7 @@ _GetRealSize:
 .endif
 
 .if wheels
+FontTVar1 = $8886
 FontTVar2 = $8887
 .endif
 
@@ -333,13 +334,13 @@ Font_2:
 	add r12L
 	tax
 	lda Font_tab2,x
-	addv <base
+	addv $22;xxx<base
 	tay
 	lda #0
-	adc #>base
+	adc #$E2;xxx#>base
 	bne @E
-@D:	lda #>FontSH5
-	ldy #<FontSH5
+@D:	lda #$E2;xxx#>FontSH5
+	ldy #$82;xxx#<FontSH5
 @E:	sta r12H
 	sty r12L
 clc_rts:
@@ -347,6 +348,14 @@ clc_rts:
 	rts
 
 Font_tab2:
+.if wheels
+LDFD7:  .byte   $B4,$30,$31,$32,$33,$34,$35,$36 ; DFD7 B4 30 31 32 33 34 35 36  .0123456
+        .byte   $07,$06,$05,$04,$03,$02,$01,$00 ; DFDF 07 06 05 04 03 02 01 00  ........
+        .byte   $B4,$3A,$3F,$44,$49,$4E,$53,$58 ; DFE7 B4 3A 3F 44 49 4E 53 58  .:?DINSX
+        .byte   $2D,$28,$23,$1E,$19,$14,$0F,$0A ; DFEF 2D 28 23 1E 19 14 0F 0A  -(#.....
+        .byte   $00,$00,$00,$00,$00,$00,$00,$00 ; DFF7 00 00 00 00 00 00 00 00  ........
+        .byte   $00                             ; DFFF 00                       .
+.else
 	.byte <(noop-base)
 	.byte <(b7-base)
 	.byte <(b6-base)
@@ -379,6 +388,7 @@ Font_tab2:
 	.byte <(e5-base)
 	.byte <(e6-base)
 	.byte <(e7-base)
+.endif
 
 ; called if currentMode & (SET_UNDERLINE | SET_ITALIC)
 Font_3:
@@ -806,9 +816,9 @@ FontGt4_2:
 	sta Z45+2,y
 	beq FontGt2_1
 
+.if !wheels
 FontTVar1:
 	.byte 0
-.if !wheels
 FontTVar2:
 .if cbmfiles
 	; This should be initialized to 0, and will
