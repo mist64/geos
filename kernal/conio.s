@@ -264,8 +264,12 @@ DoESC_GRAPHICS:
 	ldx #r0
 	jsr Ddec
 	ldx #r0
+.if wheels
+	jmp Ddec
+.else
 	jsr Ddec
 	rts
+.endif
 
 _i_PutString:
 	PopB r0L
@@ -319,12 +323,14 @@ _LoadCharSet:
 	AddW r0, curIndexTable
 	AddW r0, cardDataPntr
 
+.if !wheels
 .if (trap)
 	; copy high-byte of serial
 	lda SerialHiCompare
 	bne @2
 	jsr GetSerialNumber2
 	sta SerialHiCompare
+.endif
 .endif
 @2:	rts
 
@@ -378,8 +384,8 @@ _GetString:
 	bbrf 7, stringMargCtrl, @1
 	MoveW r4, StringFaultVec
 @1:	lda curHeight
-	jsr _InitTextPrompt
-	jmp _PromptOn
+	jsr $E822;xxx_InitTextPrompt
+	jmp $E7E4;xxx_PromptOn
 
 GSStringFault:
 	MoveB stringLen, stringMaxLen
