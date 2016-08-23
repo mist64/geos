@@ -5445,6 +5445,7 @@ LDDE1:  inx                                     ; DDE1 E8                       
         stx     $0C                             ; DDE2 86 0C                    ..
         clv                                     ; DDE4 B8                       .
         bvc     LDDB6                           ; DDE5 50 CF                    P.
+
 LDDE7:  ldy     $05                             ; DDE7 A4 05                    ..
         iny                                     ; DDE9 C8                       .
         sty     $87FE                           ; DDEA 8C FE 87                 ...

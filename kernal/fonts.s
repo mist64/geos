@@ -63,6 +63,7 @@ ID110:
 ; Destroyed: nothing
 ;---------------------------------------------------------------
 _GetRealSize:
+.if !wheels
 	subv 32
 	jsr GetChWdth1
 	tay
@@ -84,6 +85,11 @@ _GetRealSize:
 	rts
 @2:	lda baselineOffset
 	rts
+.endif
+
+.if wheels
+FontTVar2 = $8887
+.endif
 
 Font_1:
 	ldy r1H
@@ -797,6 +803,7 @@ FontGt4_2:
 
 FontTVar1:
 	.byte 0
+.if !wheels
 FontTVar2:
 .if cbmfiles
 	; This should be initialized to 0, and will
@@ -807,4 +814,5 @@ FontTVar2:
 	.word $34
 .else
 	.word 0
+.endif
 .endif
