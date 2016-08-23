@@ -879,7 +879,9 @@ FontGt4_2:
 	sta Z45+2,y
 	beq FontGt2_1
 
-.if !wheels
+.if wheels
+	.byte 0, 0, 0
+.else
 FontTVar1:
 	.byte 0
 FontTVar2:
