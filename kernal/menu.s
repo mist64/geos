@@ -200,7 +200,12 @@ _ReDoMenu:
 _GotoFirstMenu:
 	php
 	sei
-@1:	CmpBI menuNumber, 0
+@1:
+.if wheels
+	lda menuNumber
+.else
+	CmpBI menuNumber, 0
+.endif
 	beq @2
 	jsr _DoPreviousMenu
 	bra @1
@@ -209,7 +214,7 @@ _GotoFirstMenu:
 
 _DoPreviousMenu:
 	jsr _MouseOff
-	jsr _RecoverMenu
+	jsr $EF68;xxx_RecoverMenu
 	dec menuNumber
 DoPrvMn1:
 	jsr $EE12;xxxGetMenuDesc
@@ -355,7 +360,7 @@ Menu_4:
 ;---------------------------------------------------------------
 _RecoverAllMenus:
 	jsr GetMenuDesc
-	jsr _RecoverMenu
+	jsr $EF68;xxx_RecoverMenu
 	dec menuNumber
 	bpl _RecoverAllMenus
 	lda #0
