@@ -400,12 +400,12 @@ ProcessCursor:
 	and #$3f
 	bne @2
 	bbrf 6, alphaFlag, @1
-	jmp _PromptOff
-@1:	jmp _PromptOn
+	jmp $E808;xxx_PromptOff
+@1:	jmp $E7E4;xxx_PromptOn
 @2:	rts
 
 GSSkeyVector:
-	jsr _PromptOff
+	jsr $E808;xxx_PromptOff
 	MoveW stringX, r11
 	MoveB stringY, r1H
 	ldy stringLen
@@ -428,7 +428,12 @@ GSSkeyVector:
 	beq @5
 	sta (string),y
 	PushB dispBufferOn
+.if wheels
+	and #$20
+        beq @3
+.else
 	bbrf 5, dispBufferOn, @3
+.endif
 	LoadB dispBufferOn, (ST_WR_FORE | ST_WRGS_FORE)
 @3:	PushB r1H
 	clc
@@ -445,11 +450,13 @@ GSSkeyVector:
 	ldx r11L
 	stx stringX
 	bra @5
-@4:	jsr GSHelp1
+@4:	jsr $E7A9;xxxGSHelp1
+.if !wheels
 	bra @5
-@5:	jmp _PromptOn
+.endif
+@5:	jmp $E7E4;xxx_PromptOn
 @6:	sei
-	jsr _PromptOff
+	jsr $E808;xxx_PromptOff
 	lda #%01111111
 	and alphaFlag
 	sta alphaFlag
