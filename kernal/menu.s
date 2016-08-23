@@ -134,11 +134,11 @@ LC88D = $C88D
         sta     $18                             ; ED51 85 18                    ..
 .endif
 	lda #$ff
-	jsr _FrameRectangle
+	jsr $C67C;xxx_FrameRectangle
 @Y:	PopW r11
-	jsr Menu_1
+	jsr $EE4A;xxxMenu_1
 .if ((menuVSeparator | menuHSeparator)<>0)
-	jsr DrawMenu
+	jsr $EF7C;xxxDrawMenu
 .endif
 	PopB dispBufferOn
 	plp
