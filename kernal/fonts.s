@@ -221,11 +221,16 @@ Font_18:
 	sec
 	rts
 
+.if wheels
+Font_tabL:  .byte   $DC,$EA,$01,$1B                 ; DEF2 DC EA 01 1B              ....
+Font_tabH:  .byte   $E2,$E2,$E3,$E3                 ; DEF6 E2 E2 E3 E3              ....
+.else
 .define Font_tab FontGt1, FontGt2, FontGt3, FontGt4
 Font_tabL:
 	.lobytes Font_tab
 Font_tabH:
 	.hibytes Font_tab
+.endif
 
 Font_2:
 	ldx r1H
