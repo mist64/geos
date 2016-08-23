@@ -182,14 +182,19 @@ LC88D = $C88D
 	ror r11L
 @3:	sec
 @4:	bbrf MOUSEON_BIT, mouseOn, @5
+.if wheels
+        lda     #$60                            ; EDC8 A9 60                    .`
+        .byte   $2C                             ; EDCA 2C                       ,
+.else
 	smbf ICONSON_BIT, mouseOn
+.endif
 @5:	smbf MENUON_BIT, mouseOn
 	jmp _StartMouseMode
 
 ;---------------------------------------------------------------
 _ReDoMenu:
 	jsr _MouseOff
-	jmp DoPrvMn1
+	jmp $EDF2;xxxDoPrvMn1
 
 ;---------------------------------------------------------------
 _GotoFirstMenu:
