@@ -300,7 +300,7 @@ Menu_1:
 	and #%00011111
 	cmp r10H
 	bne @1
-	jsr MenuRestoreFont
+	jsr $F097;xxxMenuRestoreFont
 	jmp $EF20;xxxMenu_3
 
 Menu_2:
