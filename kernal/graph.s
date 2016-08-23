@@ -1232,7 +1232,7 @@ BitmapDecode:
 	and #%01111111
 	beq @2
 	bbrf 7, r3L, @1
-	jsr BitmapDecode2
+	jsr $E45F;xxxBitmapDecode2
 	dec r3L
 	rts
 @1:	lda r7H
@@ -1241,24 +1241,32 @@ BitmapDecode:
 @2:	lda r4L
 	bne @3
 	bbrf 7, r9H, @3
-	jsr IndirectR14
-@3:	jsr BitmapDecode2
+	jsr $E45C;xxxIndirectR14
+@3:	jsr $E45F;xxxBitmapDecode2
 	sta r3L
 	cmp #$dc
 	bcc @4
 	sbc #$dc
 	sta r7L
 	sta r4H
-	jsr BitmapDecode2
+	jsr $E45F;xxxBitmapDecode2
 	subv 1
 	sta r4L
 	MoveW r0, r8
 	bra @2
 @4:	cmp #$80
 	bcs BitmapDecode
-	jsr BitmapDecode2
+	jsr $E45F;xxxBitmapDecode2
 	sta r7H
 	bra BitmapDecode
+
+.if wheels
+IndirectR13:
+	jmp (r13)
+
+IndirectR14:
+	jmp (r14)
+.endif
 
 BitmapDecode2:
 	bit r9H
@@ -1283,11 +1291,13 @@ BitmapDecode2:
 	dec r4L
 @3:	rts
 
+.if !wheels
 IndirectR13:
 	jmp (r13)
 
 IndirectR14:
 	jmp (r14)
+.endif
 
 .segment "graph4"
 
