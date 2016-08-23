@@ -192,15 +192,31 @@ CheckMsePos:
 @A:	smbf OFFMENU_BIT, faultData
 @B:	rts
 
+.if wheels
+LC4A1 = $C4A1
+LEC75:  ldy     #$05                            ; EC75 A0 05                    ..
+LEC77:  lda     LC4A1,y                         ; EC77 B9 A1 C4                 ...
+        sta     $84B8,y                         ; EC7A 99 B8 84                 ...
+        dey                                     ; EC7D 88                       .
+        bpl     LEC77                           ; EC7E 10 F7                    ..
+        rts                                     ; EC80 60                       `
+.endif
+
 CheckClickPos:
 	lda mouseData
 	bmi @4
+.if wheels
+        bit     $30                             ; EC86 24 30                    $0
+        bpl     @4
+        bvc     @3                           ; EC8A 50 2F                    P/
+.else
 	lda mouseOn
 	and #SET_MSE_ON
 	beq @4
 	lda mouseOn
 	and #SET_MENUON
 	beq @3
+.endif
 	CmpB mouseYPos, menuTop
 	bcc @3
 	cmp menuBottom
@@ -211,22 +227,38 @@ CheckClickPos:
 	CmpW mouseXPos, menuRight
 	beq @2
 	bcs @3
-@2:	jmp Menu_5
+@2:	jmp $EFBA;xxxMenu_5
 @3:	bbrf ICONSON_BIT, mouseOn, @4
-	jmp ProcessClick
+	jmp $F0FE;xxxProcessClick
 @4:	lda otherPressVec
 	ldx otherPressVec+1
 	jmp CallRoutine
 
+.if !wheels
 	rts ; ???
+.endif
 
 DoMouseFault:
+.if wheels
+	bit $30
+	bpl @3
+	bvc @3
+.else
 	lda #$c0
 	bbrf MOUSEON_BIT, mouseOn, @3
 	bvc @3
+.endif
 	lda menuNumber
 	beq @3
 	bbsf OFFMENU_BIT, faultData, @2
+
+.if wheels
+        lda     #$80                            ; ECDF A9 80                    ..
+        bit     $86C0                           ; ECE1 2C C0 86                 ,..
+        bmi     @X                           ; ECE4 30 02                    0.
+        lda     #$20                            ; ECE6 A9 20                    .
+@X:	and     $84B6                           ; ECE8 2D B6 84                 -..
+.else
 	ldx #SET_OFFTOP
 	lda #$C0
 	tay
@@ -234,8 +266,11 @@ DoMouseFault:
 	ldx #SET_OFFLEFT
 @1:	txa
 	and faultData
+.endif
 	bne @2
+.if !wheels
 	tya
+.endif
 	bbsf 6, menuOptNumber, @3
 @2:	jsr _DoPreviousMenu
 @3:	rts

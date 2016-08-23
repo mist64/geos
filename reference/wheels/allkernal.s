@@ -7577,11 +7577,13 @@ LECC4:  lda     $84A9                           ; ECC4 AD A9 84                 
         lda     $84B6                           ; ECD8 AD B6 84                 ...
         and     #$08                            ; ECDB 29 08                    ).
         bne     LECF2                           ; ECDD D0 13                    ..
+
         lda     #$80                            ; ECDF A9 80                    ..
         bit     $86C0                           ; ECE1 2C C0 86                 ,..
         bmi     LECE8                           ; ECE4 30 02                    0.
-        lda     #$20                            ; ECE6 A9 20                    . 
+        lda     #$20                            ; ECE6 A9 20                    .
 LECE8:  and     $84B6                           ; ECE8 2D B6 84                 -..
+
         bne     LECF2                           ; ECEB D0 05                    ..
         bit     $86C0                           ; ECED 2C C0 86                 ,..
         bvs     LECF5                           ; ECF0 70 03                    p.
