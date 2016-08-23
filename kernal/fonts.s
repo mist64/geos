@@ -62,8 +62,8 @@ ID110:
 ;            a   baseline offset
 ; Destroyed: nothing
 ;---------------------------------------------------------------
-_GetRealSize:
 .if !wheels
+_GetRealSize:
 	subv 32
 	jsr GetChWdth1
 	tay
@@ -388,6 +388,37 @@ LDFD7:  .byte   $B4,$30,$31,$32,$33,$34,$35,$36 ; DFD7 B4 30 31 32 33 34 35 36  
 	.byte <(e5-base)
 	.byte <(e6-base)
 	.byte <(e7-base)
+.endif
+
+.if wheels
+_GetRealSize:
+LE661 = $E661
+LE000:  sec                                     ; E000 38                       8
+        sbc     #$20                            ; E001 E9 20                    . 
+        jsr     LE661                           ; E003 20 61 E6                  a.
+        tay                                     ; E006 A8                       .
+        txa                                     ; E007 8A                       .
+        ldx     $29                             ; E008 A6 29                    .)
+        pha                                     ; E00A 48                       H
+        and     #$40                            ; E00B 29 40                    )@
+        beq     LE010                           ; E00D F0 01                    ..
+        iny                                     ; E00F C8                       .
+LE010:  pla                                     ; E010 68                       h
+        and     #$08                            ; E011 29 08                    ).
+        beq     LE01F                           ; E013 F0 0A                    ..
+        inx                                     ; E015 E8                       .
+        inx                                     ; E016 E8                       .
+        iny                                     ; E017 C8                       .
+        iny                                     ; E018 C8                       .
+        lda     $26                             ; E019 A5 26                    .&
+        clc                                     ; E01B 18                       .
+        adc     #$02                            ; E01C 69 02                    i.
+        rts                                     ; E01E 60                       `
+
+; ----------------------------------------------------------------------------
+LE01F:  lda     $26                             ; E01F A5 26                    .&
+        rts                                     ; E021 60                       `
+
 .endif
 
 ; called if currentMode & (SET_UNDERLINE | SET_ITALIC)
