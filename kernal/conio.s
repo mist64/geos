@@ -579,7 +579,11 @@ CalcDecimal:
 	bcc @3
 	sta r0H
 	iny
+.if wheels
+	bne @2
+.else
 	bra @2
+.endif
 @3:	lda r0L
 	adc DecTabL,x
 	sta r0L
@@ -627,8 +631,13 @@ DecTabH:
 ;---------------------------------------------------------------
 _PutDecimal:
 	jsr CalcDecimal
+.if wheels
+	lda r2L
+	bmi @1
+.else
 	bbsf 7, r2L, @1
 	lda r2L
+.endif
 	and #$3f
 	sub r3H
 	add r11L
