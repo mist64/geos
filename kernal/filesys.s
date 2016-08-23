@@ -1206,20 +1206,61 @@ LDA5E:  plp                                     ; DA5E 28                       
 FindNDelete:
 	MoveW r0, r6
 	jsr FindFile
+.if wheels
+	bnex LDAB8
+.else
 	bnex @1
 	lda #0
+.endif
 	tay
 	sta (r5),y
+.if wheels
+	jmp WriteBuff
+.else
 	jsr WriteBuff
 @1:	rts
+.endif
 
 _FastDelFile:
 	PushW r3
 	jsr FindNDelete
 	PopW r3
+.if wheels
+        txa                                     ; DA83 8A                       .
+        bne     LDAB8                           ; DA84 D0 32                    .2
+        lda     $09                             ; DA86 A5 09                    ..
+        pha                                     ; DA88 48                       H
+        lda     $08                             ; DA89 A5 08                    ..
+        pha                                     ; DA8B 48                       H
+        jsr     GetDirHead                      ; DA8C 20 47 C2                  G.
+        pla                                     ; DA8F 68                       h
+        sta     $08                             ; DA90 85 08                    ..
+        pla                                     ; DA92 68                       h
+        sta     $09                             ; DA93 85 09                    ..
+LDA95:  ldy     #$00                            ; DA95 A0 00                    ..
+        lda     ($08),y                         ; DA97 B1 08                    ..
+        beq     LDAB5                           ; DA99 F0 1A                    ..
+        sta     $0E                             ; DA9B 85 0E                    ..
+        iny                                     ; DA9D C8                       .
+        lda     ($08),y                         ; DA9E B1 08                    ..
+        sta     $0F                             ; DAA0 85 0F                    ..
+        jsr     FreeBlock                       ; DAA2 20 B9 C2                  ..
+        txa                                     ; DAA5 8A                       .
+        bne     LDAB8                           ; DAA6 D0 10                    ..
+        clc                                     ; DAA8 18                       .
+        lda     #$02                            ; DAA9 A9 02                    ..
+        adc     $08                             ; DAAB 65 08                    e.
+        sta     $08                             ; DAAD 85 08                    ..
+        bcc     LDA95                           ; DAAF 90 E4                    ..
+        inc     $09                             ; DAB1 E6 09                    ..
+        bne     LDA95                           ; DAB3 D0 E0                    ..
+LDAB5:  jmp     PutDirHead                      ; DAB5 4C 4A C2                 LJ.
+LDAB8:  rts                                     ; DAB8 60                       `
+.else
 	bnex @1
 	jsr FreeChainByTab
 @1:	rts
+.endif
 
 FreeChainByTab:
 	PushW r3
@@ -1233,11 +1274,12 @@ FreeChainByTab:
 	lda (r3),y
 	sta r6H
 	jsr FreeBlock
-	bnex @3
+	bnex FreeChainByTab_rts
 	AddVW 2, r3
 	bra @1
 @2:	jsr PutDirHead
-@3:	rts
+FreeChainByTab_rts:
+	rts
 
 _RenameFile:
 	PushW r0
