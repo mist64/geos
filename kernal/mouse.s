@@ -100,11 +100,11 @@ _StartMouseMode:
 	jsr SlowMouse
 @1:	lda #>CheckClickPos
 	sta mouseVector+1
-	lda #<CheckClickPos
+	lda #$81;xxx#<CheckClickPos
 	sta mouseVector
 	lda #>DoMouseFault
 	sta mouseFaultVec+1
-	lda #<DoMouseFault
+	lda #$CD;xxx#<DoMouseFault
 	sta mouseFaultVec
 	LoadB faultData, NULL
 	jmp MouseUp
