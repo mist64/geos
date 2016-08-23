@@ -7625,6 +7625,7 @@ LED16:  php                                     ; ED16 08                       
         sta     $22                             ; ED36 85 22                    ."
         pla                                     ; ED38 68                       h
         sta     $23                             ; ED39 85 23                    .#
+
         lda     $07                             ; ED3B A5 07                    ..
         sta     $18                             ; ED3D 85 18                    ..
         lda     #$FF                            ; ED3F A9 FF                    ..
@@ -7636,6 +7637,7 @@ LED16:  php                                     ; ED16 08                       
 LED4C:  jsr     LC67C                           ; ED4C 20 7C C6                  |.
         lda     $06                             ; ED4F A5 06                    ..
         sta     $18                             ; ED51 85 18                    ..
+
         lda     #$FF                            ; ED53 A9 FF                    ..
         jsr     LC67C                           ; ED55 20 7C C6                  |.
 LED58:  pla                                     ; ED58 68                       h

@@ -112,15 +112,30 @@ DoMenu1_1:
 	PushB dispBufferOn
 	LoadB dispBufferOn, ST_WR_FORE
 	PushW r11
-	jsr CopyMenuCoords
+	jsr $EFAF;xxxCopyMenuCoords
 	PushW curPattern
 	lda #0
 	jsr _SetPattern
 	jsr _Rectangle
 	PopW curPattern
+.if wheels
+LC67C = $C67C
+LC88D = $C88D
+        lda     $07                             ; ED3B A5 07                    ..
+        sta     $18                             ; ED3D 85 18                    ..
+        lda     #$FF                            ; ED3F A9 FF                    ..
+        bit     $86C0                           ; ED41 2C C0 86                 ,..
+        bpl     @X                           ; ED44 10 06                    ..
+        jsr     LC88D                           ; ED46 20 8D C8                  ..
+        clv                                     ; ED49 B8                       .
+        bvc     @Y                           ; ED4A 50 0C                    P.
+@X:	jsr     LC67C                           ; ED4C 20 7C C6                  |.
+        lda     $06                             ; ED4F A5 06                    ..
+        sta     $18                             ; ED51 85 18                    ..
+.endif
 	lda #$ff
 	jsr _FrameRectangle
-	PopW r11
+@Y:	PopW r11
 	jsr Menu_1
 .if ((menuVSeparator | menuHSeparator)<>0)
 	jsr DrawMenu
@@ -344,7 +359,7 @@ _RecoverAllMenus:
 
 ;---------------------------------------------------------------
 _RecoverMenu:
-	jsr CopyMenuCoords
+	jsr $EFAF;xxxCopyMenuCoords
 RcvrMnu0:
 	lda RecoverVector
 	ora RecoverVector+1
