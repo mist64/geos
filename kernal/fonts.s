@@ -434,7 +434,36 @@ Font_3:
 @1:	lda r10L
 	eor #$ff
 	sta r10L
-@2:	bbrf ITALIC_BIT, currentMode, clc_rts
+@2:
+.if wheels
+LDEFA = $DEFA
+	lda     $2E                             ; E039 A5 2E                    ..
+        and     #$10                            ; E03B 29 10                    ).
+        bne     LE041                           ; E03D D0 02                    ..
+        clc                                     ; E03F 18                       .
+        rts                                     ; E040 60                       `
+LE041:  lda     $17                             ; E041 A5 17                    ..
+        lsr     a                               ; E043 4A                       J
+        bcs     LE05E                           ; E044 B0 18                    ..
+        ldx     $8887                           ; E046 AE 87 88                 ...
+        bne     LE04E                           ; E049 D0 03                    ..
+        dec     $8888                           ; E04B CE 88 88                 ...
+LE04E:  dex                                     ; E04E CA                       .
+        stx     $8887                           ; E04F 8E 87 88                 ...
+        ldx     $18                             ; E052 A6 18                    ..
+        bne     LE058                           ; E054 D0 02                    ..
+        dec     $19                             ; E056 C6 19                    ..
+LE058:  dex                                     ; E058 CA                       .
+        stx     $18                             ; E059 86 18                    ..
+        jsr     LDEFA                           ; E05B 20 FA DE                  ..
+LE05E:  lda     $38                             ; E05E A5 38                    .8
+        cmp     $8888                           ; E060 CD 88 88                 ...
+        bne     LE06A                           ; E063 D0 05                    ..
+        lda     $37                             ; E065 A5 37                    .7
+        cmp     $8887                           ; E067 CD 87 88                 ...
+LE06A:  bcc     @6                           ; E06A 90 0B                    ..
+.else
+	bbrf ITALIC_BIT, currentMode, clc_rts
 	lda r10H
 	lsr
 	bcs @5
@@ -451,6 +480,7 @@ Font_3:
 	jsr Font_2
 @5:	CmpW rightMargin, FontTVar2
 	bcc @6
+.endif
 	CmpW leftMargin, r11
 	rts
 @6:	sec
