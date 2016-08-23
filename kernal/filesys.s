@@ -1825,7 +1825,11 @@ _ReadByte:
 	lda r1L
 	beq @1
 	jsr GetBlock
+.if wheels
+	bne @1
+.else
 	bnex @1
+.endif
 	ldy #2
 	sty r5H
 	dey
