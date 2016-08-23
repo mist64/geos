@@ -1441,8 +1441,12 @@ _PointRecord:
 	cmp usedRecords
 	bcs @1
 	sta curRecord
-	jsr GetVLIRChainTS
+	jsr $DD41;xxxGetVLIRChainTS
+.if wheels
+        tay                                     ; DBD6 A8                       .
+.else
 	ldy r1L
+.endif
 	ldx #0
 	beq @2
 @1:	ldx #INV_RECORD
