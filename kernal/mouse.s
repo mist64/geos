@@ -3,6 +3,7 @@
 ;
 ; Mouse
 
+.include "config.inc"
 .include "const.inc"
 .include "geossym.inc"
 .include "geosmac.inc"
@@ -124,8 +125,13 @@ _MouseUp:
 	rts
 
 ProcessMouse:
+.if wheels
+	bbrf MOUSEON_BIT, mouseOn, @1
+	jsr UpdateMouse
+.else
 	jsr UpdateMouse
 	bbrf MOUSEON_BIT, mouseOn, @1
+.endif
 	jsr CheckMsePos
 	LoadB r3L, 0
 	MoveW msePicPtr, r4
