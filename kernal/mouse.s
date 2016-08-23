@@ -272,7 +272,7 @@ DoMouseFault:
 	tya
 .endif
 	bbsf 6, menuOptNumber, @3
-@2:	jsr _DoPreviousMenu
+@2:	jsr $EDE9;xxx_DoPreviousMenu
 @3:	rts
 
 .segment "mouse3"
