@@ -1104,6 +1104,25 @@ _FreeFile:
 	rts
 
 DeleteVlirChains:
+.if wheels
+LDA07:  ldx     #$02                            ; DA07 A2 02                    ..
+LDA09:  lda     $8101,x                         ; DA09 BD 01 81                 ...
+        sta     $05                             ; DA0C 85 05                    ..
+        lda     $8100,x                         ; DA0E BD 00 81                 ...
+        sta     $04                             ; DA11 85 04                    ..
+        beq     LDA20                           ; DA13 F0 0B                    ..
+        txa                                     ; DA15 8A                       .
+        pha                                     ; DA16 48                       H
+        jsr     LDA25                           ; DA17 20 25 DA                  %.
+        pla                                     ; DA1A 68                       h
+        cpx     #$00                            ; DA1B E0 00                    ..
+        bne     LDA24                           ; DA1D D0 05                    ..
+        tax                                     ; DA1F AA                       .
+LDA20:  inx                                     ; DA20 E8                       .
+        inx                                     ; DA21 E8                       .
+        bne     LDA09                           ; DA22 D0 E5                    ..
+LDA24:  rts                                     ; DA24 60                       `
+.else
 	ldy #0
 @1:	lda diskBlkBuf,y
 	sta fileHeader,y
@@ -1127,8 +1146,41 @@ DeleteVlirChains:
 	tay
 	beqx @2
 @3:	rts
+.endif
 
 FreeBlockChain:
+.if wheels
+LDA25:  php                                     ; DA25 08                       .
+        sei                                     ; DA26 78                       x
+        lda     $05                             ; DA27 A5 05                    ..
+        sta     $0F                             ; DA29 85 0F                    ..
+        lda     $04                             ; DA2B A5 04                    ..
+        sta     $0E                             ; DA2D 85 0E                    ..
+        jsr     LD5CA                           ; DA2F 20 CA D5                  ..
+        lda     #$00                            ; DA32 A9 00                    ..
+        sta     $06                             ; DA34 85 06                    ..
+        sta     $07                             ; DA36 85 07                    ..
+LDA38:  jsr     FreeBlock                       ; DA38 20 B9 C2                  ..
+        txa                                     ; DA3B 8A                       .
+        beq     LDA42                           ; DA3C F0 04                    ..
+        cpx     #$06                            ; DA3E E0 06                    ..
+        bne     LDA5E                           ; DA40 D0 1C                    ..
+LDA42:  inc     $06                             ; DA42 E6 06                    ..
+        bne     LDA48                           ; DA44 D0 02                    ..
+        inc     $07                             ; DA46 E6 07                    ..
+LDA48:  jsr     L9069                           ; DA48 20 69 90                  i.
+        txa                                     ; DA4B 8A                       .
+        bne     LDA5E                           ; DA4C D0 10                    ..
+        lda     $8001                           ; DA4E AD 01 80                 ...
+        sta     $0F                             ; DA51 85 0F                    ..
+        sta     $05                             ; DA53 85 05                    ..
+        lda     $8000                           ; DA55 AD 00 80                 ...
+        sta     $0E                             ; DA58 85 0E                    ..
+        sta     $04                             ; DA5A 85 04                    ..
+        bne     LDA38                           ; DA5C D0 DA                    ..
+LDA5E:  plp                                     ; DA5E 28                       (
+        rts                                     ; DA5F 60                       `
+.else
 	MoveW r1, r6
 	LoadW_ r2, 0
 @1:	jsr FreeBlock
@@ -1149,6 +1201,7 @@ FreeBlockChain:
 	bra @1
 @3:	ldx #NULL
 @4:	rts
+.endif
 
 FindNDelete:
 	MoveW r0, r6
