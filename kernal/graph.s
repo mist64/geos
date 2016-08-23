@@ -1126,7 +1126,7 @@ BitmClp1:
 	bra @1
 @3:	lda r11L
 	jsr BitmHelpClp
-	jsr BitmapUpHelp
+	jsr $E3D9;xxxBitmapUpHelp
 	lda r11H
 	jsr BitmHelpClp
 	inc r1H
@@ -1138,7 +1138,7 @@ BitmHelpClp:
 	cmp #0
 	beq @1
 	pha
-	jsr BitmapDecode
+	jsr $E40B;xxxBitmapDecode
 	pla
 	subv 1
 	bne BitmHelpClp
@@ -1188,7 +1188,9 @@ _i_BitmapUp:
 _BitmapUp:
 	PushB r9H
 	LoadB r9H, NULL
+.if !wheels
 	lda #0
+.endif
 	sta r3L
 	sta r4L
 @1:	jsr BitmapUpHelp
