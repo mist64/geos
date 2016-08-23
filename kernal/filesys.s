@@ -1703,7 +1703,7 @@ SetVLIRTable:
 	sta r1L
 	lda RecordTableTS+1
 	sta r1H
-	jsr SetFHeadVector
+	jsr $D69A;xxxSetFHeadVector
 	ldx #NULL
 @1:	rts
 
