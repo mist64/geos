@@ -569,10 +569,10 @@ Font_5:
 	plp
 	beq @7
 @6:	jsr Font_6
-	jsr FntIndirectJMP
+	jsr $E2D7;xxxFntIndirectJMP
 	jsr Font_8
 	SubW curSetWidth, r2
-@7:	jsr FntIndirectJMP
+@7:	jsr $E2D7;xxxFntIndirectJMP
 	jsr Font_8
 	jsr Font_7
 	bra @3
@@ -650,7 +650,9 @@ Font_9:
 ; central character printing, called from conio.s
 ; character - 32 in A
 FontPutChar:
+.if !wheels
 	nop
+.endif
 	tay
 	PushB r1H
 	tya
@@ -663,7 +665,7 @@ FontPutChar:
 	jsr Font_3
 @2:	php
 	bcs @3
-	jsr FntIndirectJMP ; call r13
+	jsr $E2D7;xxxFntIndirectJMP ; call r13
 @3:	bbrf 7, r8H, @4
 	jsr Font_5
 	bra @5
