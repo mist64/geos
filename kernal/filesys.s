@@ -1350,7 +1350,7 @@ OpRFile1:
 	MoveW r1, RecordDirTS
 	MoveW r5, RecordDirOffs
 	MoveW dirEntryBuf+OFF_SIZE, fileSize
-	jsr GetVLIRTab
+	jsr $DCC3;xxxGetVLIRTab
 	bnex ClearRecordTableTS
 	sta usedRecords
 	ldy #2
@@ -1380,11 +1380,15 @@ _UpdateRecordFile:
 	ldx #0
 	lda fileWritten
 	beq @1
-	jsr PutVLIRTab
+	jsr $DCCD;xxxPutVLIRTab
 	bnex @1
 	MoveW RecordDirTS, r1
 	jsr ReadBuff
+.if wheels
+	bne @1
+.else
 	bnex @1
+.endif
 	MoveW RecordDirOffs, r5
 	jsr SGDCopyDate
 	ldy #OFF_SIZE
@@ -1394,7 +1398,11 @@ _UpdateRecordFile:
 	lda fileSize+1
 	sta (r5),y
 	jsr WriteBuff
+.if wheels
+	bne @1
+.else
 	bnex @1
+.endif
 	jsr PutDirHead
 	lda #NULL
 	sta fileWritten
