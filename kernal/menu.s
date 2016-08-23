@@ -252,6 +252,7 @@ GetMenuDesc:
 	dey
 	bpl @1
 
+.if !wheels
 .if (trap)
 	; If the user has changed where GetSerialNumber points to,
 	; this will sabotage the KERNAL call GraphicsString.
@@ -260,26 +261,27 @@ GetMenuDesc:
 	adc #<(_GraphicsString - _GetSerialNumber)
 	sta GraphicsString + 1 - $FF,y
 .endif
+.endif
 
 	MoveW menuLeft, r11
 	MoveB menuTop, r1H
 	bbsf 6, menuOptNumber, @2
-	jsr ResetMseRegion
+	jsr $EC75;xxxResetMseRegion
 @2:	rts
 
 Menu_1:
-	jsr MenuStoreFont
+	jsr $F08C;xxxMenuStoreFont
 	jsr _UseSystemFont
 	LoadB r10H, 0
 	sta currentMode
 	sec
-	jsr Menu_4
-@1:	jsr Menu_3
+	jsr $EF35;xxxMenu_4
+@1:	jsr $EF20;xxxMenu_3
 	clc
-	jsr Menu_4
-	jsr Menu_2
+	jsr $EF35;xxxMenu_4
+	jsr $EE93;xxxMenu_2
 	clc
-	jsr Menu_4
+	jsr $EF35;xxxMenu_4
 	bbrf 7, menuOptNumber, @2
 	lda r1H
 	sec
@@ -287,14 +289,19 @@ Menu_1:
 	sta r1H
 	MoveW menuLeft, r11
 	sec
-	jsr Menu_4
-@2:	AddVB 1, r10H
+	jsr $EF35;xxxMenu_4
+@2:
+.if wheels
+	inc r10H
+.else
+	AddVB 1, r10H
+.endif
 	lda menuOptNumber
 	and #%00011111
 	cmp r10H
 	bne @1
 	jsr MenuRestoreFont
-	jmp Menu_3
+	jmp $EF20;xxxMenu_3
 
 Menu_2:
 	PushW r10
