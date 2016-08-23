@@ -1454,6 +1454,42 @@ _PointRecord:
 	rts
 
 _DeleteRecord:
+.if wheels
+LDBE1:  jsr     LDC29                           ; DBE1 20 29 DC                  ).
+        txa                                     ; DBE4 8A                       .
+        bne     LDC1A                           ; DBE5 D0 33                    .3
+        jsr     LDD41                           ; DBE7 20 41 DD                  A.
+        lda     $8496                           ; DBEA AD 96 84                 ...
+        sta     r0L                           ; DBED 85 02                    ..
+        jsr     LDCEB                           ; DBEF 20 EB DC                  ..
+        txa                                     ; DBF2 8A                       .
+        bne     LDC1A                           ; DBF3 D0 25                    .%
+        lda     $8496                           ; DBF5 AD 96 84                 ...
+        cmp     $8497                           ; DBF8 CD 97 84                 ...
+        bcc     LDC00                           ; DBFB 90 03                    ..
+        dec     $8496                           ; DBFD CE 96 84                 ...
+LDC00:  .byte   $A2                             ; DC00 A2                       .
+LDC01:  brk                                     ; DC01 00                       .
+LDC02:  .byte   $A5                             ; DC02 A5                       .
+LDC03:  .byte   $04                             ; DC03 04                       .
+LDC04:  .byte   $F0                             ; DC04 F0                       .
+LDC05:  .byte   $14                             ; DC05 14                       .
+        .byte   $20                             ; DC06 20                        
+        .byte   $25                             ; DC07 25                       %
+LDC08:  .byte   $DA                             ; DC08 DA                       .
+LDC09:  txa                                     ; DC09 8A                       .
+LDC0A:  .byte   $D0                             ; DC0A D0                       .
+LDC0B:  .byte   $0E                             ; DC0B 0E                       .
+        .byte   $AD                             ; DC0C AD                       .
+LDC0D:  .byte   $99                             ; DC0D 99                       .
+LDC0E:  .byte   $84                             ; DC0E 84                       .
+LDC0F:  sec                                     ; DC0F 38                       8
+        sbc     $06                             ; DC10 E5 06                    ..
+        sta     $8499                           ; DC12 8D 99 84                 ...
+        bcs     LDC1A                           ; DC15 B0 03                    ..
+        dec     $849A                           ; DC17 CE 9A 84                 ...
+LDC1A:  rts                                     ; DC1A 60                       `
+.else
 	ldx #INV_RECORD
 	lda curRecord
 	bmi @3
@@ -1476,8 +1512,26 @@ _DeleteRecord:
 	dec fileSize+1
 @2:	ldx #NULL
 @3:	rts
+.endif
 
 _InsertRecord:
+.if wheels
+LDDA4 = $DDA4
+LDD10 = $DD10
+LDCEB = $DCEB
+LDD41 = $DD41
+LDC1B:  jsr     LDC29                           ; DC1B 20 29 DC                  ).
+        txa                                     ; DC1E 8A                       .
+        bne     LDC1A                           ; DC1F D0 F9                    ..
+        lda     $8496                           ; DC21 AD 96 84                 ...
+        sta     r0L                           ; DC24 85 02                    ..
+        jmp     LDD10                           ; DC26 4C 10 DD                 L..
+
+LDC29:  ldx     #$08                            ; DC29 A2 08                    ..
+        lda     $8496                           ; DC2B AD 96 84                 ...
+        bmi     LDC1A                           ; DC2E 30 EA                    0.
+LDC30:  jmp     LDDA4                           ; DC30 4C A4 DD                 L..
+.else
 	ldx #INV_RECORD
 	lda curRecord
 	bmi @1
@@ -1487,14 +1541,15 @@ _InsertRecord:
 	sta r0L
 	jsr MoveForwVLIRTab
 @1:	rts
+.endif
 
 _AppendRecord:
-	jsr ReadyForUpdVLIR
+	jsr $DDA4;xxxReadyForUpdVLIR
 	bnex @1
 	lda curRecord
 	addv 1
 	sta r0L
-	jsr MoveForwVLIRTab
+	jsr $DD10;xxxMoveForwVLIRTab
 	bnex @1
 	MoveB r0L, curRecord
 @1:	rts
@@ -1520,8 +1575,10 @@ ReaRec0:
 	ldx #INV_RECORD
 	lda curRecord
 	bmi @1
-	jsr GetVLIRChainTS
+	jsr $DD41;xxxGetVLIRChainTS
+.ifndef wheels
 	lda r1L
+.endif
 	tax
 	beq @1
 	jsr ReadFile
@@ -1529,6 +1586,68 @@ ReaRec0:
 @1:	rts
 
 _WriteRecord:
+.if wheels
+LDD51 = $DD51
+LDD61 = $DD61
+LDC60:  lda     $07                             ; DC60 A5 07                    ..
+        pha                                     ; DC62 48                       H
+        lda     $06                             ; DC63 A5 06                    ..
+        pha                                     ; DC65 48                       H
+        jsr     LDC29                           ; DC66 20 29 DC                  ).
+        pla                                     ; DC69 68                       h
+        sta     $06                             ; DC6A 85 06                    ..
+        pla                                     ; DC6C 68                       h
+        sta     $07                             ; DC6D 85 07                    ..
+        txa                                     ; DC6F 8A                       .
+        bne     LDC7F                           ; DC70 D0 0D                    ..
+        jsr     LDD41                           ; DC72 20 41 DD                  A.
+        bne     LDC80                           ; DC75 D0 09                    ..
+        ldx     #$00                            ; DC77 A2 00                    ..
+        lda     $06                             ; DC79 A5 06                    ..
+        ora     $07                             ; DC7B 05 07                    ..
+        bne     LDCB6                           ; DC7D D0 37                    .7
+LDC7F:  rts                                     ; DC7F 60                       `
+
+; ----------------------------------------------------------------------------
+LDC80:  lda     $07                             ; DC80 A5 07                    ..
+        pha                                     ; DC82 48                       H
+        lda     $06                             ; DC83 A5 06                    ..
+        pha                                     ; DC85 48                       H
+        lda     $11                             ; DC86 A5 11                    ..
+        pha                                     ; DC88 48                       H
+        lda     $10                             ; DC89 A5 10                    ..
+        pha                                     ; DC8B 48                       H
+        jsr     LDA25                           ; DC8C 20 25 DA                  %.
+        lda     $06                             ; DC8F A5 06                    ..
+        sta     r0L                           ; DC91 85 02                    ..
+        pla                                     ; DC93 68                       h
+        sta     $10                             ; DC94 85 10                    ..
+        pla                                     ; DC96 68                       h
+        sta     $11                             ; DC97 85 11                    ..
+        pla                                     ; DC99 68                       h
+        sta     $06                             ; DC9A 85 06                    ..
+        pla                                     ; DC9C 68                       h
+        sta     $07                             ; DC9D 85 07                    ..
+        txa                                     ; DC9F 8A                       .
+        bne     LDC7F                           ; DCA0 D0 DD                    ..
+        lda     $8499                           ; DCA2 AD 99 84                 ...
+        sec                                     ; DCA5 38                       8
+        sbc     r0L                           ; DCA6 E5 02                    ..
+        sta     $8499                           ; DCA8 8D 99 84                 ...
+        bcs     LDCB0                           ; DCAB B0 03                    ..
+        dec     $849A                           ; DCAD CE 9A 84                 ...
+LDCB0:  lda     $06                             ; DCB0 A5 06                    ..
+        ora     $07                             ; DCB2 05 07                    ..
+        beq     LDCB9                           ; DCB4 F0 03                    ..
+LDCB6:  jmp     LDD61                           ; DCB6 4C 61 DD                 La.
+
+; ----------------------------------------------------------------------------
+LDCB9:  ldy     #$FF                            ; DCB9 A0 FF                    ..
+        sty     $05                             ; DCBB 84 05                    ..
+        iny                                     ; DCBD C8                       .
+        sty     $04                             ; DCBE 84 04                    ..
+        jmp     LDD51                           ; DCC0 4C 51 DD                 LQ.
+.else
 	ldx #INV_RECORD
 	lda curRecord
 	bmi @5
@@ -1564,7 +1683,7 @@ _WriteRecord:
 	sty r1L
 	jsr PutVLIRChainTS
 @5:	rts
-
+.endif
 GetVLIRTab:
 	jsr SetVLIRTable
 	bnex @1
