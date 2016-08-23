@@ -4794,6 +4794,7 @@ LD955:  lda     ($08),y                         ; D955 B1 08                    
         cpy     #$10                            ; D95D C0 10                    ..
         bcc     LD955                           ; D95F 90 F4                    ..
         bcs     LD96D                           ; D961 B0 0A                    ..
+
 LD963:  lda     #$A0                            ; D963 A9 A0                    ..
 LD965:  sta     $8403,y                         ; D965 99 03 84                 ...
         iny                                     ; D968 C8                       .
@@ -4856,10 +4857,12 @@ LD9C7:  php                                     ; D9C7 08                       
         txa                                     ; D9DE 8A                       .
         bne     LDA05                           ; D9DF D0 24                    .$
 LD9E1:  ldy     #$01                            ; D9E1 A0 01                    ..
+
         jsr     LD78B                           ; D9E3 20 8B D7                  ..
         jsr     LD69A                           ; D9E6 20 9A D6                  ..
         jsr     GetBlock                        ; D9E9 20 E4 C1                  ..
         bne     LDA05                           ; D9EC D0 17                    ..
+
         jsr     LDA25                           ; D9EE 20 25 DA                  %.
         txa                                     ; D9F1 8A                       .
         bne     LDA05                           ; D9F2 D0 11                    ..

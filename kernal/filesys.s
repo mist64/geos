@@ -941,12 +941,72 @@ SGDCopyDate:
 SGDCopyDate_rts:
 	rts
 
+.if wheels
+LD934:  clc                                     ; D934 18                       .
+        lda     #$02                            ; D935 A9 02                    ..
+        adc     $0E                             ; D937 65 0E                    e.
+        sta     $0E                             ; D939 85 0E                    ..
+        bcc     LD93F                           ; D93B 90 02                    ..
+        inc     $0F                             ; D93D E6 0F                    ..
+LD93F:  rts                                     ; D93F 60                       `
+.endif
+
 _BldGDirEntry:
 	ldy #$1d
-	lda #NULL
+	lda #0
 @1:	sta dirEntryBuf,y
 	dey
 	bpl @1
+.if wheels
+        ldy     #$01                            ; D94A A0 01                    ..
+        lda     ($14),y                         ; D94C B1 14                    ..
+        sta     $09                             ; D94E 85 09                    ..
+        dey                                     ; D950 88                       .
+        lda     ($14),y                         ; D951 B1 14                    ..
+        sta     $08                             ; D953 85 08                    ..
+@X:  lda     ($08),y                         ; D955 B1 08                    ..
+        beq     LD963                           ; D957 F0 0A                    ..
+        sta     $8403,y                         ; D959 99 03 84                 ...
+        iny                                     ; D95C C8                       .
+        cpy     #$10                            ; D95D C0 10                    ..
+        bcc     @X                           ; D95F 90 F4                    ..
+        bcs     LD96D                           ; D961 B0 0A                    ..
+LD963:  lda     #$A0                            ; D963 A9 A0                    ..
+LD965:  sta     $8403,y                         ; D965 99 03 84                 ...
+        iny                                     ; D968 C8                       .
+        cpy     #$10                            ; D969 C0 10                    ..
+        bcc     LD965                           ; D96B 90 F8                    ..
+LD96D:  ldy     #$44                            ; D96D A0 44                    .D
+        lda     ($14),y                         ; D96F B1 14                    ..
+        sta     $8400                           ; D971 8D 00 84                 ...
+        ldy     #$00                            ; D974 A0 00                    ..
+        sty     $8100                           ; D976 8C 00 81                 ...
+        dey                                     ; D979 88                       .
+        sty     $8101                           ; D97A 8C 01 81                 ...
+        lda     $8301                           ; D97D AD 01 83                 ...
+        sta     $8414                           ; D980 8D 14 84                 ...
+        lda     $8300                           ; D983 AD 00 83                 ...
+        sta     $8413                           ; D986 8D 13 84                 ...
+        jsr     LD934                           ; D989 20 34 D9                  4.
+        lda     $8303                           ; D98C AD 03 83                 ...
+        sta     $8402                           ; D98F 8D 02 84                 ...
+        lda     $8302                           ; D992 AD 02 83                 ...
+        sta     $8401                           ; D995 8D 01 84                 ...
+        ldy     #$46                            ; D998 A0 46                    .F
+        lda     ($14),y                         ; D99A B1 14                    ..
+        sta     $8415                           ; D99C 8D 15 84                 ...
+        cmp     #$01                            ; D99F C9 01                    ..
+        bne     LD9A6                           ; D9A1 D0 03                    ..
+        jsr     LD934                           ; D9A3 20 34 D9                  4.
+LD9A6:  ldy     #$45                            ; D9A6 A0 45                    .E
+        lda     ($14),y                         ; D9A8 B1 14                    ..
+        sta     $8416                           ; D9AA 8D 16 84                 ...
+        lda     $07                             ; D9AD A5 07                    ..
+        sta     $841D                           ; D9AF 8D 1D 84                 ...
+        lda     $06                             ; D9B2 A5 06                    ..
+        sta     $841C                           ; D9B4 8D 1C 84                 ...
+        rts                                     ; D9B7 60                       `
+.else
 	tay
 	lda (r9),y
 	sta r3L
@@ -989,9 +1049,10 @@ _BldGDirEntry:
 	sta dirEntryBuf+OFF_GFILE_TYPE
 	MoveW r2, dirEntryBuf+OFF_SIZE
 	rts
+.endif
 
 _DeleteFile:
-	jsr FindNDelete
+	jsr $DA60;xxxFindNDelete
 	beqx @1
 	rts
 @1:	LoadW r9, dirEntryBuf
@@ -999,7 +1060,11 @@ _FreeFile:
 	php
 	sei
 	jsr GetDirHead
+.if wheels
+	bne @3
+.else
 	bnex @3
+.endif
 	ldy #OFF_GHDR_PTR
 	lda (r9),y
 	beq @1
@@ -1007,15 +1072,22 @@ _FreeFile:
 	iny
 	lda (r9),y
 	sta r1H
-	jsr FreeBlockChain
+	jsr $DA25;xxxFreeBlockChain
 	bnex @3
 @1:	ldy #OFF_DE_TR_SC
+.if wheels
+        jsr     LD78B                           ; D9E3 20 8B D7                  ..
+        jsr     LD69A                           ; D9E6 20 9A D6                  ..
+        jsr     GetBlock                        ; D9E9 20 E4 C1                  ..
+        bne     @3                           ; D9EC D0 17                    ..
+.else
 	lda (r9),y
 	sta r1L
 	iny
 	lda (r9),y
 	sta r1H
-	jsr FreeBlockChain
+.endif
+	jsr $DA25;xxxFreeBlockChain
 	bnex @3
 	ldy #OFF_GSTRUC_TYPE
 	lda (r9),y
@@ -1493,7 +1565,11 @@ ReadyForUpdVLIR:
 	lda fileWritten
 	bne @1
 	jsr GetDirHead
+.if wheels
+	bne @1
+.else
 	bnex @1
+.endif
 	lda #$ff
 	sta fileWritten
 @1:	rts
