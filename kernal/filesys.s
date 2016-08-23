@@ -1277,11 +1277,7 @@ FreeChainByTab:
 	AddVW 2, r3
 	bra @1
 @2:
-.if wheels
-	jmp PutDirHead
-.else
 	jsr PutDirHead
-.endif
 @3:
 	rts
 .endif
@@ -1305,7 +1301,12 @@ _RenameFile:
 	iny
 	cpy #16
 	bcc @2
-@3:	jsr WriteBuff
+@3:
+.if wheels
+	jmp WriteBuff
+.else
+	jsr WriteBuff
+.endif
 @4:	rts
 
 _OpenRecordFile:
