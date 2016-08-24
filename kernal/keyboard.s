@@ -287,15 +287,25 @@ KbdScanHelp5:
 	LoadB cia1base+0, %01111111
 
 	lda cia1base+1
+.if wheels
+	and #%00100000
+	bne @3
+.else
 	eor #$ff
 	and #%00100000
 	beq @3
+.endif
 	smbf 6, r1H
 @3:	LoadB cia1base+0, %01111111
 	lda cia1base+1
+.if wheels
+	and #%00000100
+	bne @4
+.else
 	eor #$ff
 	and #%00000100
 	beq @4
+.endif
 	smbf 5, r1H
 @4:	rts
 
