@@ -296,7 +296,10 @@ KbdScanHelp5:
 	beq @3
 .endif
 	smbf 6, r1H
-@3:	LoadB cia1base+0, %01111111
+@3:
+.if !wheels
+	LoadB cia1base+0, %01111111
+.endif
 	lda cia1base+1
 .if wheels
 	and #%00000100

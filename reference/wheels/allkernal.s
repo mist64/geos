@@ -9639,6 +9639,7 @@ LFC80:  lda     #$00                            ; FC80 A9 00                    
         lda     #$40                            ; FC90 A9 40                    .@
         ora     $05                             ; FC92 05 05                    ..
         sta     $05                             ; FC94 85 05                    ..
+
 LFC96:  lda     LDC01                           ; FC96 AD 01 DC                 ...
         and     #$04                            ; FC99 29 04                    ).
         bne     LFCA3                           ; FC9B D0 06                    ..
