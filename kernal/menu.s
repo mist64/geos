@@ -542,51 +542,51 @@ LEFED:  lda     $2F                             ; EFED A5 2F                    
 .if (oldMenu_5)
 Menu_5:
 	jsr _MouseOff
-	jsr $F000;xxxMenu_7
-	jsr $EFED;xxxMenuDoInvert
+	jsr Menu_7
+	jsr MenuDoInvert
 	lda r9L
 	ldx menuNumber
 	sta menuOptionTab,x
-	jsr $F077;xxxMenu_8
+	jsr Menu_8
 	bbsf 7, r1L, Menu_52
 
 	bvs Menu_51
 	MoveB selectionFlash, r0L
 	LoadB r0H, NULL
 	jsr _Sleep
-	jsr $F000;xxxMenu_7
-	jsr $EFED;xxxMenuDoInvert
+	jsr Menu_7
+	jsr MenuDoInvert
 	MoveB selectionFlash, r0L
 	LoadB r0H, NULL
 	jsr _Sleep
-	jsr $F000;xxxMenu_7
+	jsr Menu_7
 .else
 Menu_5Help:
 	MoveB selectionFlash, r0L
 	LoadB r0H, NULL
 	jsr _Sleep
-	jmp $F000;xxxMenu_7
+	jmp Menu_7
 
 Menu_5:
 	jsr _MouseOff
-	jsr $F000;xxxMenu_7
-	jsr $EFED;xxxMenuDoInvert
+	jsr Menu_7
+	jsr MenuDoInvert
 	lda r9L
 	ldx menuNumber
 	sta menuOptionTab,x
-	jsr $F077;xxxMenu_8
+	jsr Menu_8
 	bbsf 7, r1L, Menu_52
 	bvs Menu_51
 	jsr Menu_5Help
-	jsr $EFED;xxxMenuDoInvert
+	jsr MenuDoInvert
 	jsr Menu_5Help
 .endif
-	jsr $EFED;xxxMenuDoInvert
-	jsr $F000;xxxMenu_7
+	jsr MenuDoInvert
+	jsr Menu_7
 	ldx menuNumber
 	lda menuOptionTab,x
 	pha
-	jsr $F077;xxxMenu_8
+	jsr Menu_8
 	pla
 	jmp (r0)
 
@@ -604,7 +604,7 @@ Menu_6:
 	ldx menuNumber
 	lda menuOptionTab,x
 	pha
-	jsr $F077;xxxMenu_8
+	jsr Menu_8
 	pla
 	jmp (r0)
 .endif
@@ -633,11 +633,13 @@ Menu_7:
 	lda menuLimitTabH,y
 	sta r3H
 	sty r9L
+.if !wheels
 	cpy #0
 	bne @3
 	inc r3L
 	bne @3
 	inc r3H
+.endif
 @3:	ldx menuTop
 	inx
 	stx r2L
