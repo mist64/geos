@@ -414,10 +414,32 @@ RcvrMnu0:
 
 .if ((menuVSeparator | menuHSeparator)<>0)
 DrawMenu:
-	lda menuOptNumber
 .if wheels
-	bpl @5
-.endif
+LEF7C:  lda     $86C0                           ; EF7C AD C0 86                 ...
+        bpl     LEFAE                           ; EF7F 10 2D                    .-
+        and     #$1F                            ; EF81 29 1F                    ).
+        sec                                     ; EF83 38                       8
+        sbc     #$01                            ; EF84 E9 01                    ..
+        beq     LEFAE                           ; EF86 F0 26                    .&
+        sta     $06                             ; EF88 85 06                    ..
+        lda     $86C4                           ; EF8A AD C4 86                 ...
+        sta     $09                             ; EF8D 85 09                    ..
+        lda     $86C3                           ; EF8F AD C3 86                 ...
+        sta     $08                             ; EF92 85 08                    ..
+        lda     $86C6                           ; EF94 AD C6 86                 ...
+        sta     $0B                             ; EF97 85 0B                    ..
+        lda     $86C5                           ; EF99 AD C5 86                 ...
+        sta     $0A                             ; EF9C 85 0A                    ..
+LEF9E:  ldx     $06                             ; EF9E A6 06                    ..
+        lda     $86D3,x                         ; EFA0 BD D3 86                 ...
+        sta     $18                             ; EFA3 85 18                    ..
+        lda     #$FF                            ; EFA5 A9 FF                    ..
+        jsr     LC67C                           ; EFA7 20 7C C6                  |.
+        dec     $06                             ; EFAA C6 06                    ..
+        bne     LEF9E                           ; EFAC D0 F0                    ..
+LEFAE:  rts                                     ; EFAE 60                       `
+.else
+	lda menuOptNumber
 	and #%00011111
 	subv 1
 	beq @5
@@ -462,6 +484,7 @@ DrawMenu:
 .endif
 @5:	rts
 .endif
+.endif
 
 CopyMenuCoords:
 	ldx #6
@@ -474,7 +497,7 @@ CopyMenuCoords:
 .if (oldMenu_5)
 Menu_5:
 	jsr _MouseOff
-	jsr Menu_7
+	jsr $F000;xxxMenu_7
 	jsr MenuDoInvert
 	lda r9L
 	ldx menuNumber
@@ -485,22 +508,22 @@ Menu_5:
 	MoveB selectionFlash, r0L
 	LoadB r0H, NULL
 	jsr _Sleep
-	jsr Menu_7
+	jsr $F000;xxxMenu_7
 	jsr MenuDoInvert
 	MoveB selectionFlash, r0L
 	LoadB r0H, NULL
 	jsr _Sleep
-	jsr Menu_7
+	jsr $F000;xxxMenu_7
 .else
 Menu_5Help:
 	MoveB selectionFlash, r0L
 	LoadB r0H, NULL
 	jsr _Sleep
-	jmp Menu_7
+	jmp $F000;xxxMenu_7
 
 Menu_5:
 	jsr _MouseOff
-	jsr Menu_7
+	jsr $F000;xxxMenu_7
 	jsr MenuDoInvert
 	lda r9L
 	ldx menuNumber
@@ -513,7 +536,7 @@ Menu_5:
 	jsr Menu_5Help
 .endif
 	jsr MenuDoInvert
-	jsr Menu_7
+	jsr $F000;xxxMenu_7
 	ldx menuNumber
 	lda menuOptionTab,x
 	pha
