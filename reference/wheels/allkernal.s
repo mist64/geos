@@ -9430,6 +9430,7 @@ LFB05:  jsr     LCF88                           ; FB05 20 88 CF                 
         bne     LFB2E                           ; FB0D D0 1F                    ..
         lda     $87EA                           ; FB0F AD EA 87                 ...
         jsr     LFC16                           ; FB12 20 16 FC                  ..
+
         sec                                     ; FB15 38                       8
         lda     $88B3                           ; FB16 AD B3 88                 ...
         sbc     $88B2                           ; FB19 ED B2 88                 ...
@@ -9440,12 +9441,15 @@ LFB05:  jsr     LCF88                           ; FB05 20 88 CF                 
         bcc     LFB2B                           ; FB26 90 03                    ..
 LFB28:  lda     $88B0                           ; FB28 AD B0 88                 ...
 LFB2B:  sta     $87D9                           ; FB2B 8D D9 87                 ...
+
 LFB2E:  lda     #$00                            ; FB2E A9 00                    ..
         sta     $05                             ; FB30 85 05                    ..
+
         ldy     #$FF                            ; FB32 A0 FF                    ..
         sty     LDC02                           ; FB34 8C 02 DC                 ...
         iny                                     ; FB37 C8                       .
         sty     LDC03                           ; FB38 8C 03 DC                 ...
+
         jsr     LFB74                           ; FB3B 20 74 FB                  t.
         bne     LFB70                           ; FB3E D0 30                    .0
         jsr     LFC65                           ; FB40 20 65 FC                  e.

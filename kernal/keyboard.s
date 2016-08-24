@@ -3,6 +3,7 @@
 ;
 ; C64 keyboard driver
 
+.include "config.inc"
 .include "const.inc"
 .include "geossym.inc"
 .include "geosmac.inc"
@@ -33,12 +34,36 @@
 .segment "keyboard"
 
 _DoKeyboardScan:
+.if wheels
+LCF88 = $CF88
+	jsr     LCF88                           ; FB05 20 88 CF                  ..
+	bcs @5
+.endif
 	lda KbdQueFlag
 	bne @1
 	lda KbdNextKey
-	jsr KbdScanHelp2
+	jsr $FC16;xxxKbdScanHelp2
+.if wheels
+        sec                                     ; FB15 38                       8
+        lda     $88B3                           ; FB16 AD B3 88                 ...
+        sbc     $88B2                           ; FB19 ED B2 88                 ...
+        bcc     @X                           ; FB1C 90 0A                    ..
+        cmp     $88B0                           ; FB1E CD B0 88                 ...
+        bcc     @X                           ; FB21 90 05                    ..
+        asl     $88B2                           ; FB23 0E B2 88                 ...
+        bcc     @Y                           ; FB26 90 03                    ..
+@X:	lda     $88B0                           ; FB28 AD B0 88                 ...
+@Y:	sta     $87D9                           ; FB2B 8D D9 87                 ...
+.else
 	LoadB KbdQueFlag, 15
+.endif
 @1:	LoadB r1H, 0
+.if wheels
+        ldy     #$FF                            ; FB32 A0 FF                    ..
+        sty     $DC02                           ; FB34 8C 02 DC                 ...
+        iny                                     ; FB37 C8                       .
+        sty     $DC03                           ; FB38 8C 03 DC                 ...
+.endif
 	jsr KbdScanRow
 	bne @5
 	jsr KbdScanHelp5
@@ -118,7 +143,7 @@ KbdScanHelp1:
 	beq @9
 	LoadB KbdQueFlag, 15
 	MoveB r0H, KbdNextKey
-	jsr KbdScanHelp2
+	jsr $FC16;xxxKbdScanHelp2
 	bra @A
 @9:	LoadB KbdQueFlag, $ff
 	LoadB KbdNextKey, 0
