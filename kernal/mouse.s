@@ -193,7 +193,9 @@ CheckMsePos:
 @B:	rts
 
 .if wheels
+; this got moved :(
 LC4A1 = $C4A1
+ResetMseRegion:
 LEC75:  ldy     #$05                            ; EC75 A0 05                    ..
 LEC77:  lda     LC4A1,y                         ; EC77 B9 A1 C4                 ...
         sta     $84B8,y                         ; EC7A 99 B8 84                 ...
@@ -277,6 +279,8 @@ DoMouseFault:
 
 .segment "mouse3"
 
+.if !wheels
+; this got moved :(
 ResetMseRegion:
 	lda #NULL
 	sta mouseLeft
@@ -285,6 +289,7 @@ ResetMseRegion:
 	LoadW mouseRight, SC_PIX_WIDTH-1
 	LoadB mouseBottom, SC_PIX_HEIGHT-1
 	rts
+.endif
 
 .segment "mouse4"
 

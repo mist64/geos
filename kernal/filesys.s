@@ -1861,10 +1861,3 @@ DeskTopExec:
 DeskTopLgh:
 	.byte 0 ;have to be at $c3cf .IDLE
 .endif
-
-.if wheels
-;xxx
-GetStartHAddr:
-SetBufTSVector:
-SetFHeadVector:
-.endif
