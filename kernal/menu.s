@@ -662,13 +662,22 @@ Menu_7:
 	bne @6
 	inc r2L
 @6:	MoveW menuLeft, r3
+.if wheels
+LF8DE = $F8DE
+        jsr     LF8DE                           ; F065 20 DE F8                  ..
+.else
 	inc r3L
 	bne @7
 	inc r3H
+.endif
 @7:	MoveW menuRight, r4
 	ldx #r4
+.if wheels
+	jmp Ddec
+.else
 	jsr Ddec
 	rts
+.endif
 
 Menu_8:
 	jsr Menu_0
@@ -686,11 +695,13 @@ Menu_8:
 	rts
 
 MenuDoInvert:
+.if !wheels
 	PushB dispBufferOn
 	LoadB dispBufferOn, ST_WR_FORE
 	jsr _InvertRectangle
 	PopB dispBufferOn
 	rts
+.endif
 
 MenuStoreFont:
 	ldx #9

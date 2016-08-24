@@ -3,6 +3,7 @@
 ;
 ; Icons
 
+.include "config.inc"
 .include "const.inc"
 .include "geossym.inc"
 .include "geosmac.inc"
@@ -55,15 +56,22 @@
 ;---------------------------------------------------------------
 _DoIcons:
 	MoveW r0, IconDescVec
-	jsr Icons_1
-	jsr ResetMseRegion
+	jsr $F0D7;xxxIcons_1
+	jsr $EC75;xxxResetMseRegion
 	lda mouseOn
+.if wheels
+	bmi @1
+.else
 	and #SET_MSE_ON
 	bne @1
 	lda mouseOn
+.endif
 	and #%10111111
 	sta mouseOn
-@1:	lda mouseOn
+@1:
+.if !wheels
+	lda mouseOn
+.endif
 	ora #SET_ICONSON
 	sta mouseOn
 	ldy #1

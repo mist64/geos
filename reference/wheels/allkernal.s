@@ -8058,6 +8058,7 @@ LF05B:  lda     $86C4                           ; F05B AD C4 86                 
         sta     $09                             ; F05E 85 09                    ..
         lda     $86C3                           ; F060 AD C3 86                 ...
         sta     $08                             ; F063 85 08                    ..
+
         jsr     LF8DE                           ; F065 20 DE F8                  ..
         lda     $86C6                           ; F068 AD C6 86                 ...
         sta     $0B                             ; F06B 85 0B                    ..
