@@ -417,9 +417,8 @@ DrawMenu:
 	lda menuOptNumber
 .if wheels
 	bpl @5
-.else
-	and #%00011111
 .endif
+	and #%00011111
 	subv 1
 	beq @5
 	sta r2L
