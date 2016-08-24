@@ -322,7 +322,7 @@ DBDefinedPos:
 	.word DEF_DB_RIGHT
 
 _RstrFrmDialogue:
-	jsr Dialog_2
+	jsr $F29A;xxxDialog_2
 	jsr Dialog_1
 	MoveB sysDBData, r0L
 	ldx dlgBoxCallerSP
