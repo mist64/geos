@@ -66,11 +66,11 @@ LCF88 = $CF88
 .endif
 	jsr $FB74;xxxKbdScanRow
 	bne @5
-	jsr KbdScanHelp5
+	jsr $FC65;xxxKbdScanHelp5
 	ldy #7
 @2:	jsr $FB74;xxxKbdScanRow
 	bne @5
-	lda KbdTestTab,y
+	lda $FDDD,y;xxxKbdTestTab,y
 	sta cia1base+0
 	lda cia1base+1
 	cmp KbdDBncTab,y
