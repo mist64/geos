@@ -8975,6 +8975,7 @@ LF69A:  .byte   $00,$00,$08,$08,$2F,$F7,$0A,$FF ; F69A 00 00 08 08 2F F7 0A FF  
 LF714:  sta     $885C                           ; F714 8D 5C 88                 .\.
         jsr     LF883                           ; F717 20 83 F8                  ..
         jsr     LF7D9                           ; F71A 20 D9 F7                  ..
+
         lda     $8515                           ; F71D AD 15 85                 ...
         beq     LF729                           ; F720 F0 07                    ..
         ldy     $88A7                           ; F722 AC A7 88                 ...

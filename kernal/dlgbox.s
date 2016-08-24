@@ -1031,7 +1031,7 @@ DBGFPressVector:
 	sta r2H
 	jsr IsMseInRegion
 	beq @2
-	jsr DBGFilesHelp6
+	jsr $F883;xxxDBGFilesHelp6
 	jsr $F890;xxxDBGFilesHelp7
 	lda mouseYPos
 	sub r2L
@@ -1050,12 +1050,21 @@ DBGFPressVector:
 	dex
 	txa
 @1:	sta DBGFileSelected
-	jsr DBGFilesHelp6
-	jsr DBGFilesHelp2
+	jsr $F883;xxxDBGFilesHelp6
+	jsr $F7D9;xxxDBGFilesHelp2
+.if wheels
+        lda     $8515                           ; F71D AD 15 85                 ...
+        beq     @X                           ; F720 F0 07                    ..
+        ldy     $88A7                           ; F722 AC A7 88                 ...
+        dey                                     ; F725 88                       .
+        jmp     LF4A3                           ; F726 4C A3 F4                 L..
+@X:	lda     #$1E                            ; F729 A9 1E                    ..
+        sta     $8515                           ; F72B 8D 15 85                 ...
+.endif
 @2:	rts
 
 DBGFDoArrow:
-	jsr DBGFilesHelp6
+	jsr $F883;xxxDBGFilesHelp6
 	LoadB r0H, 0
 	lda DBGFArrowX
 	asl
@@ -1084,7 +1093,7 @@ DBGFDoArrow:
 	cmp DBGFileSelected
 	bcs @6
 	sta DBGFileSelected
-@6:	jsr DBGFilesHelp2
+@6:	jsr $F7D9;xxxDBGFilesHelp2
 	jmp DBGFilesHelp5
 
 DBGFilesHelp2:
@@ -1142,7 +1151,7 @@ DBGFilesHelp5:
 	inc r15L
 	CmpBI r15L, 5
 	bne @1
-	jsr DBGFilesHelp6
+	jsr $F883;xxxDBGFilesHelp6
 	LoadB currentMode, NULL
 	PopW rightMargin
 	rts
