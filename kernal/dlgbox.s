@@ -572,9 +572,68 @@ LF46C:  .byte   $F4,$58,$BF,$00,$00,$06,$10,$EC ; F46C F4 58 BF 00 00 06 10 EC  
 .endif
 
 DBKeyVector:
+.if wheels
+L9D83 = $9D83
+L5009 = $5009
+L9D80 = $9D80
+        lda     $8504                           ; F495 AD 04 85                 ...
+        ldy     #$05                            ; F498 A0 05                    ..
+LF49A:  cmp     LF4D5,y                         ; F49A D9 D5 F4                 ...
+        beq     LF4A3                           ; F49D F0 04                    ..
+        dey                                     ; F49F 88                       .
+        bpl     LF49A                           ; F4A0 10 F8                    ..
+        rts                                     ; F4A2 60                       `
+LF4A3:  tya                                     ; F4A3 98                       .
+        asl     a                               ; F4A4 0A                       .
+        asl     a                               ; F4A5 0A                       .
+        asl     a                               ; F4A6 0A                       .
+        tay                                     ; F4A7 A8                       .
+        lda     #$00                            ; F4A8 A9 00                    ..
+        sta     r0L                           ; F4AA 85 02                    ..
+LF4AC:  tax                                     ; F4AC AA                       .
+        lda     $8810,x                         ; F4AD BD 10 88                 ...
+        cmp     LF465,y                         ; F4B0 D9 65 F4                 .e.
+        bne     LF4BD                           ; F4B3 D0 08                    ..
+        lda     $8811,x                         ; F4B5 BD 11 88                 ...
+        cmp     LF466,y                         ; F4B8 D9 66 F4                 .f.
+        beq     LF4CC                           ; F4BB F0 0F                    ..
+LF4BD:  inc     r0L                           ; F4BD E6 02                    ..
+        lda     r0L                           ; F4BF A5 02                    ..
+        cmp     $880C                           ; F4C1 CD 0C 88                 ...
+        bcs     LF4CB                           ; F4C4 B0 05                    ..
+        asl     a                               ; F4C6 0A                       .
+        asl     a                               ; F4C7 0A                       .
+        asl     a                               ; F4C8 0A                       .
+        bne     LF4AC                           ; F4C9 D0 E1                    ..
+LF4CB:  rts                                     ; F4CB 60                       `
+LF4CC:  lda     LF46B,y                         ; F4CC B9 6B F4                 .k.
+        ldx     LF46C,y                         ; F4CF BE 6C F4                 .l.
+        jmp     CallRoutine                     ; F4D2 4C D8 C1                 L..
+LF4D5:  ora     $7963                           ; F4D5 0D 63 79                 .cy
+        ror     $646F                           ; F4D8 6E 6F 64                 nod
+.else
 	CmpBI keyData, CR
 	beq DBIcOK
 	rts
+.endif
+
+.if wheels
+        lda     #$45                            ; F4DB A9 45                    .E
+        jsr     L9D80                           ; F4DD 20 80 9D                  ..
+        jsr     L5009                           ; F4E0 20 09 50                  .P
+        jsr     L9D83                           ; F4E3 20 83 9D                  ..
+        lda     #$06                            ; F4E6 A9 06                    ..
+        bit     $01A9                           ; F4E8 2C A9 01                 ,..
+        bit     $02A9                           ; F4EB 2C A9 02                 ,..
+        bit     $03A9                           ; F4EE 2C A9 03                 ,..
+        bit     $04A9                           ; F4F1 2C A9 04                 ,..
+        bit     $05A9                           ; F4F4 2C A9 05                 ,..
+        .byte   $2C                             ; F4F7 2C                       ,
+LF4F8:  lda     #$0E                            ; F4F8 A9 0E                    ..
+        bit     $0DA9                           ; F4FA 2C A9 0D                 ,..
+        sta     $851D                           ; F4FD 8D 1D 85                 ...
+        jmp     RstrFrmDialogue                 ; F500 4C BF C2                 L..
+.else
 DBIcOK:
 	lda #OK
 	bne DBKeyVec1
@@ -596,6 +655,7 @@ DBIcDISK:
 DBKeyVec1:
 	sta sysDBData
 	jmp RstrFrmDialogue
+.endif
 
 DBDoSYSOPV:
 	lda #>DBStringFaultVec
@@ -606,9 +666,11 @@ DBDoSYSOPV:
 
 DBStringFaultVec:
 	bbsf 7, mouseData, DBDoOPVEC_rts
+.if !wheels
 	lda #DBSYSOPV
 	sta sysDBData
-	jmp RstrFrmDialogue
+.endif
+	jmp $F4F8;xxxRstrFrmDialogue
 
 DBDoOPVEC:
 	ldy r1L
@@ -712,7 +774,7 @@ DBDoGETSTR:
 
 DBKeyVector2:
 	LoadB sysDBData, DBGETSTRING
-	jmp RstrFrmDialogue
+	jmp $F4F8;xxxRstrFrmDialogue
 
 DBTextCoords:
 	ldy r1L
