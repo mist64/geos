@@ -688,7 +688,6 @@ DBDoOPVEC_rts:
 DBDoGRPHSTR:
 	ldy r1L
 .if wheels
-LF55A = $F55A
         jsr     LF55A                           ; F529 20 5A F5                  Z.
 .else
 	lda (DBoxDesc),y
@@ -734,7 +733,10 @@ DBDoUSR_ROUT:
 DBDoTXTSTR:
 	clc
 	jsr CalcDialogCoords
-	jsr DBTextCoords
+	jsr $F5B1;xxxDBTextCoords
+.if wheels
+        jsr     LF55A                           ; F54F 20 5A F5                  Z.
+.else
 	lda (DBoxDesc),y
 	sta r0L
 	iny
@@ -742,15 +744,27 @@ DBDoTXTSTR:
 	sta r0H
 	iny
 	tya
+.endif
 	pha
 	jsr PutString
 	PopB r1L
 	rts
 
+.if wheels
+LF55A:  lda     ($43),y                         ; F55A B1 43                    .C
+        sta     r0L                           ; F55C 85 02                    ..
+        iny                                     ; F55E C8                       .
+        lda     ($43),y                         ; F55F B1 43                    .C
+        sta     $03                             ; F561 85 03                    ..
+        iny                                     ; F563 C8                       .
+        tya                                     ; F564 98                       .
+        rts                                     ; F565 60                       `
+.endif
+
 DBDoVARSTR:
 	clc
 	jsr CalcDialogCoords
-	jsr DBTextCoords
+	jsr $F5B1;xxxDBTextCoords
 	lda (DBoxDesc),y
 	iny
 	tax
@@ -767,7 +781,7 @@ DBDoVARSTR:
 DBDoGETSTR:
 	clc
 	jsr CalcDialogCoords
-	jsr DBTextCoords
+	jsr $F5B1;xxxDBTextCoords
 	lda (DBoxDesc),y
 	iny
 	tax
