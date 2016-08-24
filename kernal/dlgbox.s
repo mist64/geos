@@ -792,9 +792,9 @@ DBDoGETSTR:
 	lda (DBoxDesc),y
 	sta r2L
 	iny
-	lda #>DBKeyVector2
+	lda #$F4;xxx#>DBKeyVector2
 	sta keyVector+1
-	lda #<DBKeyVector2
+	lda #$FB;xxx#<DBKeyVector2
 	sta keyVector
 	LoadB r1L, 0
 	tya
@@ -804,8 +804,10 @@ DBDoGETSTR:
 	rts
 
 DBKeyVector2:
+.if !wheels
 	LoadB sysDBData, DBGETSTRING
 	jmp $F4F8;xxxRstrFrmDialogue
+.endif
 
 DBTextCoords:
 	ldy r1L
