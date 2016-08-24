@@ -88,6 +88,10 @@ LCF88 = $CF88
 	bpl @2
 @5:	rts
 
+.if wheels
+LFB71:  lda     #$00                            ; FB71 A9 00                    ..
+        .byte   $2C                             ; FB73 2C                       ,
+.endif
 KbdScanRow:
 	LoadB cia1base+0, $ff
 	CmpBI cia1base+1, $ff
@@ -99,8 +103,16 @@ KbdScanHelp1:
 @1:	lda r0L
 	ldx r1L
 	and BitMaskPow2,x
+.if wheels
+        beq     @X                           ; FB8C F0 03                    ..
+        jsr @Y
+@X:  dec     $04                             ; FB91 C6 04                    ..
+        bpl     @1                           ; FB93 10 F0                    ..
+        rts                                     ; FB95 60                       `
+.else
 	beq @A	; really dirty trick...
-	tya
+.endif
+@Y:	tya
 	asl
 	asl
 	asl

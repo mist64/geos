@@ -9491,6 +9491,7 @@ LFB85:  lda     L0002                           ; FB85 A5 02                    
         ldx     $04                             ; FB87 A6 04                    ..
         and     LC359,x                         ; FB89 3D 59 C3                 =Y.
         beq     LFB91                           ; FB8C F0 03                    ..
+
         jsr     LFB96                           ; FB8E 20 96 FB                  ..
 LFB91:  dec     $04                             ; FB91 C6 04                    ..
         bpl     LFB85                           ; FB93 10 F0                    ..
