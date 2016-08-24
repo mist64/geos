@@ -8871,6 +8871,7 @@ LF5B1:  ldy     $04                             ; F5B1 A4 04                    
         sta     $17                             ; F617 85 17                    ..
         pla                                     ; F619 68                       h
         sta     $10                             ; F61A 85 10                    ..
+
         lda     L9FF1                           ; F61C AD F1 9F                 ...
         cmp     #$05                            ; F61F C9 05                    ..
         beq     LF654                           ; F621 F0 31                    .1

@@ -867,6 +867,73 @@ DBDoGETFILES:
 	jsr HorizontalLine
 	PopW r10
 	PopB r7L
+.if wheels
+LF7D9 = $F7D9
+LF80F = $F80F
+LF7A3 = $F7A3
+LF43B = $F43B
+LF69A = $F69A
+L500C = $500C
+L9FF1 = $9FF1
+        lda     L9FF1                           ; F61C AD F1 9F                 ...
+        cmp     #$05                            ; F61F C9 05                    ..
+        beq     LF654                           ; F621 F0 31                    .1
+        lda     $16                             ; F623 A5 16                    ..
+        pha                                     ; F625 48                       H
+        sta     $0C                             ; F626 85 0C                    ..
+        lda     $17                             ; F628 A5 17                    ..
+        pha                                     ; F62A 48                       H
+        sta     $0D                             ; F62B 85 0D                    ..
+        ora     $0C                             ; F62D 05 0C                    ..
+        beq     LF640                           ; F62F F0 0F                    ..
+        lda     #$87                            ; F631 A9 87                    ..
+        sta     $17                             ; F633 85 17                    ..
+        lda     #$EB                            ; F635 A9 EB                    ..
+        sta     $16                             ; F637 85 16                    ..
+        ldx     #$0C                            ; F639 A2 0C                    ..
+        ldy     #$16                            ; F63B A0 16                    ..
+        jsr     CopyString                      ; F63D 20 65 C2                  e.
+LF640:  lda     #$45                            ; F640 A9 45                    .E
+        jsr     L9D80                           ; F642 20 80 9D                  ..
+        jsr     L500C                           ; F645 20 0C 50                  .P
+        jsr     L9D83                           ; F648 20 83 9D                  ..
+        pla                                     ; F64B 68                       h
+        sta     $16                             ; F64C 85 16                    ..
+        pla                                     ; F64E 68                       h
+        sta     $17                             ; F64F 85 17                    ..
+        clv                                     ; F651 B8                       .
+        bvc     LF657                           ; F652 50 03                    P.
+LF654:  jsr     L500C                           ; F654 20 0C 50                  .P
+LF657:  pla                                     ; F657 68                       h
+        sta     $06                             ; F658 85 06                    ..
+        pla                                     ; F65A 68                       h
+        sta     $08                             ; F65B 85 08                    ..
+        sta     LF69A                           ; F65D 8D 9A F6                 ...
+        lda     #$00                            ; F660 A9 00                    ..
+        sta     $885C                           ; F662 8D 5C 88                 .\.
+        sta     $885B                           ; F665 8D 5B 88                 .[.
+        lda     $8856                           ; F668 AD 56 88                 .V.
+        beq     LF694                           ; F66B F0 27                    .'
+        cmp     #$06                            ; F66D C9 06                    ..
+        bcc     LF67C                           ; F66F 90 0B                    ..
+        lda     #$F6                            ; F671 A9 F6                    ..
+        sta     $0D                             ; F673 85 0D                    ..
+        lda     #$98                            ; F675 A9 98                    ..
+        sta     $0C                             ; F677 85 0C                    ..
+        jsr     LF43B                           ; F679 20 3B F4                  ;.
+LF67C:  lda     #$00                            ; F67C A9 00                    ..
+        jsr     LF7A3                           ; F67E 20 A3 F7                  ..
+        jsr     FetchRAM                        ; F681 20 CB C2                  ..
+        lda     #$F6                            ; F684 A9 F6                    ..
+        sta     $84AA                           ; F686 8D AA 84                 ...
+        lda     #$D2                            ; F689 A9 D2                    ..
+        sta     $84A9                           ; F68B 8D A9 84                 ...
+        jsr     LF80F                           ; F68E 20 0F F8                  ..
+        jsr     LF7D9                           ; F691 20 D9 F7                  ..
+LF694:  pla                                     ; F694 68                       h
+        sta     $04                             ; F695 85 04                    ..
+        rts                                     ; F697 60                       `
+.else
 	LoadB r7H, 15
 	LoadW r6, fileTrScTab
 	jsr FindFTypes
@@ -915,15 +982,29 @@ DBGFilesHelp1:
 	lda #0
 @4:	sta DBGFTableIndex
 @5:	rts
+.endif
 
 DBGFilesArrowsIcons:
 	.word DBGFArrowPic
 DBGFArrowX:
 	.word 0
+.if wheels
+	.byte 8, 8
+.else
 	.byte 3, 12
-	.word DBGFDoArrow
+.endif
+	.word $F72F;xxxDBGFDoArrow
 
 DBGFArrowPic:
+.if wheels
+	.byte   $0A,$FF
+        .byte   $82,$80,$01,$04,$81,$A4,$FF,$FF
+        .byte   $80,$01,$83,$C1,$81,$81,$80,$01
+        .byte   $80,$01,$87,$E1,$8F,$F1,$80,$01
+        .byte   $80,$01,$8F,$F1,$87,$E1,$80,$01
+        .byte   $FF,$FF,$81,$81,$83,$C1,$80,$01
+        .byte   $FF,$FF,$04,$81,$08,$FF,$08,$BF
+.else
 	.byte 3, %11111111, $80+(10*3)
 	     ;%11111111, %11111111, %11111111
 	.byte %10000000, %00000000, %00000001 ;1
@@ -938,6 +1019,7 @@ DBGFArrowPic:
 	.byte %10000000, %00000000, %00000001 ;10
 	     ;%11111111, %11111111, %11111111
 	.byte 3, %11111111
+.endif
 
 DBGFPressVector:
 	lda mouseData
