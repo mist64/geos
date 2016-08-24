@@ -1,9 +1,11 @@
 reference=$1
 
-dd if=/dev/zero bs=1 count=48960 of=tmp.bin
+dd if=/dev/zero bs=1 count=40320 of=tmp.bin
+cat lokernal.bin /dev/zero | dd bs=1 count=8640 >> tmp.bin
 cat kernal.bin >> tmp.bin
 
-dd if=/dev/zero bs=1 count=48960 of=reference/$reference/tmp.bin
+dd if=/dev/zero bs=1 count=40320 of=reference/$reference/tmp.bin
+cat reference/$reference/lokernal.bin /dev/zero | dd bs=1 count=8640 >> reference/$reference/tmp.bin
 cat reference/$reference/kernal.bin >> reference/$reference/tmp.bin
 
 for file in tmp; do
