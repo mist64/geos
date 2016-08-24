@@ -114,15 +114,56 @@ _DoDlgBox:
 
 
 DlgBoxProcL:
+.if wheels
+	.byte $DF, $DF,$DF,$DF,$DF,$DF,$72,$72,$72
+        .byte   $72,$48,$66,$82,$03,$27,$CA,$16
+        .byte   $04
+LF27A:  .byte   $34
+.else
 	.lobytes DlgBoxProc1
 	.lobytes DlgBoxProc2 ; not used
 	.lobytes DlgBoxProc3
+.endif
 DlgBoxProcH:
+.if wheels
+	.byte $F3,$F3,$F3,$F3,$F3,$F3,$FA
+        .byte   $FA,$FA,$FA,$F5,$F5,$F5,$F5,$F5
+        .byte   $F5,$F5,$F4,$F5
+.else
 	.hibytes DlgBoxProc1
 	.lobytes DlgBoxProc2 ; yes, lobytes!! -- not used
 	.hibytes DlgBoxProc3
+.endif
 
 DlgBoxPrep:
+.if wheels
+LF383 = $F383
+LF36E = $F36E
+LC58F = $C58F
+LF28E:  sec                                     ; F28E 38                       8
+        jsr     LF29B                           ; F28F 20 9B F2                  ..
+        lda     #$00                            ; F292 A9 00                    ..
+        sta     $851D                           ; F294 8D 1D 85                 ...
+        jmp     LC58F                           ; F297 4C 8F C5                 L..
+LF29A:  clc                                     ; F29A 18                       .
+LF29B:  lda     $01                             ; F29B A5 01                    ..
+        pha                                     ; F29D 48                       H
+        lda     #$35                            ; F29E A9 35                    .5
+        sta     $01                             ; F2A0 85 01                    ..
+        lda     #$85                            ; F2A2 A9 85                    ..
+        sta     $0B                             ; F2A4 85 0B                    ..
+        lda     #$1F                            ; F2A6 A9 1F                    ..
+        sta     $0A                             ; F2A8 85 0A                    ..
+        bcc     LF2B6                           ; F2AA 90 0A                    ..
+        jsr     LF36E                           ; F2AC 20 6E F3                  n.
+        lda     #$01                            ; F2AF A9 01                    ..
+        sta     $D015                           ; F2B1 8D 15 D0                 ...
+        bne     LF2B9                           ; F2B4 D0 03                    ..
+LF2B6:  jsr     LF383                           ; F2B6 20 83 F3                  ..
+LF2B9:  pla                                     ; F2B9 68                       h
+        sta     $01                             ; F2BA 85 01                    ..
+        rts                                     ; F2BC 60                       `
+.else
 ASSERT_NOT_BELOW_IO
 	PushB CPU_DATA
 	LoadB CPU_DATA, IO_IN
@@ -134,6 +175,7 @@ ASSERT_NOT_BELOW_IO
 	jsr InitGEOEnv
 	LoadB sysDBData, NULL
 	rts
+.endif
 
 DrawDlgBox:
 	LoadB dispBufferOn, ST_WR_FORE | ST_WRGS_FORE
@@ -195,23 +237,27 @@ DrwDlgSpd1:
 	beq @1
 	jsr SetPattern
 	sec
-	jsr CalcDialogCoords
+	jsr $F305;xxxCalcDialogCoords
 	jsr Rectangle
 .endif
 @1:	lda #0
 	jsr SetPattern
 	clc
-	jsr CalcDialogCoords
+	jsr $F305;xxxCalcDialogCoords
 	MoveW r4, rightMargin
 	jsr Rectangle
+.if !wheels
 	clc
-	jsr CalcDialogCoords
+	jsr $F305;xxxCalcDialogCoords
+.endif
 	lda #$ff
 	jsr FrameRectangle
 	lda #0
 	sta defIconTab
+.if !wheels
 	sta defIconTab+1
 	sta defIconTab+2
+.endif
 	rts
 
 Dialog_1:
@@ -222,7 +268,7 @@ Dialog_1:
 	sec
 	jsr @2
 @1:	clc
-@2:	jsr CalcDialogCoords
+@2:	jsr $F305;xxxCalcDialogCoords
 	jmp RcvrMnu0
 
 CalcDialogCoords:
