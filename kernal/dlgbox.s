@@ -54,9 +54,15 @@ _DoDlgBox:
 	inx
 	cpx #12
 	bne @1
-	jsr DlgBoxPrep
-	jsr DrawDlgBox
+	jsr $F28E;xxxDlgBoxPrep
+	jsr $F2BD;xxxDrawDlgBox
+.if wheels
+	lda #0
+	sta r11H
+	sta r11L
+.else
 	LoadW__ r11, 0
+.endif
 	jsr _StartMouseMode
 	jsr _UseSystemFont
 	ldx #11

@@ -244,5 +244,9 @@ CalcIconCoords:
 	ldx #r4
 	jsr DShiftLeft
 	ldx #r4
+.if wheels
+	jmp Ddec
+.else
 	jsr Ddec
 	rts
+.endif
