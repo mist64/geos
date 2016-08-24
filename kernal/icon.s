@@ -84,7 +84,7 @@ _DoIcons:
 	lda (IconDescVec),y
 	tay
 	sec
-	jmp _StartMouseMode
+	jmp $EB60;xxx_StartMouseMode
 
 .segment "icon2"
 
@@ -99,7 +99,10 @@ CalcIconDescTab:
 
 Icons_1:
 	LoadB r10L, NULL
-@1:	lda r10L
+@1:
+.if !wheels
+	lda r10L
+.endif
 	jsr CalcIconDescTab
 	ldx #0
 @2:	lda (IconDescVec),y
@@ -140,15 +143,15 @@ ProcessClick:
 	beq @5
 	bmi @3
 	bvs @4
-@3:	jsr CalcIconCoords
-	jsr MenuDoInvert
+@3:	jsr $F1B1;xxxCalcIconCoords
+	jsr $EFED;xxxMenuDoInvert
 	MoveB selectionFlash, r0L
 	LoadB r0H, NULL
 	jsr _Sleep
 	MoveB clkBoxTemp2, r0L
 	ldy clkBoxTemp
-@4:	jsr CalcIconCoords
-	jsr MenuDoInvert
+@4:	jsr $F1B1;xxxCalcIconCoords
+	jsr $EFED;xxxMenuDoInvert
 @5:	ldy #$1e
 	ldx #0
 	lda dblClickCount
@@ -172,7 +175,10 @@ ProcessClick:
 
 FindClkIcon:
 	LoadB r0L, NULL
-@1:	lda r0L
+@1:
+.if !wheels
+	lda r0L
+.endif
 	jsr CalcIconDescTab
 	lda (IconDescVec),y
 	iny
