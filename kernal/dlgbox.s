@@ -379,9 +379,6 @@ DialogNextSaveRestoreEntry:
 	inc r4H
 @1:	ldy #0
 .if wheels
-LF3D2 = $F3D2
-LF3BA = $F3BA
-LF3C6 = $F3C6
         lda     LF3D2,x                         ; F3A7 BD D2 F3                 ...
         beq     @2                           ; F3AA F0 0D                    ..
         sta     $08                             ; F3AC 85 08                    ..
@@ -406,6 +403,14 @@ LF3C6 = $F3C6
 
 ; pointer & length tuples of memory regions to save and restore
 DialogCopyTab:
+.if wheels
+LF3BA:  .byte   $22,$9B,$3F,$C0,$F1,$F8,$00,$15 ; F3BA 22 9B 3F C0 F1 F8 00 15  ".?.....
+        .byte   $1B,$25,$28,$17                 ; F3C2 1B 25 28 17              .%(.
+LF3C6:  .byte   $00,$84,$00,$86,$86,$8F,$D0,$D0 ; F3C6 00 84 00 86 86 8F D0 D0  ........
+        .byte   $D0,$D0,$D0,$D0                 ; F3CE D0 D0 D0 D0              ....
+LF3D2:  .byte   $17,$26,$02,$31,$E3,$08,$11,$01 ; F3D2 17 26 02 31 E3 08 11 01  .&.1....
+        .byte   $03,$02,$07,$01,$00             ; F3DA 03 02 07 01 00           .....
+.else
 	.word curPattern
 	.byte 23
 	.word appMain
@@ -431,6 +436,7 @@ DialogCopyTab:
 	.word moby2
 	.byte 1
 	.word NULL
+.endif
 
 DBDoIcons:
 	dey
