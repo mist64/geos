@@ -621,6 +621,7 @@ LF4D5:  ora     $7963                           ; F4D5 0D 63 79                 
         lda     #$45                            ; F4DB A9 45                    .E
         jsr     L9D80                           ; F4DD 20 80 9D                  ..
         jsr     L5009                           ; F4E0 20 09 50                  .P
+; REU swap, preserving r registers and x, y
         jsr     L9D83                           ; F4E3 20 83 9D                  ..
         lda     #$06                            ; F4E6 A9 06                    ..
         bit     $01A9                           ; F4E8 2C A9 01                 ,..
@@ -893,6 +894,7 @@ L9FF1 = $9FF1
 LF640:  lda     #$45                            ; F640 A9 45                    .E
         jsr     L9D80                           ; F642 20 80 9D                  ..
         jsr     L500C                           ; F645 20 0C 50                  .P
+; REU swap, preserving r registers and x, y
         jsr     L9D83                           ; F648 20 83 9D                  ..
         pla                                     ; F64B 68                       h
         sta     $16                             ; F64C 85 16                    ..
