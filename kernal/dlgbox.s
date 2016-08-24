@@ -1241,11 +1241,16 @@ DBGFilesHelp4:
 	pla
 	tax
 	lda r1L
+.if wheels
+        sta     $00,x                           ; F808 95 00                    ..
+        lda     #$83                            ; F80A A9 83                    ..
+.else
 	clc
 	adc #<fileTrScTab
 	sta zpage,x
 	lda #>fileTrScTab
 	adc #0
+.endif
 	sta zpage+1,x
 	rts
 

@@ -9135,8 +9135,10 @@ LF7F4:  sta     L0002                           ; F7F4 85 02                    
         pla                                     ; F804 68                       h
         tax                                     ; F805 AA                       .
         lda     $04                             ; F806 A5 04                    ..
+
         sta     $00,x                           ; F808 95 00                    ..
         lda     #$83                            ; F80A A9 83                    ..
+
         sta     $01,x                           ; F80C 95 01                    ..
         rts                                     ; F80E 60                       `
 
