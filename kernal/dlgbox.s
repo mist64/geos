@@ -439,10 +439,14 @@ LF3D2:  .byte   $17,$26,$02,$31,$E3,$08,$11,$01 ; F3D2 17 26 02 31 E3 08 11 01  
 .endif
 
 DBDoIcons:
+.if wheels
+        lda     $84A4                           ; F3DF AD A4 84                 ...
+.else
 	dey
 	bne @1
 	lda keyVector
 	ora keyVector+1
+.endif
 	bne @1
 	lda #>DBKeyVector
 	sta keyVector+1
