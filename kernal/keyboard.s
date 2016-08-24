@@ -257,14 +257,24 @@ _GetNextChar:
 KbdScanHelp5:
 	LoadB cia1base+0, %11111101
 	lda cia1base+1
+.if wheels
+	and #%10000000
+	beq @1
+.else
 	eor #$ff
 	and #%10000000
 	bne @1
+.endif
 	LoadB cia1base+0, %10111111
 	lda cia1base+1
+.if wheels
+	and #%00010000
+	bne @2
+.else
 	eor #$ff
 	and #%00010000
 	beq @2
+.endif
 @1:	smbf 7, r1H
 @2:	LoadB cia1base+0, %01111111
 	lda cia1base+1
