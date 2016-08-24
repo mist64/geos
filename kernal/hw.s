@@ -36,6 +36,7 @@ VIC_IniTbl:
 VIC_IniTbl_end:
 
 _DoFirstInitIO:
+.if !wheels ;xxx
 	LoadB CPU_DDR, $2f
 ASSERT_NOT_BELOW_IO
 	LoadB CPU_DATA, KRNL_IO_IN
@@ -72,6 +73,7 @@ ASSERT_NOT_BELOW_IO
 	LoadB CPU_DATA, RAM_64K
 ASSERT_NOT_BELOW_IO
 	jmp ResetMseRegion
+.endif
 
 .segment "hw2"
 

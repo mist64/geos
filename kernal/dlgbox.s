@@ -868,7 +868,6 @@ DBDoGETFILES:
 	PopW r10
 	PopB r7L
 .if wheels
-LF80F = $F80F
 LF43B = $F43B
 LF69A = $F69A
 L500C = $500C
@@ -1255,18 +1254,83 @@ DBGFilesHelp4:
 	rts
 
 DBGFilesHelp5:
+.if wheels
+LF883 = $F883
+LF8B8 = $F8B8
+LF80F:  lda     $38                             ; F80F A5 38                    .8
+        pha                                     ; F811 48                       H
+        lda     $37                             ; F812 A5 37                    .7
+        pha                                     ; F814 48                       H
+        lda     $2E                             ; F815 A5 2E                    ..
+        pha                                     ; F817 48                       H
+        lda     #$40                            ; F818 A9 40                    .@
+        sta     $2E                             ; F81A 85 2E                    ..
+        lda     #$00                            ; F81C A9 00                    ..
+        jsr     LF8B8                           ; F81E 20 B8 F8                  ..
+        clc                                     ; F821 18                       .
+        lda     $07                             ; F822 A5 07                    ..
+        adc     #$38                            ; F824 69 38                    i8
+        sta     $07                             ; F826 85 07                    ..
+        lda     #$00                            ; F828 A9 00                    ..
+        jsr     SetPattern                      ; F82A 20 39 C1                  9.
+        jsr     Rectangle                       ; F82D 20 24 C1                  $.
+        lda     #$00                            ; F830 A9 00                    ..
+        lda     $0B                             ; F832 A5 0B                    ..
+        sta     $38                             ; F834 85 38                    .8
+        lda     $0A                             ; F836 A5 0A                    ..
+        sta     $37                             ; F838 85 37                    .7
+        lda     #$00                            ; F83A A9 00                    ..
+        sta     $20                             ; F83C 85 20                    . 
+        ldx     #$1E                            ; F83E A2 1E                    ..
+        jsr     LF7F4                           ; F840 20 F4 F7                  ..
+LF843:  lda     $20                             ; F843 A5 20                    . 
+        jsr     LF8B8                           ; F845 20 B8 F8                  ..
+        lda     $09                             ; F848 A5 09                    ..
+        sta     $19                             ; F84A 85 19                    ..
+        lda     $08                             ; F84C A5 08                    ..
+        sta     $18                             ; F84E 85 18                    ..
+        lda     $06                             ; F850 A5 06                    ..
+        clc                                     ; F852 18                       .
+        adc     #$09                            ; F853 69 09                    i.
+        sta     $05                             ; F855 85 05                    ..
+        lda     $1F                             ; F857 A5 1F                    ..
+        sta     $03                             ; F859 85 03                    ..
+        lda     $1E                           ; F85B A5 1E                    ..
+        sta     r0L                           ; F85D 85 02                    ..
+        jsr     PutString                       ; F85F 20 48 C1                  H.
+        clc                                     ; F862 18                       .
+        lda     L9FF2                           ; F863 AD F2 9F                 ...
+        adc     $1E                           ; F866 65 1E                    e.
+        sta     $1E                           ; F868 85 1E                    ..
+        bcc     LF86E                           ; F86A 90 02                    ..
+        inc     $1F                             ; F86C E6 1F                    ..
+LF86E:  inc     $20                             ; F86E E6 20                    . 
+        lda     $20                             ; F870 A5 20                    . 
+        cmp     #$05                            ; F872 C9 05                    ..
+        bne     LF843                           ; F874 D0 CD                    ..
+        jsr     LF883                           ; F876 20 83 F8                  ..
+        pla                                     ; F879 68                       h
+        sta     $2E                             ; F87A 85 2E                    ..
+        pla                                     ; F87C 68                       h
+        sta     $37                             ; F87D 85 37                    .7
+        pla                                     ; F87F 68                       h
+        sta     $38                             ; F880 85 38                    .8
+        rts                                     ; F882 60                       `
+.else
 	PushW rightMargin
 	lda #0
 	jsr DBGFilesHelp8
 	MoveW r4, rightMargin
 	LoadB r15L, 0
 	jsr SetPattern
+
 	lda DBGFTableIndex
 	ldx #r14
 	jsr DBGFilesHelp4
 	LoadB currentMode, SET_BOLD
 @1:	lda r15L
 	jsr DBGFilesHelp8
+
 	jsr Rectangle
 	MoveW r3, r11
 	lda r2L
@@ -1282,6 +1346,7 @@ DBGFilesHelp5:
 	LoadB currentMode, NULL
 	PopW rightMargin
 	rts
+.endif
 
 DBGFilesHelp6:
 	lda DBGFileSelected
