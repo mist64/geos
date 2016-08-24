@@ -450,9 +450,13 @@ DBDoIcons:
 	bne @1
 	lda #>DBKeyVector
 	sta keyVector+1
-	lda #<DBKeyVector
+	lda #$95;xxx#<DBKeyVector
 	sta keyVector
-@1:	tya
+@1:
+.if wheels
+	dey
+.endif
+	tya
 	asl
 	asl
 	asl
