@@ -1227,7 +1227,12 @@ DBGFilesHelp3:
 
 DBGFilesHelp4:
 	sta r0L
+.if wheels
+        lda     L9FF2                           ; F7F6 AD F2 9F                 ...
+        sta     $04                             ; F7F9 85 04                    ..
+.else
 	LoadB r1L, 17
+.endif
 	txa
 	pha
 	ldy #r0
