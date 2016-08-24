@@ -1861,3 +1861,131 @@ DeskTopExec:
 DeskTopLgh:
 	.byte 0 ;have to be at $c3cf .IDLE
 .endif
+
+.if wheels
+
+.segment "wheels_lokernal"
+L9E44 = $9E44
+L9D80:  jmp     L9D9F                           ; 9D80 4C 9F 9D                 L..
+
+; ----------------------------------------------------------------------------
+L9D83:  jmp     L9DED                           ; 9D83 4C ED 9D                 L..
+
+; ----------------------------------------------------------------------------
+; ReadFile
+L9D86:  jmp     L9E3C                           ; 9D86 4C 3C 9E                 L<.
+
+; ----------------------------------------------------------------------------
+; WriteFile
+L9D89:  jmp     L9E3F                           ; 9D89 4C 3F 9E                 L?.
+
+; ----------------------------------------------------------------------------
+; ToBASIC
+L9D8C:  jmp     L9E44                           ; 9D8C 4C 44 9E                 LD.
+
+; ----------------------------------------------------------------------------
+L9D8F:  .byte   $4C                             ; 9D8F 4C                       L
+L9D90:  brk                                     ; 9D90 00                       .
+        .byte   $50,$00,$01,$BD,$03             ; 9D91 50 00 01 BD 03           P....
+L9D96:  .byte   $42,$04,$F4,$50,$EA,$06,$01     ; 9D96 42 04 F4 50 EA 06 01     B..P...
+L9D9D:  .byte   $03                             ; 9D9D 03                       .
+L9D9E:  .byte   $00                             ; 9D9E 00                       .
+; ----------------------------------------------------------------------------
+L9D9F:  pha                                     ; 9D9F 48                       H
+        stx     L9D9D                           ; 9DA0 8E 9D 9D                 ...
+        sty     L9D9E                           ; 9DA3 8C 9E 9D                 ...
+        jsr     L9E31 ; read args                           ; 9DA6 20 31 9E                  1.
+        pla                                     ; 9DA9 68                       h
+        pha                                     ; 9DAA 48                       H
+        asl     a                               ; 9DAB 0A                       .
+        asl     a                               ; 9DAC 0A                       .
+        sta     $04                             ; 9DAD 85 04                    ..
+        lda     #$00                            ; 9DAF A9 00                    ..
+        sta     $05                             ; 9DB1 85 05                    ..
+        sta     $07                             ; 9DB3 85 07                    ..
+        lda     #$04                            ; 9DB5 A9 04                    ..
+        sta     $06                             ; 9DB7 85 06                    ..
+        lda     #$9D                            ; 9DB9 A9 9D                    ..
+        sta     $03                             ; 9DBB 85 03                    ..
+        lda     #$92                            ; 9DBD A9 92                    ..
+        sta     r0L                           ; 9DBF 85 02                    ..
+        jsr     L9E10                           ; 9DC1 20 10 9E                  ..
+        jsr     L9E1F                           ; 9DC4 20 1F 9E                  ..
+        jsr     L9E06                           ; 9DC7 20 06 9E                  ..
+        pla                                     ; 9DCA 68                       h
+        pha                                     ; 9DCB 48                       H
+        bmi     L9DD3                           ; 9DCC 30 05                    0.
+        jsr     L9E19 ; swap                           ; 9DCE 20 19 9E                  ..
+        bne     L9DD6                           ; 9DD1 D0 03                    ..
+L9DD3:  jsr     L9E1F ; fetch                           ; 9DD3 20 1F 9E                  ..
+L9DD6:  jsr     L9E26                           ; 9DD6 20 26 9E                  &.
+        ldx     L9D9D                           ; 9DD9 AE 9D 9D                 ...
+        ldy     L9D9E                           ; 9DDC AC 9E 9D                 ...
+        pla                                     ; 9DDF 68                       h
+        pha                                     ; 9DE0 48                       H
+        and     #$40                            ; 9DE1 29 40                    )@
+        beq     L9DE7                           ; 9DE3 F0 02                    ..
+        pla                                     ; 9DE5 68                       h
+L9DE6:  rts                                     ; 9DE6 60                       `
+
+; ----------------------------------------------------------------------------
+L9DE7:  jsr     L9D8F                           ; 9DE7 20 8F 9D                  ..
+        pla                                     ; 9DEA 68                       h
+        bmi     L9DE6                           ; 9DEB 30 F9                    0.
+L9DED:  stx     L9D9D                           ; 9DED 8E 9D 9D                 ...
+        sty     L9D9E                           ; 9DF0 8C 9E 9D                 ...
+        jsr     L9E31 ; read args                           ; 9DF3 20 31 9E                  1.
+        jsr     L9E06                           ; 9DF6 20 06 9E                  ..
+        jsr     L9E19 ; swap                           ; 9DF9 20 19 9E                  ..
+        jsr     L9E26 ; set up args                           ; 9DFC 20 26 9E                  &.
+        ldx     L9D9D                           ; 9DFF AE 9D 9D                 ...
+        ldy     L9D9E                           ; 9E02 AC 9E 9D                 ...
+        rts                                     ; 9E05 60                       `
+
+; ----------------------------------------------------------------------------
+; set up args, inc
+L9E06:  ldx     #$05                            ; 9E06 A2 05                    ..
+L9E08:  lda     L9D90,x                         ; 9E08 BD 90 9D                 ...
+        sta     r0L,x                         ; 9E0B 95 02                    ..
+        dex                                     ; 9E0D CA                       .
+        bpl     L9E08                           ; 9E0E 10 F8                    ..
+L9E10:  lda     $88C3                           ; 9E10 AD C3 88                 ...
+        sta     $08                             ; 9E13 85 08                    ..
+        inc     $88C3                           ; 9E15 EE C3 88                 ...
+        rts                                     ; 9E18 60                       `
+
+; ----------------------------------------------------------------------------
+; swap
+L9E19:  jsr     SwapRAM                         ; 9E19 20 CE C2                  ..
+        clv                                     ; 9E1C B8                       .
+        bvc     L9E22                           ; 9E1D 50 03                    P.
+; fetch
+L9E1F:  jsr     FetchRAM                        ; 9E1F 20 CB C2                  ..
+L9E22:  dec     $88C3                           ; 9E22 CE C3 88                 ...
+        rts                                     ; 9E25 60                       `
+
+; ----------------------------------------------------------------------------
+; set up args
+L9E26:  ldx     #$06                            ; 9E26 A2 06                    ..
+L9E28:  lda     L9D96,x                         ; 9E28 BD 96 9D                 ...
+        sta     r0L,x                         ; 9E2B 95 02                    ..
+        dex                                     ; 9E2D CA                       .
+        bpl     L9E28                           ; 9E2E 10 F8                    ..
+        rts                                     ; 9E30 60                       `
+
+; ----------------------------------------------------------------------------
+; copy back args
+L9E31:  ldx     #$06                            ; 9E31 A2 06                    ..
+L9E33:  lda     r0L,x                         ; 9E33 B5 02                    ..
+        sta     L9D96,x                         ; 9E35 9D 96 9D                 ...
+        dex                                     ; 9E38 CA                       .
+        bpl     L9E33                           ; 9E39 10 F8                    ..
+        rts                                     ; 9E3B 60                       `
+
+; ----------------------------------------------------------------------------
+L9E3C:  lda     #$03                            ; 9E3C A9 03                    ..
+        .byte   $2C                             ; 9E3E 2C                       ,
+L9E3F:  lda     #$04                            ; 9E3F A9 04                    ..
+        jmp     L9D9F                           ; 9E41 4C 9F 9D                 L..
+
+.endif

@@ -58,12 +58,15 @@ L9D80:  jmp     L9D9F                           ; 9D80 4C 9F 9D                 
 L9D83:  jmp     L9DED                           ; 9D83 4C ED 9D                 L..
 
 ; ----------------------------------------------------------------------------
+; ReadFile
 L9D86:  jmp     L9E3C                           ; 9D86 4C 3C 9E                 L<.
 
 ; ----------------------------------------------------------------------------
+; WriteFile
 L9D89:  jmp     L9E3F                           ; 9D89 4C 3F 9E                 L?.
 
 ; ----------------------------------------------------------------------------
+; ToBASIC
 L9D8C:  jmp     L9E44                           ; 9D8C 4C 44 9E                 LD.
 
 ; ----------------------------------------------------------------------------
@@ -77,7 +80,7 @@ L9D9E:  .byte   $00                             ; 9D9E 00                       
 L9D9F:  pha                                     ; 9D9F 48                       H
         stx     L9D9D                           ; 9DA0 8E 9D 9D                 ...
         sty     L9D9E                           ; 9DA3 8C 9E 9D                 ...
-        jsr     L9E31                           ; 9DA6 20 31 9E                  1.
+        jsr     L9E31 ; read args                           ; 9DA6 20 31 9E                  1.
         pla                                     ; 9DA9 68                       h
         pha                                     ; 9DAA 48                       H
         asl     a                               ; 9DAB 0A                       .
@@ -98,9 +101,9 @@ L9D9F:  pha                                     ; 9D9F 48                       
         pla                                     ; 9DCA 68                       h
         pha                                     ; 9DCB 48                       H
         bmi     L9DD3                           ; 9DCC 30 05                    0.
-        jsr     L9E19                           ; 9DCE 20 19 9E                  ..
+        jsr     L9E19 ; swap                           ; 9DCE 20 19 9E                  ..
         bne     L9DD6                           ; 9DD1 D0 03                    ..
-L9DD3:  jsr     L9E1F                           ; 9DD3 20 1F 9E                  ..
+L9DD3:  jsr     L9E1F ; fetch                           ; 9DD3 20 1F 9E                  ..
 L9DD6:  jsr     L9E26                           ; 9DD6 20 26 9E                  &.
         ldx     L9D9D                           ; 9DD9 AE 9D 9D                 ...
         ldy     L9D9E                           ; 9DDC AC 9E 9D                 ...
@@ -117,15 +120,16 @@ L9DE7:  jsr     L9D8F                           ; 9DE7 20 8F 9D                 
         bmi     L9DE6                           ; 9DEB 30 F9                    0.
 L9DED:  stx     L9D9D                           ; 9DED 8E 9D 9D                 ...
         sty     L9D9E                           ; 9DF0 8C 9E 9D                 ...
-        jsr     L9E31                           ; 9DF3 20 31 9E                  1.
+        jsr     L9E31 ; read args                           ; 9DF3 20 31 9E                  1.
         jsr     L9E06                           ; 9DF6 20 06 9E                  ..
-        jsr     L9E19                           ; 9DF9 20 19 9E                  ..
-        jsr     L9E26                           ; 9DFC 20 26 9E                  &.
+        jsr     L9E19 ; swap                           ; 9DF9 20 19 9E                  ..
+        jsr     L9E26 ; set up args                           ; 9DFC 20 26 9E                  &.
         ldx     L9D9D                           ; 9DFF AE 9D 9D                 ...
         ldy     L9D9E                           ; 9E02 AC 9E 9D                 ...
         rts                                     ; 9E05 60                       `
 
 ; ----------------------------------------------------------------------------
+; set up args, inc
 L9E06:  ldx     #$05                            ; 9E06 A2 05                    ..
 L9E08:  lda     L9D90,x                         ; 9E08 BD 90 9D                 ...
         sta     L0002,x                         ; 9E0B 95 02                    ..
@@ -137,14 +141,17 @@ L9E10:  lda     $88C3                           ; 9E10 AD C3 88                 
         rts                                     ; 9E18 60                       `
 
 ; ----------------------------------------------------------------------------
+; swap
 L9E19:  jsr     SwapRAM                         ; 9E19 20 CE C2                  ..
         clv                                     ; 9E1C B8                       .
         bvc     L9E22                           ; 9E1D 50 03                    P.
+; fetch
 L9E1F:  jsr     FetchRAM                        ; 9E1F 20 CB C2                  ..
 L9E22:  dec     $88C3                           ; 9E22 CE C3 88                 ...
         rts                                     ; 9E25 60                       `
 
 ; ----------------------------------------------------------------------------
+; set up args
 L9E26:  ldx     #$06                            ; 9E26 A2 06                    ..
 L9E28:  lda     L9D96,x                         ; 9E28 BD 96 9D                 ...
         sta     L0002,x                         ; 9E2B 95 02                    ..
@@ -153,6 +160,7 @@ L9E28:  lda     L9D96,x                         ; 9E28 BD 96 9D                 
         rts                                     ; 9E30 60                       `
 
 ; ----------------------------------------------------------------------------
+; copy back args
 L9E31:  ldx     #$06                            ; 9E31 A2 06                    ..
 L9E33:  lda     L0002,x                         ; 9E33 B5 02                    ..
         sta     L9D96,x                         ; 9E35 9D 96 9D                 ...
@@ -166,7 +174,13 @@ L9E3C:  lda     #$03                            ; 9E3C A9 03                    
 L9E3F:  lda     #$04                            ; 9E3F A9 04                    ..
         jmp     L9D9F                           ; 9E41 4C 9F 9D                 L..
 
+
+
+
+
+
 ; ----------------------------------------------------------------------------
+; ToBasic
 L9E44:  lda     #$4B                            ; 9E44 A9 4B                    .K
         jsr     L9D9F                           ; 9E46 20 9F 9D                  ..
         jmp     L5000                           ; 9E49 4C 00 50                 L.P
@@ -179,6 +193,8 @@ L9E44:  lda     #$4B                            ; 9E44 A9 4B                    
         brk                                     ; 9E50 00                       .
         brk                                     ; 9E51 00                       .
         brk                                     ; 9E52 00                       .
+
+; GetFile
 L9E53:  lda     $88C4                           ; 9E53 AD C4 88                 ...
         and     #$10                            ; 9E56 29 10                    ).
         beq     L9EA7                           ; 9E58 F0 4D                    .M
@@ -224,12 +240,16 @@ L9E96:  lda     $88C3                           ; 9E96 AD C3 88                 
 L9EA7:  jmp     LD513                           ; 9EA7 4C 13 D5                 L..
 
 ; ----------------------------------------------------------------------------
+; VerifyRAM
 L9EAA:  ldy     #$93                            ; 9EAA A0 93                    ..
         .byte   $2C                             ; 9EAC 2C                       ,
+; StashRAM
 L9EAD:  ldy     #$90                            ; 9EAD A0 90                    ..
         .byte   $2C                             ; 9EAF 2C                       ,
+; SwapRAM
 L9EB0:  ldy     #$92                            ; 9EB0 A0 92                    ..
         .byte   $2C                             ; 9EB2 2C                       ,
+; FetchRAM
 L9EB3:  ldy     #$91                            ; 9EB3 A0 91                    ..
 L9EB5:  ldx     #$0D                            ; 9EB5 A2 0D                    ..
         lda     $08                             ; 9EB7 A5 08                    ..

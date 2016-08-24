@@ -14,11 +14,13 @@
 
 .segment "serial1"
 
+.if !wheels
 SerialNumber:
 	; This matches the serial in the cbmfiles.com GEOS64.D64
 	.word $58B5
 
 	.byte $FF ; ???
+.endif
 
 .segment "serial2"
 
