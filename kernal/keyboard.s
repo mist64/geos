@@ -275,8 +275,17 @@ KbdScanHelp5:
 	and #%00010000
 	beq @2
 .endif
+.if wheels
+@1:  lda     #$80                            ; FC7D A9 80                    ..
+        .byte   $2C                             ; FC7F 2C                       ,
+@2:  lda     #$00                            ; FC80 A9 00                    ..
+        sta     $05                             ; FC82 85 05                    ..
+.else
 @1:	smbf 7, r1H
-@2:	LoadB cia1base+0, %01111111
+@2:
+.endif
+	LoadB cia1base+0, %01111111
+
 	lda cia1base+1
 	eor #$ff
 	and #%00100000
