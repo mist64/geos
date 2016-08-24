@@ -687,6 +687,10 @@ DBDoOPVEC_rts:
 
 DBDoGRPHSTR:
 	ldy r1L
+.if wheels
+LF55A = $F55A
+        jsr     LF55A                           ; F529 20 5A F5                  Z.
+.else
 	lda (DBoxDesc),y
 	sta r0L
 	iny
@@ -694,6 +698,7 @@ DBDoGRPHSTR:
 	sta r0H
 	iny
 	tya
+.endif
 	pha
 	jsr GraphicsString
 	PopB r1L
@@ -701,6 +706,17 @@ DBDoGRPHSTR:
 
 DBDoUSR_ROUT:
 	ldy r1L
+.if wheels
+        iny                                     ; F536 C8                       .
+        iny                                     ; F537 C8                       .
+        tya                                     ; F538 98                       .
+        pha                                     ; F539 48                       H
+        dey                                     ; F53A 88                       .
+        lda     ($43),y                         ; F53B B1 43                    .C
+        tax                                     ; F53D AA                       .
+        dey                                     ; F53E 88                       .
+        lda     ($43),y                         ; F53F B1 43                    .C
+.else
 	lda (DBoxDesc),y
 	sta r0L
 	iny
@@ -710,6 +726,7 @@ DBDoUSR_ROUT:
 	tya
 	pha
 	lda r0L
+.endif
 	jsr CallRoutine
 	PopB r1L
 	rts
