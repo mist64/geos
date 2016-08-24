@@ -494,22 +494,68 @@ CopyMenuCoords:
 	bne @1
 	rts
 
+.if wheels
+LC83C = $C83C
+LED00 = $ED00
+LF077 = $F077
+LF000 = $F000
+LEB9C = $EB9C
+
+LEFBA:  jsr     LEB9C                           ; EFBA 20 9C EB                  ..
+        jsr     LF000                           ; EFBD 20 00 F0                  ..
+        jsr     LEFED                           ; EFC0 20 ED EF                  ..
+        lda     $14                             ; EFC3 A5 14                    ..
+        ldx     $84B7                           ; EFC5 AE B7 84                 ...
+        sta     $86CF,x                         ; EFC8 9D CF 86                 ...
+        jsr     LF077                           ; EFCB 20 77 F0                  w.
+        bit     $04                             ; EFCE 24 04                    $.
+        bmi     LEFDE                           ; EFD0 30 0C                    0.
+        bvc     LEFE4                           ; EFD2 50 10                    P.
+        jsr     LEFE4                           ; EFD4 20 E4 EF                  ..
+        lda     r0L                           ; EFD7 A5 02                    ..
+        ora     $03                             ; EFD9 05 03                    ..
+        bne     LEFDE                           ; EFDB D0 01                    ..
+        rts                                     ; EFDD 60                       `
+
+; ----------------------------------------------------------------------------
+LEFDE:  inc     $84B7                           ; EFDE EE B7 84                 ...
+        jmp     LED00                           ; EFE1 4C 00 ED                 L..
+
+; ----------------------------------------------------------------------------
+LEFE4:  ldx     $84B7                           ; EFE4 AE B7 84                 ...
+        lda     $86CF,x                         ; EFE7 BD CF 86                 ...
+        jmp     (r0L)                         ; EFEA 6C 02 00                 l..
+
+; ----------------------------------------------------------------------------
+LEFED:  lda     $2F                             ; EFED A5 2F                    ./
+        pha                                     ; EFEF 48                       H
+        lda     #$80                            ; EFF0 A9 80                    ..
+        sta     $2F                             ; EFF2 85 2F                    ./
+        jsr     LC83C                           ; EFF4 20 3C C8                  <.
+        pla                                     ; EFF7 68                       h
+        sta     $2F                             ; EFF8 85 2F                    ./
+        rts                                     ; EFFA 60                       `
+
+        .byte   $00,$00,$00,$00,$00             ; EFFB 00 00 00 00 00           .....
+
+.else
 .if (oldMenu_5)
 Menu_5:
 	jsr _MouseOff
 	jsr $F000;xxxMenu_7
-	jsr MenuDoInvert
+	jsr $EFED;xxxMenuDoInvert
 	lda r9L
 	ldx menuNumber
 	sta menuOptionTab,x
-	jsr Menu_8
+	jsr $F077;xxxMenu_8
 	bbsf 7, r1L, Menu_52
+
 	bvs Menu_51
 	MoveB selectionFlash, r0L
 	LoadB r0H, NULL
 	jsr _Sleep
 	jsr $F000;xxxMenu_7
-	jsr MenuDoInvert
+	jsr $EFED;xxxMenuDoInvert
 	MoveB selectionFlash, r0L
 	LoadB r0H, NULL
 	jsr _Sleep
@@ -524,23 +570,23 @@ Menu_5Help:
 Menu_5:
 	jsr _MouseOff
 	jsr $F000;xxxMenu_7
-	jsr MenuDoInvert
+	jsr $EFED;xxxMenuDoInvert
 	lda r9L
 	ldx menuNumber
 	sta menuOptionTab,x
-	jsr Menu_8
+	jsr $F077;xxxMenu_8
 	bbsf 7, r1L, Menu_52
 	bvs Menu_51
 	jsr Menu_5Help
-	jsr MenuDoInvert
+	jsr $EFED;xxxMenuDoInvert
 	jsr Menu_5Help
 .endif
-	jsr MenuDoInvert
+	jsr $EFED;xxxMenuDoInvert
 	jsr $F000;xxxMenu_7
 	ldx menuNumber
 	lda menuOptionTab,x
 	pha
-	jsr Menu_8
+	jsr $F077;xxxMenu_8
 	pla
 	jmp (r0)
 
@@ -558,9 +604,10 @@ Menu_6:
 	ldx menuNumber
 	lda menuOptionTab,x
 	pha
-	jsr Menu_8
+	jsr $F077;xxxMenu_8
 	pla
 	jmp (r0)
+.endif
 
 Menu_7:
 	lda menuOptNumber
