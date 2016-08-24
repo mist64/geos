@@ -1379,16 +1379,35 @@ DBGFilesHelp8:
 	jsr DBGFilesHelp7
 	AddB r0L, r2L
 	clc
+.if wheels
+	adc #13
+.else
 	adc #14
+.endif
 	sta r2H
 	inc r2L
+.if wheels
+        jsr     LF8DE                           ; F8D6 20 DE F8                  ..
+.else
 	dec r2H
 	inc r3L
 	bne @1
 	inc r3H
+.endif
 @1:	ldx #r4
+.if wheels
+        jmp     Ddec                            ; F8DB 4C 75 C1                 Lu.
+.else
 	jsr Ddec
 	rts
+.endif
+
+.if wheels
+LF8DE:  inc     $08                             ; F8DE E6 08                    ..
+        bne     LF8E4                           ; F8E0 D0 02                    ..
+        inc     $09                             ; F8E2 E6 09                    ..
+LF8E4:  rts                                     ; F8E4 60                       `
+.endif
 
 DBIcPicNO:
 	.byte 5, %11111111, $80+1, %11111110, $db+8, 2, $80+6
