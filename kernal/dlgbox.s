@@ -835,17 +835,25 @@ DBDoGETFILES:
 	tya
 	pha
 	MoveW r5, DBGFNameTable
-	jsr DBGFilesHelp7
+	jsr $F890;xxxDBGFilesHelp7
 	lda r3H
 	ror
 	lda r3L
 	ror
 	lsr
 	lsr
+.if wheels
+	addv 4
+.else
 	addv 7
+.endif
 	pha
 	lda r2H
+.if wheels
+	subv 12
+.else
 	subv 14
+.endif
 	pha
 	PushB r7L
 	PushW r10
@@ -934,7 +942,7 @@ DBGFArrowPic:
 DBGFPressVector:
 	lda mouseData
 	bmi @2
-	jsr DBGFilesHelp7
+	jsr $F890;xxxDBGFilesHelp7
 	clc
 	lda r2L
 	adc #$45
@@ -942,7 +950,7 @@ DBGFPressVector:
 	jsr IsMseInRegion
 	beq @2
 	jsr DBGFilesHelp6
-	jsr DBGFilesHelp7
+	jsr $F890;xxxDBGFilesHelp7
 	lda mouseYPos
 	sub r2L
 	sta r0L
