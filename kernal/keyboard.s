@@ -151,7 +151,22 @@ KbdScanHelp1:
 	ldx r1L
 	lda r0L
 	and BitMaskPow2,x
-	and KbdDMltTab,y
+	and $887B;xxxKbdDMltTab,y
+.if wheels
+        beq     @9                           ; FBF5 F0 14                    ..
+        lda     $88B3                           ; FBF7 AD B3 88                 ...
+        sta     $87D9                           ; FBFA 8D D9 87                 ...
+        lda     $88B1                           ; FBFD AD B1 88                 ...
+        sta     $88B2                           ; FC00 8D B2 88                 ...
+        lda     $03                             ; FC03 A5 03                    ..
+        sta     $87EA                           ; FC05 8D EA 87                 ...
+        jmp     $FC16;xxxKbdScanHelp2                           ; FC08 4C 16 FC                 L..
+@9:	lda     #$FF                            ; FC0B A9 FF                    ..
+        sta     $87D9                           ; FC0D 8D D9 87                 ...
+        lda     #$00                            ; FC10 A9 00                    ..
+        sta     $87EA                           ; FC12 8D EA 87                 ...
+        rts                                     ; FC15 60                       `
+.else
 	beq @9
 	LoadB KbdQueFlag, 15
 	MoveB r0H, KbdNextKey
@@ -164,7 +179,9 @@ KbdScanHelp1:
 	jmp @1
 @B:
 	rts
+.endif
 
+.if !wheels
 KbdTab1:
 	.byte $db, $dd, $de, $ad, $af, $aa, $c0, $ba, $bb
 KbdTab2:
@@ -191,6 +208,7 @@ KbdDecodeTab2:
 	.byte "+", "P", "L", "-", ">", "[", "@", "<"
 	.byte KEY_BPS, "*", "]", KEY_CLEAR, KEY_INVALID, "=", "^", "?"
 	.byte "!", KEY_LARROW, KEY_INVALID, $22, " ", KEY_INVALID, "Q", KEY_RUN
+.endif
 
 KbdScanHelp2:
 	php

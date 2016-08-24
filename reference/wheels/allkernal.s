@@ -9547,6 +9547,7 @@ LFBE1:  ldy     $03                             ; FBE1 A4 03                    
         and     LC359,x                         ; FBEF 3D 59 C3                 =Y.
         and     $887B,y                         ; FBF2 39 7B 88                 9{.
         beq     LFC0B                           ; FBF5 F0 14                    ..
+
         lda     $88B3                           ; FBF7 AD B3 88                 ...
         sta     $87D9                           ; FBFA 8D D9 87                 ...
         lda     $88B1                           ; FBFD AD B1 88                 ...
@@ -9563,6 +9564,7 @@ LFC0B:  lda     #$FF                            ; FC0B A9 FF                    
         rts                                     ; FC15 60                       `
 
 ; ----------------------------------------------------------------------------
+; KbdScanHelp2
 LFC16:  php                                     ; FC16 08                       .
         sei                                     ; FC17 78                       x
         pha                                     ; FC18 48                       H
@@ -9580,6 +9582,7 @@ LFC31:  plp                                     ; FC31 28                       
         rts                                     ; FC32 60                       `
 
 ; ----------------------------------------------------------------------------
+; KbdScanHelp3
 LFC33:  php                                     ; FC33 08                       .
         sei                                     ; FC34 78                       x
         ldx     $87D7                           ; FC35 AE D7 87                 ...
