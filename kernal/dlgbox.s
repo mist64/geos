@@ -868,9 +868,7 @@ DBDoGETFILES:
 	PopW r10
 	PopB r7L
 .if wheels
-LF7D9 = $F7D9
 LF80F = $F80F
-LF7A3 = $F7A3
 LF43B = $F43B
 LF69A = $F69A
 L500C = $500C
@@ -1063,7 +1061,110 @@ DBGFPressVector:
 .endif
 @2:	rts
 
+; xxx F72F
 DBGFDoArrow:
+.if wheels
+L9FF2 = $9FF2
+        lda     $3B                             ; F72F A5 3B                    .;
+        lsr     a                               ; F731 4A                       J
+        lda     $3A                             ; F732 A5 3A                    .:
+        ror     a                               ; F734 6A                       j
+        lsr     a                               ; F735 4A                       J
+        lsr     a                               ; F736 4A                       J
+        sec                                     ; F737 38                       8
+        sbc     LF69A                           ; F738 ED 9A F6                 ...
+        lsr     a                               ; F73B 4A                       J
+        tay                                     ; F73C A8                       .
+        cpy     #$04                            ; F73D C0 04                    ..
+        bcc     LF742                           ; F73F 90 01                    ..
+        rts                                     ; F741 60                       `
+
+; ----------------------------------------------------------------------------
+LF742:  lda     LF74B,y                         ; F742 B9 4B F7                 .K.
+        ldx     LF74F,y                         ; F745 BE 4F F7                 .O.
+        jmp     CallRoutine                     ; F748 4C D8 C1                 L..
+
+; ----------------------------------------------------------------------------
+LF74B:  .byte   $53,$5D,$88,$7C                 ; F74B 53 5D 88 7C              S].|
+LF74F:  .byte   $F7,$F7,$F7,$F7                 ; F74F F7 F7 F7 F7              ....
+; ----------------------------------------------------------------------------
+; F753
+        lda     $885B                           ; F753 AD 5B 88                 .[.
+        bne     LF759                           ; F756 D0 01                    ..
+        rts                                     ; F758 60                       `
+
+; ----------------------------------------------------------------------------
+LF759:  lda     #$00                            ; F759 A9 00                    ..
+        beq     LF791                           ; F75B F0 34                    .4
+; F75D
+        ldx     $8856                           ; F75D AE 56 88                 .V.
+        dex                                     ; F760 CA                       .
+        stx     r0L                           ; F761 86 02                    ..
+        lda     #$00                            ; F763 A9 00                    ..
+        sta     $03                             ; F765 85 03                    ..
+        sta     $05                             ; F767 85 05                    ..
+        lda     #$05                            ; F769 A9 05                    ..
+        sta     $04                             ; F76B 85 04                    ..
+        ldx     #$02                            ; F76D A2 02                    ..
+        ldy     #$04                            ; F76F A0 04                    ..
+        jsr     Ddiv                            ; F771 20 69 C1                  i.
+        jsr     BBMult                          ; F774 20 60 C1                  `.
+        lda     r0L                           ; F777 A5 02                    ..
+        clv                                     ; F779 B8                       .
+        bvc     LF791                           ; F77A 50 15                    P.
+
+; F77C
+        lda     $885B                           ; F77C AD 5B 88                 .[.
+        clc                                     ; F77F 18                       .
+        adc     #$05                            ; F780 69 05                    i.
+        cmp     $8856                           ; F782 CD 56 88                 .V.
+        bcc     LF791                           ; F785 90 0A                    ..
+        rts                                     ; F787 60                       `
+
+; ----------------------------------------------------------------------------
+; F788
+        lda     $885B                           ; F788 AD 5B 88                 .[.
+        bne     LF78E                           ; F78B D0 01                    ..
+        rts                                     ; F78D 60                       `
+
+; ----------------------------------------------------------------------------
+LF78E:  sec                                     ; F78E 38                       8
+        sbc     #$05                            ; F78F E9 05                    ..
+LF791:  sta     $885C                           ; F791 8D 5C 88                 .\.
+        sta     $885B                           ; F794 8D 5B 88                 .[.
+        jsr     LF7A3                           ; F797 20 A3 F7                  ..
+        jsr     FetchRAM                        ; F79A 20 CB C2                  ..
+        jsr     LF7D9                           ; F79D 20 D9 F7                  ..
+        jmp     LF80F                           ; F7A0 4C 0F F8                 L..
+
+; ----------------------------------------------------------------------------
+LF7A3:  sta     $04                             ; F7A3 85 04                    ..
+        lda     #$05                            ; F7A5 A9 05                    ..
+        sta     r0L                           ; F7A7 85 02                    ..
+        lda     L9FF2                           ; F7A9 AD F2 9F                 ...
+        sta     $06                             ; F7AC 85 06                    ..
+        ldx     #$06                            ; F7AE A2 06                    ..
+        ldy     #$02                            ; F7B0 A0 02                    ..
+        jsr     BBMult                          ; F7B2 20 60 C1                  `.
+        lda     L9FF2                           ; F7B5 AD F2 9F                 ...
+        sta     r0L                           ; F7B8 85 02                    ..
+        ldx     #$04                            ; F7BA A2 04                    ..
+        ldy     #$02                            ; F7BC A0 02                    ..
+        jsr     BBMult                          ; F7BE 20 60 C1                  `.
+        clc                                     ; F7C1 18                       .
+        lda     $04                             ; F7C2 A5 04                    ..
+        adc     #$80                            ; F7C4 69 80                    i.
+        sta     $04                             ; F7C6 85 04                    ..
+        lda     $05                             ; F7C8 A5 05                    ..
+        adc     #$E0                            ; F7CA 69 E0                    i.
+        sta     $05                             ; F7CC 85 05                    ..
+        lda     #$83                            ; F7CE A9 83                    ..
+        sta     $03                             ; F7D0 85 03                    ..
+        lda     #$00                            ; F7D2 A9 00                    ..
+        sta     r0L                           ; F7D4 85 02                    ..
+        sta     $08                             ; F7D6 85 08                    ..
+        rts                                     ; F7D8 60                       `
+.else
 	jsr $F883;xxxDBGFilesHelp6
 	LoadB r0H, 0
 	lda DBGFArrowX
@@ -1095,8 +1196,23 @@ DBGFDoArrow:
 	sta DBGFileSelected
 @6:	jsr $F7D9;xxxDBGFilesHelp2
 	jmp DBGFilesHelp5
+.endif
 
 DBGFilesHelp2:
+.if wheels
+LF7F4 = $F7F4
+LF7D9:  lda     $885C                           ; F7D9 AD 5C 88                 .\.
+        sec                                     ; F7DC 38                       8
+        sbc     $885B                           ; F7DD ED 5B 88                 .[.
+        ldx     #$02                            ; F7E0 A2 02                    ..
+        jsr     LF7F4                           ; F7E2 20 F4 F7                  ..
+        lda     $885A                           ; F7E5 AD 5A 88                 .Z.
+        sta     $0D                             ; F7E8 85 0D                    ..
+        lda     $8859                           ; F7EA AD 59 88                 .Y.
+        sta     $0C                             ; F7ED 85 0C                    ..
+        ldy     #$0C                            ; F7EF A0 0C                    ..
+        jmp     CopyString                      ; F7F1 4C 65 C2                 Le.
+.else
 	lda DBGFileSelected
 	jsr DBGFilesHelp3
 	ldy #r1
@@ -1107,6 +1223,7 @@ DBGFilesHelp3:
 	jsr DBGFilesHelp4
 	MoveW DBGFNameTable, r1
 	rts
+.endif
 
 DBGFilesHelp4:
 	sta r0L
