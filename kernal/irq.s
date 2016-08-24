@@ -60,17 +60,28 @@ ASSERT_NOT_BELOW_IO
 	iny
 	beq @4
 	dec KbdQueFlag
-@4:	jsr _DoKeyboardScan
+@4:	jsr $FB05;xxx_DoKeyboardScan
 	lda alarmWarnFlag
 	beq @5
 	dec alarmWarnFlag
-@5:	lda intTopVector
+@5:
+.if wheels
+LEBAC = $EBAC
+	lda     $88B4                           ; FAC0 AD B4 88                 ...
+        lsr     a                               ; FAC3 4A                       J
+        bcc     @Y                           ; FAC4 90 09                    ..
+        jsr     LEBAC                           ; FAC6 20 AC EB                  ..
+        jsr     GetRandom                       ; FAC9 20 87 C1                  ..
+        clv                                     ; FACC B8                       .
+        bvc     @X                           ; FACD 50 12                    P.
+.endif
+@Y:	lda intTopVector
 	ldx intTopVector+1
 	jsr CallRoutine
 	lda intBotVector
 	ldx intBotVector+1
 	jsr CallRoutine
-	lda #1
+@X:	lda #1
 	sta grirq
 	PopB CPU_DATA
 ASSERT_NOT_BELOW_IO

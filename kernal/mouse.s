@@ -300,7 +300,7 @@ _DoCheckButtons:
 	ldx mouseVector+1
 	jsr CallRoutine
 @2:	bbrf KEYPRESS_BIT, pressFlag, @3
-	jsr KbdScanHelp3
+	jsr $FC33;xxxKbdScanHelp3
 	lda keyVector
 	ldx keyVector+1
 	jsr CallRoutine
