@@ -335,8 +335,22 @@ Menu_2:
 	lda #$15;xxx#<MenuStringFault
 	sta StringFaultVec
 	PushB r1H
+.if wheels
+        bit     $86C0                           ; EEDE 2C C0 86                 ,..
+        bmi     LEEED                           ; EEE1 30 0A                    0.
+        sec                                     ; EEE3 38                       8
+        lda     $86C2                           ; EEE4 AD C2 86                 ...
+        sbc     $29                             ; EEE7 E5 29                    .)
+        sbc     #$01                            ; EEE9 E9 01                    ..
+        sta     $05                             ; EEEB 85 05                    ..
+LEEED:  clc                                     ; EEED 18                       .
+        adc     $26                             ; EEEE 65 26                    e&
+        adc     #$01                            ; EEF0 69 01                    i.
+        sta     $05                             ; EEF2 85 05                    ..
+.else
 	AddB_ baselineOffset, r1H
 	inc r1H
+.endif
 	jsr _PutString
 	PopB r1H
 	PopW StringFaultVec
@@ -363,7 +377,11 @@ Menu_3:
 Menu_4:
 	bcc @1
 	bbrf 7, menuOptNumber, @2
+.if wheels
+	bmi @3
+.else
 	bra @3
+.endif
 @1:	bbrf 7, menuOptNumber, @3
 @2:	AddVB 2, r1H
 	rts
@@ -387,7 +405,9 @@ RcvrMnu0:
 	lda RecoverVector
 	ora RecoverVector+1
 	bne @1
+.if !wheels
 	lda #0
+.endif
 	jsr SetPattern
 	jmp Rectangle
 @1:	jmp (RecoverVector)
@@ -395,7 +415,11 @@ RcvrMnu0:
 .if ((menuVSeparator | menuHSeparator)<>0)
 DrawMenu:
 	lda menuOptNumber
+.if wheels
+	bpl @5
+.else
 	and #%00011111
+.endif
 	subv 1
 	beq @5
 	sta r2L
