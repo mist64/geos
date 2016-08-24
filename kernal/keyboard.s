@@ -73,17 +73,17 @@ LCF88 = $CF88
 	lda $FDDD,y;xxxKbdTestTab,y
 	sta cia1base+0
 	lda cia1base+1
-	cmp KbdDBncTab,y
-	sta KbdDBncTab,y
+	cmp $8870,y;xxxKbdDBncTab,y
+	sta $8870,y;xxxKbdDBncTab,y
 	bne @4
-	cmp KbdDMltTab,y
+	cmp $887B,y;xxxKbdDMltTab,y
 	beq @4
 	pha
-	eor KbdDMltTab,y
+	eor $887B,y;xxxKbdDMltTab,y
 	beq @3
-	jsr KbdScanHelp1
+	jsr $FB7F;xxxKbdScanHelp1
 @3:	pla
-	sta KbdDMltTab,y
+	sta $887B,y;xxxKbdDMltTab,y
 @4:	dey
 	bpl @2
 @5:	rts
