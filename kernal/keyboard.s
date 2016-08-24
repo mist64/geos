@@ -151,7 +151,7 @@ KbdScanHelp1:
 	ldx r1L
 	lda r0L
 	and BitMaskPow2,x
-	and $887B;xxxKbdDMltTab,y
+	and $887B,y;xxxKbdDMltTab,y
 .if wheels
         beq     @9                           ; FBF5 F0 14                    ..
         lda     $88B3                           ; FBF7 AD B3 88                 ...
