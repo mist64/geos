@@ -316,7 +316,13 @@ Menu_2:
 	PushW leftMargin
 	PushW rightMargin
 	PushW StringFaultVec
+.if wheels
+	lda #$00
+	sta leftMargin+1
+	sta leftMargin
+.else
 	LoadW__ leftMargin, 0
+.endif
 	sec
 	lda menuRight
 	sbc #1
@@ -326,7 +332,7 @@ Menu_2:
 	sta rightMargin+1
 	lda #>MenuStringFault
 	sta StringFaultVec+1
-	lda #<MenuStringFault
+	lda #$15;xxx#<MenuStringFault
 	sta StringFaultVec
 	PushB r1H
 	AddB_ baselineOffset, r1H
