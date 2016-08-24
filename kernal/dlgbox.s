@@ -331,6 +331,7 @@ _RstrFrmDialogue:
 	rts
 
 Dialog_2:
+.if !wheels
 ASSERT_NOT_BELOW_IO
 	PushB CPU_DATA
 	LoadB CPU_DATA, IO_IN
@@ -339,6 +340,7 @@ ASSERT_NOT_BELOW_IO
 	PopB CPU_DATA
 ASSERT_NOT_BELOW_IO
 	rts
+.endif
 
 DialogSave:
 	ldx #0
@@ -376,6 +378,18 @@ DialogNextSaveRestoreEntry:
 	bcc @1
 	inc r4H
 @1:	ldy #0
+.if wheels
+LF3D2 = $F3D2
+LF3BA = $F3BA
+LF3C6 = $F3C6
+        lda     LF3D2,x                         ; F3A7 BD D2 F3                 ...
+        beq     @2                           ; F3AA F0 0D                    ..
+        sta     $08                             ; F3AC 85 08                    ..
+        lda     LF3BA,x                         ; F3AE BD BA F3                 ...
+        sta     $06                             ; F3B1 85 06                    ..
+        lda     LF3C6,x                         ; F3B3 BD C6 F3                 ...
+        sta     $07                             ; F3B6 85 07                    ..
+.else
 	lda DialogCopyTab,x
 	sta r2L
 	inx
@@ -386,6 +400,7 @@ DialogNextSaveRestoreEntry:
 	beq @2
 	lda DialogCopyTab,x
 	sta r3L
+.endif
 	inx
 @2:	rts
 

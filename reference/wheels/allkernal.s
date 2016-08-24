@@ -8520,10 +8520,12 @@ LF39B:  tya                                     ; F39B 98                       
         inc     $0B                             ; F3A3 E6 0B                    ..
 LF3A5:  ldy     #$00                            ; F3A5 A0 00                    ..
         lda     LF3D2,x                         ; F3A7 BD D2 F3                 ...
+
         beq     LF3B9                           ; F3AA F0 0D                    ..
         sta     $08                             ; F3AC 85 08                    ..
         lda     LF3BA,x                         ; F3AE BD BA F3                 ...
         sta     $06                             ; F3B1 85 06                    ..
+
         lda     LF3C6,x                         ; F3B3 BD C6 F3                 ...
         sta     $07                             ; F3B6 85 07                    ..
         inx                                     ; F3B8 E8                       .
