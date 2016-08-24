@@ -310,7 +310,13 @@ KbdScanHelp5:
 	beq @4
 .endif
 	smbf 5, r1H
-@4:	rts
+@4:
+.if wheels
+L9FF0 = $9FF0
+	lda     $05                             ; FCA3 A5 05                    ..
+        sta     L9FF0                           ; FCA5 8D F0 9F                 ...
+.endif
+	rts
 
 KbdScanHelp6:
 	pha
@@ -320,8 +326,13 @@ KbdScanHelp6:
 	cmp #'z'+1
 	bcs @1
 	pla
+.if wheels
+        and     #$DF                            ; FCB5 29 DF                    ).
+        rts                                     ; FCB7 60                       `
+.else
 	subv $20
 	pha
+.endif
 @1:	pla
 	rts
 
