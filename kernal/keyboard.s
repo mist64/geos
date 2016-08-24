@@ -60,15 +60,15 @@ LCF88 = $CF88
 @1:	LoadB r1H, 0
 .if wheels
         ldy     #$FF                            ; FB32 A0 FF                    ..
-        sty     $DC02                           ; FB34 8C 02 DC                 ...
+        sty     cia1base+2
         iny                                     ; FB37 C8                       .
-        sty     $DC03                           ; FB38 8C 03 DC                 ...
+        sty     cia1base+3
 .endif
-	jsr KbdScanRow
+	jsr $FB74;xxxKbdScanRow
 	bne @5
 	jsr KbdScanHelp5
 	ldy #7
-@2:	jsr KbdScanRow
+@2:	jsr $FB74;xxxKbdScanRow
 	bne @5
 	lda KbdTestTab,y
 	sta cia1base+0
