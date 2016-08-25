@@ -619,7 +619,7 @@ LF4D5:  ora     $7963                           ; F4D5 0D 63 79                 
 
 .if wheels
         lda     #$45                            ; F4DB A9 45                    .E
-        jsr     L9D80                           ; F4DD 20 80 9D                  ..
+        jsr     L9D80 ; far call
         jsr     L5009                           ; F4E0 20 09 50                  .P
 ; REU swap, preserving r registers and x, y
         jsr     L9D83                           ; F4E3 20 83 9D                  ..

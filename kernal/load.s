@@ -129,7 +129,7 @@ LC53D = $c53d
 
 LC326:  jsr     LC53D                           ; C326 20 3D C5                  =.
         lda     #$CA                            ; C329 A9 CA                    ..
-        jsr     L9D80                           ; C32B 20 80 9D                  ..
+        jsr     L9D80 ; far call                           ; C32B 20 80 9D                  ..
         jsr     L5003                           ; C32E 20 03 50                  .P
 .endif
 
