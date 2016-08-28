@@ -118,7 +118,7 @@ _SmallPutChar:
 	jmp FontPutChar
 
 DoTAB:
-.if !wheels ; no-op
+.if !wheels_size_and_speed ; no-op
 	lda #0 ; XXX was this a constant in the source?
 	add r11L
 	sta r11L
