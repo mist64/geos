@@ -368,11 +368,11 @@ ProcessCursor:
 	bne @2
 	bbrf 6, alphaFlag, @1
 	jmp _PromptOff
-@1:	jmp $E7E4;xxx_PromptOn
+@1:	jmp _PromptOn
 @2:	rts
 
 GSSkeyVector:
-	jsr $E808;xxx_PromptOff
+	jsr _PromptOff
 	MoveW stringX, r11
 	MoveB stringY, r1H
 	ldy stringLen
@@ -417,13 +417,13 @@ GSSkeyVector:
 	ldx r11L
 	stx stringX
 	bra @5
-@4:	jsr $E7A9;xxxGSHelp1
+@4:	jsr GSHelp1
 .if !wheels_size_and_speed ; no op
 	bra @5
 .endif
-@5:	jmp $E7E4;xxx_PromptOn
+@5:	jmp _PromptOn
 @6:	sei
-	jsr $E808;xxx_PromptOff
+	jsr _PromptOff
 	lda #%01111111
 	and alphaFlag
 	sta alphaFlag
