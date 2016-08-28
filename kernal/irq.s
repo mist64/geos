@@ -60,7 +60,7 @@ ASSERT_NOT_BELOW_IO
 	iny
 	beq @4
 	dec KbdQueFlag
-@4:	jsr $FB05;xxx_DoKeyboardScan
+@4:	jsr _DoKeyboardScan
 	lda alarmWarnFlag
 	beq @5
 	dec alarmWarnFlag

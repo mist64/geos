@@ -56,8 +56,8 @@
 ;---------------------------------------------------------------
 _DoIcons:
 	MoveW r0, IconDescVec
-	jsr $F0D7;xxxIcons_1
-	jsr $EC75;xxxResetMseRegion
+	jsr Icons_1
+	jsr ResetMseRegion
 	lda mouseOn
 .if wheels
 	bmi @1
@@ -84,7 +84,7 @@ _DoIcons:
 	lda (IconDescVec),y
 	tay
 	sec
-	jmp $EB60;xxx_StartMouseMode
+	jmp _StartMouseMode
 
 .segment "icon2"
 
@@ -143,14 +143,14 @@ ProcessClick:
 	beq @5
 	bmi @3
 	bvs @4
-@3:	jsr $F1B1;xxxCalcIconCoords
+@3:	jsr CalcIconCoords
 	jsr $EFED;xxxMenuDoInvert
 	MoveB selectionFlash, r0L
 	LoadB r0H, NULL
 	jsr _Sleep
 	MoveB clkBoxTemp2, r0L
 	ldy clkBoxTemp
-@4:	jsr $F1B1;xxxCalcIconCoords
+@4:	jsr CalcIconCoords
 	jsr $EFED;xxxMenuDoInvert
 @5:	ldy #$1e
 	ldx #0

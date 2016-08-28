@@ -1011,7 +1011,7 @@ _GetScanLine:
 	ora r6H
 	sta r5L
 	sta r6L
-	lda $CAAB,x;xxxLineTabH,x
+	lda LineTabH,x
 	sta r5H
 	subv >(SCREEN_BASE-BACK_SCR_BASE)
 	sta r6H
@@ -1019,13 +1019,13 @@ _GetScanLine:
 	tax
 	rts
 @2:	bbrf 6, dispBufferOn, @3 ; ST_WR_BACK
-	lda $CA92,x;xxxLineTabL,x
+	lda LineTabL,x
 	ora r6H
 	sta r6L
 .if wheels
 	sta r5L
 .endif
-	lda $CAAB,x;xxxLineTabH,x
+	lda LineTabH,x
 	subv >(SCREEN_BASE-BACK_SCR_BASE)
 	sta r6H
 .if wheels
@@ -1120,7 +1120,7 @@ BitmClp1:
 	bra @1
 @3:	lda r11L
 	jsr BitmHelpClp
-	jsr $E3D9;xxxBitmapUpHelp
+	jsr BitmapUpHelp
 	lda r11H
 	jsr BitmHelpClp
 	inc r1H
@@ -1132,7 +1132,7 @@ BitmHelpClp:
 	cmp #0
 	beq @1
 	pha
-	jsr $E40B;xxxBitmapDecode
+	jsr BitmapDecode
 	pla
 	subv 1
 	bne BitmHelpClp
@@ -1226,7 +1226,7 @@ BitmapDecode:
 	and #%01111111
 	beq @2
 	bbrf 7, r3L, @1
-	jsr $E45F;xxxBitmapDecode2
+	jsr BitmapDecode2
 	dec r3L
 	rts
 @1:	lda r7H
@@ -1235,22 +1235,22 @@ BitmapDecode:
 @2:	lda r4L
 	bne @3
 	bbrf 7, r9H, @3
-	jsr $E45C;xxxIndirectR14
-@3:	jsr $E45F;xxxBitmapDecode2
+	jsr IndirectR14
+@3:	jsr BitmapDecode2
 	sta r3L
 	cmp #$dc
 	bcc @4
 	sbc #$dc
 	sta r7L
 	sta r4H
-	jsr $E45F;xxxBitmapDecode2
+	jsr BitmapDecode2
 	subv 1
 	sta r4L
 	MoveW r0, r8
 	bra @2
 @4:	cmp #$80
 	bcs BitmapDecode
-	jsr $E45F;xxxBitmapDecode2
+	jsr BitmapDecode2
 	sta r7H
 	bra BitmapDecode
 
