@@ -26,6 +26,8 @@
 
 .segment "tobasic1"
 
+.if !wheels
+
 .if (!removeToBASIC)
 ToBASICBuf:
 	.res 40, 0
@@ -120,8 +122,11 @@ execBASIC:
 
 .endif
 
+.endif
+
 .segment "tobasic2"
 
+.if !wheels
 _ToBASIC:
 .if (1 || removeToBASIC)
 	sei
@@ -188,4 +193,5 @@ ToBASICTab:
 	.word OS_VARS_LGH
 	.byte $00
 ToBASICTab_end:
+.endif
 .endif

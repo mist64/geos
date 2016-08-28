@@ -28,6 +28,7 @@
 
 .segment "hw1"
 
+.if !wheels
 VIC_IniTbl:
 	.byte $00, $00, $00, $00, $00, $00, $00, $00
 	.byte $00, $00, $00, $00, $00, $00, $00, $00
@@ -36,7 +37,6 @@ VIC_IniTbl:
 VIC_IniTbl_end:
 
 _DoFirstInitIO:
-.if !wheels ;xxx
 	LoadB CPU_DDR, $2f
 ASSERT_NOT_BELOW_IO
 	LoadB CPU_DATA, KRNL_IO_IN
@@ -77,6 +77,7 @@ ASSERT_NOT_BELOW_IO
 
 .segment "hw2"
 
+.if !wheels
 Init_KRNLVec:
 	ldx #32
 @1:	lda KERNALVecTab-1,x
@@ -84,6 +85,7 @@ Init_KRNLVec:
 	dex
 	bne @1
 	rts
+.endif
 
 .segment "hw3"
 

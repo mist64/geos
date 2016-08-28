@@ -18,6 +18,8 @@
 
 .segment "reu"
 
+.if !wheels
+
 .if (REUPresent)
 _VerifyRAM:
 	ldy #$93
@@ -283,3 +285,5 @@ RamExWr_1:
 	bpl RamExWr_0
 	jmp RamExRd_End
 .endif
+
+.endif ; wheels

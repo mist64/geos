@@ -341,6 +341,7 @@ LC4F5:  lda     (L003D),y                       ; C4F5 B1 3D                    
 
 .segment "load2"
 
+.if !wheels
 UNK_4:
 	MoveB A885D, r10L
 	MoveB A885E, r0L
@@ -374,6 +375,7 @@ U_50:
 	jsr CopyFString
 U_51:
 	rts
+.endif
 
 .segment "load3"
 

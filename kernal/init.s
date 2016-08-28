@@ -42,11 +42,13 @@
 
 .segment "init1"
 
+.if !wheels
 InitGEOS:
 	jsr _DoFirstInitIO
 InitGEOEnv:
 	LoadW r0, InitRamTab
 	jmp _InitRam
+.endif
 
 .segment "init2"
 
@@ -137,6 +139,7 @@ ASSERT_NOT_BELOW_IO
 
 .segment "init3"
 
+.if !wheels
 UNK_6:
 	lda #$bf
 	sta A8FF0
@@ -146,9 +149,11 @@ UNK_6:
 	dex
 	bpl @1
 	rts
+.endif
 
 .segment "init4"
 
+.if !wheels
 InitRamTab:
 	.word currentMode
 	.byte 12
@@ -200,4 +205,4 @@ InitRamTab:
 	.byte $2c, $2d, $2e, $2f
 
 	.word 0
-
+.endif

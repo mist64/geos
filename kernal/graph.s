@@ -59,6 +59,7 @@ GraphPenXH = GraphPenX+1
 
 .segment "graph1"
 
+.if !wheels
 ;---------------------------------------------------------------
 ; used by EnterDesktop
 ;---------------------------------------------------------------
@@ -83,6 +84,7 @@ ClrScr2:
 	dex
 	bne ClrScr1
 	rts
+.endif
 
 .segment "graph2"
 

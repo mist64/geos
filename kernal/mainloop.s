@@ -186,6 +186,7 @@ _MNLP:
 
 .segment "mainloop2"
 
+.if !wheels
 _MainLoop2:
 	ldx CPU_DATA
 ASSERT_NOT_BELOW_IO
@@ -196,6 +197,7 @@ ASSERT_NOT_BELOW_IO
 	stx CPU_DATA
 ASSERT_NOT_BELOW_IO
 	jmp _MainLoop
+.endif
 
 .segment "mainloop3"
 
