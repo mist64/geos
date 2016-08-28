@@ -190,9 +190,9 @@ pingTab:
 	.byte $0f
 pingTabEnd:
 
-	.byte $00
+; ???
 .if wheels
-	.byte 0
+	.word 0
 .else
-	.byte $0f
+	.word $0f00
 .endif
