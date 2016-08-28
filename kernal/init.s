@@ -198,11 +198,10 @@ InitRamTab:
 	.byte 1
 	.byte 0                       ; IconDescVecH
 
-.if wheels
+.if wheels ; ???
 	.word   A88A7
-	.byte   $01
-	.byte   $05 ; E963 00 01 00 A7 88 01 05 F8  ........
-
+	.byte   1
+	.byte   5
 .endif
 	.word obj0Pointer
 	.byte 8
