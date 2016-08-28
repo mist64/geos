@@ -90,17 +90,19 @@ LC064:  jsr     CallRoutine                     ; C064 20 D8 C1                 
         lda     LD011                           ; C06E AD 11 D0                 ...
         and     #$7F                            ; C071 29 7F                    ).
 LC073:  sta     LD011                           ; C073 8D 11 D0                 ...
-        .byte   $86                             ; C076 86                       .
-LC077:  ora     ($4C,x)                         ; C077 01 4C                    .L
-        .byte   $37                             ; C079 37                       7
-        .byte $c0
+        stx $01                                 ; C076 86                       .
+LC077:  jmp LC037                         ; C077 01 4C                    .L
+
+; XXX this is segment "files2"
+.if wheels
+.global DkNmTabL, DkNmTabH ; XXX
+.endif
+.define DkNmTab DrACurDkNm, DrBCurDkNm, DrCCurDkNm, DrDCurDkNm
 DkNmTabL:
-        .byte $1e, $30, $dc, $ee
+	.lobytes DkNmTab
 DkNmTabH:
-	.byte $84, $84, $88, $88
-;        inc     $8484                           ; C07E EE 84 84                 ...
- ;       dey                                     ; C081 88                       .
-;        dey                                     ; C082 88                       .
+	.hibytes DkNmTab
+
 LC083:  php                                     ; C083 08                       .
         sei                                     ; C084 78                       x
         lsr     a                               ; C085 4A                       J

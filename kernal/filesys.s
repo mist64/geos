@@ -184,10 +184,13 @@ DkNmTabH:
 .segment "files3"
 
 _GetPtrCurDkNm:
+.if wheels
+.import DkNmTabL, DkNmTabH ; XXX
+.endif
 	ldy curDrive
-	lda $c073,y;xxxDkNmTabL-8,Y
+	lda DkNmTabL-8,Y
 	sta zpage,x
-	lda $c077,y;xxxDkNmTabH-8,Y
+	lda DkNmTabH-8,Y
 	sta zpage+1,x
 	rts
 
