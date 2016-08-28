@@ -101,11 +101,11 @@ _StartMouseMode:
 	jsr SlowMouse
 @1:	lda #>CheckClickPos
 	sta mouseVector+1
-	lda #$81;xxx#<CheckClickPos
+	lda #<CheckClickPos
 	sta mouseVector
 	lda #>DoMouseFault
 	sta mouseFaultVec+1
-	lda #$CD;xxx#<DoMouseFault
+	lda #<DoMouseFault
 	sta mouseFaultVec
 	LoadB faultData, NULL
 	jmp MouseUp
@@ -229,9 +229,9 @@ CheckClickPos:
 	CmpW mouseXPos, menuRight
 	beq @2
 	bcs @3
-@2:	jmp $EFBA;xxxMenu_5
+@2:	jmp Menu_5
 @3:	bbrf ICONSON_BIT, mouseOn, @4
-	jmp $F0FE;xxxProcessClick
+	jmp ProcessClick
 @4:	lda otherPressVec
 	ldx otherPressVec+1
 	jmp CallRoutine
