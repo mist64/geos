@@ -351,8 +351,8 @@ _GetString:
 	bbrf 7, stringMargCtrl, @1
 	MoveW r4, StringFaultVec
 @1:	lda curHeight
-	jsr $E822;xxx_InitTextPrompt
-	jmp $E7E4;xxx_PromptOn
+	jsr _InitTextPrompt
+	jmp _PromptOn
 
 GSStringFault:
 	MoveB stringLen, stringMaxLen
@@ -367,7 +367,7 @@ ProcessCursor:
 	and #$3f
 	bne @2
 	bbrf 6, alphaFlag, @1
-	jmp $E808;xxx_PromptOff
+	jmp _PromptOff
 @1:	jmp $E7E4;xxx_PromptOn
 @2:	rts
 
