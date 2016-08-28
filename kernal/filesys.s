@@ -185,9 +185,9 @@ DkNmTabH:
 
 _GetPtrCurDkNm:
 	ldy curDrive
-	lda DkNmTabL-8,Y
+	lda $c073,y;xxxDkNmTabL-8,Y
 	sta zpage,x
-	lda DkNmTabH-8,Y
+	lda $c077,y;xxxDkNmTabH-8,Y
 	sta zpage+1,x
 	rts
 
@@ -394,12 +394,6 @@ LD68F:  lda     $8148                           ; D68F AD 48 81                 
         sta     $10                             ; D697 85 10                    ..
         rts                                     ; D699 60                       `
 
-; ----------------------------------------------------------------------------
-LD69A:  lda     #$81                            ; D69A A9 81                    ..
-        sta     $0B                             ; D69C 85 0B                    ..
-        lda     #$00                            ; D69E A9 00                    ..
-        sta     $0A                             ; D6A0 85 0A                    ..
-        rts                                     ; D6A2 60                       `
 .else
 .if (useRamExp)
 	CmpWI r7, ($0100+SYSTEM)
@@ -490,11 +484,11 @@ SetBufTSVector:
 GetStartHAddr:
 	MoveW fileHeader + O_GHST_ADDR, r7
 	rts
+.endif
 
 SetFHeadVector:
 	LoadW r4, fileHeader
 	rts
-.endif
 
 _FindFile:
 .if wheels
@@ -1081,7 +1075,7 @@ _FreeFile:
 @1:	ldy #OFF_DE_TR_SC
 .if wheels
         jsr     LD78B                           ; D9E3 20 8B D7                  ..
-        jsr     LD69A                           ; D9E6 20 9A D6                  ..
+        jsr     SetFHeadVector                           ; D9E6 20 9A D6                  ..
         jsr     GetBlock                        ; D9E9 20 E4 C1                  ..
         bne     @3                           ; D9EC D0 17                    ..
 .else
