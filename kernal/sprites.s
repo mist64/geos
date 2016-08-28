@@ -113,11 +113,11 @@ LCCB5:  lda     $01                             ; CCB5 A5 01                    
         lda     LC359,x                         ; CCBE BD 59 C3                 .Y.
         bcs     LCCCB                           ; CCC1 B0 08                    ..
         eor     #$FF                            ; CCC3 49 FF                    I.
-        and     $D015                           ; CCC5 2D 15 D0                 -..
+        and     mobenble                           ; CCC5 2D 15 D0                 -..
         clv                                     ; CCC8 B8                       .
         bvc     LCCCE                           ; CCC9 50 03                    P.
-LCCCB:  ora     $D015                           ; CCCB 0D 15 D0                 ...
-LCCCE:  sta     $D015                           ; CCCE 8D 15 D0                 ...
+LCCCB:  ora     mobenble                           ; CCCB 0D 15 D0                 ...
+LCCCE:  sta     mobenble                           ; CCCE 8D 15 D0                 ...
         pla                                     ; CCD1 68                       h
         sta     $01                             ; CCD2 85 01                    ..
         rts                                     ; CCD4 60                       `

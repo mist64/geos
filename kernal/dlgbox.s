@@ -139,30 +139,32 @@ DlgBoxPrep:
 LF383 = $F383
 LF36E = $F36E
 LC58F = $C58F
-LF28E:  sec                                     ; F28E 38                       8
-        jsr     LF29B
-        lda     #0 ; undefined
-        sta     sysDBData
-        jmp     LC58F
+LF28E:  sec
+	jsr     LF29B
+	lda     #0 ; undefined
+	sta     sysDBData
+	jmp     LC58F
 
-LF29A:  clc                                     ; F29A 18                       .
-LF29B:  lda     $01                             ; F29B A5 01                    ..
-        pha                                     ; F29D 48                       H
-        lda     #$35                            ; F29E A9 35                    .5
-        sta     $01                             ; F2A0 85 01                    ..
-        lda     #$85                            ; F2A2 A9 85                    ..
-        sta     $0B                             ; F2A4 85 0B                    ..
-        lda     #$1F                            ; F2A6 A9 1F                    ..
-        sta     $0A                             ; F2A8 85 0A                    ..
-        bcc     LF2B6                           ; F2AA 90 0A                    ..
-        jsr     LF36E                           ; F2AC 20 6E F3                  n.
-        lda     #$01                            ; F2AF A9 01                    ..
-        sta     $D015                           ; F2B1 8D 15 D0                 ...
-        bne     LF2B9                           ; F2B4 D0 03                    ..
-LF2B6:  jsr     LF383                           ; F2B6 20 83 F3                  ..
-LF2B9:  pla                                     ; F2B9 68                       h
-        sta     $01                             ; F2BA 85 01                    ..
-        rts                                     ; F2BC 60                       `
+LF29A:	clc
+LF29B:	lda     CPU_DATA
+	pha
+	lda     #$35
+ASSERT_NOT_BELOW_IO
+	sta     CPU_DATA
+	lda     #$85
+	sta     $0B
+	lda     #$1F
+	sta     $0A
+	bcc     LF2B6
+	jsr     LF36E
+	lda     #$01
+	sta     mobenble
+	bne     LF2B9
+LF2B6:	jsr     LF383
+LF2B9:	pla
+	sta     CPU_DATA
+ASSERT_NOT_BELOW_IO
+	rts
 .else
 ASSERT_NOT_BELOW_IO
 	PushB CPU_DATA
