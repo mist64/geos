@@ -99,39 +99,11 @@ _PutChar:
 	lda StringFaultVec
 	jmp CallRoutine
 
-.if wheels
-PutCharTabL:
-        .byte $ad
-        .byte   $14                             ; E4E7 14                       .
-        ora     $1D,x                           ; E4E8 15 1D                    ..
-        rol     $2E                             ; E4EA 26 2E                    &.
-        and     $CB40,y                         ; E4EC 39 40 CB                 9@.
-        .byte   $72                             ; E4EF 72                       r
-        .byte   $47                             ; E4F0 47                       G
-        .byte   $4E                             ; E4F1 4E                       N
-	eor     $6C,x                           ; E4F2 55 6C                    Ul
-        adc     $8B7F,y                         ; E4F4 79 7F 8B                 y..
-        .byte   $92                             ; E4F7 92                       .
-        .byte $99, $A0
-PutCharTabH:
-	.byte $E5
-        sbc     $E5                             ; E4FB E5 E5                    ..
-        sbc     $E5                             ; E4FD E5 E5                    ..
-        sbc     $E5                             ; E4FF E5 E5                    ..
-        sbc     $E5                             ; E501 E5 E5                    ..
-        .byte   $FA                             ; E503 FA                       .
-        sbc     $E5                             ; E504 E5 E5                    ..
-        sbc     $E5                             ; E506 E5 E5                    ..
-        sbc     $E5                             ; E508 E5 E5                    ..
-        sbc     $E5                             ; E50A E5 E5                    ..
-        sbc     $E5                             ; E50C E5 E5                    ..
-.else
 .define PutCharTab DoBACKSPACE, DoTAB, DoLF, DoHOME, DoUPLINE, DoCR, DoULINEON, DoULINEOFF, DoESC_GRAPHICS, DoESC_RULER, DoREV_ON, DoREV_OFF, DoGOTOX, DoGOTOY, DoGOTOXY, DoNEWCARDSET, DoBOLDON, DoITALICON, DoOUTLINEON, DoPLAINTEXT
 PutCharTabL:
 	.lobytes PutCharTab
 PutCharTabH:
 	.hibytes PutCharTab
-.endif
 
 ;---------------------------------------------------------------
 ; SmallPutChar                                            $C202
@@ -145,17 +117,14 @@ _SmallPutChar:
 	subv $20
 	jmp FontPutChar
 
-.if wheels
-	rts
-.endif
-
-.if !wheels
 DoTAB:
+.if !wheels
 	lda #0
 	add r11L
 	sta r11L
 	bcc @1
 	inc r11H
+.else
 @1:	rts
 .endif
 
