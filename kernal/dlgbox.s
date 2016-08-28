@@ -153,7 +153,7 @@ ASSERT_NOT_BELOW_IO
 	jsr DialogSave
 	LoadB mobenble, 1
 	bne @2
-@1:	jsr LF383
+@1:	jsr DialogRestore
 @2:	pla
 	sta CPU_DATA
 ASSERT_NOT_BELOW_IO
