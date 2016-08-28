@@ -137,12 +137,11 @@ DlgBoxProcH:
 DlgBoxPrep:
 .if wheels ; ???
 LF383 = $F383
-LC58F = $C58F
 LF28E:  sec
 	jsr LF29B
 	lda #0 ; undefined
 	sta sysDBData
-	jmp LC58F
+	jmp InitGEOEnv
 
 LF29A:	clc
 LF29B:	PushB CPU_DATA

@@ -68,7 +68,8 @@ _FillRam:
 LC428 = $C428
 LC58C:  jsr     LC428                           ; C58C 20 28 C4                  (.
 .import InitRamTab
-LC58F:  LoadW r0, InitRamTab
+.global InitGEOEnv
+InitGEOEnv:  LoadW r0, InitRamTab
 
 .endif
 
