@@ -135,34 +135,27 @@ DlgBoxProcH:
 	.hibytes DlgBoxProc3
 
 DlgBoxPrep:
-.if wheels
+.if wheels ; ???
 LF383 = $F383
-LF36E = $F36E
 LC58F = $C58F
 LF28E:  sec
-	jsr     LF29B
-	lda     #0 ; undefined
-	sta     sysDBData
-	jmp     LC58F
+	jsr LF29B
+	lda #0 ; undefined
+	sta sysDBData
+	jmp LC58F
 
 LF29A:	clc
-LF29B:	lda     CPU_DATA
-	pha
-	lda     #$35
+LF29B:	PushB CPU_DATA
 ASSERT_NOT_BELOW_IO
-	sta     CPU_DATA
-	lda     #$85
-	sta     $0B
-	lda     #$1F
-	sta     $0A
-	bcc     LF2B6
+	LoadB CPU_DATA, IO_IN
+	LoadW r4, dlgBoxRamBuf
+	bcc @1
 	jsr DialogSave
-	lda     #1
-	sta     mobenble
-	bne     LF2B9
-LF2B6:	jsr     LF383
-LF2B9:	pla
-	sta     CPU_DATA
+	LoadB mobenble, 1
+	bne @2
+@1:	jsr LF383
+@2:	pla
+	sta CPU_DATA
 ASSERT_NOT_BELOW_IO
 	rts
 .else

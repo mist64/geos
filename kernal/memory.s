@@ -67,10 +67,7 @@ _FillRam:
 .if wheels
 LC428 = $C428
 LC58C:  jsr     LC428                           ; C58C 20 28 C4                  (.
-LC58F:  lda     #$E9                            ; C58F A9 E9                    ..
-        sta     r0H                             ; C591 85 03                    ..
-        lda     #$2B                            ; C593 A9 2B                    .+
-        sta     r0L                           ; C595 85 02                    ..
+LC58F:  LoadW r0, $e92b
 .endif
 
 ;---------------------------------------------------------------
