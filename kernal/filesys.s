@@ -185,9 +185,9 @@ DkNmTabH:
 
 _GetPtrCurDkNm:
 	ldy curDrive
-	lda $c073,y;xxxDkNmTabL-8,Y
+	lda DkNmTabL-8,Y
 	sta zpage,x
-	lda $c077,y;xxxDkNmTabH-8,Y
+	lda DkNmTabH-8,Y
 	sta zpage+1,x
 	rts
 
@@ -731,7 +731,7 @@ _GetFHdrInfo:
 .else
 	MoveW r1, fileTrScTab
 .endif
-	jsr LD69A;xxxSetFHeadVector
+	jsr SetFHeadVector
 	jsr GetBlock
 .if wheels
         bne     @1                           ; D780 D0 08                    ..
