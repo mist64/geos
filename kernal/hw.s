@@ -28,7 +28,138 @@
 
 .segment "hw1"
 
-.if !wheels
+.if wheels
+LEC75 = $ec75
+LFD2F = $fd2f
+LC5E7 = $c5e7
+LD07B = $D07B
+L003D = $003D
+
+        .byte   $00,$00,$00,$00,$00,$00,$00,$00 ; C40A 00 00 00 00 00 00 00 00  ........
+        .byte   $00,$00,$00,$00,$00,$00,$00,$00 ; C412 00 00 00 00 00 00 00 00  ........
+        .byte   $00,$3B,$FB,$AA,$AA,$01,$08,$00 ; C41A 00 3B FB AA AA 01 08 00  .;......
+        .byte   $38,$0F,$01,$00,$00,$00         ; C422 38 0F 01 00 00 00        8.....
+; ----------------------------------------------------------------------------
+.global _DoFirstInitIO ; XXX belongs in hw.s
+_DoFirstInitIO:
+	lda     #$2F                            ; C428 A9 2F                    ./
+        sta     $00                             ; C42A 85 00                    ..
+        lda     #$36                            ; C42C A9 36                    .6
+        sta     $01                             ; C42E 85 01                    ..
+        sta     LD07B                           ; C430 8D 7B D0                 .{.
+        ldx     #$07                            ; C433 A2 07                    ..
+        lda     #$FF                            ; C435 A9 FF                    ..
+LC437:  sta     $887B,x                         ; C437 9D 7B 88                 .{.
+        sta     $8870,x                         ; C43A 9D 70 88                 .p.
+        dex                                     ; C43D CA                       .
+        bpl     LC437                           ; C43E 10 F7                    ..
+        stx     $87D9                           ; C440 8E D9 87                 ...
+        stx     $DC02                           ; C443 8E 02 DC                 ...
+        inx                                     ; C446 E8                       .
+        stx     $87D7                           ; C447 8E D7 87                 ...
+        stx     $87D8                           ; C44A 8E D8 87                 ...
+        stx     $DC03                           ; C44D 8E 03 DC                 ...
+        stx     $DC0F                           ; C450 8E 0F DC                 ...
+        stx     $DD0F                           ; C453 8E 0F DD                 ...
+        lda     $02A6                           ; C456 AD A6 02                 ...
+        beq     LC45D                           ; C459 F0 02                    ..
+        ldx     #$80                            ; C45B A2 80                    ..
+LC45D:  stx     $DC0E                           ; C45D 8E 0E DC                 ...
+        stx     $DD0E                           ; C460 8E 0E DD                 ...
+        lda     $DD00                           ; C463 AD 00 DD                 ...
+        and     #$30                            ; C466 29 30                    )0
+        ora     #$05                            ; C468 09 05                    ..
+        sta     $DD00                           ; C46A 8D 00 DD                 ...
+        lda     #$3F                            ; C46D A9 3F                    .?
+        sta     $DD02                           ; C46F 8D 02 DD                 ...
+        lda     #$7F                            ; C472 A9 7F                    ..
+        sta     $DC0D                           ; C474 8D 0D DC                 ...
+        sta     $DD0D                           ; C477 8D 0D DD                 ...
+        lda     #$C4                            ; C47A A9 C4                    ..
+        sta     $03                             ; C47C 85 03                    ..
+        lda     #$0A                            ; C47E A9 0A                    ..
+        sta     r0L                           ; C480 85 02                    ..
+        ldy     #$1E                            ; C482 A0 1E                    ..
+        jsr     LC5E7                           ; C484 20 E7 C5                  ..
+        ldx     #$20                            ; C487 A2 20                    . 
+LC489:  lda     LFD2F,x                         ; C489 BD 2F FD                 ./.
+        sta     $0313,x                         ; C48C 9D 13 03                 ...
+        dex                                     ; C48F CA                       .
+        bne     LC489                           ; C490 D0 F7                    ..
+        lda     #$30                            ; C492 A9 30                    .0
+        sta     $01                             ; C494 85 01                    ..
+        jmp     LEC75                           ; C496 4C 75 EC                 Lu.
+
+; ----------------------------------------------------------------------------
+LC499:  lda     #$02                            ; C499 A9 02                    ..
+        jsr     SetPattern                      ; C49B 20 39 C1                  9.
+        jsr     i_Rectangle                     ; C49E 20 9F C1                  ..
+LC4A1:  .byte   $00,$C7,$00,$00,$3F,$01         ; C4A1 00 C7 00 00 3F 01        ....?.
+; ----------------------------------------------------------------------------
+        rts                                     ; C4A7 60                       `
+
+; ----------------------------------------------------------------------------
+LC4A8:  php                                     ; C4A8 08                       .
+        sei                                     ; C4A9 78                       x
+        jsr     LC4C2                           ; C4AA 20 C2 C4                  ..
+        ldx     $07                             ; C4AD A6 07                    ..
+LC4AF:  ldy     #$00                            ; C4AF A0 00                    ..
+        lda     $0B                             ; C4B1 A5 0B                    ..
+LC4B3:  sta     ($0C),y                         ; C4B3 91 0C                    ..
+        iny                                     ; C4B5 C8                       .
+        cpy     $06                             ; C4B6 C4 06                    ..
+        bcc     LC4B3                           ; C4B8 90 F9                    ..
+        jsr     LC4DA                           ; C4BA 20 DA C4                  ..
+        dex                                     ; C4BD CA                       .
+        bne     LC4AF                           ; C4BE D0 EF                    ..
+        plp                                     ; C4C0 28                       (
+        rts                                     ; C4C1 60                       `
+
+; ----------------------------------------------------------------------------
+LC4C2:  clc                                     ; C4C2 18                       .
+        lda     $04                             ; C4C3 A5 04                    ..
+        adc     #$00                            ; C4C5 69 00                    i.
+        sta     $0C                             ; C4C7 85 0C                    ..
+        lda     #$8C                            ; C4C9 A9 8C                    ..
+        adc     #$00                            ; C4CB 69 00                    i.
+        sta     $0D                             ; C4CD 85 0D                    ..
+        ldx     $05                             ; C4CF A6 05                    ..
+        beq     LC4D9                           ; C4D1 F0 06                    ..
+LC4D3:  jsr     LC4DA                           ; C4D3 20 DA C4                  ..
+        dex                                     ; C4D6 CA                       .
+        bne     LC4D3                           ; C4D7 D0 FA                    ..
+LC4D9:  rts                                     ; C4D9 60                       `
+
+; ----------------------------------------------------------------------------
+LC4DA:  clc                                     ; C4DA 18                       .
+        lda     #$28                            ; C4DB A9 28                    .(
+        adc     $0C                             ; C4DD 65 0C                    e.
+        sta     $0C                             ; C4DF 85 0C                    ..
+        bcc     LC4E5                           ; C4E1 90 02                    ..
+        inc     $0D                             ; C4E3 E6 0D                    ..
+LC4E5:  rts                                     ; C4E5 60                       `
+
+; ----------------------------------------------------------------------------
+LC4E6:  pla                                     ; C4E6 68                       h
+        sta     L003D                           ; C4E7 85 3D                    .=
+        pla                                     ; C4E9 68                       h
+        sta     $3E                             ; C4EA 85 3E                    .>
+        ldy     #$05                            ; C4EC A0 05                    ..
+        lda     (L003D),y                       ; C4EE B1 3D                    .=
+        sta     $0B                             ; C4F0 85 0B                    ..
+        dey                                     ; C4F2 88                       .
+        ldx     #$03                            ; C4F3 A2 03                    ..
+LC4F5:  lda     (L003D),y                       ; C4F5 B1 3D                    .=
+        sta     $04,x                           ; C4F7 95 04                    ..
+        dey                                     ; C4F9 88                       .
+        dex                                     ; C4FA CA                       .
+        bpl     LC4F5                           ; C4FB 10 F8                    ..
+        jsr     LC4A8                           ; C4FD 20 A8 C4                  ..
+        php                                     ; C500 08                       .
+        lda     #$06                            ; C501 A9 06                    ..
+        jmp     DoInlineReturn                  ; C503 4C A4 C2                 L..
+
+.else
 VIC_IniTbl:
 	.byte $00, $00, $00, $00, $00, $00, $00, $00
 	.byte $00, $00, $00, $00, $00, $00, $00, $00
