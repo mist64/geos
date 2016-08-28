@@ -404,24 +404,13 @@ DialogNextSaveRestoreEntry:
 
 ; pointer & length tuples of memory regions to save and restore
 .if wheels
-.define DialogCopyTab curPattern, appMain, IconDescVec, menuOptNumber, TimersTab, obj0Pointer, mob0xpos, mobenble, mobprior, mcmclr0, mob1clr, moby2
+.define DialogCopyTab 23 << 16 | curPattern, 38 << 16 | appMain, 2 << 16 | IconDescVec, 49 << 16 | menuOptNumber, 227 << 16 | TimersTab, 8 << 16 | obj0Pointer, 17 << 16 | mob0xpos, 1 << 16 | mobenble, 3 << 16 | mobprior, 2 << 16 | mcmclr0, 7 << 16 | mob1clr, 1 << 16 | moby2
 DialogCopyTab1:
 	.lobytes DialogCopyTab
 DialogCopyTab2:
 	.hibytes DialogCopyTab
 DialogCopyTab3:
-	.byte 23
-	.byte 38
-	.byte 2
-	.byte 49
-	.byte 227
-	.byte 8
-	.byte 17
-	.byte 1
-	.byte 3
-	.byte 2
-	.byte 7
-	.byte 1
+	.bankbytes DialogCopyTab
 	.byte NULL
 .else
 DialogCopyTab:
