@@ -56,7 +56,7 @@ _DoDlgBox:
 	bne @1
 	jsr $F28E;xxxDlgBoxPrep
 	jsr $F2BD;xxxDrawDlgBox
-.if wheels
+.if wheels_size_and_speed ; duplicate LDA #0
 	lda #0
 	sta r11H
 	sta r11L
@@ -109,31 +109,26 @@ _DoDlgBox:
 	jmp MainLoop
 
 .define DlgBoxProc1 DBDoIcons, DBDoIcons, DBDoIcons, DBDoIcons, DBDoIcons, DBDoIcons
+.if wheels
+.define DlgBoxProc2 $fa72, $fa72, $fa72, $fa72
+.else
 .define DlgBoxProc2 DBDoIcons, DBDoIcons, DBDoIcons, DBDoIcons
+.endif
 .define DlgBoxProc3 DBDoTXTSTR, DBDoVARSTR, DBDoGETSTR, DBDoSYSOPV, DBDoGRPHSTR, DBDoGETFILES, DBDoOPVEC, DBDoUSRICON, DBDoUSR_ROUT
 
 
 DlgBoxProcL:
-.if wheels
-	.byte $DF, $DF,$DF,$DF,$DF,$DF,$72,$72,$72
-        .byte   $72,$48,$66,$82,$03,$27,$CA,$16
-        .byte   $04
-LF27A:  .byte   $34
-.else
 	.lobytes DlgBoxProc1
 	.lobytes DlgBoxProc2 ; not used
 	.lobytes DlgBoxProc3
-.endif
 DlgBoxProcH:
-.if wheels
-	.byte $F3,$F3,$F3,$F3,$F3,$F3,$FA
-        .byte   $FA,$FA,$FA,$F5,$F5,$F5,$F5,$F5
-        .byte   $F5,$F5,$F4,$F5
-.else
 	.hibytes DlgBoxProc1
+.if wheels
+	.hibytes DlgBoxProc2 ; yes, lobytes!! -- not used
+.else
 	.lobytes DlgBoxProc2 ; yes, lobytes!! -- not used
-	.hibytes DlgBoxProc3
 .endif
+	.hibytes DlgBoxProc3
 
 DlgBoxPrep:
 .if wheels
