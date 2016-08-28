@@ -316,7 +316,7 @@ _DoCheckDelays:
 	sta r0L
 	txa
 	pha
-	jsr $CC01;xxx_RemoveDelay
+	jsr _RemoveDelay
 	jsr $C34C;xxx_DoExecDelay
 	pla
 	tax

@@ -229,7 +229,7 @@ CheckClickPos:
 	CmpW mouseXPos, menuRight
 	beq @2
 	bcs @3
-@2:	jmp Menu_5
+@2:	jmp $EFBA;xxxMenu_5
 @3:	bbrf ICONSON_BIT, mouseOn, @4
 	jmp ProcessClick
 @4:	lda otherPressVec
@@ -274,7 +274,7 @@ DoMouseFault:
 	tya
 .endif
 	bbsf 6, menuOptNumber, @3
-@2:	jsr $EDE9;xxx_DoPreviousMenu
+@2:	jsr _DoPreviousMenu
 @3:	rts
 
 .segment "mouse3"
@@ -305,7 +305,7 @@ _DoCheckButtons:
 	ldx mouseVector+1
 	jsr CallRoutine
 @2:	bbrf KEYPRESS_BIT, pressFlag, @3
-	jsr $FC33;xxxKbdScanHelp3
+	jsr KbdScanHelp3
 	lda keyVector
 	ldx keyVector+1
 	jsr CallRoutine

@@ -2131,8 +2131,14 @@ L9FF0:  .byte   $00                             ; 9FF0 00                       
 L9FF1:  .byte   $00                             ; 9FF1 00                       .
 L9FF2:  .byte   $00                             ; 9FF2 00                       .
 L9FF3:  .byte   $00                             ; 9FF3 00                       .
-L9FF4:  .byte   $96                             ; 9FF4 96                       .
-L9FF5:  .byte   $DF,$68,$8D,$00,$FF,$68,$A8,$68 ; 9FF5 DF 68 8D 00 FF 68 A8 68  .h...h.h
+
+; XXX this is segment "serial1"
+.global SerialNumber
+SerialNumber:
+  .byte   $96, $DF                             ; 9FF4 96                       .
+
+
+	.byte   $68,$8D,$00,$FF,$68,$A8,$68 ; 9FF5 DF 68 8D 00 FF 68 A8 68  .h...h.h
         .byte   $AA,$68,$40
 
 .endif

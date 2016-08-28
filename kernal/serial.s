@@ -31,11 +31,14 @@ SerialNumber:
 ; Return:    r0  serial nbr of your kernal
 ; Destroyed: a
 ;---------------------------------------------------------------
+.if wheels ; XXX
+.import SerialNumber
+.endif
 _GetSerialNumber:
-	lda $9FF4;xxxSerialNumber
+	lda SerialNumber
 	sta r0L
 GetSerialNumber2:
-	lda $9FF5;xxxSerialNumber+1
+	lda SerialNumber+1
 	sta r0H
 	rts
 
