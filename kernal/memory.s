@@ -67,7 +67,9 @@ _FillRam:
 .if wheels
 LC428 = $C428
 LC58C:  jsr     LC428                           ; C58C 20 28 C4                  (.
-LC58F:  LoadW r0, $e92b
+.import InitRamTab
+LC58F:  LoadW r0, InitRamTab
+
 .endif
 
 ;---------------------------------------------------------------

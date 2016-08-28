@@ -153,6 +153,10 @@ UNK_6:
 
 .segment "init4"
 
+.if wheels
+.global InitRamTab
+.endif
+
 InitRamTab:
 	.word currentMode
 	.byte 12
