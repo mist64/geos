@@ -792,25 +792,14 @@ _GraphicsString:
 	bra _GraphicsString
 @1:	rts
 
-.if !wheels
-;xxx
-GStrTL:  .byte   $2C,$39,$57,$38,$5D,$63,$75,$80 ; C918 2C 39 57 38 5D 63 75 80  ,9W8]cu.
-        .byte   $9C,$7D                         ; C920 9C 7D                    .}
-GStrTH:  .byte   $C9,$C9,$C9,$C9,$C9,$C9,$C9,$C9 ; C922 C9 C9 C9 C9 C9 C9 C9 C9  ........
-        .byte   $C9                             ; C92A C9                       .
-; ----------------------------------------------------------------------------
-        .byte   $C9                             ; C92B C9                       .
-.else
-
 .define GStrT _DoMovePenTo, _DoLineTo, _DoRectangleTo, _DoNothing, _DoNewPattern, _DoESC_PutString, _DoFrame_RecTo, _DoPenXDelta, _DoPenYDelta, _DoPenXYDelta
 GStrTL:
 	.lobytes GStrT
 GStrTH:
 	.hibytes GStrT
-.endif
 
 _DoMovePenTo:
-	jsr $CA13;xxxGetCoords
+	jsr GetCoords
 	sta GraphPenY
 	stx GraphPenXL
 	sty GraphPenXH
@@ -828,10 +817,10 @@ _DoLineTo:
 	sty r4H
 	sec
 	lda #0
-	jmp $E977;xxx_DrawLine
+	jmp _DrawLine
 
 _DoRectangleTo:
-	jsr $C9B4;xxxGrStSetCoords
+	jsr GrStSetCoords
 	jmp _Rectangle
 
 .if !wheels
@@ -840,25 +829,25 @@ _DoNothing:
 .endif
 
 _DoNewPattern:
-	jsr $CA22;xxxGetr0AndInc
-	jmp $CA07;xxx_SetPattern
+	jsr Getr0AndInc
+	jmp _SetPattern
 
 _DoESC_PutString:
-	jsr $CA22;xxxGetr0AndInc
+	jsr Getr0AndInc
 	sta r11L
-	jsr $CA22;xxxGetr0AndInc
+	jsr Getr0AndInc
 	sta r11H
-	jsr $CA22;xxxGetr0AndInc
+	jsr Getr0AndInc
 	sta r1H
 .if wheels
-	jmp $E617;xxx_PutString
+	jmp _PutString
 .else
 	jsr _PutString
 	rts
 .endif
 
 _DoFrame_RecTo:
-	jsr $C9B4;xxxGrStSetCoords
+	jsr GrStSetCoords
 	lda #$FF
 	jmp _FrameRectangle
 
@@ -900,7 +889,7 @@ DPYD1:
 @1:	rts
 
 GrStSetCoords:
-	jsr $CA13;xxxGetCoords
+	jsr GetCoords
 	cmp GraphPenY
 	bcs @1
 	sta r2L
@@ -942,7 +931,7 @@ _SetPattern:
 	asl
 	asl
 .if wheels
-;xxx	.assert <PatternTab = 0, error, "PatternTab must be page-aligned!"
+	.assert <PatternTab = 0, error, "PatternTab must be page-aligned!"
 .else
 	adc #<PatternTab
 .endif
