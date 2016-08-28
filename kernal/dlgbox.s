@@ -632,24 +632,32 @@ LF4D5:  ora     $7963                           ; F4D5 0D 63 79                 
 .endif
 
 .if wheels
-        lda     #$45                            ; F4DB A9 45                    .E
-        jsr     L9D80 ; far call
-        jsr     L5009                           ; F4E0 20 09 50                  .P
-        jsr     L9D83 ; REU swap, preserving r registers and x, y
-        lda     #$06
+	lda #$45
+	jsr L9D80
+	jsr L5009
+	jsr L9D83 ; REU swap, preserving r registers and x, y
+DBIcDISK:
+	lda #DISK
 	.byte $2c
+DBIcOK:
 	lda #OK
 	.byte $2c
+DBIcCANCEL:
 	lda #CANCEL
 	.byte $2c
+DBIcYES:
 	lda #YES
 	.byte $2c
+DBIcNO:
 	lda #NO
 	.byte $2c
+DBIcOPEN:
 	lda #OPEN
-        .byte $2c
-LF4F8:  lda #DBSYSOPV
 	.byte $2c
+DBStringFaultVec2:
+	lda #DBSYSOPV
+	.byte $2c
+; ??? unused?
 	lda #DBGETSTRING
 .else
 DBIcOK:
@@ -669,7 +677,7 @@ DBIcOPEN:
 	bne DBKeyVec1
 DBIcDISK:
 	lda #DISK
-	bne DBKeyVec1
+	bne DBKeyVec1 ; ???
 DBKeyVec1:
 .endif
 	sta sysDBData
@@ -687,8 +695,10 @@ DBStringFaultVec:
 .if !wheels
 	lda #DBSYSOPV
 	sta sysDBData
+	jmp RstrFrmDialogue
+.else
+	jmp DBStringFaultVec2
 .endif
-	jmp $F4F8;xxxRstrFrmDialogue
 
 DBDoOPVEC:
 	ldy r1L
