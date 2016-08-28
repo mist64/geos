@@ -379,13 +379,13 @@ DialogNextSaveRestoreEntry:
 	bcc @1
 	inc r4H
 @1:	ldy #0
-.if wheels
-	lda LF3D2,x
+.if wheels_size_and_speed
+	lda DialogCopyTab3,x
 	beq @2
 	sta r3L
-	lda LF3BA,x
+	lda DialogCopyTab1,x
 	sta r2L
-	lda LF3C6,x
+	lda DialogCopyTab2,x
 	sta r2H
 .else
 	lda DialogCopyTab,x
@@ -403,15 +403,28 @@ DialogNextSaveRestoreEntry:
 @2:	rts
 
 ; pointer & length tuples of memory regions to save and restore
-DialogCopyTab:
 .if wheels
-LF3BA:  .byte   $22,$9B,$3F,$C0,$F1,$F8,$00,$15 ; F3BA 22 9B 3F C0 F1 F8 00 15  ".?.....
-        .byte   $1B,$25,$28,$17                 ; F3C2 1B 25 28 17              .%(.
-LF3C6:  .byte   $00,$84,$00,$86,$86,$8F,$D0,$D0 ; F3C6 00 84 00 86 86 8F D0 D0  ........
-        .byte   $D0,$D0,$D0,$D0                 ; F3CE D0 D0 D0 D0              ....
-LF3D2:  .byte   $17,$26,$02,$31,$E3,$08,$11,$01 ; F3D2 17 26 02 31 E3 08 11 01  .&.1....
-        .byte   $03,$02,$07,$01,$00             ; F3DA 03 02 07 01 00           .....
+.define DialogCopyTab curPattern, appMain, IconDescVec, menuOptNumber, TimersTab, obj0Pointer, mob0xpos, mobenble, mobprior, mcmclr0, mob1clr, moby2
+DialogCopyTab1:
+	.lobytes DialogCopyTab
+DialogCopyTab2:
+	.hibytes DialogCopyTab
+DialogCopyTab3:
+	.byte 23
+	.byte 38
+	.byte 2
+	.byte 49
+	.byte 227
+	.byte 8
+	.byte 17
+	.byte 1
+	.byte 3
+	.byte 2
+	.byte 7
+	.byte 1
+	.byte NULL
 .else
+DialogCopyTab:
 	.word curPattern
 	.byte 23
 	.word appMain
