@@ -26,6 +26,11 @@
 ; mouse.s
 .import _StartMouseMode
 
+.if wheels
+; mouse.s
+.import DoESC_RULER
+.endif
+
 ; var.s
 .import menuOptNumber
 .import TimersTab
@@ -109,8 +114,8 @@ _DoDlgBox:
 	jmp MainLoop
 
 .define DlgBoxProc1 DBDoIcons, DBDoIcons, DBDoIcons, DBDoIcons, DBDoIcons, DBDoIcons
-.if wheels
-.define DlgBoxProc2 $fa72, $fa72, $fa72, $fa72
+.if wheels_fixes ; fix: have commands 7-10 (undefined) point to RTS
+.define DlgBoxProc2 DoESC_RULER, DoESC_RULER, DoESC_RULER, DoESC_RULER
 .else
 .define DlgBoxProc2 DBDoIcons, DBDoIcons, DBDoIcons, DBDoIcons
 .endif
@@ -123,8 +128,8 @@ DlgBoxProcL:
 	.lobytes DlgBoxProc3
 DlgBoxProcH:
 	.hibytes DlgBoxProc1
-.if wheels
-	.hibytes DlgBoxProc2 ; yes, lobytes!! -- not used
+.if wheels_fixes ; fix: correct pointers
+	.hibytes DlgBoxProc2
 .else
 	.lobytes DlgBoxProc2 ; yes, lobytes!! -- not used
 .endif
