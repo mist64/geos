@@ -380,13 +380,13 @@ DialogNextSaveRestoreEntry:
 	inc r4H
 @1:	ldy #0
 .if wheels
-        lda     LF3D2,x                         ; F3A7 BD D2 F3                 ...
-        beq     @2                           ; F3AA F0 0D                    ..
-        sta     $08                             ; F3AC 85 08                    ..
-        lda     LF3BA,x                         ; F3AE BD BA F3                 ...
-        sta     $06                             ; F3B1 85 06                    ..
-        lda     LF3C6,x                         ; F3B3 BD C6 F3                 ...
-        sta     $07                             ; F3B6 85 07                    ..
+	lda LF3D2,x
+	beq @2
+	sta r3L
+	lda LF3BA,x
+	sta r2L
+	lda LF3C6,x
+	sta r2H
 .else
 	lda DialogCopyTab,x
 	sta r2L
