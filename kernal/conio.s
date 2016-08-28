@@ -292,14 +292,12 @@ _LoadCharSet:
 	AddW r0, curIndexTable
 	AddW r0, cardDataPntr
 
-.if !wheels
 .if (trap)
 	; copy high-byte of serial
 	lda SerialHiCompare
 	bne @2
 	jsr GetSerialNumber2
 	sta SerialHiCompare
-.endif
 .endif
 @2:	rts
 

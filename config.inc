@@ -9,7 +9,12 @@ wheels   = 1
 
 ; The original GEOS binary contains a few traps to counter tampering.
 ; They can be turned off with this global switch
+
+.if wheels
+trap = 0
+.else
 trap = 1
+.endif
 
 ; general code generation/optimization control:
 onlyVLIR        =       0               ; only VLIR and SEQ supported

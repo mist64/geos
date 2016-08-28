@@ -252,7 +252,6 @@ GetMenuDesc:
 	dey
 	bpl @1
 
-.if !wheels
 .if (trap)
 	; If the user has changed where GetSerialNumber points to,
 	; this will sabotage the KERNAL call GraphicsString.
@@ -260,7 +259,6 @@ GetMenuDesc:
 	clc
 	adc #<(_GraphicsString - _GetSerialNumber)
 	sta GraphicsString + 1 - $FF,y
-.endif
 .endif
 
 	MoveW menuLeft, r11
