@@ -121,7 +121,6 @@ _DoDlgBox:
 .endif
 .define DlgBoxProc3 DBDoTXTSTR, DBDoVARSTR, DBDoGETSTR, DBDoSYSOPV, DBDoGRPHSTR, DBDoGETFILES, DBDoOPVEC, DBDoUSRICON, DBDoUSR_ROUT
 
-
 DlgBoxProcL:
 	.lobytes DlgBoxProc1
 	.lobytes DlgBoxProc2 ; not used
@@ -379,7 +378,7 @@ DialogNextSaveRestoreEntry:
 	bcc @1
 	inc r4H
 @1:	ldy #0
-.if wheels_size_and_speed
+.if wheels_size_and_speed ; 17 vs. 21 bytes and faster
 	lda DialogCopyTab3,x
 	beq @2
 	sta r3L
@@ -403,7 +402,7 @@ DialogNextSaveRestoreEntry:
 @2:	rts
 
 ; pointer & length tuples of memory regions to save and restore
-.if wheels
+.if wheels_size_and_speed
 .define DialogCopyTab curPattern, appMain, IconDescVec, menuOptNumber, TimersTab, obj0Pointer, mob0xpos, mobenble, mobprior, mcmclr0, mob1clr, moby2
 DialogCopyTab1:
 	.lobytes DialogCopyTab
@@ -452,12 +451,13 @@ DialogCopyTab:
 	.word NULL
 .endif
 
+; handler for commands 0-6
 DBDoIcons:
-.if wheels
-        lda     $84A4                           ; F3DF AD A4 84                 ...
+.if wheels ; install keyVector for *all* kinds of buttons instead of just OK
+	lda keyVector+1
 .else
-	dey
-	bne @1
+	dey ; command-1: "OK"==0
+	bne @1 ; not "OK"
 	lda keyVector
 	ora keyVector+1
 .endif
@@ -467,7 +467,7 @@ DBDoIcons:
 	lda #<DBKeyVector
 	sta keyVector
 @1:
-.if wheels
+.if wheels ; install keyVector for *all* kinds of buttons instead of just OK
 	dey
 .endif
 	tya
@@ -554,8 +554,8 @@ LF46C:  .byte   $F4,$58,$BF,$00,$00,$06,$10,$EC ; F46C F4 58 BF 00 00 06 10 EC  
         .byte   $F4,$D4,$F9,$00,$00,$06,$10,$DB ; F48C F4 D4 F9 00 00 06 10 DB  ........
         .byte   $F4                             ; F494 F4                       .
 .else
-	.word DBIcPicOK
-	.word 0
+LF465:	.word DBIcPicOK
+LF46B:	.word 0
 	.byte 6, 16
 	.word DBIcOK
 
@@ -609,7 +609,7 @@ LF4AC:  tax                                     ; F4AC AA                       
         cmp     LF465,y                         ; F4B0 D9 65 F4                 .e.
         bne     LF4BD                           ; F4B3 D0 08                    ..
         lda     $8811,x                         ; F4B5 BD 11 88                 ...
-        cmp     LF466,y                         ; F4B8 D9 66 F4                 .f.
+        cmp     LF465+1,y                         ; F4B8 D9 66 F4                 .f.
         beq     LF4CC                           ; F4BB F0 0F                    ..
 LF4BD:  inc     r0L                           ; F4BD E6 02                    ..
         lda     r0L                           ; F4BF A5 02                    ..
@@ -621,7 +621,7 @@ LF4BD:  inc     r0L                           ; F4BD E6 02                    ..
         bne     LF4AC                           ; F4C9 D0 E1                    ..
 LF4CB:  rts                                     ; F4CB 60                       `
 LF4CC:  lda     LF46B,y                         ; F4CC B9 6B F4                 .k.
-        ldx     LF46C,y                         ; F4CF BE 6C F4                 .l.
+        ldx     LF46B+1,y                         ; F4CF BE 6C F4                 .l.
         jmp     CallRoutine                     ; F4D2 4C D8 C1                 L..
 LF4D5:  ora     $7963                           ; F4D5 0D 63 79                 .cy
         ror     $646F                           ; F4D8 6E 6F 64                 nod
@@ -635,19 +635,22 @@ LF4D5:  ora     $7963                           ; F4D5 0D 63 79                 
         lda     #$45                            ; F4DB A9 45                    .E
         jsr     L9D80 ; far call
         jsr     L5009                           ; F4E0 20 09 50                  .P
-; REU swap, preserving r registers and x, y
-        jsr     L9D83                           ; F4E3 20 83 9D                  ..
-        lda     #$06                            ; F4E6 A9 06                    ..
-        bit     $01A9                           ; F4E8 2C A9 01                 ,..
-        bit     $02A9                           ; F4EB 2C A9 02                 ,..
-        bit     $03A9                           ; F4EE 2C A9 03                 ,..
-        bit     $04A9                           ; F4F1 2C A9 04                 ,..
-        bit     $05A9                           ; F4F4 2C A9 05                 ,..
-        .byte   $2C                             ; F4F7 2C                       ,
-LF4F8:  lda     #$0E                            ; F4F8 A9 0E                    ..
-        bit     $0DA9                           ; F4FA 2C A9 0D                 ,..
-        sta     sysDBData
-        jmp     RstrFrmDialogue                 ; F500 4C BF C2                 L..
+        jsr     L9D83 ; REU swap, preserving r registers and x, y
+        lda     #$06
+	.byte $2c
+	lda #OK
+	.byte $2c
+	lda #CANCEL
+	.byte $2c
+	lda #YES
+	.byte $2c
+	lda #NO
+	.byte $2c
+	lda #OPEN
+        .byte $2c
+LF4F8:  lda #DBSYSOPV
+	.byte $2c
+	lda #DBGETSTRING
 .else
 DBIcOK:
 	lda #OK
@@ -668,9 +671,9 @@ DBIcDISK:
 	lda #DISK
 	bne DBKeyVec1
 DBKeyVec1:
+.endif
 	sta sysDBData
 	jmp RstrFrmDialogue
-.endif
 
 DBDoSYSOPV:
 	lda #>DBStringFaultVec
