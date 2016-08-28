@@ -26,7 +26,7 @@
 ; mouse.s
 .import _StartMouseMode
 
-.if wheels
+.if wheels_fixes
 ; mouse.s
 .import DoESC_RULER
 .endif
@@ -718,8 +718,8 @@ DBDoOPVEC_rts:
 
 DBDoGRPHSTR:
 	ldy r1L
-.if wheels
-	jsr StrCommon
+.if wheels_size
+	jsr StringGetNext
 .else
 	lda (DBoxDesc),y
 	sta r0L
@@ -765,8 +765,8 @@ DBDoTXTSTR:
 	clc
 	jsr CalcDialogCoords
 	jsr DBTextCoords
-.if wheels
-	jsr StrCommon
+.if wheels_size
+	jsr StringGetNext
 .else
 	lda (DBoxDesc),y
 	sta r0L
@@ -781,8 +781,8 @@ DBDoTXTSTR:
 	PopB r1L
 	rts
 
-.if wheels
-StrCommon:
+.if wheels_size
+StringGetNext:
 	lda (DBoxDesc),y
 	sta r0L
 	iny
