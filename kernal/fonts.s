@@ -334,13 +334,13 @@ Font_2:
 	add r12L
 	tax
 	lda Font_tab2,x
-	addv $22;xxx<base
+	addv <base
 	tay
 	lda #0
-	adc #$E2;xxx#>base
+	adc #>base
 	bne @E
-@D:	lda #$E2;xxx#>FontSH5
-	ldy #$82;xxx#<FontSH5
+@D:	lda #>FontSH5
+	ldy #<FontSH5
 @E:	sta r12H
 	sty r12L
 clc_rts:
@@ -569,10 +569,10 @@ Font_5:
 	plp
 	beq @7
 @6:	jsr Font_6
-	jsr $E2D7;xxxFntIndirectJMP
+	jsr FntIndirectJMP
 	jsr Font_8
 	SubW curSetWidth, r2
-@7:	jsr $E2D7;xxxFntIndirectJMP
+@7:	jsr FntIndirectJMP
 	jsr Font_8
 	jsr Font_7
 	bra @3
@@ -665,7 +665,7 @@ FontPutChar:
 	jsr Font_3
 @2:	php
 	bcs @3
-	jsr $E2D7;xxxFntIndirectJMP ; call r13
+	jsr FntIndirectJMP ; call r13
 @3:	bbrf 7, r8H, @4
 	jsr Font_5
 	bra @5
