@@ -937,7 +937,7 @@ _SetPattern:
 .endif
 	sta curPattern
 	lda #0
-	adc #$D0;xxx#>PatternTab
+	adc #>PatternTab
 	sta curPattern+1
 	rts
 
@@ -991,13 +991,13 @@ _GetScanLine:
 	tax
 	bbrf 7, dispBufferOn, @2 ; ST_WR_FORE
 	bbsf 6, dispBufferOn, @1 ; ST_WR_BACK
-	lda $CA92,x;xxxLineTabL,x
+	lda LineTabL,x
 	ora r6H
 	sta r5L
 .if wheels
 	sta r6L                             ; CA47 85 0E                    ..
 .endif
-	lda $CAAB,x;xxxLineTabH,x
+	lda LineTabH,x
 	sta r5H
 .if wheels
 	sta r6H                             ; CA47 85 0E                    ..
@@ -1007,7 +1007,7 @@ _GetScanLine:
 	pla
 	tax
 	rts
-@1:	lda $CA92,x;xxxLineTabL,x
+@1:	lda LineTabL,x
 	ora r6H
 	sta r5L
 	sta r6L
