@@ -105,14 +105,14 @@ DoMenu1:
 	sta menuStackL,x
 	lda r0H
 	sta menuStackH,x
-	jsr $EE12;xxxGetMenuDesc
+	jsr GetMenuDesc
 	sec
 DoMenu1_1:
 	php
 	PushB dispBufferOn
 	LoadB dispBufferOn, ST_WR_FORE
 	PushW r11
-	jsr $EFAF;xxxCopyMenuCoords
+	jsr CopyMenuCoords
 	PushW curPattern
 	lda #0
 	jsr _SetPattern
@@ -136,9 +136,9 @@ LC88D = $C88D
 	lda #$ff
 	jsr $C67C;xxx_FrameRectangle
 @Y:	PopW r11
-	jsr $EE4A;xxxMenu_1
+	jsr Menu_1
 .if ((menuVSeparator | menuHSeparator)<>0)
-	jsr $EF7C;xxxDrawMenu
+	jsr DrawMenu
 .endif
 	PopB dispBufferOn
 	plp
@@ -194,7 +194,7 @@ LC88D = $C88D
 ;---------------------------------------------------------------
 _ReDoMenu:
 	jsr _MouseOff
-	jmp $EDF2;xxxDoPrvMn1
+	jmp DoPrvMn1
 
 ;---------------------------------------------------------------
 _GotoFirstMenu:
@@ -214,10 +214,10 @@ _GotoFirstMenu:
 
 _DoPreviousMenu:
 	jsr _MouseOff
-	jsr $EF68;xxx_RecoverMenu
+	jsr _RecoverMenu
 	dec menuNumber
 DoPrvMn1:
-	jsr $EE12;xxxGetMenuDesc
+	jsr GetMenuDesc
 	clc
 	jmp DoMenu1_1
 
@@ -264,22 +264,22 @@ GetMenuDesc:
 	MoveW menuLeft, r11
 	MoveB menuTop, r1H
 	bbsf 6, menuOptNumber, @2
-	jsr $EC75;xxxResetMseRegion
+	jsr ResetMseRegion
 @2:	rts
 
 Menu_1:
-	jsr $F08C;xxxMenuStoreFont
+	jsr MenuStoreFont
 	jsr _UseSystemFont
 	LoadB r10H, 0
 	sta currentMode
 	sec
-	jsr $EF35;xxxMenu_4
-@1:	jsr $EF20;xxxMenu_3
+	jsr Menu_4
+@1:	jsr Menu_3
 	clc
-	jsr $EF35;xxxMenu_4
-	jsr $EE93;xxxMenu_2
+	jsr Menu_4
+	jsr Menu_2
 	clc
-	jsr $EF35;xxxMenu_4
+	jsr Menu_4
 	bbrf 7, menuOptNumber, @2
 	lda r1H
 	sec
@@ -287,7 +287,7 @@ Menu_1:
 	sta r1H
 	MoveW menuLeft, r11
 	sec
-	jsr $EF35;xxxMenu_4
+	jsr Menu_4
 @2:
 .if wheels
 	inc r10H
@@ -298,8 +298,8 @@ Menu_1:
 	and #%00011111
 	cmp r10H
 	bne @1
-	jsr $F097;xxxMenuRestoreFont
-	jmp $EF20;xxxMenu_3
+	jsr MenuRestoreFont
+	jmp Menu_3
 
 Menu_2:
 	PushW r10
@@ -330,7 +330,7 @@ Menu_2:
 	sta rightMargin+1
 	lda #>MenuStringFault
 	sta StringFaultVec+1
-	lda #$15;xxx#<MenuStringFault
+	lda #<MenuStringFault
 	sta StringFaultVec
 	PushB r1H
 .if wheels
@@ -389,7 +389,7 @@ Menu_4:
 ;---------------------------------------------------------------
 _RecoverAllMenus:
 	jsr GetMenuDesc
-	jsr $EF68;xxx_RecoverMenu
+	jsr _RecoverMenu
 	dec menuNumber
 	bpl _RecoverAllMenus
 	lda #0
@@ -398,7 +398,7 @@ _RecoverAllMenus:
 
 ;---------------------------------------------------------------
 _RecoverMenu:
-	jsr $EFAF;xxxCopyMenuCoords
+	jsr CopyMenuCoords
 RcvrMnu0:
 	lda RecoverVector
 	ora RecoverVector+1
