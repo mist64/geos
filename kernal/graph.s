@@ -90,16 +90,16 @@ ClrScr2:
 
 PrepareXCoord:
 	ldx r11L
-	jsr $CA2D;xxx_GetScanLine
+	jsr _GetScanLine
 	lda r4L
 	and #%00000111
 	tax
-	lda $C369,x;xxxBitMaskLeadingClear,x
+	lda BitMaskLeadingClear,x
 	sta r8H
 	lda r3L
 	and #%00000111
 	tax
-	lda $C361,x;xxxBitMaskLeadingSet,x
+	lda BitMaskLeadingSet,x
 	sta r8L
 	lda r3L
 	and #%11111000
@@ -516,7 +516,7 @@ _VerticalLine:
 	ldy #0
 	ldx r3L
 @1:	stx r7L
-	jsr $CA2D;xxx_GetScanLine
+	jsr _GetScanLine
 	AddW r4, r5
 	AddW r4, r6
 	lda r7L
@@ -547,8 +547,8 @@ _VerticalLine:
 ; Same as Rectangle with data after the jsr
 ;---------------------------------------------------------------
 _i_Rectangle:
-	jsr $C8D2;xxxGetInlineDrwParms
-	jsr $C825;xxx_Rectangle
+	jsr GetInlineDrwParms
+	jsr _Rectangle
 	php
 	lda #7
 	jmp DoInlineReturn
@@ -601,8 +601,8 @@ _InvertRectangle:
 ; Same as RecoverRectangle with data after the jsr
 ;---------------------------------------------------------------
 _i_RecoverRectangle:
-	jsr $C8D2;xxxGetInlineDrwParms
-	jsr $C855;xxx__RecoverRectangle
+	jsr GetInlineDrwParms
+	jsr _RecoverRectangle
 .if wheels
 	jmp $C81F
 .else
@@ -636,8 +636,8 @@ _RecoverRectangle:
 ; Same as ImprintRectangle with data after the jsr
 ;---------------------------------------------------------------
 _i_ImprintRectangle:
-	jsr $C8D2;xxxGetInlineDrwParms
-	jsr $C86E;xxx_ImprintRectangle
+	jsr GetInlineDrwParms
+	jsr _ImprintRectangle
 .if wheels
 	jmp $C81F
 .else
@@ -777,7 +777,7 @@ _i_GraphicsString:
 ; Destroyed: a, x, y, r0 - r15
 ;---------------------------------------------------------------
 _GraphicsString:
-	jsr $CA22;xxxGetr0AndInc
+	jsr Getr0AndInc
 .if wheels
 	tay
 	beq @1
@@ -792,7 +792,7 @@ _GraphicsString:
 	bra _GraphicsString
 @1:	rts
 
-.if wheels
+.if !wheels
 ;xxx
 GStrTL:  .byte   $2C,$39,$57,$38,$5D,$63,$75,$80 ; C918 2C 39 57 38 5D 63 75 80  ,9W8]cu.
         .byte   $9C,$7D                         ; C920 9C 7D                    .}
@@ -814,6 +814,9 @@ _DoMovePenTo:
 	sta GraphPenY
 	stx GraphPenXL
 	sty GraphPenXH
+.if wheels
+_DoNothing:
+.endif
 	rts
 
 _DoLineTo:
@@ -831,8 +834,8 @@ _DoRectangleTo:
 	jsr $C9B4;xxxGrStSetCoords
 	jmp _Rectangle
 
-_DoNothing:
 .if !wheels
+_DoNothing:
 	rts
 .endif
 
