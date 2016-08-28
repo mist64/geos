@@ -129,8 +129,8 @@ OrigResetHandle:
 	sei
 	cld
 	ldx #$ff
-	jsr _DoFirstInitIO
-	jsr InitGEOEnv
+	jsr $0000;xxx_DoFirstInitIO
+	jsr $0000;xxxInitGEOEnv
 	jsr GetDirHead
 	MoveB bootSec, r1H
 	MoveB bootTr, r1L
