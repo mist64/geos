@@ -156,8 +156,8 @@ ASSERT_NOT_BELOW_IO
 	lda     #$1F
 	sta     $0A
 	bcc     LF2B6
-	jsr     LF36E
-	lda     #$01
+	jsr DialogSave
+	lda     #1
 	sta     mobenble
 	bne     LF2B9
 LF2B6:	jsr     LF383
