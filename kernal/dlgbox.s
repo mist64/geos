@@ -633,9 +633,12 @@ LF4D5:  ora     $7963                           ; F4D5 0D 63 79                 
 
 .if wheels
 	lda #$45
-	jsr L9D80
+	jsr L9D80 ; far call
 	jsr L5009
 	jsr L9D83 ; REU swap, preserving r registers and x, y
+.endif
+
+.if wheels_size
 DBIcDISK:
 	lda #DISK
 	.byte $2c
@@ -692,12 +695,12 @@ DBDoSYSOPV:
 
 DBStringFaultVec:
 	bbsf 7, mouseData, DBDoOPVEC_rts
-.if !wheels
+.if wheels_size ; reuse common code
+	jmp DBStringFaultVec2
+.else
 	lda #DBSYSOPV
 	sta sysDBData
 	jmp RstrFrmDialogue
-.else
-	jmp DBStringFaultVec2
 .endif
 
 DBDoOPVEC:
@@ -716,7 +719,7 @@ DBDoOPVEC_rts:
 DBDoGRPHSTR:
 	ldy r1L
 .if wheels
-        jsr     LF55A                           ; F529 20 5A F5                  Z.
+	jsr StrCommon
 .else
 	lda (DBoxDesc),y
 	sta r0L
@@ -739,10 +742,10 @@ DBDoUSR_ROUT:
         tya                                     ; F538 98                       .
         pha                                     ; F539 48                       H
         dey                                     ; F53A 88                       .
-        lda     ($43),y                         ; F53B B1 43                    .C
+        lda     (DBoxDesc),y                         ; F53B B1 43                    .C
         tax                                     ; F53D AA                       .
         dey                                     ; F53E 88                       .
-        lda     ($43),y                         ; F53F B1 43                    .C
+        lda     (DBoxDesc),y                         ; F53F B1 43                    .C
 .else
 	lda (DBoxDesc),y
 	sta r0L
@@ -763,7 +766,7 @@ DBDoTXTSTR:
 	jsr CalcDialogCoords
 	jsr DBTextCoords
 .if wheels
-        jsr     LF55A                           ; F54F 20 5A F5                  Z.
+	jsr StrCommon
 .else
 	lda (DBoxDesc),y
 	sta r0L
@@ -779,14 +782,15 @@ DBDoTXTSTR:
 	rts
 
 .if wheels
-LF55A:  lda     ($43),y                         ; F55A B1 43                    .C
-        sta     r0L                           ; F55C 85 02                    ..
-        iny                                     ; F55E C8                       .
-        lda     ($43),y                         ; F55F B1 43                    .C
-        sta     $03                             ; F561 85 03                    ..
-        iny                                     ; F563 C8                       .
-        tya                                     ; F564 98                       .
-        rts                                     ; F565 60                       `
+StrCommon:
+	lda (DBoxDesc),y
+	sta r0L
+	iny
+	lda (DBoxDesc),y
+	sta r0H
+	iny
+	tya
+	rts
 .endif
 
 DBDoVARSTR:

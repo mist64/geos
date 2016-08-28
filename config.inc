@@ -7,17 +7,24 @@ gateway  = 0 ; the gateWay 2.51 variant
 wheels   = 1
 ; if all of these are 0, the BSW variant will be built
 
-; The original GEOS binary contains a few traps to counter tampering.
-; They can be turned off with this global switch
 
 .if wheels
-trap = 0
-wheels_size_and_speed = 1
-wheels_fixes = 1
+	; BSW traps to counter tampering
+	trap = 0
+
+	; size optimizations that have no significant speed impact
+	wheels_size = 1
+
+	; optimizations that benefit both size and speed
+	wheels_size_and_speed = 1
+
+	; fixes for bugs in the BSW version
+	wheels_fixes = 1
 .else
-trap = 1
-wheels_size_and_speed = 0
-wheels_fixes = 0
+	trap = 1
+	wheels_size = 0
+	wheels_size_and_speed = 0
+	wheels_fixes = 0
 .endif
 
 ; general code generation/optimization control:
