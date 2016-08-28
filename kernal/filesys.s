@@ -387,13 +387,6 @@ LD686:  lda     #$83                            ; D686 A9 83                    
         sta     $0E                             ; D68C 85 0E                    ..
         rts                                     ; D68E 60                       `
 
-; ----------------------------------------------------------------------------
-LD68F:  lda     $8148                           ; D68F AD 48 81                 .H.
-        sta     $11                             ; D692 85 11                    ..
-        lda     $8147                           ; D694 AD 47 81                 .G.
-        sta     $10                             ; D697 85 10                    ..
-        rts                                     ; D699 60                       `
-
 .else
 .if (useRamExp)
 	CmpWI r7, ($0100+SYSTEM)
@@ -480,11 +473,11 @@ FFTypesStart:
 SetBufTSVector:
 	LoadW r6, fileTrScTab
 	rts
+.endif
 
 GetStartHAddr:
 	MoveW fileHeader + O_GHST_ADDR, r7
 	rts
-.endif
 
 SetFHeadVector:
 	LoadW r4, fileHeader
@@ -742,7 +735,7 @@ _GetFHdrInfo:
 	lda (r9),y
 	sta r1H
 .endif
-	jsr $D68F;xxxGetStartHAddr
+	jsr GetStartHAddr
 @1:	rts
 
 .if wheels
@@ -847,7 +840,7 @@ _SaveFile:
 .endif
 	jsr $D8E5;xxxClearNWrite
 	bnex @2
-	jsr $D68F;xxxGetStartHAddr
+	jsr GetStartHAddr
 	jsr WriteFile
 @2:	rts
 
