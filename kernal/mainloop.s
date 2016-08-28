@@ -93,11 +93,14 @@ LC073:  sta     LD011                           ; C073 8D 11 D0                 
         .byte   $86                             ; C076 86                       .
 LC077:  ora     ($4C,x)                         ; C077 01 4C                    .L
         .byte   $37                             ; C079 37                       7
-        cpy     #$1E                            ; C07A C0 1E                    ..
-        bmi     LC058+2                        ; C07C 30 DC                    0.
-        inc     $8484                           ; C07E EE 84 84                 ...
-        dey                                     ; C081 88                       .
-        dey                                     ; C082 88                       .
+        .byte $c0
+DkNmTabL:
+        .byte $1e, $30, $dc, $ee
+DkNmTabH:
+	.byte $84, $84, $88, $88
+;        inc     $8484                           ; C07E EE 84 84                 ...
+ ;       dey                                     ; C081 88                       .
+;        dey                                     ; C082 88                       .
 LC083:  php                                     ; C083 08                       .
         sei                                     ; C084 78                       x
         lsr     a                               ; C085 4A                       J

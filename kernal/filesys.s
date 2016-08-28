@@ -826,14 +826,14 @@ _SaveFile:
 .else
 	MoveW dirEntryBuf+OFF_GHDR_PTR, r1
 .endif
-	jsr $D69A;xxxSetFHeadVector
+	jsr SetFHeadVector
 	jsr PutBlock
 .if wheels
 	bne @2
 .else
 	bnex @2
 .endif
-	jsr $D8E5;xxxClearNWrite
+	jsr ClearNWrite
 	bnex @2
 	jsr GetStartHAddr
 	jsr WriteFile
@@ -1038,7 +1038,7 @@ LD9A6:  ldy     #$45                            ; D9A6 A0 45                    
 .endif
 
 _DeleteFile:
-	jsr $DA60;xxxFindNDelete
+	jsr FindNDelete
 	beqx @1
 	rts
 @1:	LoadW r9, dirEntryBuf
@@ -1058,7 +1058,7 @@ _FreeFile:
 	iny
 	lda (r9),y
 	sta r1H
-	jsr $DA25;xxxFreeBlockChain
+	jsr FreeBlockChain
 	bnex @3
 @1:	ldy #OFF_DE_TR_SC
 .if wheels
@@ -1073,7 +1073,7 @@ _FreeFile:
 	lda (r9),y
 	sta r1H
 .endif
-	jsr $DA25;xxxFreeBlockChain
+	jsr FreeBlockChain
 	bnex @3
 	ldy #OFF_GSTRUC_TYPE
 	lda (r9),y
@@ -1336,7 +1336,7 @@ OpRFile1:
 	MoveW r1, RecordDirTS
 	MoveW r5, RecordDirOffs
 	MoveW dirEntryBuf+OFF_SIZE, fileSize
-	jsr $DCC3;xxxGetVLIRTab
+	jsr GetVLIRTab
 	bnex ClearRecordTableTS
 	sta usedRecords
 	ldy #2
@@ -1366,7 +1366,7 @@ _UpdateRecordFile:
 	ldx #0
 	lda fileWritten
 	beq @1
-	jsr $DCCD;xxxPutVLIRTab
+	jsr PutVLIRTab
 	bnex @1
 	MoveW RecordDirTS, r1
 	jsr ReadBuff
@@ -1427,7 +1427,7 @@ _PointRecord:
 	cmp usedRecords
 	bcs @1
 	sta curRecord
-	jsr $DD41;xxxGetVLIRChainTS
+	jsr GetVLIRChainTS
 .if wheels
         tay                                     ; DBD6 A8                       .
 .else
@@ -1530,12 +1530,12 @@ LDC30:  jmp     LDDA4                           ; DC30 4C A4 DD                 
 .endif
 
 _AppendRecord:
-	jsr $DDA4;xxxReadyForUpdVLIR
+	jsr ReadyForUpdVLIR
 	bnex @1
 	lda curRecord
 	addv 1
 	sta r0L
-	jsr $DD10;xxxMoveForwVLIRTab
+	jsr MoveForwVLIRTab
 	bnex @1
 	MoveB r0L, curRecord
 @1:	rts
@@ -1561,7 +1561,7 @@ ReaRec0:
 	ldx #INV_RECORD
 	lda curRecord
 	bmi @1
-	jsr $DD41;xxxGetVLIRChainTS
+	jsr GetVLIRChainTS
 .ifndef wheels
 	lda r1L
 .endif
@@ -1689,7 +1689,7 @@ SetVLIRTable:
 	sta r1L
 	lda RecordTableTS+1
 	sta r1H
-	jsr $D69A;xxxSetFHeadVector
+	jsr SetFHeadVector
 	ldx #NULL
 @1:	rts
 
@@ -1767,13 +1767,13 @@ PutVLIRChainTS:
 	rts
 
 WriteVLIRChain:
-	jsr $D686;xxxSetBufTSVector
+	jsr SetBufTSVector
 	PushW r7
 	jsr BlkAlloc
 	PopW r7
 	bnex @1
 	PushB r2L
-	jsr $D686;xxxSetBufTSVector
+	jsr SetBufTSVector
 	jsr WriteFile
 	PopB r2L
 	bnex @1
