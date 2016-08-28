@@ -12,8 +12,10 @@ wheels   = 1
 
 .if wheels
 trap = 0
+wheels_size_and_speed = 1
 .else
 trap = 1
+wheels_size_and_speed = 0
 .endif
 
 ; general code generation/optimization control:

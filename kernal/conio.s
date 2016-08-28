@@ -118,8 +118,8 @@ _SmallPutChar:
 	jmp FontPutChar
 
 DoTAB:
-.if !wheels
-	lda #0
+.if !wheels ; no-op
+	lda #0 ; XXX was this a constant in the source?
 	add r11L
 	sta r11L
 	bcc @1
@@ -233,7 +233,7 @@ DoESC_GRAPHICS:
 	ldx #r0
 	jsr Ddec
 	ldx #r0
-.if wheels
+.if wheels_size_and_speed ; tail call
 	jmp Ddec
 .else
 	jsr Ddec
@@ -395,7 +395,7 @@ GSSkeyVector:
 	beq @5
 	sta (string),y
 	PushB dispBufferOn
-.if wheels
+.if wheels_size_and_speed ; duplicate read of dispBufferOn
 	and #$20
         beq @3
 .else
@@ -418,7 +418,7 @@ GSSkeyVector:
 	stx stringX
 	bra @5
 @4:	jsr $E7A9;xxxGSHelp1
-.if !wheels
+.if !wheels_size_and_speed ; no op
 	bra @5
 .endif
 @5:	jmp $E7E4;xxx_PromptOn
@@ -546,7 +546,7 @@ CalcDecimal:
 	bcc @3
 	sta r0H
 	iny
-.if wheels
+.if wheels_size_and_speed ; Y can't be 0
 	bne @2
 .else
 	bra @2
@@ -598,7 +598,7 @@ DecTabH:
 ;---------------------------------------------------------------
 _PutDecimal:
 	jsr CalcDecimal
-.if wheels
+.if wheels_size_and_speed ; duplicate load
 	lda r2L
 	bmi @1
 .else
