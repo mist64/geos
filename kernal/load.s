@@ -83,7 +83,7 @@ EDT1:
 	eor #1
 	jsr EDT3
 EDT2:
-;xxx	LoadW r0, _EnterDT_DB
+	LoadW r0, _EnterDT_DB
 	jsr DoDlgBox
 	lda TempCurDrive
 	bne EDT1

@@ -81,7 +81,7 @@ LCF88 = $CF88
 	pha
 	eor $887B,y;xxxKbdDMltTab,y
 	beq @3
-	jsr $FB7F;xxxKbdScanHelp1
+	jsr KbdScanHelp1
 @3:	pla
 	sta $887B,y;xxxKbdDMltTab,y
 @4:	dey
@@ -125,7 +125,7 @@ KbdScanHelp1:
 @3:	sta r0H
 	bbrf 5, r1H, @4
 	lda r0H
-	jsr $FCA9;xxxKbdScanHelp6
+	jsr KbdScanHelp6
 	cmp #'A'
 	bcc @4
 	cmp #'Z'+1

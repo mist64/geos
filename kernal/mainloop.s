@@ -209,11 +209,11 @@ ASSERT_NOT_BELOW_IO
 ;---------------------------------------------------------------
 ;---------------------------------------------------------------
 _InterruptMain:
-	jsr $EBAC;xxxProcessMouse
-	jsr $CB2A;xxx_ProcessTimers
-	jsr $CBC1;xxx_ProcessDelays
-	jsr $E6EF;xxxProcessCursor
-	jmp $CDB1;xxx_GetRandom
+	jsr ProcessMouse
+	jsr _ProcessTimers
+	jsr _ProcessDelays
+	jsr ProcessCursor
+	jmp _GetRandom
 
 .if wheels
 LC4DA = $c4da
