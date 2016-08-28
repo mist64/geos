@@ -59,8 +59,8 @@ _DoDlgBox:
 	inx
 	cpx #12
 	bne @1
-	jsr $F28E;xxxDlgBoxPrep
-	jsr $F2BD;xxxDrawDlgBox
+	jsr DlgBoxPrep
+	jsr DrawDlgBox
 .if wheels_size_and_speed ; duplicate LDA #0
 	lda #0
 	sta r11H
@@ -141,10 +141,11 @@ LF383 = $F383
 LF36E = $F36E
 LC58F = $C58F
 LF28E:  sec                                     ; F28E 38                       8
-        jsr     LF29B                           ; F28F 20 9B F2                  ..
-        lda     #$00                            ; F292 A9 00                    ..
-        sta     $851D                           ; F294 8D 1D 85                 ...
-        jmp     LC58F                           ; F297 4C 8F C5                 L..
+        jsr     LF29B
+        lda     #0 ; undefined
+        sta     sysDBData
+        jmp     LC58F
+
 LF29A:  clc                                     ; F29A 18                       .
 LF29B:  lda     $01                             ; F29B A5 01                    ..
         pha                                     ; F29D 48                       H
@@ -237,18 +238,18 @@ DrwDlgSpd1:
 	beq @1
 	jsr SetPattern
 	sec
-	jsr $F305;xxxCalcDialogCoords
+	jsr CalcDialogCoords
 	jsr Rectangle
 .endif
 @1:	lda #0
 	jsr SetPattern
 	clc
-	jsr $F305;xxxCalcDialogCoords
+	jsr CalcDialogCoords
 	MoveW r4, rightMargin
 	jsr Rectangle
 .if !wheels
 	clc
-	jsr $F305;xxxCalcDialogCoords
+	jsr CalcDialogCoords
 .endif
 	lda #$ff
 	jsr FrameRectangle
@@ -268,7 +269,7 @@ Dialog_1:
 	sec
 	jsr @2
 @1:	clc
-@2:	jsr $F305;xxxCalcDialogCoords
+@2:	jsr CalcDialogCoords
 	jmp RcvrMnu0
 
 CalcDialogCoords:
@@ -450,7 +451,7 @@ DBDoIcons:
 	bne @1
 	lda #>DBKeyVector
 	sta keyVector+1
-	lda #$95;xxx#<DBKeyVector
+	lda #<DBKeyVector
 	sta keyVector
 @1:
 .if wheels
@@ -632,7 +633,7 @@ LF4D5:  ora     $7963                           ; F4D5 0D 63 79                 
         .byte   $2C                             ; F4F7 2C                       ,
 LF4F8:  lda     #$0E                            ; F4F8 A9 0E                    ..
         bit     $0DA9                           ; F4FA 2C A9 0D                 ,..
-        sta     $851D                           ; F4FD 8D 1D 85                 ...
+        sta     sysDBData
         jmp     RstrFrmDialogue                 ; F500 4C BF C2                 L..
 .else
 DBIcOK:
@@ -734,7 +735,7 @@ DBDoUSR_ROUT:
 DBDoTXTSTR:
 	clc
 	jsr CalcDialogCoords
-	jsr $F5B1;xxxDBTextCoords
+	jsr DBTextCoords
 .if wheels
         jsr     LF55A                           ; F54F 20 5A F5                  Z.
 .else
@@ -765,7 +766,7 @@ LF55A:  lda     ($43),y                         ; F55A B1 43                    
 DBDoVARSTR:
 	clc
 	jsr CalcDialogCoords
-	jsr $F5B1;xxxDBTextCoords
+	jsr DBTextCoords
 	lda (DBoxDesc),y
 	iny
 	tax
@@ -782,7 +783,7 @@ DBDoVARSTR:
 DBDoGETSTR:
 	clc
 	jsr CalcDialogCoords
-	jsr $F5B1;xxxDBTextCoords
+	jsr DBTextCoords
 	lda (DBoxDesc),y
 	iny
 	tax
@@ -807,7 +808,7 @@ DBDoGETSTR:
 DBKeyVector2:
 .if !wheels
 	LoadB sysDBData, DBGETSTRING
-	jmp $F4F8;xxxRstrFrmDialogue
+	jmp RstrFrmDialogue
 .endif
 
 DBTextCoords:
@@ -836,7 +837,7 @@ DBDoGETFILES:
 	tya
 	pha
 	MoveW r5, DBGFNameTable
-	jsr $F890;xxxDBGFilesHelp7
+	jsr DBGFilesHelp7
 	lda r3H
 	ror
 	lda r3L
@@ -992,7 +993,7 @@ DBGFArrowX:
 .else
 	.byte 3, 12
 .endif
-	.word $F72F;xxxDBGFDoArrow
+	.word DBGFDoArrow
 
 DBGFArrowPic:
 .if wheels
@@ -1023,15 +1024,15 @@ DBGFArrowPic:
 DBGFPressVector:
 	lda mouseData
 	bmi @2
-	jsr $F890;xxxDBGFilesHelp7
+	jsr DBGFilesHelp7
 	clc
 	lda r2L
 	adc #$45
 	sta r2H
 	jsr IsMseInRegion
 	beq @2
-	jsr $F883;xxxDBGFilesHelp6
-	jsr $F890;xxxDBGFilesHelp7
+	jsr DBGFilesHelp6
+	jsr DBGFilesHelp7
 	lda mouseYPos
 	sub r2L
 	sta r0L
@@ -1049,8 +1050,8 @@ DBGFPressVector:
 	dex
 	txa
 @1:	sta DBGFileSelected
-	jsr $F883;xxxDBGFilesHelp6
-	jsr $F7D9;xxxDBGFilesHelp2
+	jsr DBGFilesHelp6
+	jsr DBGFilesHelp2
 .if wheels
         lda     $8515                           ; F71D AD 15 85                 ...
         beq     @X                           ; F720 F0 07                    ..
@@ -1166,7 +1167,7 @@ LF7A3:  sta     $04                             ; F7A3 85 04                    
         sta     $08                             ; F7D6 85 08                    ..
         rts                                     ; F7D8 60                       `
 .else
-	jsr $F883;xxxDBGFilesHelp6
+	jsr DBGFilesHelp6
 	LoadB r0H, 0
 	lda DBGFArrowX
 	asl
@@ -1195,7 +1196,7 @@ LF7A3:  sta     $04                             ; F7A3 85 04                    
 	cmp DBGFileSelected
 	bcs @6
 	sta DBGFileSelected
-@6:	jsr $F7D9;xxxDBGFilesHelp2
+@6:	jsr DBGFilesHelp2
 	jmp DBGFilesHelp5
 .endif
 
@@ -1344,7 +1345,7 @@ LF86E:  inc     $20                             ; F86E E6 20                    
 	inc r15L
 	CmpBI r15L, 5
 	bne @1
-	jsr $F883;xxxDBGFilesHelp6
+	jsr DBGFilesHelp6
 	LoadB currentMode, NULL
 	PopW rightMargin
 	rts
