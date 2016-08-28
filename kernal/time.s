@@ -70,7 +70,7 @@ ASSERT_NOT_BELOW_IO
 	beq @5
 	jmp (alarmTmtVector)
 @5:	bbrf 6, alarmSetFlag, @6
-	jsr $FD9D;xxxDoClockAlarm
+	jsr DoClockAlarm
 @6:	cli
 	rts
 
@@ -141,8 +141,8 @@ DoClockAlarm:
 	ldy CPU_DATA
 ASSERT_NOT_BELOW_IO
 	LoadB CPU_DATA, IO_IN
-	ldx #24
-@1:	lda $FE65,x;xxxpingTab,x
+	ldx #pingTabEnd - pingTab - 1
+@1:	lda pingTab,x
 	sta sidbase,x
 	dex
 	bpl @1
@@ -187,7 +187,10 @@ pingTab:
 	.byte $00, $10, $00, $08, $40, $08, $00, $00
 	.byte $00, $00, $00, $00, $00, $00, $00, $00
 	.byte $00, $00, $00, $00, $00, $00, $00, $00
-	.byte $0f, $00
+	.byte $0f
+pingTabEnd:
+
+	.byte $00
 .if wheels
 	.byte 0
 .else
