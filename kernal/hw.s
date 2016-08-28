@@ -28,6 +28,13 @@
 
 .segment "hw1"
 
+VIC_IniTbl:
+	.byte $00, $00, $00, $00, $00, $00, $00, $00
+	.byte $00, $00, $00, $00, $00, $00, $00, $00
+	.byte $00, $3b, $fb, $aa, $aa, $01, $08, $00
+	.byte $38, $0f, $01, $00, $00, $00
+VIC_IniTbl_end:
+
 .if wheels
 LEC75 = $ec75
 LFD2F = $fd2f
@@ -35,10 +42,6 @@ LC5E7 = $c5e7
 LD07B = $D07B
 L003D = $003D
 
-        .byte   $00,$00,$00,$00,$00,$00,$00,$00 ; C40A 00 00 00 00 00 00 00 00  ........
-        .byte   $00,$00,$00,$00,$00,$00,$00,$00 ; C412 00 00 00 00 00 00 00 00  ........
-        .byte   $00,$3B,$FB,$AA,$AA,$01,$08,$00 ; C41A 00 3B FB AA AA 01 08 00  .;......
-        .byte   $38,$0F,$01,$00,$00,$00         ; C422 38 0F 01 00 00 00        8.....
 ; ----------------------------------------------------------------------------
 .global _DoFirstInitIO ; XXX belongs in hw.s
 _DoFirstInitIO:
@@ -160,12 +163,6 @@ LC4F5:  lda     (L003D),y                       ; C4F5 B1 3D                    
         jmp     DoInlineReturn                  ; C503 4C A4 C2                 L..
 
 .else
-VIC_IniTbl:
-	.byte $00, $00, $00, $00, $00, $00, $00, $00
-	.byte $00, $00, $00, $00, $00, $00, $00, $00
-	.byte $00, $3b, $fb, $aa, $aa, $01, $08, $00
-	.byte $38, $0f, $01, $00, $00, $00
-VIC_IniTbl_end:
 
 _DoFirstInitIO:
 	LoadB CPU_DDR, $2f
