@@ -42,7 +42,7 @@ LCF88 = $CF88
 	lda KbdQueFlag
 	bne @1
 	lda KbdNextKey
-	jsr $FC16;xxxKbdScanHelp2
+	jsr KbdScanHelp2
 .if wheels
         sec                                     ; FB15 38                       8
         lda     $88B3                           ; FB16 AD B3 88                 ...
@@ -64,11 +64,11 @@ LCF88 = $CF88
         iny                                     ; FB37 C8                       .
         sty     cia1base+3
 .endif
-	jsr $FB74;xxxKbdScanRow
+	jsr KbdScanRow
 	bne @5
-	jsr $FC65;xxxKbdScanHelp5
+	jsr KbdScanHelp5
 	ldy #7
-@2:	jsr $FB74;xxxKbdScanRow
+@2:	jsr KbdScanRow
 	bne @5
 	lda $FDDD,y;xxxKbdTestTab,y
 	sta cia1base+0
