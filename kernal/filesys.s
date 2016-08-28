@@ -381,11 +381,6 @@ LD663:  lda     $0D                             ; D663 A5 0D                    
 ; ----------------------------------------------------------------------------
 LD684:  brk                                     ; D684 00                       .
 LD685:  brk                                     ; D685 00                       .
-LD686:  lda     #$83                            ; D686 A9 83                    ..
-        sta     $0F                             ; D688 85 0F                    ..
-        lda     #$00                            ; D68A A9 00                    ..
-        sta     $0E                             ; D68C 85 0E                    ..
-        rts                                     ; D68E 60                       `
 
 .else
 .if (useRamExp)
@@ -469,11 +464,11 @@ FFTypesStart:
 	beq @2
 @7:	plp
 	rts
+.endif
 
 SetBufTSVector:
 	LoadW r6, fileTrScTab
 	rts
-.endif
 
 GetStartHAddr:
 	MoveW fileHeader + O_GHST_ADDR, r7
@@ -758,7 +753,7 @@ GetHeaderFileName:
 	iny
 	lda (r5),y
 	sta r1H
-	jsr $D69A;xxxSetFHeadVector
+	jsr SetFHeadVector
 	jsr GetBlock
 .if wheels
         bne @4
@@ -809,11 +804,11 @@ _SaveFile:
 .else
 	bnex @2
 .endif
-	jsr $D8BA;xxxGetDAccLength
-	jsr $D686;xxxSetBufTSVector
+	jsr GetDAccLength
+	jsr SetBufTSVector
 	jsr BlkAlloc
 	bnex @2
-	jsr $D686;xxxSetBufTSVector
+	jsr SetBufTSVector
 	jsr SetGDirEntry
 	bnex @2
 	jsr PutDirHead
