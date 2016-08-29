@@ -917,17 +917,14 @@ LF654:	jsr L500C
 LF657:	PopB r2L
 	PopB r3L
 	sta LF69A
-	lda #$00
-	sta $885C
-	sta $885B
+	lda #0
+	sta DBGFileSelected
+	sta DBGFTableIndex
 	lda $8856
 	beq LF694
 	cmp #6
 	bcc @1
-	lda #>DBGFilesArrowsIcons
-	sta r5H
-	lda #<DBGFilesArrowsIcons
-	sta r5L
+	LoadW r5, DBGFilesArrowsIcons
 	jsr DBIconsHelp2
 @1:	lda #$00
 	jsr LF7A3
@@ -937,9 +934,8 @@ LF657:	PopB r2L
 	lda #$D2
 	sta $84A9
 	jsr DBGFilesHelp5
-	jsr LF7D9
-LF694:	pla
-	sta $04
+	jsr DBGFilesHelp2
+LF694:	PopB r1L
 	rts
 .else
 	LoadB r7H, 15
@@ -954,10 +950,7 @@ LF694:	pla
 	sta DBGFilesFound
 	cmp #6
 	bcc @1
-	lda #>DBGFilesArrowsIcons
-	sta r5H
-	lda #<DBGFilesArrowsIcons
-	sta r5L
+	LoadW r5, DBGFilesArrowsIcons
 	jsr DBIconsHelp2
 @1:	lda #>DBGFPressVector
 	sta otherPressVec+1
@@ -1144,7 +1137,7 @@ LF791:  sta     $885C                           ; F791 8D 5C 88                 
         sta     $885B                           ; F794 8D 5B 88                 .[.
         jsr     LF7A3                           ; F797 20 A3 F7                  ..
         jsr     FetchRAM                        ; F79A 20 CB C2                  ..
-        jsr     LF7D9                           ; F79D 20 D9 F7                  ..
+        jsr     DBGFilesHelp2                           ; F79D 20 D9 F7                  ..
         jmp     DBGFilesHelp5                           ; F7A0 4C 0F F8                 L..
 
 ; ----------------------------------------------------------------------------
@@ -1211,7 +1204,7 @@ LF7A3:  sta     $04                             ; F7A3 85 04                    
 DBGFilesHelp2:
 .if wheels
 LF7F4 = $F7F4
-LF7D9:  lda     $885C                           ; F7D9 AD 5C 88                 .\.
+	lda     $885C                           ; F7D9 AD 5C 88                 .\.
         sec                                     ; F7DC 38                       8
         sbc     $885B                           ; F7DD ED 5B 88                 .[.
         ldx     #$02                            ; F7E0 A2 02                    ..
