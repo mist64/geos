@@ -84,7 +84,6 @@ dateCopy:
 .include "jumptab.inc"
 LD07F = $D07F
 LD074 = $D074
-LD07E = $D07E
 
 .global _WheelsSyscall2
 _WheelsSyscall2:
@@ -96,9 +95,9 @@ LC020:	php
 	PushB CPU_DATA
 ASSERT_NOT_BELOW_IO
 	LoadB CPU_DATA, $35
-	sta LD07E
-	sta LD074,y
-	sta LD07F
+	sta scpu_hwreg_enable
+	sta scpu_base,y
+	sta scpu_hwreg_disable
 	PopB CPU_DATA
 ASSERT_NOT_BELOW_IO
 	plp
