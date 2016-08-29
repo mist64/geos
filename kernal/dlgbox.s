@@ -550,7 +550,7 @@ LF46C:  .byte   $F4,$58,$BF,$00,$00,$06,$10,$EC ; F46C F4 58 BF 00 00 06 10 EC  
         .byte   $F4,$D4,$F9,$00,$00,$06,$10,$DB ; F48C F4 D4 F9 00 00 06 10 DB  ........
         .byte   $F4                             ; F494 F4                       .
 .else
-LF465:	.word DBIcPicOK
+	.word DBIcPicOK
 LF46B:	.word 0
 	.byte 6, 16
 	.word DBIcOK
@@ -586,41 +586,44 @@ DBKeyVector:
 L9D83 = $9D83
 L5009 = $5009
 L9D80 = $9D80
-        lda     $8504                           ; F495 AD 04 85                 ...
-        ldy     #$05                            ; F498 A0 05                    ..
-LF49A:  cmp     LF4D5,y                         ; F49A D9 D5 F4                 ...
-        beq     LF4A3                           ; F49D F0 04                    ..
-        dey                                     ; F49F 88                       .
-        bpl     LF49A                           ; F4A0 10 F8                    ..
-        rts                                     ; F4A2 60                       `
-LF4A3:  tya                                     ; F4A3 98                       .
-        asl     a                               ; F4A4 0A                       .
-        asl     a                               ; F4A5 0A                       .
-        asl     a                               ; F4A6 0A                       .
-        tay                                     ; F4A7 A8                       .
-        lda     #$00                            ; F4A8 A9 00                    ..
-        sta     r0L                           ; F4AA 85 02                    ..
-LF4AC:  tax                                     ; F4AC AA                       .
-        lda     $8810,x                         ; F4AD BD 10 88                 ...
-        cmp     LF465,y                         ; F4B0 D9 65 F4                 .e.
-        bne     LF4BD                           ; F4B3 D0 08                    ..
-        lda     $8811,x                         ; F4B5 BD 11 88                 ...
-        cmp     LF465+1,y                         ; F4B8 D9 66 F4                 .f.
-        beq     LF4CC                           ; F4BB F0 0F                    ..
-LF4BD:  inc     r0L                           ; F4BD E6 02                    ..
-        lda     r0L                           ; F4BF A5 02                    ..
-        cmp     $880C                           ; F4C1 CD 0C 88                 ...
-        bcs     LF4CB                           ; F4C4 B0 05                    ..
-        asl     a                               ; F4C6 0A                       .
-        asl     a                               ; F4C7 0A                       .
-        asl     a                               ; F4C8 0A                       .
-        bne     LF4AC                           ; F4C9 D0 E1                    ..
-LF4CB:  rts                                     ; F4CB 60                       `
-LF4CC:  lda     LF46B,y                         ; F4CC B9 6B F4                 .k.
-        ldx     LF46B+1,y                         ; F4CF BE 6C F4                 .l.
-        jmp     CallRoutine                     ; F4D2 4C D8 C1                 L..
-LF4D5:  ora     $7963                           ; F4D5 0D 63 79                 .cy
-        ror     $646F                           ; F4D8 6E 6F 64                 nod
+A8810 = $8810
+	lda     keyData
+	ldy     #5
+@1:	cmp     ShortcutKeys,y
+	beq     LF4A3
+	dey
+	bpl     @1
+	rts
+
+LF4A3:	tya
+	asl     a
+	asl     a
+	asl     a
+	tay
+	lda     #$00
+	sta     r0L
+LF4AC:	tax
+	lda     A8810,x
+	cmp     DBDefIconsTab,y
+	bne     LF4BD
+	lda     A8810+1,x
+	cmp     DBDefIconsTab+1,y
+	beq     LF4CC
+LF4BD:	inc     r0L
+	lda     r0L
+	cmp     $880C
+	bcs     LF4CB
+	asl     a
+	asl     a
+	asl     a
+	bne     LF4AC
+LF4CB:	rts
+LF4CC:	lda     LF46B,y
+	ldx     LF46B+1,y
+	jmp     CallRoutine
+
+ShortcutKeys:
+	.byte 13, "cynod"
 .else
 	CmpBI keyData, CR
 	beq DBIcOK
@@ -1129,7 +1132,7 @@ LF759:  lda     #$00                            ; F759 A9 00                    
         dex                                     ; F760 CA                       .
         stx     r0L                           ; F761 86 02                    ..
         lda     #$00                            ; F763 A9 00                    ..
-        sta     $03                             ; F765 85 03                    ..
+        sta     r0H                             ; F765 85 03                    ..
         sta     $05                             ; F767 85 05                    ..
         lda     #$05                            ; F769 A9 05                    ..
         sta     $04                             ; F76B 85 04                    ..
@@ -1187,7 +1190,7 @@ LF7A3:  sta     $04                             ; F7A3 85 04                    
         adc     #$E0                            ; F7CA 69 E0                    i.
         sta     $05                             ; F7CC 85 05                    ..
         lda     #$83                            ; F7CE A9 83                    ..
-        sta     $03                             ; F7D0 85 03                    ..
+        sta     r0H                             ; F7D0 85 03                    ..
         lda     #$00                            ; F7D2 A9 00                    ..
         sta     r0L                           ; F7D4 85 02                    ..
         sta     $08                             ; F7D6 85 08                    ..
@@ -1323,7 +1326,7 @@ LF843:  lda     $20                             ; F843 A5 20                    
         adc     #$09                            ; F853 69 09                    i.
         sta     $05                             ; F855 85 05                    ..
         lda     $1F                             ; F857 A5 1F                    ..
-        sta     $03                             ; F859 85 03                    ..
+        sta     r0H                             ; F859 85 03                    ..
         lda     $1E                           ; F85B A5 1E                    ..
         sta     r0L                           ; F85D 85 02                    ..
         jsr     PutString                       ; F85F 20 48 C1                  H.
