@@ -1231,7 +1231,7 @@ DBGFilesHelp3:
 DBGFilesHelp4:
 	sta r0L
 .if wheels
-        MoveB L9FF2, r1L
+	MoveB L9FF2, r1L
 .else
 	LoadB r1L, 17
 .endif
@@ -1244,8 +1244,9 @@ DBGFilesHelp4:
 	tax
 	lda r1L
 .if wheels
-        sta     $00,x                           ; F808 95 00                    ..
-        lda     #$83                            ; F80A A9 83                    ..
+	sta 0,x
+	.assert <fileTrScTab = 0, error, "fileTrScTab must be page-aligned!"
+	lda #>fileTrScTab
 .else
 	clc
 	adc #<fileTrScTab
