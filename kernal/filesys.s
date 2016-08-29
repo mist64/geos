@@ -214,16 +214,15 @@ LC073:  sta     LD011                           ; C073 8D 11 D0                 
         stx $01                                 ; C076 86                       .
 LC077:  jmp LC037                         ; C077 01 4C                    .L
 
-; XXX this is segment "files2"
-.if wheels
-.global DkNmTabL, DkNmTabH ; XXX
 .endif
+
 .define DkNmTab DrACurDkNm, DrBCurDkNm, DrCCurDkNm, DrDCurDkNm
 DkNmTabL:
 	.lobytes DkNmTab
 DkNmTabH:
 	.hibytes DkNmTab
 
+.if wheels
 .include "c64.inc"
 LC083:  php                                     ; C083 08                       .
         sei                                     ; C084 78                       x
@@ -298,14 +297,6 @@ LC0CD:  lda     $06                             ; C0CD A5 06                    
 ; ----------------------------------------------------------------------------
         brk                                     ; C0FE 00                       .
         brk                                     ; C0FF 00                       .
-.endif
-
-.if !wheels
-.define DkNmTab DrACurDkNm, DrBCurDkNm, DrCCurDkNm, DrDCurDkNm
-DkNmTabL:
-	.lobytes DkNmTab
-DkNmTabH:
-	.hibytes DkNmTab
 .endif
 
 .segment "files3"
