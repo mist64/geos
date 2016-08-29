@@ -354,7 +354,7 @@ GotoFirstMenu:
 InitTextPrompt:
 	jmp _InitTextPrompt
 MainLoop:
-	jmp $C037;xxx_MainLoop
+	jmp _MainLoop
 DrawSprite:
 	jmp _DrawSprite
 GetCharWidth:
