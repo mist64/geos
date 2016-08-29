@@ -610,7 +610,7 @@ ColorRectangle:
 
 ; new Wheels syscalls
 .global WheelsSyscall1, WheelsSyscall9
-.import _WheelsSyscall1, _WheelsSyscall2, _WheelsSyscall3, _WheelsSyscall4, _WheelsSyscall5, _WheelsSyscall6, _WheelsSyscall7, _WheelsSyscall8, _WheelsSyscall9, _WheelsSyscall10, _WheelsSyscall11, _WheelsSyscall12
+.import _WheelsSyscall1, _WheelsSyscall2, _WheelsSyscall3, _WheelsSyscall4, _WheelsSyscall5, _WheelsSyscall6, _IRQHandler, _WheelsSyscall8, _WheelsSyscall9, _WheelsSyscall10, _WheelsSyscall11, _WheelsSyscall12
 WheelsSyscall1: ; $C2FE
 	jmp _WheelsSyscall1
 WheelsSyscall2: ; $C301
@@ -622,9 +622,9 @@ WheelsSyscall4: ; $C307
 WheelsSyscall5: ; $C30A
 	jmp _WheelsSyscall5
 WheelsSyscall6: ; $C30D
-	jmp LC083
+	jmp _WheelsSyscall6
 WheelsSyscall7: ; $C310
-	jmp LFA73
+	jmp _IRQHandler
 WheelsSyscall8: ; $C313
 	jmp LC4A8
 WheelsSyscall9: ; $C316

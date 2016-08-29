@@ -222,7 +222,9 @@ DkNmTabH:
 
 .if wheels
 .include "c64.inc"
-LC083:	php
+.global _WheelsSyscall6
+_WheelsSyscall6:
+	php
 	sei
 	lsr
 	ror
