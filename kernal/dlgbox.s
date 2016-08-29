@@ -1371,15 +1371,15 @@ DBGFilesHelp8:
 	jsr DBGFilesHelp7
 	AddB r0L, r2L
 	clc
-.if wheels
+.if wheels ; xxx
 	adc #13
 .else
 	adc #14
 .endif
 	sta r2H
 	inc r2L
-.if wheels
-        jsr     LF8DE                           ; F8D6 20 DE F8                  ..
+.if wheels_size ; code reuse
+	jsr IncR3
 .else
 	dec r2H
 	inc r3L
@@ -1387,18 +1387,19 @@ DBGFilesHelp8:
 	inc r3H
 .endif
 @1:	ldx #r4
-.if wheels
+.if wheels_size_and_speed
         jmp     Ddec                            ; F8DB 4C 75 C1                 Lu.
 .else
 	jsr Ddec
 	rts
 .endif
 
-.if wheels
-LF8DE:  inc     r3L                             ; F8DE E6 08                    ..
-        bne     LF8E4                           ; F8E0 D0 02                    ..
-        inc     r3H                             ; F8E2 E6 09                    ..
-LF8E4:  rts                                     ; F8E4 60                       `
+.if wheels_size ; code reuse
+.global IncR3
+IncR3:	inc r3L
+	bne @1
+	inc r3H
+@1:	rts
 .endif
 
 DBIcPicNO:

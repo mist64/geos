@@ -660,17 +660,18 @@ Menu_7:
 	bne @6
 	inc r2L
 @6:	MoveW menuLeft, r3
-.if wheels
-LF8DE = $F8DE
-        jsr     LF8DE                           ; F065 20 DE F8                  ..
+.if wheels_size ; code reuse
+.import IncR3
+	jsr IncR3
 .else
 	inc r3L
 	bne @7
 	inc r3H
+@7:
 .endif
-@7:	MoveW menuRight, r4
+	MoveW menuRight, r4
 	ldx #r4
-.if wheels
+.if wheels_size_and_speed
 	jmp Ddec
 .else
 	jsr Ddec
