@@ -89,7 +89,6 @@ LEC75 = $ec75
 LFD2F = $fd2f
 LC5E7 = $c5e7
 LD07B = $D07B
-L003D = $003D
 
 ; ----------------------------------------------------------------------------
 LC499:  lda     #$02                            ; C499 A9 02                    ..
@@ -107,7 +106,7 @@ _WheelsSyscall8:
         jsr     LC4C2                           ; C4AA 20 C2 C4                  ..
         ldx     $07                             ; C4AD A6 07                    ..
 LC4AF:  ldy     #$00                            ; C4AF A0 00                    ..
-        lda     $0B                             ; C4B1 A5 0B                    ..
+        lda     r4H                             ; C4B1 A5 0B                    ..
 LC4B3:  sta     ($0C),y                         ; C4B3 91 0C                    ..
         iny                                     ; C4B5 C8                       .
         cpy     $06                             ; C4B6 C4 06                    ..
@@ -145,16 +144,14 @@ LC4E5:  rts                                     ; C4E5 60                       
 ; ----------------------------------------------------------------------------
 .global _WheelsSyscall9
 _WheelsSyscall9:
-	pla                                     ; C4E6 68                       h
-        sta     L003D                           ; C4E7 85 3D                    .=
-        pla                                     ; C4E9 68                       h
-        sta     $3E                             ; C4EA 85 3E                    .>
-        ldy     #$05                            ; C4EC A0 05                    ..
-        lda     (L003D),y                       ; C4EE B1 3D                    .=
-        sta     $0B                             ; C4F0 85 0B                    ..
+	PopB returnAddress
+        PopB returnAddress+1
+        ldy #5                            ; C4EC A0 05                    ..
+        lda (returnAddress),y                       ; C4EE B1 3D                    .=
+        sta     r4H                             ; C4F0 85 0B                    ..
         dey                                     ; C4F2 88                       .
         ldx     #$03                            ; C4F3 A2 03                    ..
-LC4F5:  lda     (L003D),y                       ; C4F5 B1 3D                    .=
+LC4F5:  lda     (returnAddress),y                       ; C4F5 B1 3D                    .=
         sta     $04,x                           ; C4F7 95 04                    ..
         dey                                     ; C4F9 88                       .
         dex                                     ; C4FA CA                       .
@@ -231,9 +228,9 @@ LC623:  lda     $11                             ; C623 A5 11                    
         ldy     #$84                            ; C644 A0 84                    ..
         lda     #$42                            ; C646 A9 42                    .B
         ldx     #$08                            ; C648 A2 08                    ..
-LC64A:  sty     $0B                             ; C64A 84 0B                    ..
-        sta     $0A                             ; C64C 85 0A                    ..
-        ldy     #$0A                            ; C64E A0 0A                    ..
+LC64A:  sty     r4H                             ; C64A 84 0B                    ..
+        sta     r4L                             ; C64C 85 0A                    ..
+        ldy     #r4                            ; C64E A0 0A                    ..
         lda     #$10                            ; C650 A9 10                    ..
         jsr     CopyFString                     ; C652 20 68 C2                  h.
 LC655:  rts                                     ; C655 60                       `
