@@ -2127,18 +2127,20 @@ LD513 = $D513
 L9EA7:  jmp     LD513                           ; 9EA7 4C 13 D5                 L..
 
 ; ----------------------------------------------------------------------------
-; VerifyRAM
-L9EAA:  ldy     #$93                            ; 9EAA A0 93                    ..
+.global _VerifyRAM, _StashRAM, _SwapRAM, _FetchRAM, _DoRAMOp
+_VerifyRAM:
+	ldy     #$93                            ; 9EAA A0 93                    ..
         .byte   $2C                             ; 9EAC 2C                       ,
-; StashRAM
-L9EAD:  ldy     #$90                            ; 9EAD A0 90                    ..
+_StashRAM:
+	ldy     #$90                            ; 9EAD A0 90                    ..
         .byte   $2C                             ; 9EAF 2C                       ,
-; SwapRAM
-L9EB0:  ldy     #$92                            ; 9EB0 A0 92                    ..
+_SwapRAM:
+	ldy     #$92                            ; 9EB0 A0 92                    ..
         .byte   $2C                             ; 9EB2 2C                       ,
-; FetchRAM
-L9EB3:  ldy     #$91                            ; 9EB3 A0 91                    ..
-L9EB5:  ldx     #$0D                            ; 9EB5 A2 0D                    ..
+_FetchRAM:
+	ldy     #$91                            ; 9EB3 A0 91                    ..
+_DoRAMOp:
+	ldx     #$0D                            ; 9EB5 A2 0D                    ..
         lda     r3L                             ; 9EB7 A5 08                    ..
         cmp     $88C3                           ; 9EB9 CD C3 88                 ...
         bcs     L9F09                           ; 9EBC B0 4B                    .K

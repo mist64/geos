@@ -533,15 +533,15 @@ BitOtherClip:
 	jmp _BitOtherClip
 .if (REUPresent)
 StashRAM:
-	jmp $9ead;xxx_StashRAM
+	jmp _StashRAM
 FetchRAM:
-	jmp $9eb3;xxx_FetchRAM
+	jmp _FetchRAM
 SwapRAM:
-	jmp $9eb0;xxx_SwapRAM
+	jmp _SwapRAM
 VerifyRAM:
-	jmp $9eaa;xxx_VerifyRAM
+	jmp _VerifyRAM
 DoRAMOp:
-	jmp $9eb5;xxx_DoRAMOp
+	jmp _DoRAMOp
 .else
 StashRAM:
 	ldx #DEV_NOT_FOUND
