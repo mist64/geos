@@ -593,15 +593,15 @@ DoKeyboardShortcut:
 	lda #0
 	sta r0L
 LF4AC:	tax
-	lda A8810,x
+	lda defIconTab+4,x
 	cmp DBDefIconsTab,y
 	bne LF4BD
-	lda A8810+1,x
+	lda defIconTab+4+1,x
 	cmp DBDefIconsTab+1,y
 	beq LF4CC
 LF4BD:	inc r0L
 	lda r0L
-	cmp $880C
+	cmp defIconTab
 	bcs LF4CB
 	asl
 	asl
