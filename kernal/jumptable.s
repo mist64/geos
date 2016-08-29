@@ -626,15 +626,15 @@ WheelsSyscall6: ; $C30D
 WheelsSyscall7: ; $C310
 	jmp _IRQHandler
 WheelsSyscall8: ; $C313
-	jmp LC4A8
+	jmp _WheelsSyscall8
 WheelsSyscall9: ; $C316
-	jmp LC4E6
+	jmp _WheelsSyscall9
 WheelsSyscall10: ; $C319
-	jmp LC391
+	jmp _WheelsSyscall10
 WheelsSyscall11: ; $C31C
-	jmp LC38E
+	jmp _WheelsSyscall11
 WheelsSyscall12: ; $C31F
-	jmp LC0CD
+	jmp _WheelsSyscall12
 
 	.byte 0, 0, 0 ; ???
 

@@ -100,7 +100,9 @@ LC4A1:  .byte   $00,$C7,$00,$00,$3F,$01         ; C4A1 00 C7 00 00 3F 01        
         rts                                     ; C4A7 60                       `
 
 ; ----------------------------------------------------------------------------
-LC4A8:  php                                     ; C4A8 08                       .
+.global _WheelsSyscall8
+_WheelsSyscall8:
+	php                                     ; C4A8 08                       .
         sei                                     ; C4A9 78                       x
         jsr     LC4C2                           ; C4AA 20 C2 C4                  ..
         ldx     $07                             ; C4AD A6 07                    ..
@@ -141,7 +143,9 @@ LC4DA:  clc                                     ; C4DA 18                       
 LC4E5:  rts                                     ; C4E5 60                       `
 
 ; ----------------------------------------------------------------------------
-LC4E6:  pla                                     ; C4E6 68                       h
+.global _WheelsSyscall9
+_WheelsSyscall9:
+	pla                                     ; C4E6 68                       h
         sta     L003D                           ; C4E7 85 3D                    .=
         pla                                     ; C4E9 68                       h
         sta     $3E                             ; C4EA 85 3E                    .>
@@ -155,7 +159,7 @@ LC4F5:  lda     (L003D),y                       ; C4F5 B1 3D                    
         dey                                     ; C4F9 88                       .
         dex                                     ; C4FA CA                       .
         bpl     LC4F5                           ; C4FB 10 F8                    ..
-        jsr     LC4A8                           ; C4FD 20 A8 C4                  ..
+        jsr     _WheelsSyscall8                           ; C4FD 20 A8 C4                  ..
         php                                     ; C500 08                       .
         lda     #$06                            ; C501 A9 06                    ..
         jmp     DoInlineReturn                  ; C503 4C A4 C2                 L..

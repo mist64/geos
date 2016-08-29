@@ -258,8 +258,9 @@ _WheelsSyscall6:
 	plp
 	rts
 
-; ----------------------------------------------------------------------------
-LC0CD:  lda     $06                             ; C0CD A5 06                    ..
+.global _WheelsSyscall12
+_WheelsSyscall12:
+	lda     $06                             ; C0CD A5 06                    ..
         lsr                               ; C0CF 4A                       J
         lsr                               ; C0D0 4A                       J
         lsr                               ; C0D1 4A                       J

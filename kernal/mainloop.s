@@ -84,10 +84,12 @@ _InterruptMain:
 LC4DA = $c4da
 LC4C2 = $c4c2
 LC325 = $c325
-
-LC38E:  lda     #$00                            ; C38E A9 00                    ..
+.global _WheelsSyscall10, _WheelsSyscall11
+_WheelsSyscall11:
+	lda     #$00                            ; C38E A9 00                    ..
         .byte   $2C                             ; C390 2C                       ,
-LC391:  lda     #$80                            ; C391 A9 80                    ..
+_WheelsSyscall10:
+	lda     #$80                            ; C391 A9 80                    ..
         sta     LC325                           ; C393 8D 25 C3                 .%.
         jsr     LC4C2                           ; C396 20 C2 C4                  ..
         lda     $03                             ; C399 A5 03                    ..
