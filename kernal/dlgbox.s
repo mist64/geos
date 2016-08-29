@@ -1090,12 +1090,13 @@ L9FF2 = $9FF2
         jmp     CallRoutine
 
 ; ---------------------------------------------
-.define TAB $f753, $f75d, $f788, $f77c
+.define TAB LF753, LF75D, LF788, LF77C
 
 LF74B:	.lobytes TAB
 LF74F:	.hibytes TAB
 ; ---------------------------------------------
 ; F753
+LF753:
         lda     $885B
         bne     LF759
         rts
@@ -1103,7 +1104,7 @@ LF74F:	.hibytes TAB
 ; ---------------------------------------------
 LF759:  lda     #$00
         beq     LF791
-; F75D
+LF75D:
         ldx     DBGFilesFound
         dex
         stx     r0L
@@ -1120,7 +1121,7 @@ LF759:  lda     #$00
         clv
         bvc     LF791
 
-; F77
+LF77C:
         lda     $885B
         clc
         adc     #$05
@@ -1129,7 +1130,7 @@ LF759:  lda     #$00
         rts
 
 ; --------------------------------------------
-; F78
+LF788:
         lda     $885B
         bne     LF78E
         rts
