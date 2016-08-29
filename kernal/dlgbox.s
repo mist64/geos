@@ -646,7 +646,7 @@ DBIcOPEN:
 DBStringFaultVec2:
 	lda #DBSYSOPV
 	.byte $2c
-; ??? unused?
+DBKeyVector2:
 	lda #DBGETSTRING
 .else
 DBIcOK:
@@ -810,9 +810,9 @@ DBDoGETSTR:
 	lda (DBoxDesc),y
 	sta r2L
 	iny
-	lda #$F4;xxx#>DBKeyVector2
+	lda #>DBKeyVector2
 	sta keyVector+1
-	lda #$FB;xxx#<DBKeyVector2
+	lda #<DBKeyVector2
 	sta keyVector
 	LoadB r1L, 0
 	tya
@@ -821,8 +821,8 @@ DBDoGETSTR:
 	PopB r1L
 	rts
 
-DBKeyVector2:
 .if !wheels
+DBKeyVector2:
 	LoadB sysDBData, DBGETSTRING
 	jmp RstrFrmDialogue
 .endif
