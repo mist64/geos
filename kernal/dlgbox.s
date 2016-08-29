@@ -566,11 +566,7 @@ DBDefIconsTabRoutine:
 	.word DBIcPicDISK
 	.word 0
 	.byte 6, 16
-.if wheels
-	.word $f4db;xxx
-.else
 	.word DBIcDISK
-.endif
 
 DBKeyVector:
 .if wheels_buttons_shortcuts
@@ -619,7 +615,9 @@ ShortcutKeysEnd:
 	rts
 .endif
 
-.if wheels
+.if wheels_size
+DBIcDISK:
+.if wheels ; XXX disk swapping + REU? ATTN: *requires* wheels_size!!!
 L9D83 = $9D83
 L5009 = $5009
 L9D80 = $9D80
@@ -628,9 +626,6 @@ L9D80 = $9D80
 	jsr L5009
 	jsr L9D83 ; REU swap, preserving r registers and x, y
 .endif
-
-.if wheels_size
-DBIcDISK:
 	lda #DISK
 	.byte $2c
 DBIcOK:
