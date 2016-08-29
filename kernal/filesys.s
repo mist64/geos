@@ -173,6 +173,138 @@ ASSERT_NOT_BELOW_IO
 
 .segment "files2"
 
+;---------------------------------------------------------------
+.if wheels
+LD41A = $D41A
+LD419 = $D419
+LDC0D = $DC0D
+LDC04 = $DC04
+LDC05 = $DC05
+LDC0E = $DC0E
+LDC02 = $DC02
+LDC00 = $DC00
+LD011 = $D011
+LFCBA = $FCBA
+LCBDB = $CBDB
+LCAFC = $CAFC
+LFA27 = $FA27
+LCF55 = $CF55
+
+; ----------------------------------------------------------------------------
+LC037:  bit     $88B4                           ; C037 2C B4 88                 ,..
+        bpl     LC052                           ; C03A 10 16                    ..
+        bvs     LC052                           ; C03C 70 14                    p.
+        bit     $84B4                           ; C03E 2C B4 84                 ,..
+        bvs     LC052                           ; C041 70 0F                    p.
+        sei                                     ; C043 78                       x
+        lda     $88B4                           ; C044 AD B4 88                 ...
+        and     #$7F                            ; C047 29 7F                    ).
+        ora     #$01                            ; C049 09 01                    ..
+        sta     $88B4                           ; C04B 8D B4 88                 ...
+        jsr     LCF55                           ; C04E 20 55 CF                  U.
+        cli                                     ; C051 58                       X
+LC052:  jsr     LFA27                           ; C052 20 27 FA                  '.
+        jsr     LCAFC                           ; C055 20 FC CA                  ..
+LC058:  jsr     LCBDB                           ; C058 20 DB CB                  ..
+        jsr     LFCBA                           ; C05B 20 BA FC                  ..
+        lda     $849B                           ; C05E AD 9B 84                 ...
+        ldx     $849C                           ; C061 AE 9C 84                 ...
+LC064:  jsr     CallRoutine                     ; C064 20 D8 C1                  ..
+        cli                                     ; C067 58                       X
+        ldx     $01                             ; C068 A6 01                    ..
+        lda     #$35                            ; C06A A9 35                    .5
+        sta     $01                             ; C06C 85 01                    ..
+        lda     LD011                           ; C06E AD 11 D0                 ...
+        and     #$7F                            ; C071 29 7F                    ).
+LC073:  sta     LD011                           ; C073 8D 11 D0                 ...
+        stx $01                                 ; C076 86                       .
+LC077:  jmp LC037                         ; C077 01 4C                    .L
+
+; XXX this is segment "files2"
+.if wheels
+.global DkNmTabL, DkNmTabH ; XXX
+.endif
+.define DkNmTab DrACurDkNm, DrBCurDkNm, DrCCurDkNm, DrDCurDkNm
+DkNmTabL:
+	.lobytes DkNmTab
+DkNmTabH:
+	.hibytes DkNmTab
+
+LC083:  php                                     ; C083 08                       .
+        sei                                     ; C084 78                       x
+        lsr     a                               ; C085 4A                       J
+        ror     a                               ; C086 6A                       j
+        ror     a                               ; C087 6A                       j
+        sta     LDC00                           ; C088 8D 00 DC                 ...
+        lda     LDC02                           ; C08B AD 02 DC                 ...
+        pha                                     ; C08E 48                       H
+        lda     #$C0                            ; C08F A9 C0                    ..
+        sta     LDC02                           ; C091 8D 02 DC                 ...
+        lda     LDC0E                           ; C094 AD 0E DC                 ...
+        and     #$FE                            ; C097 29 FE                    ).
+        sta     LDC0E                           ; C099 8D 0E DC                 ...
+        lda     L9FEF                           ; C09C AD EF 9F                 ...
+        sta     LDC05                           ; C09F 8D 05 DC                 ...
+        lda     L9FEE                           ; C0A2 AD EE 9F                 ...
+        sta     LDC04                           ; C0A5 8D 04 DC                 ...
+        lda     #$7F                            ; C0A8 A9 7F                    ..
+        sta     LDC0D                           ; C0AA 8D 0D DC                 ...
+        lda     LDC0D                           ; C0AD AD 0D DC                 ...
+        lda     LDC0E                           ; C0B0 AD 0E DC                 ...
+        and     #$40                            ; C0B3 29 40                    )@
+        ora     #$19                            ; C0B5 09 19                    ..
+        sta     LDC0E                           ; C0B7 8D 0E DC                 ...
+        lda     #$01                            ; C0BA A9 01                    ..
+LC0BC:  bit     LDC0D                           ; C0BC 2C 0D DC                 ,..
+        beq     LC0BC                           ; C0BF F0 FB                    ..
+        ldx     LD419                           ; C0C1 AE 19 D4                 ...
+        ldy     LD41A                           ; C0C4 AC 1A D4                 ...
+        pla                                     ; C0C7 68                       h
+        sta     LDC02                           ; C0C8 8D 02 DC                 ...
+        plp                                     ; C0CB 28                       (
+        rts                                     ; C0CC 60                       `
+
+; ----------------------------------------------------------------------------
+LC0CD:  lda     $06                             ; C0CD A5 06                    ..
+        lsr     a                               ; C0CF 4A                       J
+        lsr     a                               ; C0D0 4A                       J
+        lsr     a                               ; C0D1 4A                       J
+        sta     $05                             ; C0D2 85 05                    ..
+        sec                                     ; C0D4 38                       8
+        lda     $07                             ; C0D5 A5 07                    ..
+        sbc     $06                             ; C0D7 E5 06                    ..
+        lsr     a                               ; C0D9 4A                       J
+        lsr     a                               ; C0DA 4A                       J
+        lsr     a                               ; C0DB 4A                       J
+        sta     $07                             ; C0DC 85 07                    ..
+        inc     $07                             ; C0DE E6 07                    ..
+        lda     $09                             ; C0E0 A5 09                    ..
+        lsr     a                               ; C0E2 4A                       J
+        lda     $08                             ; C0E3 A5 08                    ..
+        ror     a                               ; C0E5 6A                       j
+        lsr     a                               ; C0E6 4A                       J
+        lsr     a                               ; C0E7 4A                       J
+        sta     $04                             ; C0E8 85 04                    ..
+        sec                                     ; C0EA 38                       8
+        lda     $0A                             ; C0EB A5 0A                    ..
+        sbc     $08                             ; C0ED E5 08                    ..
+        pha                                     ; C0EF 48                       H
+        lda     $0B                             ; C0F0 A5 0B                    ..
+        sbc     $09                             ; C0F2 E5 09                    ..
+        lsr     a                               ; C0F4 4A                       J
+        pla                                     ; C0F5 68                       h
+        ror     a                               ; C0F6 6A                       j
+        lsr     a                               ; C0F7 4A                       J
+        lsr     a                               ; C0F8 4A                       J
+        sta     $06                             ; C0F9 85 06                    ..
+        inc     $06                             ; C0FB E6 06                    ..
+        rts                                     ; C0FD 60                       `
+
+; ----------------------------------------------------------------------------
+        brk                                     ; C0FE 00                       .
+        brk                                     ; C0FF 00                       .
+.endif
+
 .if !wheels
 .define DkNmTab DrACurDkNm, DrBCurDkNm, DrCCurDkNm, DrDCurDkNm
 DkNmTabL:
@@ -184,9 +316,6 @@ DkNmTabH:
 .segment "files3"
 
 _GetPtrCurDkNm:
-.if wheels
-.import DkNmTabL, DkNmTabH ; XXX
-.endif
 	ldy curDrive
 	lda DkNmTabL-8,Y
 	sta zpage,x
@@ -1455,24 +1584,24 @@ LDBE1:  jsr     LDC29                           ; DBE1 20 29 DC                 
         bne     LDC1A                           ; DBF3 D0 25                    .%
         lda     $8496                           ; DBF5 AD 96 84                 ...
         cmp     $8497                           ; DBF8 CD 97 84                 ...
-        bcc     LDC00                           ; DBFB 90 03                    ..
+        bcc     xLDC00                           ; DBFB 90 03                    ..
         dec     $8496                           ; DBFD CE 96 84                 ...
-LDC00:  .byte   $A2                             ; DC00 A2                       .
-LDC01:  brk                                     ; DC01 00                       .
-LDC02:  .byte   $A5                             ; DC02 A5                       .
-LDC03:  .byte   $04                             ; DC03 04                       .
-LDC04:  .byte   $F0                             ; DC04 F0                       .
-LDC05:  .byte   $14                             ; DC05 14                       .
+xLDC00:  .byte   $A2                             ; DC00 A2                       .
+  brk                                     ; DC01 00                       .
+  .byte   $A5                             ; DC02 A5                       .
+  .byte   $04                             ; DC03 04                       .
+  .byte   $F0                             ; DC04 F0                       .
+  .byte   $14                             ; DC05 14                       .
         .byte   $20                             ; DC06 20                        
         .byte   $25                             ; DC07 25                       %
-LDC08:  .byte   $DA                             ; DC08 DA                       .
-LDC09:  txa                                     ; DC09 8A                       .
-LDC0A:  .byte   $D0                             ; DC0A D0                       .
-LDC0B:  .byte   $0E                             ; DC0B 0E                       .
+  .byte   $DA                             ; DC08 DA                       .
+  txa                                     ; DC09 8A                       .
+  .byte   $D0                             ; DC0A D0                       .
+  .byte   $0E                             ; DC0B 0E                       .
         .byte   $AD                             ; DC0C AD                       .
-LDC0D:  .byte   $99                             ; DC0D 99                       .
-LDC0E:  .byte   $84                             ; DC0E 84                       .
-LDC0F:  sec                                     ; DC0F 38                       8
+  .byte   $99                             ; DC0D 99                       .
+  .byte   $84                             ; DC0E 84                       .
+  sec                                     ; DC0F 38                       8
         sbc     $06                             ; DC10 E5 06                    ..
         sta     $8499                           ; DC12 8D 99 84                 ...
         bcs     LDC1A                           ; DC15 B0 03                    ..
