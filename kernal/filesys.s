@@ -1970,6 +1970,7 @@ DeskTopLgh:
 
 .global GetNewKernal
 .global RstrKernal
+.global _ToBASIC
 
 GetNewKernal:
 	jmp     L9D9F ; far call                           ; 9D80 4C 9F 9D                 L..
@@ -1989,7 +1990,8 @@ _WriteFile:
 
 ; ----------------------------------------------------------------------------
 ; ToBASIC
-L9D8C:  jmp     L9E44                           ; 9D8C 4C 44 9E                 LD.
+_ToBASIC:
+	jmp     L9E44                           ; 9D8C 4C 44 9E                 LD.
 
 ; ----------------------------------------------------------------------------
 L9D8F:  .byte   $4C                             ; 9D8F 4C                       L

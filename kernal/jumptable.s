@@ -438,7 +438,7 @@ FindFTypes:
 RstrAppl:
 	jmp _RstrAppl
 ToBASIC:
-	jmp $9d8c;xxx_ToBASIC
+	jmp _ToBASIC
 FastDelFile:
 	jmp _FastDelFile
 GetDirHead:
