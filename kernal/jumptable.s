@@ -573,7 +573,6 @@ LD5D3 = $D5D3
 LC020 = $C020
 LC01E = $C01E
 LC01B = $C01B
-LC58C = $C58C
 
 .macro UNIMPLEMENTED
 	rts
@@ -611,10 +610,11 @@ ColorRectangle:
 
 ; new Wheels syscalls
 .global WheelsSyscall1, WheelsSyscall9
+.import _WheelsSyscall1, _WheelsSyscall2, _WheelsSyscall3, _WheelsSyscall4, _WheelsSyscall5, _WheelsSyscall6, _WheelsSyscall7, _WheelsSyscall8, _WheelsSyscall9, _WheelsSyscall10, _WheelsSyscall11, _WheelsSyscall12
 WheelsSyscall1: ; $C2FE
-	jmp LC58C
+	jmp _WheelsSyscall1
 WheelsSyscall2: ; $C301
-	jmp LC01B
+	jmp _WheelsSyscall2
 WheelsSyscall3: ; $C304
 	jmp LC01E
 WheelsSyscall4: ; $C307

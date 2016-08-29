@@ -65,9 +65,8 @@ _FillRam:
 @4:	rts
 
 .if wheels ; XXX wrong file
-LC428 = $C428
-LC58C:
-;	jsr     LC428                           ; C58C 20 28 C4                  (.
+.global _WheelsSyscall1
+_WheelsSyscall1:
 .import _DoFirstInitIO
 	jsr _DoFirstInitIO
 

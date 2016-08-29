@@ -86,22 +86,24 @@ LD07F = $D07F
 LD074 = $D074
 LD07E = $D07E
 
-LC01B:  ldy     #$00                            ; C01B A0 00                    ..
-        .byte   $2C                             ; C01D 2C                       ,
-LC01E:  ldy     #$03                            ; C01E A0 03                    ..
-LC020:  php                                     ; C020 08                       .
-        sei                                     ; C021 78                       x
-        lda     $01                             ; C022 A5 01                    ..
-        pha                                     ; C024 48                       H
-        lda     #$35                            ; C025 A9 35                    .5
-        sta     $01                             ; C027 85 01                    ..
-        sta     LD07E                           ; C029 8D 7E D0                 .~.
-        sta     LD074,y                         ; C02C 99 74 D0                 .t.
-        sta     LD07F                           ; C02F 8D 7F D0                 ...
-        pla                                     ; C032 68                       h
-        sta     $01                             ; C033 85 01                    ..
-        plp                                     ; C035 28                       (
-        rts                                     ; C036 60                       `
+.global _WheelsSyscall2
+_WheelsSyscall2:
+	ldy #0
+	.byte $2c
+LC01E:	ldy #3
+LC020:	php
+	sei
+	lda CPU_DATA
+	pha
+	lda #$35
+	sta $01
+	sta LD07E
+	sta LD074,y
+	sta LD07F
+	pla
+	sta CPU_DATA
+	plp
+	rts
 
 .else
 BootGEOS:
