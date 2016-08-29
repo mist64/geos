@@ -539,20 +539,10 @@ DBIconsHelp2:
 @4:	rts
 
 DBDefIconsTab:
-.if wheels
-LF465:  .byte   $AC                             ; F465 AC                       .
-LF466:  .byte   $BF,$00,$00,$06,$10             ; F466 BF 00 00 06 10           .....
-LF46B:  .byte   $E9                             ; F46B E9                       .
-LF46C:  .byte   $F4,$58,$BF,$00,$00,$06,$10,$EC ; F46C F4 58 BF 00 00 06 10 EC  .X......
-        .byte   $F4,$30,$F9,$00,$00,$06,$10,$EF ; F474 F4 30 F9 00 00 06 10 EF  .0......
-        .byte   $F4,$E5,$F8,$00,$00,$06,$10,$F2 ; F47C F4 E5 F8 00 00 06 10 F2  ........
-        .byte   $F4,$81,$F9,$00,$00,$06,$10,$F5 ; F484 F4 81 F9 00 00 06 10 F5  ........
-        .byte   $F4,$D4,$F9,$00,$00,$06,$10,$DB ; F48C F4 D4 F9 00 00 06 10 DB  ........
-        .byte   $F4                             ; F494 F4                       .
-.else
 	.word DBIcPicOK
-LF46B:	.word 0
+	.word 0
 	.byte 6, 16
+DBDefIconsTabRoutine:
 	.word DBIcOK
 
 	.word DBIcPicCANCEL
@@ -578,6 +568,9 @@ LF46B:	.word 0
 	.word DBIcPicDISK
 	.word 0
 	.byte 6, 16
+.if wheels
+	.word $f4db;xxx
+.else
 	.word DBIcDISK
 .endif
 
@@ -618,8 +611,8 @@ LF4BD:	inc     r0L
 	asl     a
 	bne     LF4AC
 LF4CB:	rts
-LF4CC:	lda     LF46B,y
-	ldx     LF46B+1,y
+LF4CC:	lda     DBDefIconsTabRoutine,y
+	ldx     DBDefIconsTabRoutine+1,y
 	jmp     CallRoutine
 
 ShortcutKeys:
