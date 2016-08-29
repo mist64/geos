@@ -929,10 +929,7 @@ LF657:	PopB r2L
 @1:	lda #$00
 	jsr LF7A3
 	jsr FetchRAM
-	lda #$F6
-	sta $84AA
-	lda #$D2
-	sta $84A9
+	LoadW otherPressVec, $f6d2
 	jsr DBGFilesHelp5
 	jsr DBGFilesHelp2
 LF694:	PopB r1L
