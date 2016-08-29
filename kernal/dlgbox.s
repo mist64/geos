@@ -915,15 +915,11 @@ LF640:  lda     #$45                            ; F640 A9 45                    
         jsr     L9D80                           ; F642 20 80 9D                  ..
         jsr     L500C                           ; F645 20 0C 50                  .P
         jsr     L9D83 ; REU swap, preserving r registers and x, y
-        pla                                     ; F64B 68                       h
-        sta     r10L                             ; F64C 85 16                    ..
-        pla                                     ; F64E 68                       h
-        sta     r10H                             ; F64F 85 17                    ..
-        clv                                     ; F651 B8                       .
-        bvc     LF657                           ; F652 50 03                    P.
+        PopW r10
+        bra     LF657                           ; F652 50 03                    P.
 LF654:  jsr     L500C                           ; F654 20 0C 50                  .P
 LF657:  pla                                     ; F657 68                       h
-        sta     $06                             ; F658 85 06                    ..
+        sta     r2L                             ; F658 85 06                    ..
         pla                                     ; F65A 68                       h
         sta     $08                             ; F65B 85 08                    ..
         sta     LF69A                           ; F65D 8D 9A F6                 ...
@@ -1162,9 +1158,9 @@ LF7A3:  sta     $04                             ; F7A3 85 04                    
         lda     #$05                            ; F7A5 A9 05                    ..
         sta     r0L                           ; F7A7 85 02                    ..
         lda     L9FF2                           ; F7A9 AD F2 9F                 ...
-        sta     $06                             ; F7AC 85 06                    ..
-        ldx     #$06                            ; F7AE A2 06                    ..
-        ldy     #$02                            ; F7B0 A0 02                    ..
+        sta     r2L                             ; F7AC 85 06                    ..
+        ldx     #r2                            ; F7AE A2 06                    ..
+        ldy     #r0                            ; F7B0 A0 02                    ..
         jsr     BBMult                          ; F7B2 20 60 C1                  `.
         lda     L9FF2                           ; F7B5 AD F2 9F                 ...
         sta     r0L                           ; F7B8 85 02                    ..
@@ -1289,9 +1285,9 @@ LF80F:  lda     $38                             ; F80F A5 38                    
         lda     #$00                            ; F81C A9 00                    ..
         jsr     LF8B8                           ; F81E 20 B8 F8                  ..
         clc                                     ; F821 18                       .
-        lda     $07                             ; F822 A5 07                    ..
+        lda     r2H                             ; F822 A5 07                    ..
         adc     #$38                            ; F824 69 38                    i8
-        sta     $07                             ; F826 85 07                    ..
+        sta     r2H                             ; F826 85 07                    ..
         lda     #$00                            ; F828 A9 00                    ..
         jsr     SetPattern                      ; F82A 20 39 C1                  9.
         jsr     Rectangle                       ; F82D 20 24 C1                  $.
@@ -1310,7 +1306,7 @@ LF843:  lda     $20                             ; F843 A5 20                    
         sta     $19                             ; F84A 85 19                    ..
         lda     $08                             ; F84C A5 08                    ..
         sta     $18                             ; F84E 85 18                    ..
-        lda     $06                             ; F850 A5 06                    ..
+        lda     r2L                             ; F850 A5 06                    ..
         clc                                     ; F852 18                       .
         adc     #$09                            ; F853 69 09                    i.
         sta     $05                             ; F855 85 05                    ..
