@@ -177,12 +177,6 @@ ASSERT_NOT_BELOW_IO
 .if wheels
 LD41A = $D41A
 LD419 = $D419
-LDC0D = $DC0D
-LDC04 = $DC04
-LDC05 = $DC05
-LDC0E = $DC0E
-LDC02 = $DC02
-LDC00 = $DC00
 LD011 = $D011
 LFCBA = $FCBA
 LCBDB = $CBDB
@@ -230,37 +224,38 @@ DkNmTabL:
 DkNmTabH:
 	.hibytes DkNmTab
 
+.include "c64.inc"
 LC083:  php                                     ; C083 08                       .
         sei                                     ; C084 78                       x
         lsr     a                               ; C085 4A                       J
         ror     a                               ; C086 6A                       j
         ror     a                               ; C087 6A                       j
-        sta     LDC00                           ; C088 8D 00 DC                 ...
-        lda     LDC02                           ; C08B AD 02 DC                 ...
+        sta     cia1base+0                           ; C088 8D 00 DC                 ...
+        lda     cia1base+2                           ; C08B AD 02 DC                 ...
         pha                                     ; C08E 48                       H
         lda     #$C0                            ; C08F A9 C0                    ..
-        sta     LDC02                           ; C091 8D 02 DC                 ...
-        lda     LDC0E                           ; C094 AD 0E DC                 ...
+        sta     cia1base+2                           ; C091 8D 02 DC                 ...
+        lda     cia1base+14                           ; C094 AD 0E DC                 ...
         and     #$FE                            ; C097 29 FE                    ).
-        sta     LDC0E                           ; C099 8D 0E DC                 ...
+        sta     cia1base+14                           ; C099 8D 0E DC                 ...
         lda     L9FEF                           ; C09C AD EF 9F                 ...
-        sta     LDC05                           ; C09F 8D 05 DC                 ...
+        sta     cia1base+5                           ; C09F 8D 05 DC                 ...
         lda     L9FEE                           ; C0A2 AD EE 9F                 ...
-        sta     LDC04                           ; C0A5 8D 04 DC                 ...
+        sta     cia1base+4                           ; C0A5 8D 04 DC                 ...
         lda     #$7F                            ; C0A8 A9 7F                    ..
-        sta     LDC0D                           ; C0AA 8D 0D DC                 ...
-        lda     LDC0D                           ; C0AD AD 0D DC                 ...
-        lda     LDC0E                           ; C0B0 AD 0E DC                 ...
+        sta     cia1base+13                           ; C0AA 8D 0D DC                 ...
+        lda     cia1base+13                           ; C0AD AD 0D DC                 ...
+        lda     cia1base+14                           ; C0B0 AD 0E DC                 ...
         and     #$40                            ; C0B3 29 40                    )@
         ora     #$19                            ; C0B5 09 19                    ..
-        sta     LDC0E                           ; C0B7 8D 0E DC                 ...
+        sta     cia1base+14                           ; C0B7 8D 0E DC                 ...
         lda     #$01                            ; C0BA A9 01                    ..
-LC0BC:  bit     LDC0D                           ; C0BC 2C 0D DC                 ,..
+LC0BC:  bit     cia1base+13                           ; C0BC 2C 0D DC                 ,..
         beq     LC0BC                           ; C0BF F0 FB                    ..
         ldx     LD419                           ; C0C1 AE 19 D4                 ...
         ldy     LD41A                           ; C0C4 AC 1A D4                 ...
         pla                                     ; C0C7 68                       h
-        sta     LDC02                           ; C0C8 8D 02 DC                 ...
+        sta     cia1base+2                           ; C0C8 8D 02 DC                 ...
         plp                                     ; C0CB 28                       (
         rts                                     ; C0CC 60                       `
 
@@ -1587,21 +1582,21 @@ LDBE1:  jsr     LDC29                           ; DBE1 20 29 DC                 
         bcc     xLDC00                           ; DBFB 90 03                    ..
         dec     $8496                           ; DBFD CE 96 84                 ...
 xLDC00:  .byte   $A2                             ; DC00 A2                       .
-  brk                                     ; DC01 00                       .
-  .byte   $A5                             ; DC02 A5                       .
-  .byte   $04                             ; DC03 04                       .
-  .byte   $F0                             ; DC04 F0                       .
-  .byte   $14                             ; DC05 14                       .
-        .byte   $20                             ; DC06 20                        
-        .byte   $25                             ; DC07 25                       %
-  .byte   $DA                             ; DC08 DA                       .
-  txa                                     ; DC09 8A                       .
-  .byte   $D0                             ; DC0A D0                       .
-  .byte   $0E                             ; DC0B 0E                       .
-        .byte   $AD                             ; DC0C AD                       .
-  .byte   $99                             ; DC0D 99                       .
-  .byte   $84                             ; DC0E 84                       .
-  sec                                     ; DC0F 38                       8
+	brk                                     ; DC01 00                       .
+	.byte   $A5                             ; DC02 A5                       .
+	.byte   $04                             ; DC03 04                       .
+	.byte   $F0                             ; DC04 F0                       .
+	.byte   $14                             ; DC05 14                       .
+	.byte   $20                             ; DC06 20                        
+	.byte   $25                             ; DC07 25                       %
+	.byte   $DA                             ; DC08 DA                       .
+	txa                                     ; DC09 8A                       .
+	.byte   $D0                             ; DC0A D0                       .
+	.byte   $0E                             ; DC0B 0E                       .
+	.byte   $AD                             ; DC0C AD                       .
+	.byte   $99                             ; DC0D 99                       .
+	.byte   $84                             ; DC0E 84                       .
+	sec                                     ; DC0F 38                       8
         sbc     $06                             ; DC10 E5 06                    ..
         sta     $8499                           ; DC12 8D 99 84                 ...
         bcs     LDC1A                           ; DC15 B0 03                    ..
