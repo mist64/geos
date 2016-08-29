@@ -40,7 +40,7 @@ _DoFirstInitIO:
 ASSERT_NOT_BELOW_IO
 	LoadB CPU_DATA, KRNL_IO_IN
 .if wheels
-        sta     LD07B                           ; C430 8D 7B D0                 .{.
+	sta scpu_turbo
 .endif
 	ldx #7
 	lda #$ff
@@ -71,7 +71,7 @@ ASSERT_NOT_BELOW_IO
 	LoadW r0, VIC_IniTbl
 	ldy #VIC_IniTbl_end - VIC_IniTbl
 	jsr SetVICRegs
-.if wheels
+.if wheels_size_and_speed ; inlined
 	ldx #32
 @3:	lda KERNALVecTab-1,x
 	sta irqvec-1,x
@@ -163,7 +163,7 @@ LC4F5:  lda     (L003D),y                       ; C4F5 B1 3D                    
 
 .segment "hw2"
 
-.if !wheels
+.if !wheels_size_and_speed ; inlined instead
 Init_KRNLVec:
 	ldx #32
 @1:	lda KERNALVecTab-1,x
