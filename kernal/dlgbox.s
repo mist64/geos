@@ -1090,13 +1090,13 @@ L9FF2 = $9FF2
         jmp     CallRoutine
 
 ; ---------------------------------------------
-.define TAB LF753, LF75D, LF788, LF77C
+.define TAB DBGFDoArrowFunc1, DBGFDoArrowFunc2, DBGFDoArrowFunc3, DBGFDoArrowFunc4
 
 LF74B:	.lobytes TAB
 LF74F:	.hibytes TAB
 ; ---------------------------------------------
 ; F753
-LF753:
+DBGFDoArrowFunc1:
         lda     $885B
         bne     LF759
         rts
@@ -1104,7 +1104,7 @@ LF753:
 ; ---------------------------------------------
 LF759:  lda     #$00
         beq     LF791
-LF75D:
+DBGFDoArrowFunc2:
         ldx     DBGFilesFound
         dex
         stx     r0L
@@ -1113,15 +1113,14 @@ LF75D:
         sta     $05
         lda     #$05
         sta     $04
-        ldx     #$02
-        ldy     #$04
+        ldx     #r0
+        ldy     #r1
         jsr     Ddiv
         jsr     BBMult
         lda     r0L
-        clv
-        bvc     LF791
+        bra     LF791
 
-LF77C:
+DBGFDoArrowFunc4:
         lda     $885B
         clc
         adc     #$05
@@ -1130,7 +1129,7 @@ LF77C:
         rts
 
 ; --------------------------------------------
-LF788:
+DBGFDoArrowFunc3:
         lda     $885B
         bne     LF78E
         rts
