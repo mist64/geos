@@ -1969,21 +1969,23 @@ DeskTopLgh:
 .segment "wheels_lokernal"
 
 .global GetNewKernal
+.global RstrKernal
 
 GetNewKernal:
 	jmp     L9D9F ; far call                           ; 9D80 4C 9F 9D                 L..
 
 ; ----------------------------------------------------------------------------
 ; REU swap, preserving r registers and x, y
-L9D83:  jmp     L9DED                           ; 9D83 4C ED 9D                 L..
+RstrKernal:
+	jmp     L9DED                           ; 9D83 4C ED 9D                 L..
 
 ; ----------------------------------------------------------------------------
-; ReadFile
-L9D86:  jmp     L9E3C                           ; 9D86 4C 3C 9E                 L<.
+_ReadFile:
+	jmp     L9E3C                           ; 9D86 4C 3C 9E                 L<.
 
 ; ----------------------------------------------------------------------------
-; WriteFile
-L9D89:  jmp     L9E3F                           ; 9D89 4C 3F 9E                 L?.
+_WriteFile:
+	jmp     L9E3F                           ; 9D89 4C 3F 9E                 L?.
 
 ; ----------------------------------------------------------------------------
 ; ToBASIC

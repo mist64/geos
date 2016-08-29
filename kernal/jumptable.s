@@ -390,11 +390,11 @@ BldGDirEntry:
 GetFreeDirBlk:
 	jmp (_GetFreeDirBlk)
 WriteFile:
-	jmp $9d89;xxx_WriteFile
+	jmp _WriteFile
 BlkAlloc:
 	jmp (_BlkAlloc)
 ReadFile:
-	jmp $9d86;xxx_ReadFile
+	jmp _ReadFile
 SmallPutChar:
 	jmp _SmallPutChar
 FollowChain:
