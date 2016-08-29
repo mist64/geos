@@ -175,8 +175,6 @@ ASSERT_NOT_BELOW_IO
 
 ;---------------------------------------------------------------
 .if wheels
-LD41A = $D41A
-LD419 = $D419
 LD011 = $D011
 LFCBA = $FCBA
 LCBDB = $CBDB
@@ -251,8 +249,8 @@ LC083:	php
 	lda #$01
 @1:	bit cia1base+13
 	beq @1
-	ldx LD419
-	ldy LD41A
+	ldx sidbase+$19 ; mouse
+	ldy sidbase+$1A
 	pla
 	sta cia1base+2
 	plp

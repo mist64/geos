@@ -189,7 +189,7 @@
 
 .assert * = $C100, error, "Jump table not at $C100"
 
-.if wheels
+.if !wheels
 
 .byte $4c, $7f, $c3, $4c, $c4, $ca, $4c, $8f, $cb, $4c, $ae, $cb, $4c, $ab, $cb, $4c
 .byte $b5, $cb, $4c, $a8, $cb, $4c, $b8, $cb, $4c, $7c, $c6, $4c, $81, $c6, $4c, $1b
@@ -220,15 +220,7 @@
 .byte $e8, $6c, $14, $90, $4c, $da, $c5, $4c, $5b, $fc, $4c, $46, $e3, $6c, $26, $90
 .byte $4c, $e9, $d6, $4c, $c4, $ce, $4c, $b6, $dd, $6c, $22, $90, $6c, $0a, $90, $4c
 .byte $56, $f3, $4c, $f0, $ce, $4c, $43, $e3, $4c, $ad, $9e, $4c, $b3, $9e, $4c, $b0
-.byte $9e, $4c, $aa, $9e, $4c, $b5, $9e, $60, $ea, $ea, $60, $ea, $ea, $60, $ea, $ea
-.byte $60, $ea, $ea, $60, $ea, $ea, $60, $ea, $ea, $60, $ea, $ea, $60, $ea, $ea, $60
-.byte $ea, $ea, $60, $ea, $ea, $60, $ea, $ea, $60, $ea, $ea, $60, $ea, $ea, $4c, $8c
-.byte $c5, $4c, $1b, $c0, $4c, $1e, $c0, $4c, $20, $c0, $4c, $d3, $d5, $4c, $83, $c0
-.byte $4c, $73, $fa, $4c, $a8, $c4, $4c, $e6, $c4, $4c, $91, $c3, $4c, $8e, $c3, $4c
-.byte $cd, $c0
-
-        .byte   $00,$00,$00                     ; C322 00 00 00                 ...
-LC325:  .byte   $00                             ; C325 00                       .
+.byte $9e, $4c, $aa, $9e, $4c, $b5, $9e
 
 .else
 InterruptMain:
@@ -238,19 +230,19 @@ InitProcesses:
 RestartProcess:
 	jmp _RestartProcess
 EnableProcess:
-	jmp _EnableProcess
+	jmp $cbae;xxx_EnableProcess
 BlockProcess:
-	jmp _BlockProcess
+	jmp $cbab;xxx_BlockProcess
 UnBlockProcess:
-	jmp _UnBlockProcess
+	jmp $cbb5;xxx_UnBlockProcess
 FreezeProcess:
-	jmp _FreezeProcess
+	jmp $cba8;xxx_FreezeProcess
 UnFreezeProcess:
-	jmp _UnFreezeProcess
+	jmp $cbb8;xxx_UnFreezeProcess
 HorizontalLine:
 	jmp _HorizontalLine
 InvertLine:
-	jmp _InvertLine
+	jmp $C681;xxx_InvertLine
 RecoverLine:
 	jmp _RecoverLine
 VerticalLine:
@@ -362,7 +354,7 @@ GotoFirstMenu:
 InitTextPrompt:
 	jmp _InitTextPrompt
 MainLoop:
-	jmp _MainLoop
+	jmp $C037;xxx_MainLoop
 DrawSprite:
 	jmp _DrawSprite
 GetCharWidth:
@@ -398,17 +390,17 @@ BldGDirEntry:
 GetFreeDirBlk:
 	jmp (_GetFreeDirBlk)
 WriteFile:
-	jmp _WriteFile
+	jmp $9d89;xxx_WriteFile
 BlkAlloc:
 	jmp (_BlkAlloc)
 ReadFile:
-	jmp _ReadFile
+	jmp $9d86;xxx_ReadFile
 SmallPutChar:
 	jmp _SmallPutChar
 FollowChain:
 	jmp _FollowChain
 GetFile:
-	jmp _GetFile
+	jmp $9E53;xxx_GetFile
 FindFile:
 	jmp _FindFile
 CRC:
@@ -432,7 +424,7 @@ FreeFile:
 GetFHdrInfo:
 	jmp _GetFHdrInfo
 EnterDeskTop:
-	jmp _EnterDeskTop
+	jmp $c326;xxx_EnterDeskTop
 StartAppl:
 	jmp _StartAppl
 ExitTurbo:
@@ -446,7 +438,7 @@ FindFTypes:
 RstrAppl:
 	jmp _RstrAppl
 ToBASIC:
-	jmp _ToBASIC
+	jmp $9d8c;xxx_ToBASIC
 FastDelFile:
 	jmp _FastDelFile
 GetDirHead:
@@ -541,15 +533,15 @@ BitOtherClip:
 	jmp _BitOtherClip
 .if (REUPresent)
 StashRAM:
-	jmp _StashRAM
+	jmp $9ead;xxx_StashRAM
 FetchRAM:
-	jmp _FetchRAM
+	jmp $9eb3;xxx_FetchRAM
 SwapRAM:
-	jmp _SwapRAM
+	jmp $9eb0;xxx_SwapRAM
 VerifyRAM:
-	jmp _VerifyRAM
+	jmp $9eaa;xxx_VerifyRAM
 DoRAMOp:
-	jmp _DoRAMOp
+	jmp $9eb5;xxx_DoRAMOp
 .else
 StashRAM:
 	ldx #DEV_NOT_FOUND
@@ -567,4 +559,16 @@ DoRAMOp:
 	ldx #DEV_NOT_FOUND
 	rts
 .endif
+.endif
+
+.if wheels
+.byte $60, $ea, $ea, $60, $ea, $ea, $60, $ea, $ea
+.byte $60, $ea, $ea, $60, $ea, $ea, $60, $ea, $ea, $60, $ea, $ea, $60, $ea, $ea, $60
+.byte $ea, $ea, $60, $ea, $ea, $60, $ea, $ea, $60, $ea, $ea, $60, $ea, $ea, $4c, $8c
+.byte $c5, $4c, $1b, $c0, $4c, $1e, $c0, $4c, $20, $c0, $4c, $d3, $d5, $4c, $83, $c0
+.byte $4c, $73, $fa, $4c, $a8, $c4, $4c, $e6, $c4, $4c, $91, $c3, $4c, $8e, $c3, $4c
+.byte $cd, $c0
+
+        .byte   $00,$00,$00                     ; C322 00 00 00                 ...
+LC325:  .byte   $00                             ; C325 00                       .
 .endif
