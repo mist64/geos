@@ -1005,7 +1005,8 @@ DBGFArrowPic:
 	;     %10111111 %10111111 %10111111 %10111111 %10111111 %10111111 %10111111 %10111111
 	.byte 4, %10000001 ; repeat 4
 	.byte 8, %11111111 ; repeat 8
-	.byte 8, %10111111 ; repeat 8
+
+	.byte 8, $bf ; ??? unused
 .else
 	.byte 3, %11111111, $80+(10*3)
 	     ;%11111111, %11111111, %11111111
@@ -1068,13 +1069,13 @@ DBGFPressVector:
 DBGFDoArrow:
 .if wheels
 L9FF2 = $9FF2
-	; which X card (0-3) was the mouse on?
+	; which icon inside the top/bot/up/down image was the mouse on?
         lda     mouseXPos+1
         lsr     a
         lda     mouseXPos
         ror     a
         lsr     a
-        lsr     a ; / 8
+        lsr     a ; / 16
         sec
         sbc     DBGFArrowX
         lsr     a
@@ -1086,21 +1087,21 @@ L9FF2 = $9FF2
         ldx     DoArrowTabH,y
         jmp     CallRoutine
 
-.define DoArrowTab DBGFDoArrowFunc1, DBGFDoArrowFunc2, DBGFDoArrowFunc3, DBGFDoArrowFunc4
+.define DoArrowTab DBGFDoArrowTop, DBGFDoArrowBottom, DBGFDoArrowUp, DBGFDoArrowDown
 
 DoArrowTabL:
 	.lobytes DoArrowTab
 DoArrowTabH:
 	.hibytes DoArrowTab
 
-DBGFDoArrowFunc1:
+DBGFDoArrowTop:
         lda     $885B
         bne     @1
         rts
 @1:	lda     #0
         beq     DBGFDoArrowFuncCommon
 
-DBGFDoArrowFunc2:
+DBGFDoArrowBottom:
         ldx     DBGFilesFound
         dex
         stx     r0L
@@ -1116,7 +1117,7 @@ DBGFDoArrowFunc2:
         lda     r0L
         bra     DBGFDoArrowFuncCommon
 
-DBGFDoArrowFunc4:
+DBGFDoArrowDown:
         lda     $885B
         clc
         adc     #$05
@@ -1125,7 +1126,7 @@ DBGFDoArrowFunc4:
         rts
 
 ; --------------------------------------------
-DBGFDoArrowFunc3:
+DBGFDoArrowUp:
         lda     $885B
         bne     LF78E
         rts
