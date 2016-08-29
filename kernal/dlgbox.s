@@ -1283,24 +1283,24 @@ DBGFilesHelp5:
 LF843:  lda     r15L
         jsr     DBGFilesHelp8
         lda     r3H
-        sta     $19
+        sta     r11H
         lda     r3L
-        sta     $18
+        sta     r11L
         lda     r2L
         clc
         adc     #$09
         sta     r1H
-        lda     $1F
+        lda     r14H
         sta     r0H
-        lda     $1E
+        lda     r14L
         sta     r0L
         jsr     PutString
         clc
         lda     L9FF2
-        adc     $1E
-        sta     $1E
+        adc     r14L
+        sta     r14L
         bcc     LF86E
-        inc     $1F
+        inc     r14H
 LF86E:  inc     r15L
         lda     r15L
         cmp     #5
