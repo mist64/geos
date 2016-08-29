@@ -1071,14 +1071,14 @@ DBGFDoArrow:
 L9FF2 = $9FF2
 	; which icon inside the top/bot/up/down image was the mouse on?
         lda     mouseXPos+1
-        lsr     a
+        lsr
         lda     mouseXPos
-        ror     a
-        lsr     a
-        lsr     a ; / 16
+        ror
+        lsr
+        lsr ; / 16
         sec
         sbc     DBGFArrowX
-        lsr     a
+        lsr
         tay
         cpy     #4
         bcc     @1

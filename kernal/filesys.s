@@ -224,60 +224,60 @@ DkNmTabH:
 
 .if wheels
 .include "c64.inc"
-LC083:  php                                     ; C083 08                       .
-        sei                                     ; C084 78                       x
-        lsr     a                               ; C085 4A                       J
-        ror     a                               ; C086 6A                       j
-        ror     a                               ; C087 6A                       j
-        sta     cia1base+0                           ; C088 8D 00 DC                 ...
-        lda     cia1base+2                           ; C08B AD 02 DC                 ...
-        pha                                     ; C08E 48                       H
-        lda     #$C0                            ; C08F A9 C0                    ..
-        sta     cia1base+2                           ; C091 8D 02 DC                 ...
-        lda     cia1base+14                           ; C094 AD 0E DC                 ...
-        and     #$FE                            ; C097 29 FE                    ).
-        sta     cia1base+14                           ; C099 8D 0E DC                 ...
-        lda     L9FEF                           ; C09C AD EF 9F                 ...
-        sta     cia1base+5                           ; C09F 8D 05 DC                 ...
-        lda     L9FEE                           ; C0A2 AD EE 9F                 ...
-        sta     cia1base+4                           ; C0A5 8D 04 DC                 ...
-        lda     #$7F                            ; C0A8 A9 7F                    ..
-        sta     cia1base+13                           ; C0AA 8D 0D DC                 ...
-        lda     cia1base+13                           ; C0AD AD 0D DC                 ...
-        lda     cia1base+14                           ; C0B0 AD 0E DC                 ...
-        and     #$40                            ; C0B3 29 40                    )@
-        ora     #$19                            ; C0B5 09 19                    ..
-        sta     cia1base+14                           ; C0B7 8D 0E DC                 ...
-        lda     #$01                            ; C0BA A9 01                    ..
-LC0BC:  bit     cia1base+13                           ; C0BC 2C 0D DC                 ,..
-        beq     LC0BC                           ; C0BF F0 FB                    ..
-        ldx     LD419                           ; C0C1 AE 19 D4                 ...
-        ldy     LD41A                           ; C0C4 AC 1A D4                 ...
-        pla                                     ; C0C7 68                       h
-        sta     cia1base+2                           ; C0C8 8D 02 DC                 ...
-        plp                                     ; C0CB 28                       (
-        rts                                     ; C0CC 60                       `
+LC083:	php
+	sei
+	lsr
+	ror
+	ror
+	sta cia1base+0
+	lda cia1base+2
+	pha
+	lda #$C0
+	sta cia1base+2
+	lda cia1base+14
+	and #$FE
+	sta cia1base+14
+	lda L9FEF
+	sta cia1base+5
+	lda L9FEE
+	sta cia1base+4
+	lda #$7F
+	sta cia1base+13
+	lda cia1base+13
+	lda cia1base+14
+	and #$40
+	ora #$19
+	sta cia1base+14
+	lda #$01
+@1:	bit cia1base+13
+	beq @1
+	ldx LD419
+	ldy LD41A
+	pla
+	sta cia1base+2
+	plp
+	rts
 
 ; ----------------------------------------------------------------------------
 LC0CD:  lda     $06                             ; C0CD A5 06                    ..
-        lsr     a                               ; C0CF 4A                       J
-        lsr     a                               ; C0D0 4A                       J
-        lsr     a                               ; C0D1 4A                       J
+        lsr                               ; C0CF 4A                       J
+        lsr                               ; C0D0 4A                       J
+        lsr                               ; C0D1 4A                       J
         sta     $05                             ; C0D2 85 05                    ..
         sec                                     ; C0D4 38                       8
         lda     $07                             ; C0D5 A5 07                    ..
         sbc     $06                             ; C0D7 E5 06                    ..
-        lsr     a                               ; C0D9 4A                       J
-        lsr     a                               ; C0DA 4A                       J
-        lsr     a                               ; C0DB 4A                       J
+        lsr                               ; C0D9 4A                       J
+        lsr                               ; C0DA 4A                       J
+        lsr                               ; C0DB 4A                       J
         sta     $07                             ; C0DC 85 07                    ..
         inc     $07                             ; C0DE E6 07                    ..
         lda     $09                             ; C0E0 A5 09                    ..
-        lsr     a                               ; C0E2 4A                       J
+        lsr                               ; C0E2 4A                       J
         lda     $08                             ; C0E3 A5 08                    ..
-        ror     a                               ; C0E5 6A                       j
-        lsr     a                               ; C0E6 4A                       J
-        lsr     a                               ; C0E7 4A                       J
+        ror                               ; C0E5 6A                       j
+        lsr                               ; C0E6 4A                       J
+        lsr                               ; C0E7 4A                       J
         sta     $04                             ; C0E8 85 04                    ..
         sec                                     ; C0EA 38                       8
         lda     $0A                             ; C0EB A5 0A                    ..
@@ -285,11 +285,11 @@ LC0CD:  lda     $06                             ; C0CD A5 06                    
         pha                                     ; C0EF 48                       H
         lda     $0B                             ; C0F0 A5 0B                    ..
         sbc     $09                             ; C0F2 E5 09                    ..
-        lsr     a                               ; C0F4 4A                       J
+        lsr                               ; C0F4 4A                       J
         pla                                     ; C0F5 68                       h
-        ror     a                               ; C0F6 6A                       j
-        lsr     a                               ; C0F7 4A                       J
-        lsr     a                               ; C0F8 4A                       J
+        ror                               ; C0F6 6A                       j
+        lsr                               ; C0F7 4A                       J
+        lsr                               ; C0F8 4A                       J
         sta     $06                             ; C0F9 85 06                    ..
         inc     $06                             ; C0FB E6 06                    ..
         rts                                     ; C0FD 60                       `
@@ -410,13 +410,13 @@ LD5D3:  bit     L9FF3                           ; D5D3 2C F3 9F                 
         lda     #$00                            ; D5E0 A9 00                    ..
         sta     $03                             ; D5E2 85 03                    ..
         lda     $11                             ; D5E4 A5 11                    ..
-        asl     a                               ; D5E6 0A                       .
+        asl                               ; D5E6 0A                       .
         rol     $03                             ; D5E7 26 03                    &.
-        asl     a                               ; D5E9 0A                       .
+        asl                               ; D5E9 0A                       .
         rol     $03                             ; D5EA 26 03                    &.
-        asl     a                               ; D5EC 0A                       .
+        asl                               ; D5EC 0A                       .
         rol     $03                             ; D5ED 26 03                    &.
-        asl     a                               ; D5EF 0A                       .
+        asl                               ; D5EF 0A                       .
         rol     $03                             ; D5F0 26 03                    &.
         adc     $11                             ; D5F2 65 11                    e.
         sta     r0L                           ; D5F4 85 02                    ..
@@ -2001,8 +2001,8 @@ L9D9F:  pha                                     ; 9D9F 48                       
         jsr     L9E31 ; read args                           ; 9DA6 20 31 9E                  1.
         pla                                     ; 9DA9 68                       h
         pha                                     ; 9DAA 48                       H
-        asl     a                               ; 9DAB 0A                       .
-        asl     a                               ; 9DAC 0A                       .
+        asl                               ; 9DAB 0A                       .
+        asl                               ; 9DAC 0A                       .
         sta     $04                             ; 9DAD 85 04                    ..
         lda     #$00                            ; 9DAF A9 00                    ..
         sta     $05                             ; 9DB1 85 05                    ..
