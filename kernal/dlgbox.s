@@ -43,6 +43,9 @@
 .import dlgBoxCallerSP
 .import dlgBoxCallerPC
 .import defIconTab
+.if wheels
+.import KbdDBncTab
+.endif
 
 .global Dialog_2
 .global DlgBoxPrep
@@ -891,7 +894,7 @@ LF69A = $F69A
 L500C = $500C
 L9FF1 = $9FF1
         lda     L9FF1                           ; F61C AD F1 9F                 ...
-        cmp     #$05                            ; F61F C9 05                    ..
+        cmp     #5                            ; F61F C9 05                    ..
         beq     LF654                           ; F621 F0 31                    .1
         lda     r10L                             ; F623 A5 16                    ..
         pha                                     ; F625 48                       H
@@ -901,9 +904,9 @@ L9FF1 = $9FF1
         sta     r5H                             ; F62B 85 0D                    ..
         ora     r5L                             ; F62D 05 0C                    ..
         beq     LF640                           ; F62F F0 0F                    ..
-        lda     #$87                            ; F631 A9 87                    ..
+        lda     #>KbdDBncTab                            ; F631 A9 87                    ..
         sta     r10H                             ; F633 85 17                    ..
-        lda     #$EB                            ; F635 A9 EB                    ..
+        lda     #<KbdDBncTab                            ; F635 A9 EB                    ..
         sta     r10L                             ; F637 85 16                    ..
         ldx     #r5                            ; F639 A2 0C                    ..
         ldy     #r10                            ; F63B A0 16                    ..
