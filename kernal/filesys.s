@@ -1967,7 +1967,11 @@ DeskTopLgh:
 .if wheels
 
 .segment "wheels_lokernal"
-L9D80:  jmp     L9D9F ; far call                           ; 9D80 4C 9F 9D                 L..
+
+.global GetNewKernal
+
+GetNewKernal:
+	jmp     L9D9F ; far call                           ; 9D80 4C 9F 9D                 L..
 
 ; ----------------------------------------------------------------------------
 ; REU swap, preserving r registers and x, y

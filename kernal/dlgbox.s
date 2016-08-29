@@ -623,9 +623,9 @@ DBIcDISK:
 .if wheels ; XXX disk swapping + REU? ATTN: *requires* wheels_size!!!
 L9D83 = $9D83
 L5009 = $5009
-L9D80 = $9D80
+.import GetNewKernal
 	lda #$45
-	jsr L9D80 ; far call
+	jsr GetNewKernal
 	jsr L5009
 	jsr L9D83 ; REU swap, preserving r registers and x, y
 .endif
@@ -907,7 +907,7 @@ L9FF1 = $9FF1
 	ldy #r10
 	jsr CopyString
 @A:	lda #$45
-	jsr L9D80 ; far call
+	jsr GetNewKernal
 	jsr L500C
 	jsr L9D83 ; REU swap, preserving r registers and x, y
 	PopW r10

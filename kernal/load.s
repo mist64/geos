@@ -124,12 +124,12 @@ LC54E = $c54e
 LC2FE = $c2fe
 LC623 = $c623
 L5003 = $5003
-L9D80 = $9d80
 LC53D = $c53d
+.import GetNewKernal
 
 LC326:  jsr     LC53D                           ; C326 20 3D C5                  =.
         lda     #$CA                            ; C329 A9 CA                    ..
-        jsr     L9D80 ; far call                           ; C32B 20 80 9D                  ..
+        jsr     GetNewKernal
         jsr     L5003                           ; C32E 20 03 50                  .P
 .endif
 
