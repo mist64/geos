@@ -888,12 +888,12 @@ DBDoGETFILES:
 	jsr HorizontalLine
 	PopW r10
 	PopB r7L
-.if wheels
+.if wheels ; xxx
 L500C = $500C
 L9FF1 = $9FF1
 	lda L9FF1
 	cmp #5
-	beq LF654
+	beq @B
 	lda r10L
 	pha
 	sta r5L
@@ -901,19 +901,19 @@ L9FF1 = $9FF1
 	pha
 	sta r5H
 	ora r5L
-	beq LF640
+	beq @A
 	LoadW r10, KbdDBncTab
 	ldx #r5
 	ldy #r10
 	jsr CopyString
-LF640:	lda #$45
+@A:	lda #$45
 	jsr L9D80 ; far call
 	jsr L500C
 	jsr L9D83 ; REU swap, preserving r registers and x, y
 	PopW r10
-	bra LF657
-LF654:	jsr L500C
-LF657:	PopB r2L
+	bra @C
+@B:	jsr L500C
+@C:	PopB r2L
 	PopB r3L
 	sta DBGFArrowX
 	lda #0
@@ -938,13 +938,13 @@ LF657:	PopB r2L
 	LoadW r5, DBGFilesArrowsIcons
 	jsr DBIconsHelp2
 @1:
-.if wheels
+.if wheels ; xxx
 	lda #0
 	jsr LF7A3
 	jsr FetchRAM
 .endif
 	LoadW otherPressVec, DBGFPressVector
-.if !wheels
+.if !wheels ; xxx
 	jsr DBGFilesHelp1
 .endif
 	jsr DBGFilesHelp5
@@ -952,7 +952,7 @@ LF657:	PopB r2L
 @2:	PopB r1L
 	rts
 
-.if !wheels
+.if !wheels ; xxx
 DBGFilesHelp1:
 	PushB DBGFilesFound
 @1:	pla
@@ -980,7 +980,7 @@ DBGFilesArrowsIcons:
 	.word DBGFArrowPic
 DBGFArrowX:
 	.word 0
-.if wheels
+.if wheels ; xxx
 	.byte 8, 8
 .else
 	.byte 3, 12
@@ -989,13 +989,33 @@ DBGFArrowX:
 
 DBGFArrowPic:
 .if wheels
-	.byte   $0A,$FF
-        .byte   $82,$80,$01,$04,$81,$A4,$FF,$FF
-        .byte   $80,$01,$83,$C1,$81,$81,$80,$01
-        .byte   $80,$01,$87,$E1,$8F,$F1,$80,$01
-        .byte   $80,$01,$8F,$F1,$87,$E1,$80,$01
-        .byte   $FF,$FF,$81,$81,$83,$C1,$80,$01
-        .byte   $FF,$FF,$04,$81,$08,$FF,$08,$BF
+;	.byte   $0A,$FF
+;        .byte   $82,$80,$01,$04,$81,$A4,$FF,$FF
+;        .byte   $80,$01,$83,$C1,$81,$81,$80,$01
+;        .byte   $80,$01,$87,$E1,$8F,$F1,$80,$01
+;        .byte   $80,$01,$8F,$F1,$87,$E1,$80,$01
+;        .byte   $FF,$FF,$81,$81,$83,$C1,$80,$01
+;        .byte   $FF,$FF,$04,$81,$08,$FF,$08,$BF
+	.byte 10, %11111111 ; repeat 10
+	.byte $80+2 ; 2 data bytes
+        .byte %10000000, %00000001
+	.byte 4, %10000001 ; repeat 4
+	.byte $80 + (12*3)
+	.byte %11111111, %11111111, %10000000 ;1
+	.byte %00000001, %10000011, %11000001 ;2
+	.byte %10000001, %10000001, %10000000 ;3
+	.byte %00000001, %10000000, %00000001 ;4
+	.byte %10000111, %11100001, %10001111 ;5
+	.byte %11110001, %10000000, %00000001 ;6
+	.byte %10000000, %00000001, %10001111 ;7
+	.byte %11110001, %10000111, %11100001 ;8
+	.byte %10000000, %00000001, %11111111 ;9
+	.byte %11111111, %10000001, %10000001 ;10
+	.byte %10000011, %11000001, %10000000 ;11
+	.byte %00000001, %11111111, %11111111 ;12
+	.byte 4, %10000001 ; repeat 4
+	.byte 8, %11111111 ; repeat 8
+	.byte 8, %10111111 ; repeat 8
 .else
 	.byte 3, %11111111, $80+(10*3)
 	     ;%11111111, %11111111, %11111111
