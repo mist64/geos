@@ -399,7 +399,9 @@ _FindFTypes:
 L9033 = $9033
 LD795 = $D795
 L9030 = $9030
-LD5D3:  bit     L9FF3                           ; D5D3 2C F3 9F                 ,..
+.global _WheelsSyscall5
+_WheelsSyscall5:
+	bit     L9FF3                           ; D5D3 2C F3 9F                 ,..
         bmi     LD5FD                           ; D5D6 30 25                    0%
         lda     $0F                             ; D5D8 A5 0F                    ..
         sta     $05                             ; D5DA 85 05                    ..

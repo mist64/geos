@@ -616,11 +616,11 @@ WheelsSyscall1: ; $C2FE
 WheelsSyscall2: ; $C301
 	jmp _WheelsSyscall2
 WheelsSyscall3: ; $C304
-	jmp LC01E
+	jmp _WheelsSyscall3
 WheelsSyscall4: ; $C307
-	jmp LC020
+	jmp _WheelsSyscall4
 WheelsSyscall5: ; $C30A
-	jmp LD5D3
+	jmp _WheelsSyscall5
 WheelsSyscall6: ; $C30D
 	jmp LC083
 WheelsSyscall7: ; $C310

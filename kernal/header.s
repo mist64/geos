@@ -85,12 +85,14 @@ dateCopy:
 LD07F = $D07F
 LD074 = $D074
 
-.global _WheelsSyscall2
+.global _WheelsSyscall2, _WheelsSyscall3, _WheelsSyscall4
 _WheelsSyscall2:
-	ldy #0
+	ldy #0 ; enable GEOS optimization
 	.byte $2c
-LC01E:	ldy #3
-LC020:	php
+_WheelsSyscall3:
+	ldy #3 ; disable all optimizations
+_WheelsSyscall4:
+	php
 	sei
 	PushB CPU_DATA
 ASSERT_NOT_BELOW_IO
