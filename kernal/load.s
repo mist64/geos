@@ -46,10 +46,18 @@
 .global _RstrAppl
 .global _StartAppl
 
-.segment "load1a"
+.segment "load1"
 
-.if !wheels ;xxx
 _EnterDeskTop:
+.if wheels
+.import GetNewKernal
+L5003 = $5003
+LC53D = $c53d
+	jsr     LC53D                           ; C326 20 3D C5                  =.
+        lda     #$CA                            ; C329 A9 CA                    ..
+        jsr     GetNewKernal
+        jsr     L5003                           ; C32E 20 03 50                  .P
+.else
 	sei
 	cld
 	ldx #$ff
@@ -111,18 +119,6 @@ EDT6:
 	LoadB r0L, NULL
 	MoveW fileHeader+O_GHST_VEC, r7
 .endif
-.endif
-
-.segment "load1b"
-.if wheels
-.import GetNewKernal
-L5003 = $5003
-LC53D = $c53d
-_EnterDeskTop:
-	jsr     LC53D                           ; C326 20 3D C5                  =.
-        lda     #$CA                            ; C329 A9 CA                    ..
-        jsr     GetNewKernal
-        jsr     L5003                           ; C32E 20 03 50                  .P
 .endif
 
 _StartAppl:
