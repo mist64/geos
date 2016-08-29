@@ -260,40 +260,40 @@ _WheelsSyscall6:
 
 .global _WheelsSyscall12
 _WheelsSyscall12:
-	lda     r2L                             ; C0CD A5 06                    ..
-        lsr                               ; C0CF 4A                       J
-        lsr                               ; C0D0 4A                       J
-        lsr                               ; C0D1 4A                       J
-        sta     r1H                             ; C0D2 85 05                    ..
-        sec                                     ; C0D4 38                       8
-        lda     r2H                             ; C0D5 A5 07                    ..
-        sbc     r2L                             ; C0D7 E5 06                    ..
-        lsr                               ; C0D9 4A                       J
-        lsr                               ; C0DA 4A                       J
-        lsr                               ; C0DB 4A                       J
-        sta     r2H                             ; C0DC 85 07                    ..
-        inc     r2H                             ; C0DE E6 07                    ..
-        lda     $09                             ; C0E0 A5 09                    ..
-        lsr                               ; C0E2 4A                       J
-        lda     $08                             ; C0E3 A5 08                    ..
-        ror                               ; C0E5 6A                       j
-        lsr                               ; C0E6 4A                       J
-        lsr                               ; C0E7 4A                       J
-        sta     r1L                             ; C0E8 85 04                    ..
-        sec                                     ; C0EA 38                       8
-        lda     $0A                             ; C0EB A5 0A                    ..
-        sbc     $08                             ; C0ED E5 08                    ..
-        pha                                     ; C0EF 48                       H
-        lda     $0B                             ; C0F0 A5 0B                    ..
-        sbc     $09                             ; C0F2 E5 09                    ..
-        lsr                               ; C0F4 4A                       J
-        pla                                     ; C0F5 68                       h
-        ror                               ; C0F6 6A                       j
-        lsr                               ; C0F7 4A                       J
-        lsr                               ; C0F8 4A                       J
-        sta     r2L                             ; C0F9 85 06                    ..
-        inc     r2L                             ; C0FB E6 06                    ..
-        rts                                     ; C0FD 60                       `
+	lda r2L
+	lsr
+	lsr
+	lsr
+	sta r1H
+	sec
+	lda r2H
+	sbc r2L
+	lsr
+	lsr
+	lsr
+	sta r2H
+	inc r2H
+	lda r3H
+	lsr
+	lda r3L
+	ror
+	lsr
+	lsr
+	sta r1L
+	sec
+	lda r4L
+	sbc r3L
+	pha
+	lda r4H
+	sbc r3H
+	lsr
+	pla
+	ror
+	lsr
+	lsr
+	sta r2L
+	inc r2L
+	rts
 
 ; ----------------------------------------------------------------------------
         brk                                     ; C0FE 00                       .
@@ -319,7 +319,7 @@ LC325 = $C325
 LD57C:  php                                     ; D57C 08                       .
         sei                                     ; D57D 78                       x
         jsr     LD5CA                           ; D57E 20 CA D5                  ..
-        lda     $09                             ; D581 A5 09                    ..
+        lda     r3H                             ; D581 A5 09                    ..
         pha                                     ; D583 48                       H
 
         lda     #$00                            ; D584 A9 00                    ..
@@ -330,21 +330,21 @@ LD58C:  txa                                     ; D58C 8A                       
         ldy     LC325                           ; D58F AC 25 C3                 .%.
 
         lda     r1L                             ; D592 A5 04                    ..
-        sta     ($08),y                         ; D594 91 08                    ..
+        sta     (r3),y                         ; D594 91 08                    ..
         iny                                     ; D596 C8                       .
         lda     r1H                             ; D597 A5 05                    ..
-        sta     ($08),y                         ; D599 91 08                    ..
+        sta     (r3),y                         ; D599 91 08                    ..
         iny                                     ; D59B C8                       .
         sty     LC325                           ; D59C 8C 25 C3                 .%.
         bne     LD5A3                           ; D59F D0 02                    ..
-        inc     $09                             ; D5A1 E6 09                    ..
+        inc     r3H                             ; D5A1 E6 09                    ..
 LD5A3:  lda     r1L                             ; D5A3 A5 04                    ..
         beq     LD5C5                           ; D5A5 F0 1E                    ..
 
         lda     $8000                           ; D5A7 AD 00 80                 ...
         bne     LD5AF                           ; D5AA D0 03                    ..
         jsr     GetBlock                        ; D5AC 20 E4 C1                  ..
-LD5AF:  lda     $09                             ; D5AF A5 09                    ..
+LD5AF:  lda     r3H                             ; D5AF A5 09                    ..
         cmp     #$80                            ; D5B1 C9 80                    ..
         bcs     LD5C3                           ; D5B3 B0 0E                    ..
 
@@ -358,15 +358,15 @@ LD5AF:  lda     $09                             ; D5AF A5 09                    
 
 LD5C3:  ldx     #$0B                            ; D5C3 A2 0B                    ..
 LD5C5:  pla                                     ; D5C5 68                       h
-        sta     $09                             ; D5C6 85 09                    ..
+        sta     r3H                             ; D5C6 85 09                    ..
         plp                                     ; D5C8 28                       (
         rts                                     ; D5C9 60                       `
 
 ; ----------------------------------------------------------------------------
 LD5CA:  lda     #$80                            ; D5CA A9 80                    ..
-        sta     $0B                             ; D5CC 85 0B                    ..
+        sta     r4H                             ; D5CC 85 0B                    ..
         lda     #$00                            ; D5CE A9 00                    ..
-        sta     $0A                             ; D5D0 85 0A                    ..
+        sta     r4L                             ; D5D0 85 0A                    ..
         rts                                     ; D5D2 60                       `
 .else
 	php
@@ -1067,11 +1067,11 @@ _BldGDirEntry:
 .if wheels
         ldy     #$01                            ; D94A A0 01                    ..
         lda     ($14),y                         ; D94C B1 14                    ..
-        sta     $09                             ; D94E 85 09                    ..
+        sta     r3H                             ; D94E 85 09                    ..
         dey                                     ; D950 88                       .
         lda     ($14),y                         ; D951 B1 14                    ..
-        sta     $08                             ; D953 85 08                    ..
-@X:  lda     ($08),y                         ; D955 B1 08                    ..
+        sta     r3L                             ; D953 85 08                    ..
+@X:	lda     (r3),y                         ; D955 B1 08                    ..
         beq     LD963                           ; D957 F0 0A                    ..
         sta     $8403,y                         ; D959 99 03 84                 ...
         iny                                     ; D95C C8                       .
@@ -1335,31 +1335,31 @@ _FastDelFile:
 .if wheels
         txa                                     ; DA83 8A                       .
         bne     LDAB8                           ; DA84 D0 32                    .2
-        lda     $09                             ; DA86 A5 09                    ..
+        lda     r3H                             ; DA86 A5 09                    ..
         pha                                     ; DA88 48                       H
-        lda     $08                             ; DA89 A5 08                    ..
+        lda     r3L                             ; DA89 A5 08                    ..
         pha                                     ; DA8B 48                       H
         jsr     GetDirHead                      ; DA8C 20 47 C2                  G.
         pla                                     ; DA8F 68                       h
-        sta     $08                             ; DA90 85 08                    ..
+        sta     r3L                             ; DA90 85 08                    ..
         pla                                     ; DA92 68                       h
-        sta     $09                             ; DA93 85 09                    ..
+        sta     r3H                             ; DA93 85 09                    ..
 LDA95:  ldy     #$00                            ; DA95 A0 00                    ..
-        lda     ($08),y                         ; DA97 B1 08                    ..
+        lda     (r3),y                         ; DA97 B1 08                    ..
         beq     LDAB5                           ; DA99 F0 1A                    ..
         sta     $0E                             ; DA9B 85 0E                    ..
         iny                                     ; DA9D C8                       .
-        lda     ($08),y                         ; DA9E B1 08                    ..
+        lda     (r3),y                         ; DA9E B1 08                    ..
         sta     $0F                             ; DAA0 85 0F                    ..
         jsr     FreeBlock                       ; DAA2 20 B9 C2                  ..
         txa                                     ; DAA5 8A                       .
         bne     LDAB8                           ; DAA6 D0 10                    ..
         clc                                     ; DAA8 18                       .
         lda     #$02                            ; DAA9 A9 02                    ..
-        adc     $08                             ; DAAB 65 08                    e.
-        sta     $08                             ; DAAD 85 08                    ..
+        adc     r3L                             ; DAAB 65 08                    e.
+        sta     r3L                             ; DAAD 85 08                    ..
         bcc     LDA95                           ; DAAF 90 E4                    ..
-        inc     $09                             ; DAB1 E6 09                    ..
+        inc     r3H                             ; DAB1 E6 09                    ..
         bne     LDA95                           ; DAB3 D0 E0                    ..
 LDAB5:  jmp     PutDirHead                      ; DAB5 4C 4A C2                 LJ.
 LDAB8:  rts                                     ; DAB8 60                       `
@@ -2065,7 +2065,7 @@ L9E08:  lda     L9D90,x                         ; 9E08 BD 90 9D                 
         dex                                     ; 9E0D CA                       .
         bpl     L9E08                           ; 9E0E 10 F8                    ..
 L9E10:  lda     $88C3                           ; 9E10 AD C3 88                 ...
-        sta     $08                             ; 9E13 85 08                    ..
+        sta     r3L                             ; 9E13 85 08                    ..
         inc     $88C3                           ; 9E15 EE C3 88                 ...
         rts                                     ; 9E18 60                       `
 
@@ -2154,7 +2154,7 @@ L9E53:  lda     $88C4                           ; 9E53 AD C4 88                 
         sta     r1L                             ; 9E92 85 04                    ..
         sta     r2L                             ; 9E94 85 06                    ..
 L9E96:  lda     $88C3                           ; 9E96 AD C3 88                 ...
-        sta     $08                             ; 9E99 85 08                    ..
+        sta     r3L                             ; 9E99 85 08                    ..
         inc     $88C3                           ; 9E9B EE C3 88                 ...
         jsr     FetchRAM                        ; 9E9E 20 CB C2                  ..
         dec     $88C3                           ; 9EA1 CE C3 88                 ...
@@ -2178,7 +2178,7 @@ L9EB0:  ldy     #$92                            ; 9EB0 A0 92                    
 ; FetchRAM
 L9EB3:  ldy     #$91                            ; 9EB3 A0 91                    ..
 L9EB5:  ldx     #$0D                            ; 9EB5 A2 0D                    ..
-        lda     $08                             ; 9EB7 A5 08                    ..
+        lda     r3L                             ; 9EB7 A5 08                    ..
         cmp     $88C3                           ; 9EB9 CD C3 88                 ...
         bcs     L9F09                           ; 9EBC B0 4B                    .K
         php                                     ; 9EBE 08                       .
@@ -2200,7 +2200,7 @@ L9ED2:  lda     $01,x                           ; 9ED2 B5 01                    
         sta     EXP_BASE+8                           ; 9EDC 8D 08 DF                 ...
         lda     r2L                             ; 9EDF A5 06                    ..
         sta     EXP_BASE+7                           ; 9EE1 8D 07 DF                 ...
-        lda     $08                             ; 9EE4 A5 08                    ..
+        lda     r3L                             ; 9EE4 A5 08                    ..
         sta     EXP_BASE+6                           ; 9EE6 8D 06 DF                 ...
         stx     EXP_BASE+9                           ; 9EE9 8E 09 DF                 ...
         stx     EXP_BASE+10                           ; 9EEC 8E 0A DF                 ...
