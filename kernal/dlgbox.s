@@ -580,40 +580,41 @@ L9D83 = $9D83
 L5009 = $5009
 L9D80 = $9D80
 A8810 = $8810
-	lda     keyData
-	ldy     #5
-@1:	cmp     ShortcutKeys,y
-	beq     LF4A3
+	lda keyData
+	ldy #5
+@1:	cmp ShortcutKeys,y
+	beq DoKeyboardShortcut
 	dey
-	bpl     @1
+	bpl @1
 	rts
 
-LF4A3:	tya
-	asl     a
-	asl     a
-	asl     a
+DoKeyboardShortcut:
+	tya
+	asl
+	asl
+	asl
 	tay
-	lda     #$00
-	sta     r0L
+	lda #0
+	sta r0L
 LF4AC:	tax
-	lda     A8810,x
-	cmp     DBDefIconsTab,y
-	bne     LF4BD
-	lda     A8810+1,x
-	cmp     DBDefIconsTab+1,y
-	beq     LF4CC
-LF4BD:	inc     r0L
-	lda     r0L
-	cmp     $880C
-	bcs     LF4CB
-	asl     a
-	asl     a
-	asl     a
-	bne     LF4AC
+	lda A8810,x
+	cmp DBDefIconsTab,y
+	bne LF4BD
+	lda A8810+1,x
+	cmp DBDefIconsTab+1,y
+	beq LF4CC
+LF4BD:	inc r0L
+	lda r0L
+	cmp $880C
+	bcs LF4CB
+	asl
+	asl
+	asl
+	bne LF4AC
 LF4CB:	rts
-LF4CC:	lda     DBDefIconsTabRoutine,y
-	ldx     DBDefIconsTabRoutine+1,y
-	jmp     CallRoutine
+LF4CC:	lda DBDefIconsTabRoutine,y
+	ldx DBDefIconsTabRoutine+1,y
+	jmp CallRoutine
 
 ShortcutKeys:
 	.byte 13, "cynod"
@@ -1075,13 +1076,13 @@ DBGFPressVector:
 	jsr DBGFilesHelp6
 	jsr DBGFilesHelp2
 .if wheels
-        lda     $8515                           ; F71D AD 15 85                 ...
-        beq     @X                           ; F720 F0 07                    ..
-        ldy     A88A7                           ; F722 AC A7 88                 ...
-        dey                                     ; F725 88                       .
-        jmp     LF4A3                           ; F726 4C A3 F4                 L..
-@X:	lda     #$1E                            ; F729 A9 1E                    ..
-        sta     $8515                           ; F72B 8D 15 85                 ...
+	lda dblClickCount
+	beq @X
+	ldy A88A7
+	dey
+	jmp DoKeyboardShortcut
+@X:	lda #30
+	sta dblClickCount
 .endif
 @2:	rts
 
