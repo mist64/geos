@@ -1258,61 +1258,56 @@ DBGFilesHelp4:
 
 DBGFilesHelp5:
 .if wheels
-	PushB rightMargin+1
-        PushB rightMargin
+        PushW rightMargin
         PushB currentMode
         LoadB currentMode, $40
-        lda     #0
-        jsr     DBGFilesHelp8
-        clc
-        lda     r2H
-        adc     #$38
-        sta     r2H
-        lda     #0
-        jsr     SetPattern
-        jsr     Rectangle
-        lda     #$00
-        lda     r4H
-        sta     rightMargin+1
-        lda     r4L
-        sta     rightMargin
-        lda     #0
-        sta     r15L
-        ldx     #30
-        jsr     DBGFilesHelp4
-LF843:  lda     r15L
-        jsr     DBGFilesHelp8
-        lda     r3H
-        sta     r11H
-        lda     r3L
-        sta     r11L
-        lda     r2L
-        clc
-        adc     #$09
-        sta     r1H
-        lda     r14H
-        sta     r0H
-        lda     r14L
-        sta     r0L
-        jsr     PutString
-        clc
-        lda     L9FF2
-        adc     r14L
-        sta     r14L
-        bcc     LF86E
-        inc     r14H
-LF86E:  inc     r15L
-        lda     r15L
-        cmp     #5
-        bne     LF843
-        jsr     DBGFilesHelp6
-        pla
-        sta     currentMode
-        pla
-        sta     rightMargin
-        pla
-        sta     rightMargin+1
-        rts
+	lda #0
+	jsr DBGFilesHelp8
+	clc
+	lda r2H
+	adc #$38
+	sta r2H
+	lda #0
+	jsr SetPattern
+	jsr Rectangle
+	lda #0
+	lda r4H
+	sta rightMargin+1
+	lda r4L
+	sta rightMargin
+	lda #0
+	sta r15L
+	ldx #30
+	jsr DBGFilesHelp4
+LF843:	lda r15L
+	jsr DBGFilesHelp8
+	lda r3H
+	sta r11H
+	lda r3L
+	sta r11L
+	lda r2L
+	clc
+	adc #9
+	sta r1H
+	lda r14H
+	sta r0H
+	lda r14L
+	sta r0L
+	jsr PutString
+	clc
+	lda L9FF2
+	adc r14L
+	sta r14L
+	bcc LF86E
+	inc r14H
+LF86E:	inc r15L
+	lda r15L
+	cmp #5
+	bne LF843
+	jsr DBGFilesHelp6
+	PopB currentMode
+	PopW rightMargin
+	rts
 .else
 	PushW rightMargin
 	lda #0
