@@ -989,24 +989,18 @@ DBGFArrowX:
 
 DBGFArrowPic:
 .if wheels ; xxx
-	; XXX This doesn't look right... :(
 	.byte 10, %11111111 ; repeat 10
 	.byte $80+2 ; 2 data bytes
-        .byte %10000000, %00000001
+        .byte                     %10000000, %00000001
 	.byte 4, %10000001 ; repeat 4
 	.byte $80 + (12*3)
-	.byte %11111111, %11111111, %10000000 ;1
-	.byte %00000001, %10000011, %11000001 ;2
-	.byte %10000001, %10000001, %10000000 ;3
-	.byte %00000001, %10000000, %00000001 ;4
-	.byte %10000111, %11100001, %10001111 ;5
-	.byte %11110001, %10000000, %00000001 ;6
-	.byte %10000000, %00000001, %10001111 ;7
-	.byte %11110001, %10000111, %11100001 ;8
-	.byte %10000000, %00000001, %11111111 ;9
-	.byte %11111111, %10000001, %10000001 ;10
-	.byte %10000011, %11000001, %10000000 ;11
-	.byte %00000001, %11111111, %11111111 ;12
+	;     %11111111,%11111111,%11111111,%11111111,%11111111,%11111111,%11111111,%11111111
+	;     %11111111,%11111111,%10000000,%00000001,%10000001,%10000001,%10000001,%10000001
+	.byte %11111111,%11111111,%10000000,%00000001,%10000011,%11000001,%10000001,%10000001
+	.byte %10000000,%00000001,%10000000,%00000001,%10000111,%11100001,%10001111,%11110001
+	.byte %10000000,%00000001,%10000000,%00000001,%10001111,%11110001,%10000111,%11100001
+	.byte %10000000,%00000001,%11111111,%11111111,%10000001,%10000001,%10000011,%11000001
+	.byte %10000000,%00000001,%11111111,%11111111;%10000001,%10000001,%10000001,%10000001
 	.byte 4, %10000001 ; repeat 4
 	.byte 8, %11111111 ; repeat 8
 	.byte 8, %10111111 ; repeat 8
@@ -1072,6 +1066,7 @@ DBGFPressVector:
 DBGFDoArrow:
 .if wheels
 L9FF2 = $9FF2
+	; which X card (0-3) was the mouse on?
         lda     mouseXPos+1
         lsr     a
         lda     mouseXPos
@@ -1085,25 +1080,24 @@ L9FF2 = $9FF2
         cpy     #4
         bcc     @1
         rts
-@1:	lda     LF74B,y
-        ldx     LF74F,y
+@1:	lda     DoArrowTabL,y
+        ldx     DoArrowTabH,y
         jmp     CallRoutine
 
-; ---------------------------------------------
-.define TAB DBGFDoArrowFunc1, DBGFDoArrowFunc2, DBGFDoArrowFunc3, DBGFDoArrowFunc4
+.define DoArrowTab DBGFDoArrowFunc1, DBGFDoArrowFunc2, DBGFDoArrowFunc3, DBGFDoArrowFunc4
 
-LF74B:	.lobytes TAB
-LF74F:	.hibytes TAB
-; ---------------------------------------------
-; F753
+DoArrowTabL:
+	.lobytes DoArrowTab
+DoArrowTabH:
+	.hibytes DoArrowTab
+
 DBGFDoArrowFunc1:
         lda     $885B
-        bne     LF759
+        bne     @1
         rts
+@1:	lda     #0
+        beq     DBGFDoArrowFuncCommon
 
-; ---------------------------------------------
-LF759:  lda     #$00
-        beq     LF791
 DBGFDoArrowFunc2:
         ldx     DBGFilesFound
         dex
@@ -1118,14 +1112,14 @@ DBGFDoArrowFunc2:
         jsr     Ddiv
         jsr     BBMult
         lda     r0L
-        bra     LF791
+        bra     DBGFDoArrowFuncCommon
 
 DBGFDoArrowFunc4:
         lda     $885B
         clc
         adc     #$05
         cmp     DBGFilesFound
-        bcc     LF791
+        bcc     DBGFDoArrowFuncCommon
         rts
 
 ; --------------------------------------------
@@ -1136,7 +1130,8 @@ DBGFDoArrowFunc3:
 ; ---------------------------------------------
 LF78E:  sec
         sbc     #$05
-LF791:  sta     $885C
+DBGFDoArrowFuncCommon:
+	sta     $885C
         sta     $885B
         jsr     LF7A3
         jsr     FetchRAM
