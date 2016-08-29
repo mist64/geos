@@ -889,7 +889,6 @@ DBDoGETFILES:
 	PopW r10
 	PopB r7L
 .if wheels
-LF69A = $F69A
 L500C = $500C
 L9FF1 = $9FF1
 	lda L9FF1
@@ -916,7 +915,7 @@ LF640:	lda #$45
 LF654:	jsr L500C
 LF657:	PopB r2L
 	PopB r3L
-	sta LF69A
+	sta DBGFArrowX
 	lda #0
 	sta DBGFileSelected
 	sta DBGFTableIndex
@@ -1067,7 +1066,7 @@ L9FF2 = $9FF2
         lsr     a                               ; F735 4A                       J
         lsr     a                               ; F736 4A                       J
         sec                                     ; F737 38                       8
-        sbc     LF69A                           ; F738 ED 9A F6                 ...
+        sbc     DBGFArrowX                           ; F738 ED 9A F6                 ...
         lsr     a                               ; F73B 4A                       J
         tay                                     ; F73C A8                       .
         cpy     #$04                            ; F73D C0 04                    ..
