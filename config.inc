@@ -24,12 +24,15 @@ wheels   = 1
 	; dialog box buttons can be selected using "o" for
 	; "Open" etc.
 	wheels_buttons_shortcuts = 1
+
+	wheels_enhanced_list_scrolling = 1
 .else
 	trap = 1
 	wheels_size = 0
 	wheels_size_and_speed = 0
 	wheels_fixes = 0
 	wheels_buttons_shortcuts = 0
+	wheels_enhanced_list_scrolling = 0
 .endif
 
 ; general code generation/optimization control:

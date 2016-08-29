@@ -863,14 +863,14 @@ DBDoGETFILES:
 	ror
 	lsr
 	lsr
-.if wheels ; ???
+.if wheels_enhanced_list_scrolling ; ???
 	addv 4
 .else
 	addv 7
 .endif
 	pha
 	lda r2H
-.if wheels ; ???
+.if wheels_enhanced_list_scrolling ; ???
 	subv 12
 .else
 	subv 14
@@ -980,7 +980,7 @@ DBGFilesArrowsIcons:
 	.word DBGFArrowPic
 DBGFArrowX:
 	.word 0
-.if wheels ; xxx
+.if wheels_enhanced_list_scrolling
 	.byte 8, 8
 .else
 	.byte 3, 12
@@ -988,7 +988,7 @@ DBGFArrowX:
 	.word DBGFDoArrow
 
 DBGFArrowPic:
-.if wheels ; xxx
+.if wheels_enhanced_list_scrolling
 	.byte 10, %11111111 ; repeat 10
 	.byte $80+2 ; 2 data bytes
         .byte                     %10000000, %00000001
@@ -1067,7 +1067,7 @@ DBGFPressVector:
 @2:	rts
 
 DBGFDoArrow:
-.if wheels
+.if wheels_enhanced_list_scrolling
 L9FF2 = $9FF2
 	; which icon inside the top/bot/up/down image was the mouse on?
         lda     mouseXPos+1
@@ -1107,9 +1107,9 @@ DBGFDoArrowBottom:
         stx     r0L
         lda     #$00
         sta     r0H
-        sta     $05
-        lda     #$05
-        sta     $04
+        sta     r1H
+        lda     #5
+        sta     r1L
         ldx     #r0
         ldy     #r1
         jsr     Ddiv
@@ -1120,7 +1120,7 @@ DBGFDoArrowBottom:
 DBGFDoArrowDown:
         lda     $885B
         clc
-        adc     #$05
+        adc     #5
         cmp     DBGFilesFound
         bcc     DBGFDoArrowFuncCommon
         rts
@@ -1132,7 +1132,7 @@ DBGFDoArrowUp:
         rts
 ; ---------------------------------------------
 LF78E:  sec
-        sbc     #$05
+        sbc     #5
 DBGFDoArrowFuncCommon:
 	sta     $885C
         sta     $885B
@@ -1141,8 +1141,8 @@ DBGFDoArrowFuncCommon:
         jsr     DBGFilesHelp2
         jmp     DBGFilesHelp5
 ; ---------------------------------------------
-LF7A3:  sta     $04
-        lda     #$05
+LF7A3:  sta     r1L
+        lda     #5
         sta     r0L
         lda     L9FF2
         sta     r2L
@@ -1151,16 +1151,16 @@ LF7A3:  sta     $04
         jsr     BBMult
         lda     L9FF2
         sta     r0L
-        ldx     #$04                            
+        ldx     #r1L                            
         ldy     #$02
         jsr     BBMult
         clc
-        lda     $04
+        lda     r1L
         adc     #$80
-        sta     $04
-        lda     $05
+        sta     r1L
+        lda     r1H
         adc     #$E0
-        sta     $05
+        sta     r1H
         lda     #$83
         sta     r0H
         lda     #$00
@@ -1231,8 +1231,7 @@ DBGFilesHelp3:
 DBGFilesHelp4:
 	sta r0L
 .if wheels
-        lda     L9FF2                           ; F7F6 AD F2 9F                 ...
-        sta     $04                             ; F7F9 85 04                    ..
+        MoveB L9FF2, r1L
 .else
 	LoadB r1L, 17
 .endif
@@ -1294,7 +1293,7 @@ LF843:  lda     r15L
         lda     r2L
         clc
         adc     #$09
-        sta     $05
+        sta     r1H
         lda     $1F
         sta     r0H
         lda     $1E
@@ -1308,7 +1307,7 @@ LF843:  lda     r15L
         inc     $1F
 LF86E:  inc     r15L
         lda     r15L
-        cmp     #$05
+        cmp     #5
         bne     LF843
         jsr     DBGFilesHelp6
         pla
