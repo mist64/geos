@@ -136,7 +136,6 @@ DlgBoxProcH:
 
 DlgBoxPrep:
 .if wheels ; ???
-LF383 = $F383
 LF28E:  sec
 	jsr DlgBoxPrep2
 	LoadB sysDBData, NULL
@@ -576,10 +575,7 @@ DBDefIconsTabRoutine:
 
 DBKeyVector:
 .if wheels
-L9D83 = $9D83
-L5009 = $5009
-L9D80 = $9D80
-A8810 = $8810
+A8810 = $8810 ; XXX
 	lda keyData
 	ldy #5
 @1:	cmp ShortcutKeys,y
@@ -625,6 +621,9 @@ ShortcutKeys:
 .endif
 
 .if wheels
+L9D83 = $9D83
+L5009 = $5009
+L9D80 = $9D80
 	lda #$45
 	jsr L9D80 ; far call
 	jsr L5009
