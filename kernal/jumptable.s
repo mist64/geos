@@ -610,29 +610,31 @@ ColorRectangle:
 	UNIMPLEMENTED
 
 ; new Wheels syscalls
-LC2FE:
+.global WheelsSyscall1, WheelsSyscall9
+WheelsSyscall1: ; $C2FE
 	jmp LC58C
-LC301:
+WheelsSyscall2: ; $C301
 	jmp LC01B
-LC304:
+WheelsSyscall3: ; $C304
 	jmp LC01E
-LC307:
+WheelsSyscall4: ; $C307
 	jmp LC020
-LC30A:
+WheelsSyscall5: ; $C30A
 	jmp LD5D3
-LC30D:
+WheelsSyscall6: ; $C30D
 	jmp LC083
-LC310:
+WheelsSyscall7: ; $C310
 	jmp LFA73
-LC313:
+WheelsSyscall8: ; $C313
 	jmp LC4A8
-LC316:
+WheelsSyscall9: ; $C316
 	jmp LC4E6
-LC319:
+WheelsSyscall10: ; $C319
 	jmp LC391
-LC31C:
+WheelsSyscall11: ; $C31C
 	jmp LC38E
-LC31F:	jmp LC0CD
+WheelsSyscall12: ; $C31F
+	jmp LC0CD
 
 	.byte 0, 0, 0 ; ???
 

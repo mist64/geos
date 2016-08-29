@@ -78,9 +78,9 @@ _FirstInit:
 L9FDA = $9FDA
 L9FDC = $9fdc
 L9FDD = $9fdd
-LC316 = $c316
 LC499 = $C499
 LBF3F = $bf3f
+.import WheelsSyscall9
 	MoveB L9FDA, screencolors
         ldy     #$3E                            ; C528 A0 3E                    .>
 LC52A:  lda     #$00                            ; C52A A9 00                    ..
@@ -95,7 +95,7 @@ LC534:  lda     LBF3F,x                         ; C534 BD 3F BF                 
 LC53D:  jsr     LC499                           ; C53D 20 99 C4                  ..
         lda     $851E                           ; C540 AD 1E 85                 ...
         sta     LC54D                           ; C543 8D 4D C5                 .M.
-        jsr     LC316                           ; C546 20 16 C3                  ..
+        jsr     WheelsSyscall9                           ; C546 20 16 C3                  ..
         .byte   $00,$00,$28,$19                 ; C549 00 00 28 19              ..(.
 LC54D:  .byte   $BF                             ; C54D BF                       .
 ; ----------------------------------------------------------------------------
