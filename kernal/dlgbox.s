@@ -922,13 +922,6 @@ LF657:	PopB r2L
 	sta DBGFTableIndex
 	lda $8856
 	beq @2
-	cmp #6
-	bcc @1
-	LoadW r5, DBGFilesArrowsIcons
-	jsr DBIconsHelp2
-@1:	lda #0
-	jsr LF7A3
-	jsr FetchRAM
 .else
 	LoadB r7H, 15
 	LoadW r6, fileTrScTab
@@ -940,11 +933,16 @@ LF657:	PopB r2L
 	sub r7H
 	beq @2
 	sta DBGFilesFound
+.endif
 	cmp #6
 	bcc @1
 	LoadW r5, DBGFilesArrowsIcons
 	jsr DBIconsHelp2
 @1:
+.if wheels
+	lda #0
+	jsr LF7A3
+	jsr FetchRAM
 .endif
 	LoadW otherPressVec, DBGFPressVector
 .if !wheels
