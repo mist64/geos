@@ -920,7 +920,7 @@ LF657:	PopB r2L
 	lda #0
 	sta DBGFileSelected
 	sta DBGFTableIndex
-	lda $8856
+	lda DBGFilesFound
 	beq @2
 .else
 	LoadB r7H, 15
@@ -1092,7 +1092,7 @@ LF74F:  .byte   $F7,$F7,$F7,$F7                 ; F74F F7 F7 F7 F7              
 LF759:  lda     #$00                            ; F759 A9 00                    ..
         beq     LF791                           ; F75B F0 34                    .4
 ; F75D
-        ldx     $8856                           ; F75D AE 56 88                 .V.
+        ldx     DBGFilesFound                           ; F75D AE 56 88                 .V.
         dex                                     ; F760 CA                       .
         stx     r0L                           ; F761 86 02                    ..
         lda     #$00                            ; F763 A9 00                    ..
@@ -1112,7 +1112,7 @@ LF759:  lda     #$00                            ; F759 A9 00                    
         lda     $885B                           ; F77C AD 5B 88                 .[.
         clc                                     ; F77F 18                       .
         adc     #$05                            ; F780 69 05                    i.
-        cmp     $8856                           ; F782 CD 56 88                 .V.
+        cmp     DBGFilesFound                           ; F782 CD 56 88                 .V.
         bcc     LF791                           ; F785 90 0A                    ..
         rts                                     ; F787 60                       `
 
