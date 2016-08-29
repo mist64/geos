@@ -141,8 +141,7 @@ LF28E:  sec
 	LoadB sysDBData, NULL
 	jmp InitGEOEnv
 
-.global DlgBoxPrep1
-DlgBoxPrep1:
+Dialog_2:
 	clc
 DlgBoxPrep2:
 	PushB CPU_DATA
@@ -241,7 +240,7 @@ DrwDlgSpd1:
 	jsr CalcDialogCoords
 	MoveW r4, rightMargin
 	jsr Rectangle
-.if !wheels
+.if !wheels ; ???
 	clc
 	jsr CalcDialogCoords
 .endif
@@ -249,7 +248,7 @@ DrwDlgSpd1:
 	jsr FrameRectangle
 	lda #0
 	sta defIconTab
-.if !wheels
+.if !wheels ; ???
 	sta defIconTab+1
 	sta defIconTab+2
 .endif
@@ -317,7 +316,7 @@ DBDefinedPos:
 	.word DEF_DB_RIGHT
 
 _RstrFrmDialogue:
-	jsr $F29A;xxxDialog_2
+	jsr Dialog_2
 	jsr Dialog_1
 	MoveB sysDBData, r0L
 	ldx dlgBoxCallerSP
@@ -325,8 +324,8 @@ _RstrFrmDialogue:
 	PushW dlgBoxCallerPC
 	rts
 
-Dialog_2:
 .if !wheels
+Dialog_2:
 ASSERT_NOT_BELOW_IO
 	PushB CPU_DATA
 	LoadB CPU_DATA, IO_IN
