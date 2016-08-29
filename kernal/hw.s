@@ -143,6 +143,7 @@ LC4E5:  rts                                     ; C4E5 60                       
 
 ; ----------------------------------------------------------------------------
 .global _WheelsSyscall9
+; inline version of WheelsSyscall8
 _WheelsSyscall9:
 	PopB returnAddress
         PopB returnAddress+1

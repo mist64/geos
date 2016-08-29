@@ -115,17 +115,9 @@ EDT6:
 
 .segment "load1b"
 .if wheels
-L0002 = $0002
-LCA26 = $ca26
-LC064 = $c064
-LC5FA = $c5fa
-LE62A = $e62a
-LC54E = $c54e
-LC623 = $c623
+.import GetNewKernal
 L5003 = $5003
 LC53D = $c53d
-.import GetNewKernal
-
 _EnterDeskTop:
 	jsr     LC53D                           ; C326 20 3D C5                  =.
         lda     #$CA                            ; C329 A9 CA                    ..
@@ -135,6 +127,13 @@ _EnterDeskTop:
 
 _StartAppl:
 .if wheels
+L0002 = $0002
+LCA26 = $ca26
+LC064 = $c064
+LC5FA = $c5fa
+LE62A = $e62a
+LC54E = $c54e
+LC623 = $c623
 .import WheelsSyscall1
 	sei                                     ; C331 78                       x
         cld                                     ; C332 D8                       .
