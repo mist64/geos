@@ -989,13 +989,7 @@ DBGFArrowX:
 
 DBGFArrowPic:
 .if wheels
-;	.byte   $0A,$FF
-;        .byte   $82,$80,$01,$04,$81,$A4,$FF,$FF
-;        .byte   $80,$01,$83,$C1,$81,$81,$80,$01
-;        .byte   $80,$01,$87,$E1,$8F,$F1,$80,$01
-;        .byte   $80,$01,$8F,$F1,$87,$E1,$80,$01
-;        .byte   $FF,$FF,$81,$81,$83,$C1,$80,$01
-;        .byte   $FF,$FF,$04,$81,$08,$FF,$08,$BF
+	; XXX This doesn't look right... :(
 	.byte 10, %11111111 ; repeat 10
 	.byte $80+2 ; 2 data bytes
         .byte %10000000, %00000001
