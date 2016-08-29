@@ -446,9 +446,9 @@ DialogCopyTab:
 	.word NULL
 .endif
 
-; handler for commands 0-6
+; handler for commands 1-6
 DBDoIcons:
-.if wheels ; install keyVector for *all* kinds of buttons instead of just OK
+.if wheels_buttons_shortcuts ; install keyVector for all button types
 	lda keyVector+1
 .else
 	dey ; command-1: "OK"==0
@@ -462,7 +462,7 @@ DBDoIcons:
 	lda #<DBKeyVector
 	sta keyVector
 @1:
-.if wheels ; install keyVector for *all* kinds of buttons instead of just OK
+.if wheels_buttons_shortcuts
 	dey
 .endif
 	tya
@@ -574,10 +574,9 @@ DBDefIconsTabRoutine:
 .endif
 
 DBKeyVector:
-.if wheels
-A8810 = $8810 ; XXX
+.if wheels_buttons_shortcuts
 	lda keyData
-	ldy #5
+	ldy #ShortcutKeysEnd - ShortcutKeys - 1
 @1:	cmp ShortcutKeys,y
 	beq DoKeyboardShortcut
 	dey
@@ -614,6 +613,7 @@ LF4CC:	lda DBDefIconsTabRoutine,y
 
 ShortcutKeys:
 	.byte 13, "cynod"
+ShortcutKeysEnd:
 .else
 	CmpBI keyData, CR
 	beq DBIcOK
