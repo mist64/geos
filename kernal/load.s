@@ -48,8 +48,8 @@
 
 .segment "load1a"
 
-_EnterDeskTop:
 .if !wheels ;xxx
+_EnterDeskTop:
 	sei
 	cld
 	ldx #$ff
@@ -126,7 +126,8 @@ L5003 = $5003
 LC53D = $c53d
 .import GetNewKernal
 
-LC326:  jsr     LC53D                           ; C326 20 3D C5                  =.
+_EnterDeskTop:
+	jsr     LC53D                           ; C326 20 3D C5                  =.
         lda     #$CA                            ; C329 A9 CA                    ..
         jsr     GetNewKernal
         jsr     L5003                           ; C32E 20 03 50                  .P

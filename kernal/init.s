@@ -64,7 +64,7 @@ _FirstInit:
 	sei
 	cld
 	jsr $C2FE;xxxInitGEOS
-	LoadW EnterDeskTop+1, $C326;xxx_EnterDeskTop
+	LoadW EnterDeskTop+1, _EnterDeskTop
 	LoadB maxMouseSpeed, iniMaxMouseSpeed
 .if wheels
 	sta mouseAccel

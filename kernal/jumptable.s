@@ -424,7 +424,7 @@ FreeFile:
 GetFHdrInfo:
 	jmp _GetFHdrInfo
 EnterDeskTop:
-	jmp $c326;xxx_EnterDeskTop
+	jmp _EnterDeskTop
 StartAppl:
 	jmp _StartAppl
 ExitTurbo:
