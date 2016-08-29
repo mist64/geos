@@ -42,7 +42,6 @@
 
 ;---------------------------------------------------------------
 ;---------------------------------------------------------------
-_MainLoop:
 .if wheels
 LD41A = $D41A
 LD419 = $D419
@@ -177,6 +176,7 @@ LC0CD:  lda     $06                             ; C0CD A5 06                    
         brk                                     ; C0FE 00                       .
         brk                                     ; C0FF 00                       .
 .else
+_MainLoop:
 	jsr _DoCheckButtons
 	jsr _ExecuteProcesses
 	jsr _DoCheckDelays
