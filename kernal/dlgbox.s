@@ -821,7 +821,7 @@ DBDoGETSTR:
 	PopB r1L
 	rts
 
-.if !wheels
+.if !wheels_size ; code reuse
 DBKeyVector2:
 	LoadB sysDBData, DBGETSTRING
 	jmp RstrFrmDialogue
@@ -893,30 +893,29 @@ L9FF1 = $9FF1
         lda     L9FF1                           ; F61C AD F1 9F                 ...
         cmp     #$05                            ; F61F C9 05                    ..
         beq     LF654                           ; F621 F0 31                    .1
-        lda     $16                             ; F623 A5 16                    ..
+        lda     r10L                             ; F623 A5 16                    ..
         pha                                     ; F625 48                       H
-        sta     $0C                             ; F626 85 0C                    ..
-        lda     $17                             ; F628 A5 17                    ..
+        sta     r5L                             ; F626 85 0C                    ..
+        lda     r10H                             ; F628 A5 17                    ..
         pha                                     ; F62A 48                       H
-        sta     $0D                             ; F62B 85 0D                    ..
-        ora     $0C                             ; F62D 05 0C                    ..
+        sta     r5H                             ; F62B 85 0D                    ..
+        ora     r5L                             ; F62D 05 0C                    ..
         beq     LF640                           ; F62F F0 0F                    ..
         lda     #$87                            ; F631 A9 87                    ..
-        sta     $17                             ; F633 85 17                    ..
+        sta     r10H                             ; F633 85 17                    ..
         lda     #$EB                            ; F635 A9 EB                    ..
-        sta     $16                             ; F637 85 16                    ..
-        ldx     #$0C                            ; F639 A2 0C                    ..
-        ldy     #$16                            ; F63B A0 16                    ..
+        sta     r10L                             ; F637 85 16                    ..
+        ldx     #r5                            ; F639 A2 0C                    ..
+        ldy     #r10                            ; F63B A0 16                    ..
         jsr     CopyString                      ; F63D 20 65 C2                  e.
 LF640:  lda     #$45                            ; F640 A9 45                    .E
         jsr     L9D80                           ; F642 20 80 9D                  ..
         jsr     L500C                           ; F645 20 0C 50                  .P
-; REU swap, preserving r registers and x, y
-        jsr     L9D83                           ; F648 20 83 9D                  ..
+        jsr     L9D83 ; REU swap, preserving r registers and x, y
         pla                                     ; F64B 68                       h
-        sta     $16                             ; F64C 85 16                    ..
+        sta     r10L                             ; F64C 85 16                    ..
         pla                                     ; F64E 68                       h
-        sta     $17                             ; F64F 85 17                    ..
+        sta     r10H                             ; F64F 85 17                    ..
         clv                                     ; F651 B8                       .
         bvc     LF657                           ; F652 50 03                    P.
 LF654:  jsr     L500C                           ; F654 20 0C 50                  .P
@@ -933,9 +932,9 @@ LF657:  pla                                     ; F657 68                       
         cmp     #$06                            ; F66D C9 06                    ..
         bcc     LF67C                           ; F66F 90 0B                    ..
         lda     #$F6                            ; F671 A9 F6                    ..
-        sta     $0D                             ; F673 85 0D                    ..
+        sta     r5H                             ; F673 85 0D                    ..
         lda     #$98                            ; F675 A9 98                    ..
-        sta     $0C                             ; F677 85 0C                    ..
+        sta     r5L                             ; F677 85 0C                    ..
         jsr     LF43B                           ; F679 20 3B F4                  ;.
 LF67C:  lda     #$00                            ; F67C A9 00                    ..
         jsr     LF7A3                           ; F67E 20 A3 F7                  ..
@@ -1225,10 +1224,10 @@ LF7D9:  lda     $885C                           ; F7D9 AD 5C 88                 
         ldx     #$02                            ; F7E0 A2 02                    ..
         jsr     LF7F4                           ; F7E2 20 F4 F7                  ..
         lda     $885A                           ; F7E5 AD 5A 88                 .Z.
-        sta     $0D                             ; F7E8 85 0D                    ..
+        sta     r5H                             ; F7E8 85 0D                    ..
         lda     $8859                           ; F7EA AD 59 88                 .Y.
-        sta     $0C                             ; F7ED 85 0C                    ..
-        ldy     #$0C                            ; F7EF A0 0C                    ..
+        sta     r5L                             ; F7ED 85 0C                    ..
+        ldy     #r5L                            ; F7EF A0 0C                    ..
         jmp     CopyString                      ; F7F1 4C 65 C2                 Le.
 .else
 	lda DBGFileSelected
