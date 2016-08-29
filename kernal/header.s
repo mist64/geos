@@ -93,15 +93,14 @@ _WheelsSyscall2:
 LC01E:	ldy #3
 LC020:	php
 	sei
-	lda CPU_DATA
-	pha
-	lda #$35
-	sta $01
+	PushB CPU_DATA
+ASSERT_NOT_BELOW_IO
+	LoadB CPU_DATA, $35
 	sta LD07E
 	sta LD074,y
 	sta LD07F
-	pla
-	sta CPU_DATA
+	PopB CPU_DATA
+ASSERT_NOT_BELOW_IO
 	plp
 	rts
 
