@@ -914,24 +914,22 @@ LF640:	lda #$45
 	PopW r10
 	bra LF657
 LF654:	jsr L500C
-LF657:	pla
-	sta r2L
-	pla
-	sta r3L
+LF657:	PopB r2L
+	PopB r3L
 	sta LF69A
 	lda #$00
 	sta $885C
 	sta $885B
 	lda $8856
 	beq LF694
-	cmp #$06
-	bcc LF67C
+	cmp #6
+	bcc @1
 	lda #>DBGFilesArrowsIcons
 	sta r5H
 	lda #<DBGFilesArrowsIcons
 	sta r5L
 	jsr DBIconsHelp2
-LF67C:	lda #$00
+@1:	lda #$00
 	jsr LF7A3
 	jsr FetchRAM
 	lda #$F6
