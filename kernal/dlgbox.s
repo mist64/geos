@@ -863,14 +863,14 @@ DBDoGETFILES:
 	ror
 	lsr
 	lsr
-.if wheels
+.if wheels ; ???
 	addv 4
 .else
 	addv 7
 .endif
 	pha
 	lda r2H
-.if wheels
+.if wheels ; ???
 	subv 12
 .else
 	subv 14
@@ -889,7 +889,6 @@ DBDoGETFILES:
 	PopW r10
 	PopB r7L
 .if wheels
-LF43B = $F43B
 LF69A = $F69A
 L500C = $500C
 L9FF1 = $9FF1
@@ -909,7 +908,7 @@ L9FF1 = $9FF1
 	ldy #r10
 	jsr CopyString
 LF640:	lda #$45
-	jsr L9D80
+	jsr L9D80 ; far call
 	jsr L500C
 	jsr L9D83 ; REU swap, preserving r registers and x, y
 	PopW r10
@@ -927,11 +926,11 @@ LF657:	pla
 	beq LF694
 	cmp #$06
 	bcc LF67C
-	lda #$F6
+	lda #>DBGFilesArrowsIcons
 	sta r5H
-	lda #$98
+	lda #<DBGFilesArrowsIcons
 	sta r5L
-	jsr LF43B
+	jsr DBIconsHelp2
 LF67C:	lda #$00
 	jsr LF7A3
 	jsr FetchRAM
