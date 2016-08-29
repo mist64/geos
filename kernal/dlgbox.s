@@ -921,19 +921,14 @@ LF657:	PopB r2L
 	sta DBGFileSelected
 	sta DBGFTableIndex
 	lda $8856
-	beq LF694
+	beq @2
 	cmp #6
 	bcc @1
 	LoadW r5, DBGFilesArrowsIcons
 	jsr DBIconsHelp2
-@1:	lda #$00
+@1:	lda #0
 	jsr LF7A3
 	jsr FetchRAM
-	LoadW otherPressVec, DBGFPressVector
-	jsr DBGFilesHelp5
-	jsr DBGFilesHelp2
-LF694:	PopB r1L
-	rts
 .else
 	LoadB r7H, 15
 	LoadW r6, fileTrScTab
@@ -949,16 +944,18 @@ LF694:	PopB r1L
 	bcc @1
 	LoadW r5, DBGFilesArrowsIcons
 	jsr DBIconsHelp2
-@1:	lda #>DBGFPressVector
-	sta otherPressVec+1
-	lda #<DBGFPressVector
-	sta otherPressVec
+@1:
+.endif
+	LoadW otherPressVec, DBGFPressVector
+.if !wheels
 	jsr DBGFilesHelp1
+.endif
 	jsr DBGFilesHelp5
 	jsr DBGFilesHelp2
 @2:	PopB r1L
 	rts
 
+.if !wheels
 DBGFilesHelp1:
 	PushB DBGFilesFound
 @1:	pla
