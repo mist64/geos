@@ -893,60 +893,57 @@ LF43B = $F43B
 LF69A = $F69A
 L500C = $500C
 L9FF1 = $9FF1
-        lda     L9FF1                           ; F61C AD F1 9F                 ...
-        cmp     #5                            ; F61F C9 05                    ..
-        beq     LF654                           ; F621 F0 31                    .1
-        lda     r10L                             ; F623 A5 16                    ..
-        pha                                     ; F625 48                       H
-        sta     r5L                             ; F626 85 0C                    ..
-        lda     r10H                             ; F628 A5 17                    ..
-        pha                                     ; F62A 48                       H
-        sta     r5H                             ; F62B 85 0D                    ..
-        ora     r5L                             ; F62D 05 0C                    ..
-        beq     LF640                           ; F62F F0 0F                    ..
-        lda     #>KbdDBncTab                            ; F631 A9 87                    ..
-        sta     r10H                             ; F633 85 17                    ..
-        lda     #<KbdDBncTab                            ; F635 A9 EB                    ..
-        sta     r10L                             ; F637 85 16                    ..
-        ldx     #r5                            ; F639 A2 0C                    ..
-        ldy     #r10                            ; F63B A0 16                    ..
-        jsr     CopyString                      ; F63D 20 65 C2                  e.
-LF640:  lda     #$45                            ; F640 A9 45                    .E
-        jsr     L9D80                           ; F642 20 80 9D                  ..
-        jsr     L500C                           ; F645 20 0C 50                  .P
-        jsr     L9D83 ; REU swap, preserving r registers and x, y
-        PopW r10
-        bra     LF657                           ; F652 50 03                    P.
-LF654:  jsr     L500C                           ; F654 20 0C 50                  .P
-LF657:  pla                                     ; F657 68                       h
-        sta     r2L                             ; F658 85 06                    ..
-        pla                                     ; F65A 68                       h
-        sta     $08                             ; F65B 85 08                    ..
-        sta     LF69A                           ; F65D 8D 9A F6                 ...
-        lda     #$00                            ; F660 A9 00                    ..
-        sta     $885C                           ; F662 8D 5C 88                 .\.
-        sta     $885B                           ; F665 8D 5B 88                 .[.
-        lda     $8856                           ; F668 AD 56 88                 .V.
-        beq     LF694                           ; F66B F0 27                    .'
-        cmp     #$06                            ; F66D C9 06                    ..
-        bcc     LF67C                           ; F66F 90 0B                    ..
-        lda     #$F6                            ; F671 A9 F6                    ..
-        sta     r5H                             ; F673 85 0D                    ..
-        lda     #$98                            ; F675 A9 98                    ..
-        sta     r5L                             ; F677 85 0C                    ..
-        jsr     LF43B                           ; F679 20 3B F4                  ;.
-LF67C:  lda     #$00                            ; F67C A9 00                    ..
-        jsr     LF7A3                           ; F67E 20 A3 F7                  ..
-        jsr     FetchRAM                        ; F681 20 CB C2                  ..
-        lda     #$F6                            ; F684 A9 F6                    ..
-        sta     $84AA                           ; F686 8D AA 84                 ...
-        lda     #$D2                            ; F689 A9 D2                    ..
-        sta     $84A9                           ; F68B 8D A9 84                 ...
-        jsr     LF80F                           ; F68E 20 0F F8                  ..
-        jsr     LF7D9                           ; F691 20 D9 F7                  ..
-LF694:  pla                                     ; F694 68                       h
-        sta     $04                             ; F695 85 04                    ..
-        rts                                     ; F697 60                       `
+	lda L9FF1
+	cmp #5
+	beq LF654
+	lda r10L
+	pha
+	sta r5L
+	lda r10H
+	pha
+	sta r5H
+	ora r5L
+	beq LF640
+	LoadW r10, KbdDBncTab
+	ldx #r5
+	ldy #r10
+	jsr CopyString
+LF640:	lda #$45
+	jsr L9D80
+	jsr L500C
+	jsr L9D83 ; REU swap, preserving r registers and x, y
+	PopW r10
+	bra LF657
+LF654:	jsr L500C
+LF657:	pla
+	sta r2L
+	pla
+	sta r3L
+	sta LF69A
+	lda #$00
+	sta $885C
+	sta $885B
+	lda $8856
+	beq LF694
+	cmp #$06
+	bcc LF67C
+	lda #$F6
+	sta r5H
+	lda #$98
+	sta r5L
+	jsr LF43B
+LF67C:	lda #$00
+	jsr LF7A3
+	jsr FetchRAM
+	lda #$F6
+	sta $84AA
+	lda #$D2
+	sta $84A9
+	jsr DBGFilesHelp5
+	jsr LF7D9
+LF694:	pla
+	sta $04
+	rts
 .else
 	LoadB r7H, 15
 	LoadW r6, fileTrScTab
@@ -1151,7 +1148,7 @@ LF791:  sta     $885C                           ; F791 8D 5C 88                 
         jsr     LF7A3                           ; F797 20 A3 F7                  ..
         jsr     FetchRAM                        ; F79A 20 CB C2                  ..
         jsr     LF7D9                           ; F79D 20 D9 F7                  ..
-        jmp     LF80F                           ; F7A0 4C 0F F8                 L..
+        jmp     DBGFilesHelp5                           ; F7A0 4C 0F F8                 L..
 
 ; ----------------------------------------------------------------------------
 LF7A3:  sta     $04                             ; F7A3 85 04                    ..
@@ -1178,7 +1175,7 @@ LF7A3:  sta     $04                             ; F7A3 85 04                    
         sta     r0H                             ; F7D0 85 03                    ..
         lda     #$00                            ; F7D2 A9 00                    ..
         sta     r0L                           ; F7D4 85 02                    ..
-        sta     $08                             ; F7D6 85 08                    ..
+        sta     r3L                             ; F7D6 85 08                    ..
         rts                                     ; F7D8 60                       `
 .else
 	jsr DBGFilesHelp6
@@ -1272,66 +1269,65 @@ DBGFilesHelp4:
 
 DBGFilesHelp5:
 .if wheels
-LF883 = $F883
-LF80F:  lda     rightMargin+1                             ; F80F A5 38                    .8
-        pha                                     ; F811 48                       H
-        lda     rightMargin                             ; F812 A5 37                    .7
-        pha                                     ; F814 48                       H
-        lda     currentMode                             ; F815 A5 2E                    ..
-        pha                                     ; F817 48                       H
-        lda     #$40                            ; F818 A9 40                    .@
-        sta     currentMode                             ; F81A 85 2E                    ..
-        lda     #$00                            ; F81C A9 00                    ..
-        jsr     DBGFilesHelp8                           ; F81E 20 B8 F8                  ..
-        clc                                     ; F821 18                       .
-        lda     r2H                             ; F822 A5 07                    ..
-        adc     #$38                            ; F824 69 38                    i8
-        sta     r2H                             ; F826 85 07                    ..
-        lda     #0                            ; F828 A9 00                    ..
-        jsr     SetPattern                      ; F82A 20 39 C1                  9.
-        jsr     Rectangle                       ; F82D 20 24 C1                  $.
-        lda     #$00                            ; F830 A9 00                    ..
-        lda     $0B                             ; F832 A5 0B                    ..
-        sta     rightMargin+1                             ; F834 85 38                    .8
-        lda     $0A                             ; F836 A5 0A                    ..
-        sta     rightMargin                             ; F838 85 37                    .7
-        lda     #$00                            ; F83A A9 00                    ..
-        sta     $20                             ; F83C 85 20                    . 
-        ldx     #$1E                            ; F83E A2 1E                    ..
-        jsr     LF7F4                           ; F840 20 F4 F7                  ..
-LF843:  lda     $20                             ; F843 A5 20                    . 
-        jsr     DBGFilesHelp8                           ; F845 20 B8 F8                  ..
-        lda     $09                             ; F848 A5 09                    ..
-        sta     $19                             ; F84A 85 19                    ..
-        lda     $08                             ; F84C A5 08                    ..
-        sta     $18                             ; F84E 85 18                    ..
-        lda     r2L                             ; F850 A5 06                    ..
-        clc                                     ; F852 18                       .
-        adc     #$09                            ; F853 69 09                    i.
-        sta     $05                             ; F855 85 05                    ..
-        lda     $1F                             ; F857 A5 1F                    ..
-        sta     r0H                             ; F859 85 03                    ..
-        lda     $1E                           ; F85B A5 1E                    ..
-        sta     r0L                           ; F85D 85 02                    ..
-        jsr     PutString                       ; F85F 20 48 C1                  H.
-        clc                                     ; F862 18                       .
-        lda     L9FF2                           ; F863 AD F2 9F                 ...
-        adc     $1E                           ; F866 65 1E                    e.
-        sta     $1E                           ; F868 85 1E                    ..
-        bcc     LF86E                           ; F86A 90 02                    ..
-        inc     $1F                             ; F86C E6 1F                    ..
-LF86E:  inc     $20                             ; F86E E6 20                    . 
-        lda     $20                             ; F870 A5 20                    . 
-        cmp     #$05                            ; F872 C9 05                    ..
-        bne     LF843                           ; F874 D0 CD                    ..
-        jsr     LF883                           ; F876 20 83 F8                  ..
-        pla                                     ; F879 68                       h
-        sta     currentMode                             ; F87A 85 2E                    ..
-        pla                                     ; F87C 68                       h
-        sta     rightMargin                             ; F87D 85 37                    .7
-        pla                                     ; F87F 68                       h
-        sta     rightMargin+1                             ; F880 85 38                    .8
-        rts                                     ; F882 60                       `
+	lda     rightMargin+1
+        pha
+        lda     rightMargin
+        pha
+        lda     currentMode
+        pha
+        lda     #$40
+        sta     currentMode
+        lda     #$00
+        jsr     DBGFilesHelp8
+        clc
+        lda     r2H
+        adc     #$38
+        sta     r2H
+        lda     #0
+        jsr     SetPattern
+        jsr     Rectangle
+        lda     #$00
+        lda     r4H
+        sta     rightMargin+1
+        lda     r4L
+        sta     rightMargin
+        lda     #0
+        sta     r15L
+        ldx     #30
+        jsr     LF7F4
+LF843:  lda     r15L
+        jsr     DBGFilesHelp8
+        lda     r3H
+        sta     $19
+        lda     r3L
+        sta     $18
+        lda     r2L
+        clc
+        adc     #$09
+        sta     $05
+        lda     $1F
+        sta     r0H
+        lda     $1E
+        sta     r0L
+        jsr     PutString
+        clc
+        lda     L9FF2
+        adc     $1E
+        sta     $1E
+        bcc     LF86E
+        inc     $1F
+LF86E:  inc     r15L
+        lda     r15L
+        cmp     #$05
+        bne     LF843
+        jsr     DBGFilesHelp6
+        pla
+        sta     currentMode
+        pla
+        sta     rightMargin
+        pla
+        sta     rightMargin+1
+        rts
 .else
 	PushW rightMargin
 	lda #0
@@ -1419,9 +1415,9 @@ DBGFilesHelp8:
 .endif
 
 .if wheels
-LF8DE:  inc     $08                             ; F8DE E6 08                    ..
+LF8DE:  inc     r3L                             ; F8DE E6 08                    ..
         bne     LF8E4                           ; F8E0 D0 02                    ..
-        inc     $09                             ; F8E2 E6 09                    ..
+        inc     r3H                             ; F8E2 E6 09                    ..
 LF8E4:  rts                                     ; F8E4 60                       `
 .endif
 
