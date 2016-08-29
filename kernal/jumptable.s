@@ -400,7 +400,7 @@ SmallPutChar:
 FollowChain:
 	jmp _FollowChain
 GetFile:
-	jmp $9E53;xxx_GetFile
+	jmp _GetFile
 FindFile:
 	jmp _FindFile
 CRC:

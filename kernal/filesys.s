@@ -2079,7 +2079,9 @@ L9E44:  lda     #$4B                            ; 9E44 A9 4B                    
         brk                                     ; 9E52 00                       .
 
 ; GetFile
-L9E53:  lda     $88C4                           ; 9E53 AD C4 88                 ...
+.global _GetFile
+_GetFile:
+	lda     $88C4                           ; 9E53 AD C4 88                 ...
         and     #$10                            ; 9E56 29 10                    ).
         beq     L9EA7                           ; 9E58 F0 4D                    .M
         lda     $0F                             ; 9E5A A5 0F                    ..
