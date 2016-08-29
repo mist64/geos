@@ -135,8 +135,8 @@ DlgBoxProcH:
 	.hibytes DlgBoxProc3
 
 DlgBoxPrep:
-.if wheels ; ???
-LF28E:  sec
+.if wheels_size ; Dialog_2 was folded into this
+	sec
 	jsr DlgBoxPrep2
 	LoadB sysDBData, NULL
 	jmp InitGEOEnv
@@ -324,7 +324,7 @@ _RstrFrmDialogue:
 	PushW dlgBoxCallerPC
 	rts
 
-.if !wheels
+.if !wheels_size ; folded into DlgBoxPrep
 Dialog_2:
 ASSERT_NOT_BELOW_IO
 	PushB CPU_DATA
