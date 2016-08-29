@@ -138,13 +138,15 @@ DlgBoxPrep:
 .if wheels ; ???
 LF383 = $F383
 LF28E:  sec
-	jsr LF29B
-	lda #0 ; undefined
-	sta sysDBData
+	jsr DlgBoxPrep2
+	LoadB sysDBData, NULL
 	jmp InitGEOEnv
 
-LF29A:	clc
-LF29B:	PushB CPU_DATA
+.global DlgBoxPrep1
+DlgBoxPrep1:
+	clc
+DlgBoxPrep2:
+	PushB CPU_DATA
 ASSERT_NOT_BELOW_IO
 	LoadB CPU_DATA, IO_IN
 	LoadW r4, dlgBoxRamBuf

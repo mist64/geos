@@ -400,7 +400,7 @@ LDAcc1:
 
 _RstrAppl:
 .if wheels
-LF29A = $F29A
+.import DlgBoxPrep1
 LD81D:  lda     LD81A                           ; D81D AD 1A D8                 ...
         sta     $03                             ; D820 85 03                    ..
         sta     $05                             ; D822 85 05                    ..
@@ -414,7 +414,7 @@ LD81D:  lda     LD81A                           ; D81D AD 1A D8                 
         lda     #$00                            ; D835 A9 00                    ..
         sta     $08                             ; D837 85 08                    ..
         jsr     FetchRAM                        ; D839 20 CB C2                  ..
-        jsr     LF29A                           ; D83C 20 9A F2                  ..
+        jsr     DlgBoxPrep1
         ldx     $8852                           ; D83F AE 52 88                 .R.
         txs                                     ; D842 9A                       .
         ldx     #$00                            ; D843 A2 00                    ..
