@@ -574,59 +574,42 @@ LC020 = $C020
 LC01E = $C01E
 LC01B = $C01B
 LC58C = $C58C
-TempHideMouse:
-	rts
-	nop
-	nop
-SetMousePicture:
-	rts
-	nop
-	nop
-SetNewMode:
-	rts
-	nop
-	nop
-NormalizeX:
-	rts
-	nop
-	nop
-MoveBData:
-	rts
-	nop
-	nop
-SwapBData:
-	rts
-	nop
-	nop
-VerifyBData:
-	rts
-	nop
-	nop
-DoBOp:
-	rts
-	nop
-	nop
-AccessCache:
-	rts
-	nop
-	nop
-HideOnlyMouse:
-	rts
-	nop
-	nop
-SetColorMode:
-	rts
-	nop
-	nop
-ColorCard:
-	rts
-	nop
-	nop
-ColorRectangle:
-	rts
-	nop
-	nop
 
+.macro UNIMPLEMENTED
+	rts
+	nop
+	nop
+.endmacro
+
+; C128 syscalls
+TempHideMouse:
+	UNIMPLEMENTED
+SetMousePicture:
+	UNIMPLEMENTED
+SetNewMode:
+	UNIMPLEMENTED
+NormalizeX:
+	UNIMPLEMENTED
+MoveBData:
+	UNIMPLEMENTED
+SwapBData:
+	UNIMPLEMENTED
+VerifyBData:
+	UNIMPLEMENTED
+DoBOp:
+	UNIMPLEMENTED
+AccessCache:
+	UNIMPLEMENTED
+HideOnlyMouse:
+	UNIMPLEMENTED
+SetColorMode:
+	UNIMPLEMENTED
+ColorCard:
+	UNIMPLEMENTED
+ColorRectangle:
+	UNIMPLEMENTED
+
+; new Wheels syscalls
 LC2FE:
 	jmp LC58C
 LC301:
