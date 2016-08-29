@@ -1388,7 +1388,7 @@ DBGFilesHelp8:
 .endif
 @1:	ldx #r4
 .if wheels_size_and_speed
-        jmp     Ddec                            ; F8DB 4C 75 C1                 Lu.
+	jmp Ddec
 .else
 	jsr Ddec
 	rts
