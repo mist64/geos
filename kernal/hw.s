@@ -35,63 +35,61 @@ VIC_IniTbl:
 	.byte $38, $0f, $01, $00, $00, $00
 VIC_IniTbl_end:
 
+_DoFirstInitIO:
+	LoadB CPU_DDR, $2f
+ASSERT_NOT_BELOW_IO
+	LoadB CPU_DATA, KRNL_IO_IN
+.if wheels
+        sta     LD07B                           ; C430 8D 7B D0                 .{.
+.endif
+	ldx #7
+	lda #$ff
+@1:	sta $887B,x;xxxKbdDMltTab,x
+	sta $8870,x;xxxKbdDBncTab,x
+	dex
+	bpl @1
+	stx KbdQueFlag
+	stx cia1base+2
+	inx
+	stx KbdQueHead
+	stx KbdQueTail
+	stx cia1base+3
+	stx cia1base+15
+	stx cia2base+15
+	lda PALNTSCFLAG
+	beq @2
+	ldx #$80
+@2:	stx cia1base+14
+	stx cia2base+14
+	lda cia2base
+	and #%00110000
+	ora #%00000101
+	sta cia2base
+	LoadB cia2base+2, $3f
+	LoadB cia1base+13, $7f
+	sta cia2base+13
+	LoadW r0, VIC_IniTbl
+	ldy #VIC_IniTbl_end - VIC_IniTbl
+	jsr SetVICRegs
+.if wheels
+	ldx #32
+@3:	lda KERNALVecTab-1,x
+	sta irqvec-1,x
+	dex
+	bne @3
+.else
+	jsr Init_KRNLVec
+.endif
+	LoadB CPU_DATA, RAM_64K
+ASSERT_NOT_BELOW_IO
+	jmp ResetMseRegion
+
 .if wheels
 LEC75 = $ec75
 LFD2F = $fd2f
 LC5E7 = $c5e7
 LD07B = $D07B
 L003D = $003D
-
-; ----------------------------------------------------------------------------
-.global _DoFirstInitIO ; XXX belongs in hw.s
-_DoFirstInitIO:
-	lda     #$2F                            ; C428 A9 2F                    ./
-        sta     $00                             ; C42A 85 00                    ..
-        lda     #$36                            ; C42C A9 36                    .6
-        sta     $01                             ; C42E 85 01                    ..
-        sta     LD07B                           ; C430 8D 7B D0                 .{.
-        ldx     #$07                            ; C433 A2 07                    ..
-        lda     #$FF                            ; C435 A9 FF                    ..
-LC437:  sta     $887B,x                         ; C437 9D 7B 88                 .{.
-        sta     $8870,x                         ; C43A 9D 70 88                 .p.
-        dex                                     ; C43D CA                       .
-        bpl     LC437                           ; C43E 10 F7                    ..
-        stx     $87D9                           ; C440 8E D9 87                 ...
-        stx     $DC02                           ; C443 8E 02 DC                 ...
-        inx                                     ; C446 E8                       .
-        stx     $87D7                           ; C447 8E D7 87                 ...
-        stx     $87D8                           ; C44A 8E D8 87                 ...
-        stx     $DC03                           ; C44D 8E 03 DC                 ...
-        stx     $DC0F                           ; C450 8E 0F DC                 ...
-        stx     $DD0F                           ; C453 8E 0F DD                 ...
-        lda     $02A6                           ; C456 AD A6 02                 ...
-        beq     LC45D                           ; C459 F0 02                    ..
-        ldx     #$80                            ; C45B A2 80                    ..
-LC45D:  stx     $DC0E                           ; C45D 8E 0E DC                 ...
-        stx     $DD0E                           ; C460 8E 0E DD                 ...
-        lda     $DD00                           ; C463 AD 00 DD                 ...
-        and     #$30                            ; C466 29 30                    )0
-        ora     #$05                            ; C468 09 05                    ..
-        sta     $DD00                           ; C46A 8D 00 DD                 ...
-        lda     #$3F                            ; C46D A9 3F                    .?
-        sta     $DD02                           ; C46F 8D 02 DD                 ...
-        lda     #$7F                            ; C472 A9 7F                    ..
-        sta     $DC0D                           ; C474 8D 0D DC                 ...
-        sta     $DD0D                           ; C477 8D 0D DD                 ...
-        lda     #$C4                            ; C47A A9 C4                    ..
-        sta     $03                             ; C47C 85 03                    ..
-        lda     #$0A                            ; C47E A9 0A                    ..
-        sta     r0L                           ; C480 85 02                    ..
-        ldy     #$1E                            ; C482 A0 1E                    ..
-        jsr     LC5E7                           ; C484 20 E7 C5                  ..
-        ldx     #$20                            ; C487 A2 20                    . 
-LC489:  lda     LFD2F,x                         ; C489 BD 2F FD                 ./.
-        sta     $0313,x                         ; C48C 9D 13 03                 ...
-        dex                                     ; C48F CA                       .
-        bne     LC489                           ; C490 D0 F7                    ..
-        lda     #$30                            ; C492 A9 30                    .0
-        sta     $01                             ; C494 85 01                    ..
-        jmp     LEC75                           ; C496 4C 75 EC                 Lu.
 
 ; ----------------------------------------------------------------------------
 LC499:  lda     #$02                            ; C499 A9 02                    ..
@@ -161,46 +159,6 @@ LC4F5:  lda     (L003D),y                       ; C4F5 B1 3D                    
         php                                     ; C500 08                       .
         lda     #$06                            ; C501 A9 06                    ..
         jmp     DoInlineReturn                  ; C503 4C A4 C2                 L..
-
-.else
-
-_DoFirstInitIO:
-	LoadB CPU_DDR, $2f
-ASSERT_NOT_BELOW_IO
-	LoadB CPU_DATA, KRNL_IO_IN
-	ldx #7
-	lda #$ff
-@1:	sta KbdDMltTab,x
-	sta KbdDBncTab,x
-	dex
-	bpl @1
-	stx KbdQueFlag
-	stx cia1base+2
-	inx
-	stx KbdQueHead
-	stx KbdQueTail
-	stx cia1base+3
-	stx cia1base+15
-	stx cia2base+15
-	lda PALNTSCFLAG
-	beq @2
-	ldx #$80
-@2:	stx cia1base+14
-	stx cia2base+14
-	lda cia2base
-	and #%00110000
-	ora #%00000101
-	sta cia2base
-	LoadB cia2base+2, $3f
-	LoadB cia1base+13, $7f
-	sta cia2base+13
-	LoadW r0, VIC_IniTbl
-	ldy #VIC_IniTbl_end - VIC_IniTbl
-	jsr SetVICRegs
-	jsr Init_KRNLVec
-	LoadB CPU_DATA, RAM_64K
-ASSERT_NOT_BELOW_IO
-	jmp ResetMseRegion
 .endif
 
 .segment "hw2"

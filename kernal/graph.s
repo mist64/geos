@@ -931,7 +931,7 @@ _SetPattern:
 	asl
 	asl
 .if wheels
-	.assert <PatternTab = 0, error, "PatternTab must be page-aligned!"
+;	.assert <PatternTab = 0, error, "PatternTab must be page-aligned!"
 .else
 	adc #<PatternTab
 .endif
