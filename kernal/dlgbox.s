@@ -1273,35 +1273,34 @@ DBGFilesHelp4:
 DBGFilesHelp5:
 .if wheels
 LF883 = $F883
-LF8B8 = $F8B8
-LF80F:  lda     $38                             ; F80F A5 38                    .8
+LF80F:  lda     rightMargin+1                             ; F80F A5 38                    .8
         pha                                     ; F811 48                       H
-        lda     $37                             ; F812 A5 37                    .7
+        lda     rightMargin                             ; F812 A5 37                    .7
         pha                                     ; F814 48                       H
-        lda     $2E                             ; F815 A5 2E                    ..
+        lda     currentMode                             ; F815 A5 2E                    ..
         pha                                     ; F817 48                       H
         lda     #$40                            ; F818 A9 40                    .@
-        sta     $2E                             ; F81A 85 2E                    ..
+        sta     currentMode                             ; F81A 85 2E                    ..
         lda     #$00                            ; F81C A9 00                    ..
-        jsr     LF8B8                           ; F81E 20 B8 F8                  ..
+        jsr     DBGFilesHelp8                           ; F81E 20 B8 F8                  ..
         clc                                     ; F821 18                       .
         lda     r2H                             ; F822 A5 07                    ..
         adc     #$38                            ; F824 69 38                    i8
         sta     r2H                             ; F826 85 07                    ..
-        lda     #$00                            ; F828 A9 00                    ..
+        lda     #0                            ; F828 A9 00                    ..
         jsr     SetPattern                      ; F82A 20 39 C1                  9.
         jsr     Rectangle                       ; F82D 20 24 C1                  $.
         lda     #$00                            ; F830 A9 00                    ..
         lda     $0B                             ; F832 A5 0B                    ..
-        sta     $38                             ; F834 85 38                    .8
+        sta     rightMargin+1                             ; F834 85 38                    .8
         lda     $0A                             ; F836 A5 0A                    ..
-        sta     $37                             ; F838 85 37                    .7
+        sta     rightMargin                             ; F838 85 37                    .7
         lda     #$00                            ; F83A A9 00                    ..
         sta     $20                             ; F83C 85 20                    . 
         ldx     #$1E                            ; F83E A2 1E                    ..
         jsr     LF7F4                           ; F840 20 F4 F7                  ..
 LF843:  lda     $20                             ; F843 A5 20                    . 
-        jsr     LF8B8                           ; F845 20 B8 F8                  ..
+        jsr     DBGFilesHelp8                           ; F845 20 B8 F8                  ..
         lda     $09                             ; F848 A5 09                    ..
         sta     $19                             ; F84A 85 19                    ..
         lda     $08                             ; F84C A5 08                    ..
@@ -1327,11 +1326,11 @@ LF86E:  inc     $20                             ; F86E E6 20                    
         bne     LF843                           ; F874 D0 CD                    ..
         jsr     LF883                           ; F876 20 83 F8                  ..
         pla                                     ; F879 68                       h
-        sta     $2E                             ; F87A 85 2E                    ..
+        sta     currentMode                             ; F87A 85 2E                    ..
         pla                                     ; F87C 68                       h
-        sta     $37                             ; F87D 85 37                    .7
+        sta     rightMargin                             ; F87D 85 37                    .7
         pla                                     ; F87F 68                       h
-        sta     $38                             ; F880 85 38                    .8
+        sta     rightMargin+1                             ; F880 85 38                    .8
         rts                                     ; F882 60                       `
 .else
 	PushW rightMargin
