@@ -1203,12 +1203,11 @@ LF7A3:  sta     r1L
 
 DBGFilesHelp2:
 .if wheels
-LF7F4 = $F7F4
 	lda     $885C                           ; F7D9 AD 5C 88                 .\.
         sec                                     ; F7DC 38                       8
         sbc     $885B                           ; F7DD ED 5B 88                 .[.
         ldx     #$02                            ; F7E0 A2 02                    ..
-        jsr     LF7F4                           ; F7E2 20 F4 F7                  ..
+        jsr     DBGFilesHelp4                           ; F7E2 20 F4 F7                  ..
         lda     $885A                           ; F7E5 AD 5A 88                 .Z.
         sta     r5H                             ; F7E8 85 0D                    ..
         lda     $8859                           ; F7EA AD 59 88                 .Y.
@@ -1259,15 +1258,11 @@ DBGFilesHelp4:
 
 DBGFilesHelp5:
 .if wheels
-	lda     rightMargin+1
-        pha
-        lda     rightMargin
-        pha
-        lda     currentMode
-        pha
-        lda     #$40
-        sta     currentMode
-        lda     #$00
+	PushB rightMargin+1
+        PushB rightMargin
+        PushB currentMode
+        LoadB currentMode, $40
+        lda     #0
         jsr     DBGFilesHelp8
         clc
         lda     r2H
@@ -1284,7 +1279,7 @@ DBGFilesHelp5:
         lda     #0
         sta     r15L
         ldx     #30
-        jsr     LF7F4
+        jsr     DBGFilesHelp4
 LF843:  lda     r15L
         jsr     DBGFilesHelp8
         lda     r3H
