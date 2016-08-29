@@ -722,16 +722,16 @@ DBDoGRPHSTR:
 
 DBDoUSR_ROUT:
 	ldy r1L
-.if wheels
-        iny                                     ; F536 C8                       .
-        iny                                     ; F537 C8                       .
-        tya                                     ; F538 98                       .
-        pha                                     ; F539 48                       H
-        dey                                     ; F53A 88                       .
-        lda     (DBoxDesc),y                         ; F53B B1 43                    .C
-        tax                                     ; F53D AA                       .
-        dey                                     ; F53E 88                       .
-        lda     (DBoxDesc),y                         ; F53F B1 43                    .C
+.if wheels_size_and_speed ; 13->11 bytes, 25->23 cycles
+	iny
+	iny
+	tya
+	pha
+	dey
+	lda (DBoxDesc),y
+	tax
+	dey
+	lda (DBoxDesc),y
 .else
 	lda (DBoxDesc),y
 	sta r0L
