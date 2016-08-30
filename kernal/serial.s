@@ -51,22 +51,25 @@ LFB71 = $FB71
 .include "jumptab.inc"
 .include "c64.inc"
 ; ----------------------------------------------------------------------------
-LCF55:
+.global RunScreensaver
+RunScreensaver:
 	ldx CPU_DATA
 ASSERT_NOT_BELOW_IO
 	LoadB CPU_DATA, IO_IN
 	PushB extclr
-	LoadB extclr, 0
+	LoadB extclr, 0 ; black border
 	PushB grcntrl1
 	and #$6F
-	sta grcntrl1
+	sta grcntrl1 ; turn off screen
 	stx CPU_DATA
+ASSERT_NOT_BELOW_IO
 	cli
-@1:	lda saverStatus
+@1:	lda saverStatus ; wait for IRQ to disable screen saver
 	lsr
 	bcs @1
 	sei
 	ldx CPU_DATA
+ASSERT_NOT_BELOW_IO
 	LoadB CPU_DATA, IO_IN
 	PopB grcntrl1
 	PopB extclr
