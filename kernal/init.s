@@ -92,6 +92,7 @@ L9FDC = $9fdc
 L9FDD = $9fdd
 .import DrawCheckeredScreen
 .import i_ColorRectangle
+.global _FirstInit2
 LBF3F = $bf3f
 	MoveB L9FDA, screencolors
 	ldy #62
@@ -104,11 +105,12 @@ LBF3F = $bf3f
 	sta mousePicData-1,x
 	dex
 	bne @3
-LC53D:  jsr     DrawCheckeredScreen
-        lda     $851E                           ; C540 AD 1E 85                 ...
-        sta     LC54D                           ; C543 8D 4D C5                 .M.
-        jsr     i_ColorRectangle                           ; C546 20 16 C3                  ..
-        .byte 0, 0                 ; origin
+_FirstInit2:
+	jsr DrawCheckeredScreen
+	lda screencolors
+	sta LC54D
+	jsr i_ColorRectangle
+	.byte 0, 0                 ; origin
 	.byte 40, 25               ; size
 LC54D:  .byte (DKGREY << 4)+LTGREY ; value
 ; ----------------------------------------------------------------------------
