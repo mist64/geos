@@ -52,7 +52,7 @@ version:
 .endif
 nationality:
 .if wheels
-	.word 1 ; xxx this means GERMAN
+	.word 1 ; GERMAN
 .else
 	.word 0
 .endif

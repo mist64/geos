@@ -187,11 +187,11 @@ KbdScanHelp1:
 
 .if wheels
 KbdTab1:
-	.byte $BB,$BB,$BB,$BB,$BB,$BB,$BB,$BA,$E0
+	.byte $bb, $bb, $bb, $bb, $bb, $bb, $bb, $ba, $e0
 KbdTab2:
-	.byte $3C,$3C,$3C,$3C,$3C,$3C,$3C,$3E,$5E
+	.byte $3c, $3c, $3c, $3c, $3c, $3c, $3c, $3e, $5e
 KbdTestTab:
-	.byte $FE,$FD,$FB,$F7,$EF,$DF,$BF,$7F
+	.byte $fe, $fd, $fb, $f7, $ef, $df, $bf, $7f
 KbdDecodeTab1:
 	.byte   $1D,$0D,$1E,$0E,$01,$03,$05,$11 ; FDE5 1D 0D 1E 0E 01 03 05 11  ........
         .byte   $33,$77,$61,$34,$79,$73,$65,$1F ; FDED 33 77 61 34 79 73 65 1F  3wa4yse.
