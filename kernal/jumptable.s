@@ -605,12 +605,12 @@ SetColorMode:
 	UNIMPLEMENTED
 ColorCard:
 	UNIMPLEMENTED
-C128_ColorRectangle: ; XXX the real name is ColorRectangle
+ColorRectangle:
 	UNIMPLEMENTED
 
 ; new Wheels syscalls
-.global InitGEOS, i_ColorRectangle
-.import _InitGEOS, _SuperCPUEnableGEOSOptimizations, _SuperCPUDisableGEOSOptimizations, _SuperCPUWriteRegister, _FindFTypes, _WheelsSyscall6, _IRQHandler, _ColorRectangle, _i_ColorRectangle, _WheelsSyscall10, _WheelsSyscall11, _WheelsSyscall12
+.global InitGEOS, i_ColorizeRectangle
+.import _InitGEOS, _SuperCPUEnableGEOSOptimizations, _SuperCPUDisableGEOSOptimizations, _SuperCPUWriteRegister, _FindFTypes, _WheelsSyscall6, _IRQHandler, _ColorizeRectangle, _i_ColorizeRectangle, _WheelsSyscall10, _WheelsSyscall11, _WheelsSyscall12
 InitGEOS: ; $C2FE
 	jmp _InitGEOS
 SuperCPUEnableGEOSOptimizations: ; $C301
@@ -625,10 +625,10 @@ WheelsSyscall6: ; $C30D
 	jmp _WheelsSyscall6
 IRQHandler: ; $C310
 	jmp _IRQHandler
-ColorRectangle: ; $C313
-	jmp _ColorRectangle
-i_ColorRectangle: ; $C316
-	jmp _i_ColorRectangle
+ColorizeRectangle: ; $C313
+	jmp _ColorizeRectangle
+i_ColorizeRectangle: ; $C316
+	jmp _i_ColorizeRectangle
 WheelsSyscall10: ; $C319
 	jmp _WheelsSyscall10
 WheelsSyscall11: ; $C31C

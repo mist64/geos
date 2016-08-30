@@ -100,8 +100,8 @@ LC4A1:	.byte 0, 199
 	rts
 
 ; ----------------------------------------------------------------------------
-.global _ColorRectangle
-_ColorRectangle:
+.global _ColorizeRectangle
+_ColorizeRectangle:
 ; r1L   x
 ; r1H   y
 ; r2L   width
@@ -141,9 +141,9 @@ _ColorRectangle:
 	rts
 
 ; ----------------------------------------------------------------------------
-.global _i_ColorRectangle
-; inline version of ColorRectangle
-_i_ColorRectangle:
+.global _i_ColorizeRectangle
+; inline version of ColorizeRectangle
+_i_ColorizeRectangle:
 	PopW returnAddress
 	ldy #5
 	lda (returnAddress),y
@@ -155,7 +155,7 @@ _i_ColorRectangle:
 	dey
 	dex
 	bpl @1
-	jsr _ColorRectangle
+	jsr _ColorizeRectangle
 	php
 	lda #6
 	jmp DoInlineReturn
