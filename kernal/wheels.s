@@ -260,7 +260,7 @@ _i_ColorRectangle:
 
 .if wheels
 
-.segment "wheels_lokernal"
+.segment "wheels_lokernal1"
 
 .global GetNewKernal
 .global RstrKernal
@@ -559,11 +559,7 @@ dbFieldWidth:
 fftIndicator:
 	.byte   $00                             ; 9FF3 00                       .
 
-; XXX this is segment "serial1"
-.global SerialNumber
-SerialNumber:
-  .word $DF96                             ; 9FF4 96                       .
-
+.segment "wheels_lokernal2"
 
 IntRoutine:
 	.byte $68, $8D, $00, $FF

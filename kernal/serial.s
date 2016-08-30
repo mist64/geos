@@ -14,8 +14,10 @@
 
 .segment "serial1"
 
-.if !wheels
 SerialNumber:
+.if wheels
+	.word $DF96
+.else
 	; This matches the serial in the cbmfiles.com GEOS64.D64
 	.word $58B5
 
@@ -31,9 +33,6 @@ SerialNumber:
 ; Return:    r0  serial nbr of your kernal
 ; Destroyed: a
 ;---------------------------------------------------------------
-.if wheels ; XXX
-.import SerialNumber
-.endif
 _GetSerialNumber:
 	lda SerialNumber
 	sta r0L
