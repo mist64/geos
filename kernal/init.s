@@ -38,19 +38,18 @@
 
 .global InitGEOEnv
 .if wheels
-.global _InitGEOS
-.import InitGEOS
+.global _InitMachine
 .else
-.global InitGEOS
+.global InitMachine
 .endif
 .global _FirstInit
 
 .segment "init1"
 
 .if wheels
-_InitGEOS:
+_InitMachine:
 .else
-InitGEOS:
+InitMachine:
 .endif
 	jsr _DoFirstInitIO
 InitGEOEnv:
@@ -74,7 +73,7 @@ InitGEOEnv:
 _FirstInit:
 	sei
 	cld
-	jsr InitGEOS
+	jsr InitMachine
 	LoadW EnterDeskTop+1, _EnterDeskTop
 	LoadB maxMouseSpeed, iniMaxMouseSpeed
 .if wheels

@@ -574,10 +574,10 @@ ColorRectangle:
 	UNIMPLEMENTED
 
 ; new Wheels syscalls
-.global InitGEOS, _i_ColorRectangle
-.import _InitGEOS, _GEOSOptimize, _DEFOptimize, _DoOptimize, _FindFTypes, _ReadXYPot, _IRQHandler, _ColorRectangle_W, _i_ColorRectangle, _SaveColorRectangle, _RestoreColorRectangle, _ConvToCards
-InitGEOS: ; $C2FE
-	jmp _InitGEOS
+.global InitMachine, _i_ColorRectangle
+.import _InitMachine, _GEOSOptimize, _DEFOptimize, _DoOptimize, _FindFTypes, _ReadXYPot, _IRQHandler, _ColorRectangle_W, _i_ColorRectangle, _SaveColorRectangle, _RestoreColorRectangle, _ConvToCards
+InitMachine: ; $C2FE
+	jmp _InitMachine
 GEOSOptimize: ; $C301
 	jmp _GEOSOptimize
 DEFOptimize: ; $C304

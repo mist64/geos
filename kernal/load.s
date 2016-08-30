@@ -27,7 +27,9 @@
 
 ; init.s
 .import InitGEOEnv
-.import InitGEOS
+.if !wheels ; it's a syscall on Wheels
+.import InitMachine
+.endif
 
 ; main.s
 .import _MNLP
@@ -64,7 +66,7 @@ L5003 = $5003
 	stx firstBoot
 	txs
 	jsr ClrScr
-	jsr InitGEOS
+	jsr InitMachine
 .if (useRamExp)
 	MoveW DeskTopStart, r0
 	MoveB DeskTopLgh, r2H
@@ -128,13 +130,13 @@ LCA26 = $ca26
 LC064 = $c064
 LE62A = $e62a
 LC54E = $c54e
-.import InitGEOS
+;.import InitMachine
 	sei                                     ; C331 78                       x
         cld                                     ; C332 D8                       .
         ldx     #$FF                            ; C333 A2 FF                    ..
         txs                                     ; C335 9A                       .
         jsr     UNK_5                           ; C336 20 23 C6                  #.
-        jsr     InitGEOS                           ; C339 20 FE C2                  ..
+        jsr     InitMachine                           ; C339 20 FE C2                  ..
         jsr     LC54E                           ; C33C 20 4E C5                  N.
         jsr     LE62A                           ; C33F 20 2A E6                  *.
         jsr     UNK_4                           ; C342 20 FA C5                  ..
@@ -152,7 +154,7 @@ LC34F:  jmp     (L0002)                         ; C34F 6C 02 00                 
 	ldx #$FF
 	txs
 	jsr UNK_5
-	jsr InitGEOS
+	jsr InitMachine
 	jsr _UseSystemFont
 	jsr UNK_4
 	ldx r7H
