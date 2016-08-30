@@ -92,7 +92,7 @@ L9FDC = $9fdc
 L9FDD = $9fdd
 .import DrawCheckeredScreen
 LBF3F = $bf3f
-.import WheelsSyscall9
+.import i_ColorRectangle
 	MoveB L9FDA, screencolors
         ldy     #$3E                            ; C528 A0 3E                    .>
 LC52A:  lda     #$00                            ; C52A A9 00                    ..
@@ -107,7 +107,7 @@ LC534:  lda     LBF3F,x                         ; C534 BD 3F BF                 
 LC53D:  jsr     DrawCheckeredScreen
         lda     $851E                           ; C540 AD 1E 85                 ...
         sta     LC54D                           ; C543 8D 4D C5                 .M.
-        jsr     WheelsSyscall9                           ; C546 20 16 C3                  ..
+        jsr     i_ColorRectangle                           ; C546 20 16 C3                  ..
         .byte   $00,$00,$28,$19                 ; C549 00 00 28 19              ..(.
 LC54D:  .byte   $BF                             ; C54D BF                       .
 ; ----------------------------------------------------------------------------

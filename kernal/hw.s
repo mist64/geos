@@ -141,9 +141,9 @@ _ColorRectangle:
 	rts
 
 ; ----------------------------------------------------------------------------
-.global _WheelsSyscall9
+.global _i_ColorRectangle
 ; inline version of ColorRectangle
-_WheelsSyscall9:
+_i_ColorRectangle:
 	PopB returnAddress
         PopB returnAddress+1
         ldy #5                            ; C4EC A0 05                    ..
