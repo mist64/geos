@@ -185,15 +185,38 @@ KbdScanHelp1:
 
 .segment "keyboard2"
 
-.if !wheels
+.if wheels
+KbdTab1:
+	.byte $BB,$BB,$BB,$BB,$BB,$BB,$BB,$BA,$E0
+KbdTab2:
+	.byte $3C,$3C,$3C,$3C,$3C,$3C,$3C,$3E,$5E
+KbdTestTab:
+	.byte $FE,$FD,$FB,$F7,$EF,$DF,$BF,$7F
+KbdDecodeTab1:
+	.byte   $1D,$0D,$1E,$0E,$01,$03,$05,$11 ; FDE5 1D 0D 1E 0E 01 03 05 11  ........
+        .byte   $33,$77,$61,$34,$79,$73,$65,$1F ; FDED 33 77 61 34 79 73 65 1F  3wa4yse.
+        .byte   $35,$72,$64,$36,$63,$66,$74,$78 ; FDF5 35 72 64 36 63 66 74 78  5rd6cftx
+        .byte   $37,$7A,$67,$38,$62,$68,$75,$76 ; FDFD 37 7A 67 38 62 68 75 76  7zg8bhuv
+        .byte   $39,$69,$6A,$30,$6D,$6B,$6F,$6E ; FE05 39 69 6A 30 6D 6B 6F 6E  9ij0mkon
+        .byte   $7E,$70,$6C,$27,$2E,$7C,$7D,$2C ; FE0D 7E 70 6C 27 2E 7C 7D 2C  ~pl'.|},
+        .byte   $1F,$2B,$7B,$12,$1F,$23,$1F,$2D ; FE15 1F 2B 7B 12 1F 23 1F 2D  .+{..#.-
+        .byte   $31,$14,$1F,$32,$20,$1F,$71,$16 ; FE1D 31 14 1F 32 20 1F 71 16  1..2 .q.
+KbdDecodeTab2:
+	.byte   $1C,$0D,$08,$0F,$02,$04,$06,$10 ; FE25 1C 0D 08 0F 02 04 06 10  ........
+        .byte   $40,$57,$41,$24,$59,$53,$45,$1F ; FE2D 40 57 41 24 59 53 45 1F  @WA$YSE.
+        .byte   $25,$52,$44,$26,$43,$46,$54,$58 ; FE35 25 52 44 26 43 46 54 58  %RD&CFTX
+        .byte   $2F,$5A,$47,$28,$42,$48,$55,$56 ; FE3D 2F 5A 47 28 42 48 55 56  /ZG(BHUV
+        .byte   $29,$49,$4A,$3D,$4D,$4B,$4F,$4E ; FE45 29 49 4A 3D 4D 4B 4F 4E  )IJ=MKON
+        .byte   $3F,$50,$4C,$60,$3A,$5C,$5D,$3B ; FE4D 3F 50 4C 60 3A 5C 5D 3B  ?PL`:\];
+        .byte   $5E,$2A,$5B,$13,$1F,$27,$1F,$5F ; FE55 5E 2A 5B 13 1F 27 1F 5F  ^*[..'._
+        .byte   $21,$14,$1F,$22,$20,$1F,$51,$17 ; FE5D 21 14 1F 22 20 1F 51 17  !.." .Q.
+.else
 KbdTab1:
 	.byte $db, $dd, $de, $ad, $af, $aa, $c0, $ba, $bb
 KbdTab2:
 	.byte $7b, $7d, $7c, $5f, $5c, $7e, $60, $7b, $7d
-
 KbdTestTab:
 	.byte $fe, $fd, $fb, $f7, $ef, $df, $bf, $7f
-
 KbdDecodeTab1:
 	.byte KEY_DELETE, CR, KEY_RIGHT, KEY_F7, KEY_F1, KEY_F3, KEY_F5, KEY_DOWN
 	.byte "3", "w", "a", "4", "z", "s", "e", KEY_INVALID

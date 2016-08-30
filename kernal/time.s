@@ -19,7 +19,7 @@
 ; called by main loop
 .global _DoUpdateTime
 
-.segment "time"
+.segment "time1"
 
 _DoUpdateTime:
 	sei
@@ -159,7 +159,7 @@ ASSERT_NOT_BELOW_IO
 	dec alarmSetFlag
 @3:	rts
 
-.if wheels
+.if 0
 LFDCB:  .byte   $BB,$BB,$BB,$BB,$BB,$BB,$BB,$BA ; FDCB BB BB BB BB BB BB BB BA  ........
         .byte   $E0                             ; FDD3 E0                       .
 LFDD4:  .byte   $3C,$3C,$3C,$3C,$3C,$3C,$3C,$3E ; FDD4 3C 3C 3C 3C 3C 3C 3C 3E  <<<<<<<>
@@ -182,6 +182,8 @@ LFE25:  .byte   $1C,$0D,$08,$0F,$02,$04,$06,$10 ; FE25 1C 0D 08 0F 02 04 06 10  
         .byte   $5E,$2A,$5B,$13,$1F,$27,$1F,$5F ; FE55 5E 2A 5B 13 1F 27 1F 5F  ^*[..'._
         .byte   $21,$14,$1F,$22,$20,$1F,$51,$17 ; FE5D 21 14 1F 22 20 1F 51 17  !.." .Q.
 .endif
+
+.segment "time2"
 
 pingTab:
 	.byte $00, $10, $00, $08, $40, $08, $00, $00
