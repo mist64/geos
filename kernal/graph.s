@@ -751,7 +751,7 @@ _i_GraphicsString:
 ;---------------------------------------------------------------
 _GraphicsString:
 	jsr Getr0AndInc
-.if wheels
+.if wheels_size_and_speed
 	tay
 	beq @1
 .else
@@ -759,8 +759,8 @@ _GraphicsString:
 	tay
 .endif
 	dey
-	lda GStrTL,Y
-	ldx GStrTH,Y
+	lda GStrTL,y
+	ldx GStrTH,y
 	jsr CallRoutine
 	bra _GraphicsString
 @1:	rts
@@ -776,7 +776,7 @@ _DoMovePenTo:
 	sta GraphPenY
 	stx GraphPenXL
 	sty GraphPenXH
-.if wheels
+.if wheels_size
 _DoNothing:
 .endif
 	rts
@@ -796,7 +796,7 @@ _DoRectangleTo:
 	jsr GrStSetCoords
 	jmp _Rectangle
 
-.if !wheels
+.if !wheels_size
 _DoNothing:
 	rts
 .endif
@@ -812,7 +812,7 @@ _DoESC_PutString:
 	sta r11H
 	jsr Getr0AndInc
 	sta r1H
-.if wheels
+.if wheels_size_and_speed
 	jmp _PutString
 .else
 	jsr _PutString
@@ -826,7 +826,7 @@ _DoFrame_RecTo:
 
 _DoPenXYDelta:
 	ldx #1
-.if wheels
+.if wheels_size
 	.byte $2c
 .else
 	bne DPXD0
@@ -904,7 +904,7 @@ _SetPattern:
 	asl
 	asl
 .if wheels
-;	.assert <PatternTab = 0, error, "PatternTab must be page-aligned!"
+	.assert <PatternTab = 0, error, "PatternTab must be page-aligned!"
 .else
 	adc #<PatternTab
 .endif
@@ -930,7 +930,7 @@ Getr0AndInc:
 	bne @1
 	inc r0H
 @1:
-.if !wheels
+.if !wheels_size_and_speed ; only one caller needed this
 	cmp #0
 .endif
 	rts
