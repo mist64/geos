@@ -85,13 +85,13 @@ _FirstInit:
 .endif
 
 .if wheels
-L9FDA = $9FDA
-L9FDC = $9fdc
-L9FDD = $9fdd
+sysScrnColors = $9FDA
+sysMob0Clr = $9fdc
+sysExtClr = $9fdd
 .import DrawCheckeredScreen
 .import _i_ColorRectangle
 .global _FirstInit2
-	MoveB L9FDA, screencolors
+	MoveB sysScrnColors, screencolors
 	ldy #62
 @2:	lda #0
 	sta mousePicData,Y
@@ -114,9 +114,9 @@ LC54D:  .byte (DKGREY << 4)+LTGREY ; value
 LC54E:  ldx     CPU_DATA
 ASSERT_NOT_BELOW_IO
 	LoadB CPU_DATA, IO_IN
-        lda     L9FDD                           ; C554 AD DD 9F                 ...
+        lda     sysExtClr                           ; C554 AD DD 9F                 ...
         sta     extclr
-        lda     L9FDC                           ; C55A AD DC 9F                 ...
+        lda     sysMob0Clr                           ; C55A AD DC 9F                 ...
         sta     $D027                           ; C55D 8D 27 D0                 .'.
         sta     $D028                           ; C560 8D 28 D0                 .(.
         stx     CPU_DATA

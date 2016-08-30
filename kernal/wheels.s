@@ -9,6 +9,8 @@
 .include "kernal.inc"
 .include "c64.inc"
 
+.global modKeyCopy
+
 .segment "wheels1"
 
 .if wheels
@@ -49,7 +51,7 @@ _ReadXYPot:
 	lda cia1base+14
 	and #$FE
 	sta cia1base+14 ; stop timer A
-	MoveW L9FEE, cia1base+4 ; timer A value
+	MoveW relayDelay, cia1base+4 ; timer A value
 	lda #$7F
 	sta cia1base+13 ; disabe all interrupts
 	lda cia1base+13 ; clear pending interrupts
@@ -540,10 +542,13 @@ L9F09:  rts                                     ; 9F09 60                       
 L9FDA:  .byte   $BF,$E0                         ; 9FDA BF E0                    ..
 L9FDC:  .byte   $06                             ; 9FDC 06                       .
 L9FDD:  .byte   $00,$00,$00,$67,$63,$41,$61,$C3 ; 9FDD 00 00 00 67 63 41 61 C3  ...gcAa.
+; backSysPattern
         .byte   $52,$95,$2D,$52,$8A,$6D,$94,$A2 ; 9FE5 52 95 2D 52 8A 6D 94 A2  R.-R.m..
         .byte   $01                             ; 9FED 01                       .
-L9FEE:  .word $0800
-L9FF0:  .byte   $00                             ; 9FF0 00                       .
+relayDelay:
+	.word $0800
+modKeyCopy:
+	.byte   $00                             ; 9FF0 00                       .
 L9FF1:  .byte   $00                             ; 9FF1 00                       .
 L9FF2:  .byte   $00                             ; 9FF2 00                       .
 L9FF3:  .byte   $00                             ; 9FF3 00                       .

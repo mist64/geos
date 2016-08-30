@@ -282,7 +282,6 @@ L9033 = $9033
 LD795 = $D795
 L9030 = $9030
 L9FF3 = $9FF3
-L9FEE = $9FEE
 	bit     L9FF3                           ; D5D3 2C F3 9F                 ,..
         bmi     LD5FD                           ; D5D6 30 25                    0%
         lda     $0F                             ; D5D8 A5 0F                    ..

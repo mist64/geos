@@ -312,9 +312,9 @@ KbdScanHelp5:
 	smbf 5, r1H
 @4:
 .if wheels
-L9FF0 = $9FF0
+.import modKeyCopy
 	lda     $05                             ; FCA3 A5 05                    ..
-        sta     L9FF0                           ; FCA5 8D F0 9F                 ...
+        sta     modKeyCopy                           ; FCA5 8D F0 9F                 ...
 .endif
 	rts
 
