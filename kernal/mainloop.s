@@ -127,32 +127,30 @@ _WheelsSyscall11:
 _WheelsSyscall10:
 	lda #$80
 	sta LC325
+; r1L: x
+; r1H: y
 	jsr GetColorMatrixOffset
-	lda r0H
-	sta r6H
-	lda r0L
-	sta r6L
+	MoveW r0, r6
 	ldx r2H
-LC3A3:	ldy #0
-LC3A5:	bit LC325
-	bpl LC3B1
+@1:	ldy #0
+@2:	bbrf 7, LC325, @3
 	lda (r5),y
 	sta (r6),y
-	bra LC3B5
-LC3B1:	lda (r6),y
+	bra @4
+@3:	lda (r6),y
 	sta (r5),y
-LC3B5:	iny
+@4:	iny
 	cpy r2L
-	bcc LC3A5
+	bcc @2
 	tya
 	clc
 	adc r6L
 	sta r6L
-	bcc LC3C4
+	bcc @5
 	inc r6H
-LC3C4:	jsr LC4DA
+@5:	jsr LC4DA
 	dex
-	bne LC3A3
+	bne @1
 	rts
 
         .byte 0, 0, 0, 0

@@ -125,6 +125,8 @@ _ColorizeRectangle:
 	rts
 
 GetColorMatrixOffset:
+; r1L   x
+; r1H   y
 	clc
 	lda r1L
 	adc #<COLOR_MATRIX
