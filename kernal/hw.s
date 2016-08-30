@@ -89,15 +89,15 @@ ASSERT_NOT_BELOW_IO
 LEC75 = $ec75
 LFD2F = $fd2f
 LC5E7 = $c5e7
-LD07B = $D07B
 
-; ----------------------------------------------------------------------------
-LC499:  lda     #$02                            ; C499 A9 02                    ..
-        jsr     SetPattern                      ; C49B 20 39 C1                  9.
-        jsr     i_Rectangle                     ; C49E 20 9F C1                  ..
-LC4A1:  .byte   $00,$C7,$00,$00,$3F,$01         ; C4A1 00 C7 00 00 3F 01        ....?.
-; ----------------------------------------------------------------------------
-        rts                                     ; C4A7 60                       `
+.global DrawCheckeredScreen
+DrawCheckeredScreen:
+	lda #2
+	jsr SetPattern
+	jsr i_Rectangle
+LC4A1:	.byte 0, 199
+	.word 0, 319
+	rts
 
 ; ----------------------------------------------------------------------------
 .global _WheelsSyscall8

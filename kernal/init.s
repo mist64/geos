@@ -90,7 +90,7 @@ _FirstInit:
 L9FDA = $9FDA
 L9FDC = $9fdc
 L9FDD = $9fdd
-LC499 = $C499
+.import DrawCheckeredScreen
 LBF3F = $bf3f
 .import WheelsSyscall9
 	MoveB L9FDA, screencolors
@@ -104,7 +104,7 @@ LC534:  lda     LBF3F,x                         ; C534 BD 3F BF                 
         sta     $84C0,x                         ; C537 9D C0 84                 ...
         dex                                     ; C53A CA                       .
         bne     LC534                           ; C53B D0 F7                    ..
-LC53D:  jsr     LC499                           ; C53D 20 99 C4                  ..
+LC53D:  jsr     DrawCheckeredScreen
         lda     $851E                           ; C540 AD 1E 85                 ...
         sta     LC54D                           ; C543 8D 4D C5                 .M.
         jsr     WheelsSyscall9                           ; C546 20 16 C3                  ..
