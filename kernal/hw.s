@@ -105,12 +105,12 @@ _WheelsSyscall8:
 	php                                     ; C4A8 08                       .
         sei                                     ; C4A9 78                       x
         jsr     LC4C2                           ; C4AA 20 C2 C4                  ..
-        ldx     $07                             ; C4AD A6 07                    ..
+        ldx     r2H                             ; C4AD A6 07                    ..
 LC4AF:  ldy     #$00                            ; C4AF A0 00                    ..
         lda     r4H                             ; C4B1 A5 0B                    ..
-LC4B3:  sta     ($0C),y                         ; C4B3 91 0C                    ..
+LC4B3:  sta     (r5),y                         ; C4B3 91 0C                    ..
         iny                                     ; C4B5 C8                       .
-        cpy     $06                             ; C4B6 C4 06                    ..
+        cpy     r2L                             ; C4B6 C4 06                    ..
         bcc     LC4B3                           ; C4B8 90 F9                    ..
         jsr     LC4DA                           ; C4BA 20 DA C4                  ..
         dex                                     ; C4BD CA                       .
@@ -120,13 +120,13 @@ LC4B3:  sta     ($0C),y                         ; C4B3 91 0C                    
 
 ; ----------------------------------------------------------------------------
 LC4C2:  clc                                     ; C4C2 18                       .
-        lda     $04                             ; C4C3 A5 04                    ..
+        lda     r1L                             ; C4C3 A5 04                    ..
         adc     #$00                            ; C4C5 69 00                    i.
-        sta     $0C                             ; C4C7 85 0C                    ..
+        sta     r5L                             ; C4C7 85 0C                    ..
         lda     #$8C                            ; C4C9 A9 8C                    ..
         adc     #$00                            ; C4CB 69 00                    i.
-        sta     $0D                             ; C4CD 85 0D                    ..
-        ldx     $05                             ; C4CF A6 05                    ..
+        sta     r5H                             ; C4CD 85 0D                    ..
+        ldx     r1H                             ; C4CF A6 05                    ..
         beq     LC4D9                           ; C4D1 F0 06                    ..
 LC4D3:  jsr     LC4DA                           ; C4D3 20 DA C4                  ..
         dex                                     ; C4D6 CA                       .
@@ -136,10 +136,10 @@ LC4D9:  rts                                     ; C4D9 60                       
 ; ----------------------------------------------------------------------------
 LC4DA:  clc                                     ; C4DA 18                       .
         lda     #$28                            ; C4DB A9 28                    .(
-        adc     $0C                             ; C4DD 65 0C                    e.
-        sta     $0C                             ; C4DF 85 0C                    ..
+        adc     r5L                             ; C4DD 65 0C                    e.
+        sta     r5L                             ; C4DF 85 0C                    ..
         bcc     LC4E5                           ; C4E1 90 02                    ..
-        inc     $0D                             ; C4E3 E6 0D                    ..
+        inc     r5H                             ; C4E3 E6 0D                    ..
 LC4E5:  rts                                     ; C4E5 60                       `
 
 ; ----------------------------------------------------------------------------
@@ -154,13 +154,13 @@ _WheelsSyscall9:
         dey                                     ; C4F2 88                       .
         ldx     #$03                            ; C4F3 A2 03                    ..
 LC4F5:  lda     (returnAddress),y                       ; C4F5 B1 3D                    .=
-        sta     $04,x                           ; C4F7 95 04                    ..
+        sta     r1L,x                           ; C4F7 95 04                    ..
         dey                                     ; C4F9 88                       .
         dex                                     ; C4FA CA                       .
         bpl     LC4F5                           ; C4FB 10 F8                    ..
         jsr     _WheelsSyscall8                           ; C4FD 20 A8 C4                  ..
         php                                     ; C500 08                       .
-        lda     #$06                            ; C501 A9 06                    ..
+        lda     #6                            ; C501 A9 06                    ..
         jmp     DoInlineReturn                  ; C503 4C A4 C2                 L..
 .endif
 
