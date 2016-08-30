@@ -450,6 +450,7 @@ L9E96:  lda     $88C3                           ; 9E96 AD C3 88                 
 .import _GetFileOld
 L9EA7:	jmp _GetFileOld
 
+.segment "wheels_lokernal1a"
 ; ----------------------------------------------------------------------------
 .global _VerifyRAM, _StashRAM, _SwapRAM, _FetchRAM, _DoRAMOp
 _VerifyRAM:
@@ -506,6 +507,8 @@ L9ED2:  lda     $01,x                           ; 9ED2 B5 01                    
         .byte   $2C                             ; 9F06 2C                       ,
 L9F07:  ldx     #$25                            ; 9F07 A2 25                    .%
 L9F09:  rts                                     ; 9F09 60                       `
+
+.segment "wheels_lokernal1b"
 
 ; ----------------------------------------------------------------------------
         .byte   $00,$00,$00,$00,$00,$00,$00,$00 ; 9F0A 00 00 00 00 00 00 00 00  ........
