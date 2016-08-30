@@ -67,13 +67,12 @@ ASSERT_NOT_BELOW_IO
 @5:
 .if wheels
 LEBAC = $EBAC
-	lda     saverStatus                           ; FAC0 AD B4 88                 ...
-        lsr     a                               ; FAC3 4A                       J
-        bcc     @Y                           ; FAC4 90 09                    ..
-        jsr     LEBAC                           ; FAC6 20 AC EB                  ..
-        jsr     GetRandom                       ; FAC9 20 87 C1                  ..
-        clv                                     ; FACC B8                       .
-        bvc     @X                           ; FACD 50 12                    P.
+	lda saverStatus
+	lsr
+	bcc @Y
+	jsr LEBAC
+	jsr GetRandom
+	bra @X
 .endif
 @Y:	lda intTopVector
 	ldx intTopVector+1
