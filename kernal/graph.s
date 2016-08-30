@@ -132,8 +132,8 @@ _InvertLine:
 	ldy r3L
 	lda r3H
 	beq LC69F
-	inc $0D
-	inc $0F
+	inc r5H
+	inc r6H
 LC69F:	lda r3H
 	cmp r4H
 	bne LC6A9
@@ -147,25 +147,25 @@ LC6A9:	beq LC6E3
 	jsr LC70C
 	clv
 	bvc LC6BD
-LC6BB:	eor ($0C),y
+LC6BB:	eor (r5),y
 LC6BD:	bit LC325
 	bpl LC6C4
 	eor #$FF
 LC6C4:	sta ($0E),y
-	sta ($0C),y
+	sta (r5),y
 	tya
 	clc
 	adc #$08
 	tay
 	bcc LC6D3
-	inc $0D
-	inc $0F
+	inc r5H
+	inc r6H
 LC6D3:	dec r4L
 	beq LC6EA
 	lda r7L
 	bit LC325
 	bpl LC6BD
-	lda ($0C),y
+	lda (r5),y
 	clv
 	bvc LC6BD
 LC6E3:	lda $12
@@ -179,9 +179,9 @@ LC6EC:	bit LC325
 	jmp LC6FB
 
 LC6F7:	eor #$FF
-	eor ($0C),y
+	eor (r5),y
 LC6FB:	sta ($0E),y
-	sta ($0C),y
+	sta (r5),y
 LC6FF:	pla
 	sta r4L
 	pla
@@ -368,19 +368,19 @@ LC71E:  lda     #$38                            ; C71E A9 38                    
         sta     $2F                             ; C73A 85 2F                    ./
 LC73C:  clc                                     ; C73C 18                       .
         bcc     LC74F                           ; C73D 90 10                    ..
-        lda     $0C                             ; C73F A5 0C                    ..
+        lda     r5L                             ; C73F A5 0C                    ..
         ldy     $0E                             ; C741 A4 0E                    ..
         sta     $0E                             ; C743 85 0E                    ..
-        sty     $0C                             ; C745 84 0C                    ..
-        lda     $0D                             ; C747 A5 0D                    ..
-        ldy     $0F                             ; C749 A4 0F                    ..
-        sta     $0F                             ; C74B 85 0F                    ..
-        sty     $0D                             ; C74D 84 0D                    ..
+        sty     r5L                             ; C745 84 0C                    ..
+        lda     r5H                             ; C747 A5 0D                    ..
+        ldy     r6H                             ; C749 A4 0F                    ..
+        sta     r6H                             ; C74B 85 0F                    ..
+        sty     r5H                             ; C74D 84 0D                    ..
 LC74F:  ldy     r3L                             ; C74F A4 08                    ..
         lda     r3H                             ; C751 A5 09                    ..
         beq     LC759                           ; C753 F0 04                    ..
-        inc     $0D                             ; C755 E6 0D                    ..
-        inc     $0F                             ; C757 E6 0F                    ..
+        inc     r5H                             ; C755 E6 0D                    ..
+        inc     r6H                             ; C757 E6 0F                    ..
 LC759:  lda     r3H                             ; C759 A5 09                    ..
         cmp     r4H                             ; C75B C5 0B                    ..
         bne     LC763                           ; C75D D0 04                    ..
@@ -395,12 +395,12 @@ LC76D:  tya                                     ; C76D 98                       
         adc     #$08                            ; C76F 69 08                    i.
         tay                                     ; C771 A8                       .
         bcc     LC778                           ; C772 90 04                    ..
-        inc     $0D                             ; C774 E6 0D                    ..
-        inc     $0F                             ; C776 E6 0F                    ..
+        inc     r5H                             ; C774 E6 0D                    ..
+        inc     r6H                             ; C776 E6 0F                    ..
 LC778:  dec     r4L                             ; C778 C6 0A                    ..
         beq     LC78A                           ; C77A F0 0E                    ..
         lda     ($0E),y                         ; C77C B1 0E                    ..
-        sta     ($0C),y                         ; C77E 91 0C                    ..
+        sta     (r5),y                         ; C77E 91 0C                    ..
         clv                                     ; C780 B8                       .
         bvc     LC76D                           ; C781 50 EA                    P.
 LC783:  lda     $12                             ; C783 A5 12                    ..
@@ -413,13 +413,13 @@ LC78C:  jsr     LC792                           ; C78C 20 92 C7                 
 
 ; ----------------------------------------------------------------------------
 LC792:  sta     r7L                             ; C792 85 10                    ..
-        and     ($0C),y                         ; C794 31 0C                    1.
+        and     (r5),y                         ; C794 31 0C                    1.
         sta     r7H                             ; C796 85 11                    ..
         lda     r7L                             ; C798 A5 10                    ..
         eor     #$FF                            ; C79A 49 FF                    I.
         and     ($0E),y                         ; C79C 31 0E                    1.
         ora     r7H                             ; C79E 05 11                    ..
-        sta     ($0C),y                         ; C7A0 91 0C                    ..
+        sta     (r5),y                         ; C7A0 91 0C                    ..
         rts                                     ; C7A2 60                       `
 
 ; ----------------------------------------------------------------------------
