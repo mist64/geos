@@ -39,6 +39,7 @@
 .global InitGEOEnv
 .if wheels
 .global _InitGEOS
+.import InitGEOS
 .else
 .global InitGEOS
 .endif
@@ -51,8 +52,6 @@ _InitGEOS:
 .else
 InitGEOS:
 .endif
-
-InitGEOS:
 	jsr _DoFirstInitIO
 InitGEOEnv:
 	LoadW r0, InitRamTab
