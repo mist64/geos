@@ -47,7 +47,7 @@ GetSerialNumber2:
 .endif
 
 .if wheels
-LFB71 = $FB71
+.import KbdScanAll
 .include "jumptab.inc"
 .include "c64.inc"
 L88B8 = $88B8
@@ -79,47 +79,45 @@ ASSERT_NOT_BELOW_IO
 ASSERT_NOT_BELOW_IO
 	rts
 
-; ----------------------------------------------------------------------------
-LCF88:	lda saverStatus
+.global ScreenSaver1
+ScreenSaver1:
+	lda saverStatus
 	lsr
-	bcs LCF9A ; screen saver on
+	bcs @2 ; screen saver on
 	lda saverStatus
 	and #$30
-	bne LCF98 ; timer stopped
-	jsr LCFB2
-LCF98:	clc
+	bne @1 ; timer stopped
+	jsr @5
+@1:	clc
 	rts
-LCF9A:	jsr LCFB2
-	bcc LCFB0
+@2:	jsr @5
+	bcc @4
 	lda saverStatus
 	and #$7E
 	sta saverStatus
-LCFA7:	jsr LFB71
-	bne LCFA7
-	lda #$00
+@3:	jsr KbdScanAll
+	bne @3
+	lda #0
 	sta pressFlag
-LCFB0:	sec
+@4:	sec
 	rts
 
-; ----------------------------------------------------------------------------
-LCFB2:  lda     saverStatus
-        and     #$02
-        bne     LCFC0
-        lda     inputData
-        cmp     #$FF
-        bne     LCFC5
-LCFC0:  jsr     LFB71
-        beq     LCFD3
-LCFC5:  lda     L88B8
-        sta     L88B6
-        lda     saverCount
-        sta     saverTimer
-        sec
-        rts
-
-; ----------------------------------------------------------------------------
-LCFD3:  clc                                     ; CFD3 18                       .
-        rts                                     ; CFD4 60                       `
+@5:	lda saverStatus
+	and #$02
+	bne @6 ; ignore mouse
+	lda inputData
+	cmp #$FF
+	bne @7 ; mouse moved
+@6:	jsr KbdScanAll
+	beq @8
+@7:	lda L88B8
+	sta L88B6
+	lda saverCount
+	sta saverTimer
+	sec
+	rts
+@8:	clc
+	rts
 
 ; ----------------------------------------------------------------------------
         .byte   $00,$00,$00,$00                 ; CFD5 00 00 00 00              ....

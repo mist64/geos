@@ -35,8 +35,8 @@
 
 _DoKeyboardScan:
 .if wheels
-LCF88 = $CF88
-	jsr     LCF88                           ; FB05 20 88 CF                  ..
+.import ScreenSaver1
+	jsr     ScreenSaver1                           ; FB05 20 88 CF                  ..
 	bcs @5
 .endif
 	lda KbdQueFlag
@@ -89,7 +89,9 @@ LCF88 = $CF88
 @5:	rts
 
 .if wheels
-LFB71:  lda     #$00                            ; FB71 A9 00                    ..
+.global KbdScanAll
+KbdScanAll:
+	lda     #$00                            ; FB71 A9 00                    ..
         .byte   $2C                             ; FB73 2C                       ,
 .endif
 KbdScanRow:
