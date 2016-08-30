@@ -189,17 +189,13 @@ _WheelsSyscall6:
 	ror
 	ror
 	sta cia1base+0
-	lda cia1base+2
-	pha
+	PushB cia1base+2 ; DDR A
 	lda #$C0
 	sta cia1base+2
 	lda cia1base+14
 	and #$FE
-	sta cia1base+14
-	lda L9FEF
-	sta cia1base+5
-	lda L9FEE
-	sta cia1base+4
+	sta cia1base+14 ; stop timer
+	MoveW L9FEE, cia1base+4
 	lda #$7F
 	sta cia1base+13
 	lda cia1base+13
@@ -208,12 +204,11 @@ _WheelsSyscall6:
 	ora #$19
 	sta cia1base+14
 	lda #$01
-@1:	bit cia1base+13
+@1:	bit cia1base+13 ; wait for timer A underflow
 	beq @1
 	ldx sidbase+$19 ; mouse
 	ldy sidbase+$1A
-	pla
-	sta cia1base+2
+	PopB cia1base+2 ; DDR A
 	plp
 	rts
 
