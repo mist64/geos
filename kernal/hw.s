@@ -100,13 +100,18 @@ LC4A1:	.byte 0, 199
 	rts
 
 ; ----------------------------------------------------------------------------
-.global _WheelsSyscall8
-_WheelsSyscall8:
+.global _ColorRectangle
+_ColorRectangle:
+; r1H   x
+; r1L   y
+; r2L   width
+; r2H   height
+; r4H   value
 	php
 	sei
 	jsr @3
 	ldx r2H
-@1:	ldy #$00
+@1:	ldy #0
 	lda r4H
 @2:	sta (r5),y
 	iny
@@ -120,7 +125,7 @@ _WheelsSyscall8:
 
 @3:	clc
 	lda r1L
-	adc #0
+	adc #<COLOR_MATRIX
 	sta r5L
 	lda #>COLOR_MATRIX
 	adc #0
@@ -137,7 +142,7 @@ _WheelsSyscall8:
 
 ; ----------------------------------------------------------------------------
 .global _WheelsSyscall9
-; inline version of WheelsSyscall8
+; inline version of ColorRectangle
 _WheelsSyscall9:
 	PopB returnAddress
         PopB returnAddress+1
@@ -151,7 +156,7 @@ LC4F5:  lda     (returnAddress),y                       ; C4F5 B1 3D            
         dey                                     ; C4F9 88                       .
         dex                                     ; C4FA CA                       .
         bpl     LC4F5                           ; C4FB 10 F8                    ..
-        jsr     _WheelsSyscall8                           ; C4FD 20 A8 C4                  ..
+        jsr     _ColorRectangle                           ; C4FD 20 A8 C4                  ..
         php                                     ; C500 08                       .
         lda     #6                            ; C501 A9 06                    ..
         jmp     DoInlineReturn                  ; C503 4C A4 C2                 L..
