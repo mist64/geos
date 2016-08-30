@@ -109,27 +109,18 @@ PrepareXCoord:
 	sta r4L
 	rts
 
-;---------------------------------------------------------------
-; HorizontalLine                                          $C118
-;
-; Pass:      a    pattern byte
-;            r11L y position in scanlines (0-199)
-;            r3   x in pixel of left end (0-319)
-;            r4   x in pixel of right end (0-319)
-; Return:    r11L unchanged
-; Destroyed: a, x, y, r5 - r8, r11
-;---------------------------------------------------------------
-_HorizontalLine:
 .if wheels
 LC656 = $C656
 LC325 = $C325
 HLinEnd2 = $aaaa
 HLinEnd1 = $aaaa
 
-LC67C:  sta     $10                             ; C67C 85 10                    ..
+_HorizontalLine:
+	sta     $10                             ; C67C 85 10                    ..
         lda     #$00                            ; C67E A9 00                    ..
         .byte   $2C                             ; C680 2C                       ,
-LC681:  lda     #$80                            ; C681 A9 80                    ..
+_InvertLine:
+	lda     #$80                            ; C681 A9 80                    ..
         sta     LC325                           ; C683 8D 25 C3                 .%.
         lda     $09                             ; C686 A5 09                    ..
         pha                                     ; C688 48                       H
@@ -215,6 +206,17 @@ LC70C:  sta     $19                             ; C70C 85 19                    
         rts                                     ; C71A 60                       `
 
 .else
+;---------------------------------------------------------------
+; HorizontalLine                                          $C118
+;
+; Pass:      a    pattern byte
+;            r11L y position in scanlines (0-199)
+;            r3   x in pixel of left end (0-319)
+;            r4   x in pixel of right end (0-319)
+; Return:    r11L unchanged
+; Destroyed: a, x, y, r5 - r8, r11
+;---------------------------------------------------------------
+_HorizontalLine:
 	sta r7L
 	PushW r3
 	PushW r4
@@ -267,7 +269,7 @@ HLineHelp:
 	and r7L
 	ora r7H
 	rts
-.endif
+
 ;---------------------------------------------------------------
 ; InvertLine                                              $C11B
 ;
@@ -278,9 +280,6 @@ HLineHelp:
 ; Destroyed: a, x, y, r5 - r8
 ;---------------------------------------------------------------
 _InvertLine:
-.if wheels
-ImprintLine = $aaaa
-.else
 	PushW r3
 	PushW r4
 	jsr PrepareXCoord

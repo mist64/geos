@@ -242,7 +242,7 @@ UnFreezeProcess:
 HorizontalLine:
 	jmp _HorizontalLine
 InvertLine:
-	jmp $C681;xxx_InvertLine
+	jmp _InvertLine
 RecoverLine:
 	jmp _RecoverLine
 VerticalLine:
