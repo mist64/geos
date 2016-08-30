@@ -890,8 +890,8 @@ DBDoGETFILES:
 	PopB r7L
 .if wheels ; xxx
 L500C = $500C
-L9FF1 = $9FF1
-	lda L9FF1
+.import extKrnlIn
+	lda extKrnlIn
 	cmp #5
 	beq @B
 	lda r10L
@@ -1068,7 +1068,7 @@ DBGFPressVector:
 
 DBGFDoArrow:
 .if wheels_enhanced_list_scrolling
-L9FF2 = $9FF2
+.import dbFieldWidth
 	; which icon inside the top/bot/up/down image was the mouse on?
         lda     mouseXPos+1
         lsr
@@ -1144,12 +1144,12 @@ DBGFDoArrowFuncCommon:
 LF7A3:  sta     r1L
         lda     #5
         sta     r0L
-        lda     L9FF2
+        lda     dbFieldWidth
         sta     r2L
         ldx     #r2
         ldy     #r0
         jsr     BBMult
-        lda     L9FF2
+        lda     dbFieldWidth
         sta     r0L
         ldx     #r1L                            
         ldy     #$02
@@ -1230,7 +1230,7 @@ DBGFilesHelp3:
 DBGFilesHelp4:
 	sta r0L
 .if wheels
-	MoveB L9FF2, r1L
+	MoveB dbFieldWidth, r1L
 .else
 	LoadB r1L, 17
 .endif
@@ -1295,7 +1295,7 @@ LF843:	lda r15L
 	sta r0L
 	jsr PutString
 	clc
-	lda L9FF2
+	lda dbFieldWidth
 	adc r14L
 	sta r14L
 	bcc LF86E

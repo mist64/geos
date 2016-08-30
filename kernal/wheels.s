@@ -10,6 +10,9 @@
 .include "c64.inc"
 
 .global modKeyCopy
+.global dbFieldWidth
+.global extKrnlIn
+.global fftIndicator
 
 .segment "wheels1"
 
@@ -549,14 +552,17 @@ relayDelay:
 	.word $0800
 modKeyCopy:
 	.byte   $00                             ; 9FF0 00                       .
-L9FF1:  .byte   $00                             ; 9FF1 00                       .
-L9FF2:  .byte   $00                             ; 9FF2 00                       .
-L9FF3:  .byte   $00                             ; 9FF3 00                       .
+extKrnlIn:
+	.byte   $00                             ; 9FF1 00                       .
+dbFieldWidth:
+	.byte   $00                             ; 9FF2 00                       .
+fftIndicator:
+	.byte   $00                             ; 9FF3 00                       .
 
 ; XXX this is segment "serial1"
 .global SerialNumber
 SerialNumber:
-  .byte   $96, $DF                             ; 9FF4 96                       .
+  .word $DF96                             ; 9FF4 96                       .
 
 
 	.byte   $68,$8D,$00,$FF,$68,$A8,$68 ; 9FF5 DF 68 8D 00 FF 68 A8 68  .h...h.h

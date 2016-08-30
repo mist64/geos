@@ -281,8 +281,8 @@ _FindFTypes:
 L9033 = $9033
 LD795 = $D795
 L9030 = $9030
-L9FF3 = $9FF3
-	bit     L9FF3                           ; D5D3 2C F3 9F                 ,..
+.import fftIndicator
+	bit     fftIndicator                           ; D5D3 2C F3 9F                 ,..
         bmi     LD5FD                           ; D5D6 30 25                    0%
         lda     $0F                             ; D5D8 A5 0F                    ..
         sta     r1H                             ; D5DA 85 05                    ..
@@ -340,7 +340,7 @@ LD633:  lda     (r0L),y                       ; D633 B1 02                    ..
         bne     LD633                           ; D63E D0 F3                    ..
 LD640:  lda     #$00                            ; D640 A9 00                    ..
         sta     ($0E),y                         ; D642 91 0E                    ..
-        bit     L9FF3                           ; D644 2C F3 9F                 ,..
+        bit     fftIndicator                           ; D644 2C F3 9F                 ,..
         bmi     LD663                           ; D647 30 1A                    0.
         clc                                     ; D649 18                       .
         lda     #$11                            ; D64A A9 11                    ..
