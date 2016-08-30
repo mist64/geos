@@ -94,12 +94,12 @@ L9FDD = $9fdd
 .import i_ColorRectangle
 LBF3F = $bf3f
 	MoveB L9FDA, screencolors
-        ldy     #$3E                            ; C528 A0 3E                    .>
-LC52A:  lda     #$00                            ; C52A A9 00                    ..
-        sta     $84C1,y                         ; C52C 99 C1 84                 ...
-        dey                                     ; C52F 88                       .
-        bpl     LC52A                           ; C530 10 F8                    ..
-        ldx     #$18                            ; C532 A2 18                    ..
+	ldy #62
+@2:	lda #0
+	sta mousePicData,Y
+	dey
+	bpl @2
+	ldx #24
 @3:	lda InitMsePic-1,x
 	sta mousePicData-1,x
 	dex
@@ -108,8 +108,9 @@ LC53D:  jsr     DrawCheckeredScreen
         lda     $851E                           ; C540 AD 1E 85                 ...
         sta     LC54D                           ; C543 8D 4D C5                 .M.
         jsr     i_ColorRectangle                           ; C546 20 16 C3                  ..
-        .byte   $00,$00,$28,$19                 ; C549 00 00 28 19              ..(.
-LC54D:  .byte   $BF                             ; C54D BF                       .
+        .byte 0, 0                 ; origin
+	.byte 40, 25               ; size
+LC54D:  .byte (DKGREY << 4)+LTGREY ; value
 ; ----------------------------------------------------------------------------
 LC54E:  ldx     CPU_DATA
 ASSERT_NOT_BELOW_IO

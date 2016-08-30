@@ -102,8 +102,8 @@ LC4A1:	.byte 0, 199
 ; ----------------------------------------------------------------------------
 .global _ColorRectangle
 _ColorRectangle:
-; r1H   x
-; r1L   y
+; r1L   x
+; r1H   y
 ; r2L   width
 ; r2H   height
 ; r4H   value
