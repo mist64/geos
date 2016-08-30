@@ -331,67 +331,67 @@ _RecoverLine:
 .if wheels
 
 LC71B:  lda     #$18
-        .byte   $2C                             
-LC71E:  lda     #$38                            
-        sta     LC73C                           
-        lda     r3H                             
-        pha                                     
-        lda     r3L                             
-        pha                                     
-        lda     r4H                             
-        pha                                     
-        lda     r4L                             
-        pha                                     
-        lda     $2F                             
-        pha                                     
-        ora     #$C0                            
-        sta     $2F                             
-        jsr     PrepareXCoord                   
-        pla                                     
-        sta     $2F                             
-LC73C:  clc                                     
-        bcc     LC74F                           
-        lda     r5L                             
-        ldy     r6L                             
-        sta     r6L                             
-        sty     r5L                             
-        lda     r5H                             
-        ldy     r6H                             
-        sta     r6H                             
-        sty     r5H                             
-LC74F:  ldy     r3L                             
-        lda     r3H                             
-        beq     LC759                           
-        inc     r5H                             
-        inc     r6H                             
-LC759:  lda     r3H                             
-        cmp     r4H                             
-        bne     LC763                           
-        lda     r3L                             
-        cmp     r4L                             
-LC763:  beq     LC783                           
-        jsr     LC7A3                           
-        lda     $12                             
-        jsr     LC792                           
-LC76D:  tya                                     
-        clc                                     
-        adc     #$08                            
-        tay                                     
-        bcc     LC778                           
-        inc     r5H                             
-        inc     r6H                             
-LC778:  dec     r4L                             
-        beq     LC78A                           
-        lda     (r6),y                         
+        .byte   $2C
+LC71E:  lda     #$38
+        sta     LC73C
+        lda     r3H
+        pha
+        lda     r3L
+        pha
+        lda     r4H
+        pha
+        lda     r4L
+        pha
+        lda     $2F
+        pha
+        ora     #$C0
+        sta     $2F
+        jsr     PrepareXCoord
+        pla
+        sta     $2F
+LC73C:  clc
+        bcc     LC74F
+        lda     r5L
+        ldy     r6L
+        sta     r6L
+        sty     r5L
+        lda     r5H
+        ldy     r6H
+        sta     r6H
+        sty     r5H
+LC74F:  ldy     r3L
+        lda     r3H
+        beq     LC759
+        inc     r5H
+        inc     r6H
+LC759:  lda     r3H
+        cmp     r4H
+        bne     LC763
+        lda     r3L
+        cmp     r4L
+LC763:  beq     LC783
+        jsr     LC7A3
+        lda     $12
+        jsr     LC792
+LC76D:  tya
+        clc
+        adc     #$08
+        tay
+        bcc     LC778
+        inc     r5H
+        inc     r6H
+LC778:  dec     r4L
+        beq     LC78A
+        lda     (r6),y
         sta     (r5),y
-        clv                                     
-        bvc     LC76D                           
-LC783:  lda     $12                             
-        ora     $13                             
-        clv                                     
-        bvc     LC78C                           
-LC78A:  lda     $13                             
-LC78C:  jsr     LC792                           
+        clv
+        bvc     LC76D
+LC783:  lda     $12
+        ora     $13
+        clv
+        bvc     LC78C
+LC78A:  lda     $13
+LC78C:  jsr     LC792
         jmp     LineEnd
 
 ; ----------------------------------------------------------------------------
