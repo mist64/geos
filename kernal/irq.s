@@ -67,7 +67,7 @@ ASSERT_NOT_BELOW_IO
 @5:
 .if wheels
 LEBAC = $EBAC
-	lda     $88B4                           ; FAC0 AD B4 88                 ...
+	lda     saverStatus                           ; FAC0 AD B4 88                 ...
         lsr     a                               ; FAC3 4A                       J
         bcc     @Y                           ; FAC4 90 09                    ..
         jsr     LEBAC                           ; FAC6 20 AC EB                  ..

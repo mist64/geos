@@ -21,12 +21,27 @@ DBoxDesc        =       $43
 DBoxDescL       =       $43
 DBoxDescH       =       $44
 
+; Wheels internal vars
+
+; bit 7    = time out, run the screensaver.
+; bit 6    = saver blocked, don't run it yet.
+; bit 5    = stop the timer.
+; bit 4    = timer off. Screensaver will never run.
+; bits 2,3 = unused.
+; bit 1    = if set then ignore mouse movement.
+; bit 0    = screensaver is running.
+saverStatus     =       $88b4
+saverTimer      =       $88b5 ; time remaining before screensaver.
+saverCount      =       $88b7 ; user defined countdown to screensaver.
+saverBank       =       $88b9 ; bank in reu holding screensaver.
+vdcRamType      =       $88ba ; bit7 1=64K VDC ram, 0=16K ram.
+
 ; GEOS Kernal internal vars (not for use by apps)
 
 savedmoby2      =       $88bb ; ---
 scr80polar      =       $88bc ; ---
 scr80colors     =       $88bd ; ---
-vdcClrMode      =       $88be ; ---
+vdcClrMode      =       $88be ; --- (used with 128 only)
 driveData       =       $88bf ; drv
 ramExpSize      =       $88c3 ; reu
 sysRAMFlg       =       $88c4 ; drv, filesys, memory, tobasic

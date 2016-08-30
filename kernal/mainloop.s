@@ -49,16 +49,16 @@ LCAFC = $CAFC
 LFA27 = $FA27
 LCF55 = $CF55
 
-	bit     $88B4                           ; C037 2C B4 88                 ,..
+	bit     saverStatus                           ; C037 2C B4 88                 ,..
         bpl     LC052                           ; C03A 10 16                    ..
         bvs     LC052                           ; C03C 70 14                    p.
         bit     $84B4                           ; C03E 2C B4 84                 ,..
         bvs     LC052                           ; C041 70 0F                    p.
         sei                                     ; C043 78                       x
-        lda     $88B4                           ; C044 AD B4 88                 ...
+        lda     saverStatus                           ; C044 AD B4 88                 ...
         and     #$7F                            ; C047 29 7F                    ).
         ora     #$01                            ; C049 09 01                    ..
-        sta     $88B4                           ; C04B 8D B4 88                 ...
+        sta     saverStatus                           ; C04B 8D B4 88                 ...
         jsr     LCF55                           ; C04E 20 55 CF                  U.
         cli                                     ; C051 58                       X
 LC052:  jsr     LFA27                           ; C052 20 27 FA                  '.
