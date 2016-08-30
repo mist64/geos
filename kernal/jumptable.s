@@ -230,15 +230,15 @@ InitProcesses:
 RestartProcess:
 	jmp _RestartProcess
 EnableProcess:
-	jmp $cbae;xxx_EnableProcess
+	jmp _EnableProcess
 BlockProcess:
-	jmp $cbab;xxx_BlockProcess
+	jmp _BlockProcess
 UnBlockProcess:
-	jmp $cbb5;xxx_UnBlockProcess
+	jmp _UnBlockProcess
 FreezeProcess:
-	jmp $cba8;xxx_FreezeProcess
+	jmp _FreezeProcess
 UnFreezeProcess:
-	jmp $cbb8;xxx_UnFreezeProcess
+	jmp _UnFreezeProcess
 HorizontalLine:
 	jmp _HorizontalLine
 InvertLine:

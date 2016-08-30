@@ -212,20 +212,25 @@ RProc0:
 	tax
 	rts
 
-.if wheels
-LCBA8:  lda     #$20                            ; CBA8 A9 20                    . 
-        .byte   $2C                             ; CBAA 2C                       ,
-LCBAB:  lda     #$40                            ; CBAB A9 40                    .@
-        .byte   $2C                             ; CBAD 2C                       ,
-LCBAE:  lda     #$80                            ; CBAE A9 80                    ..
-        ora     $8719,x                         ; CBB0 1D 19 87                 ...
-        bne     LCBBD                           ; CBB3 D0 08                    ..
-LCBB5:  lda     #$BF                            ; CBB5 A9 BF                    ..
-        .byte   $2C                             ; CBB7 2C                       ,
-LCBB8:  lda     #$DF                            ; CBB8 A9 DF                    ..
-        and     $8719,x                         ; CBBA 3D 19 87                 =..
-LCBBD:  sta     $8719,x                         ; CBBD 9D 19 87                 ...
-        rts                                     ; CBC0 60                       `
+.if wheels_size
+_FreezeProcess:
+	lda #$20
+	.byte $2c
+_BlockProcess:
+	lda #$40
+	.byte $2c
+_EnableProcess:
+	lda #$80
+	ora TimersCMDs,x
+	bne LCBBD
+_UnBlockProcess:
+	lda #$BF
+	.byte $2c
+_UnFreezeProcess:
+	lda #$DF
+	and TimersCMDs,x
+LCBBD:  sta TimersCMDs,x
+	rts
 .else
 ;---------------------------------------------------------------
 ; EnableProcess                                           $C109
