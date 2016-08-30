@@ -125,9 +125,7 @@ _ConvToCards:
 	inc r2L
 	rts
 
-; ----------------------------------------------------------------------------
-        brk                                     ; C0FE 00                       .
-        brk                                     ; C0FF 00                       .
+        .byte 0, 0 ; ??? unused
 .endif
 
 .segment "wheels3"
@@ -265,39 +263,32 @@ _i_ColorRectangle:
 
 .global GetNewKernal
 .global RstrKernal
+.global _ReadFile
+.global _WriteFile
 .global _ToBASIC
 
 GetNewKernal:
-	jmp     L9D9F ; far call                           ; 9D80 4C 9F 9D                 L..
+	jmp     L9D9F ; far call
 
-; ----------------------------------------------------------------------------
 ; REU swap, preserving r registers and x, y
 RstrKernal:
-	jmp     L9DED                           ; 9D83 4C ED 9D                 L..
+	jmp     L9DED
 
-; ----------------------------------------------------------------------------
-.global _ReadFile
 _ReadFile:
 	jmp     L9E3C                           ; 9D86 4C 3C 9E                 L<.
 
-; ----------------------------------------------------------------------------
-.global _WriteFile
 _WriteFile:
 	jmp     L9E3F                           ; 9D89 4C 3F 9E                 L?.
 
-; ----------------------------------------------------------------------------
-; ToBASIC
 _ToBASIC:
 	jmp     L9E44                           ; 9D8C 4C 44 9E                 LD.
 
-; ----------------------------------------------------------------------------
-L9D8F:  .byte   $4C                             ; 9D8F 4C                       L
-L9D90:  brk                                     ; 9D90 00                       .
-        .byte   $50,$00,$01,$BD,$03             ; 9D91 50 00 01 BD 03           P....
+L9D8F:  jmp $5000
+        .byte   $00,$01,$BD,$03             ; 9D91 50 00 01 BD 03           P....
 L9D96:  .byte   $42,$04,$F4,$50,$EA,$06,$01     ; 9D96 42 04 F4 50 EA 06 01     B..P...
 L9D9D:  .byte   $03                             ; 9D9D 03                       .
 L9D9E:  .byte   $00                             ; 9D9E 00                       .
-; ----------------------------------------------------------------------------
+
 L9D9F:  pha                                     ; 9D9F 48                       H
         stx     L9D9D                           ; 9DA0 8E 9D 9D                 ...
         sty     L9D9E                           ; 9DA3 8C 9E 9D                 ...
@@ -352,7 +343,7 @@ L9DED:  stx     L9D9D                           ; 9DED 8E 9D 9D                 
 ; ----------------------------------------------------------------------------
 ; set up args, inc
 L9E06:  ldx     #$05                            ; 9E06 A2 05                    ..
-L9E08:  lda     L9D90,x                         ; 9E08 BD 90 9D                 ...
+L9E08:  lda     L9D8F+1,x                         ; 9E08 BD 90 9D                 ...
         sta     r0L,x                         ; 9E0B 95 02                    ..
         dex                                     ; 9E0D CA                       .
         bpl     L9E08                           ; 9E0E 10 F8                    ..
