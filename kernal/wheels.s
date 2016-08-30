@@ -545,7 +545,7 @@ L9F09:  rts                                     ; 9F09 60                       
 L9FDA:  .byte   $BF,$E0                         ; 9FDA BF E0                    ..
 L9FDC:  .byte   $06                             ; 9FDC 06                       .
 L9FDD:  .byte   $00,$00,$00,$67,$63,$41,$61,$C3 ; 9FDD 00 00 00 67 63 41 61 C3  ...gcAa.
-; backSysPattern
+backSysPattern:
         .byte   $52,$95,$2D,$52,$8A,$6D,$94,$A2 ; 9FE5 52 95 2D 52 8A 6D 94 A2  R.-R.m..
         .byte   $01                             ; 9FED 01                       .
 relayDelay:
@@ -568,8 +568,7 @@ SerialNumber:
 IntRoutine:
 	.byte $68, $8D, $00, $FF
 IrqRoutine:
-	.byte $68, $A8, $68
-        .byte $AA, $68
+	.byte $68, $A8, $68, $AA, $68
 nmiDefault:
 	.byte $40
 
