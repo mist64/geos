@@ -117,23 +117,26 @@ _InterruptMain:
 	jmp _GetRandom
 
 .if wheels
-LC4DA = $c4da
+.import NextScreenLine
 .import GetColorMatrixOffset
-LC325 = $c325
+temp = $c325
 .global _WheelsSyscall10, _WheelsSyscall11
-_WheelsSyscall11:
+_WheelsSyscall11: ; save
 	lda #$00
 	.byte $2c
-_WheelsSyscall10:
+_WheelsSyscall10: ; restore
 	lda #$80
-	sta LC325
-; r1L: x
-; r1H: y
+	sta temp
+; in:  r0:  shadow color matrix address
+;      r1L: x
+;      r1H: y
+;      r2L: width
+;      r2H: height
 	jsr GetColorMatrixOffset
 	MoveW r0, r6
 	ldx r2H
 @1:	ldy #0
-@2:	bbrf 7, LC325, @3
+@2:	bbrf 7, temp, @3
 	lda (r5),y
 	sta (r6),y
 	bra @4
@@ -148,7 +151,7 @@ _WheelsSyscall10:
 	sta r6L
 	bcc @5
 	inc r6H
-@5:	jsr LC4DA
+@5:	jsr NextScreenLine
 	dex
 	bne @1
 	rts

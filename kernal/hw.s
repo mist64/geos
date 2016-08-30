@@ -102,6 +102,7 @@ LC4A1:	.byte 0, 199
 ; ----------------------------------------------------------------------------
 .global _ColorizeRectangle
 .global GetColorMatrixOffset
+.global NextScreenLine
 _ColorizeRectangle:
 ; r1L   x
 ; r1H   y
@@ -118,15 +119,16 @@ _ColorizeRectangle:
 	iny
 	cpy r2L
 	bcc @2
-	jsr LC4DA
+	jsr NextScreenLine
 	dex
 	bne @1
 	plp
 	rts
 
 GetColorMatrixOffset:
-; r1L   x
-; r1H   y
+; in:  r1L: x
+;      r1H: y
+; out: r5:  color matrix offset
 	clc
 	lda r1L
 	adc #<COLOR_MATRIX
@@ -136,12 +138,13 @@ GetColorMatrixOffset:
 	sta r5H
 	ldx r1H
 	beq @5
-@4:	jsr LC4DA
+@4:	jsr NextScreenLine
 	dex
 	bne @4
 @5:	rts
 
-LC4DA:	AddVW 40, r5
+NextScreenLine:
+	AddVW 40, r5
 	rts
 
 ; ----------------------------------------------------------------------------
