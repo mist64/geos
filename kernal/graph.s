@@ -112,98 +112,95 @@ PrepareXCoord:
 .if wheels
 LC656 = $C656
 LC325 = $C325
-HLinEnd2 = $aaaa
-HLinEnd1 = $aaaa
 
 _HorizontalLine:
-	sta     $10                             ; C67C 85 10                    ..
-        lda     #$00                            ; C67E A9 00                    ..
-        .byte   $2C                             ; C680 2C                       ,
+	sta r7L
+	lda #0
+	.byte $2c
 _InvertLine:
-	lda     #$80                            ; C681 A9 80                    ..
-        sta     LC325                           ; C683 8D 25 C3                 .%.
-        lda     $09                             ; C686 A5 09                    ..
-        pha                                     ; C688 48                       H
-        lda     $08                             ; C689 A5 08                    ..
-        pha                                     ; C68B 48                       H
-        lda     $0B                             ; C68C A5 0B                    ..
-        pha                                     ; C68E 48                       H
-        lda     $0A                             ; C68F A5 0A                    ..
-        pha                                     ; C691 48                       H
-        jsr     LC656                           ; C692 20 56 C6                  V.
-        ldy     $08                             ; C695 A4 08                    ..
-        lda     $09                             ; C697 A5 09                    ..
-        beq     LC69F                           ; C699 F0 04                    ..
-        inc     $0D                             ; C69B E6 0D                    ..
-        inc     $0F                             ; C69D E6 0F                    ..
-LC69F:  lda     $09                             ; C69F A5 09                    ..
-        cmp     $0B                             ; C6A1 C5 0B                    ..
-        bne     LC6A9                           ; C6A3 D0 04                    ..
-        lda     $08                             ; C6A5 A5 08                    ..
-        cmp     $0A                             ; C6A7 C5 0A                    ..
-LC6A9:  beq     LC6E3                           ; C6A9 F0 38                    .8
-        jsr     LC7A3                           ; C6AB 20 A3 C7                  ..
-        lda     $12                             ; C6AE A5 12                    ..
-        bit     LC325                           ; C6B0 2C 25 C3                 ,%.
-        bmi     LC6BB                           ; C6B3 30 06                    0.
-        jsr     LC70C                           ; C6B5 20 0C C7                  ..
-        clv                                     ; C6B8 B8                       .
-        bvc     LC6BD                           ; C6B9 50 02                    P.
-LC6BB:  eor     ($0C),y                         ; C6BB 51 0C                    Q.
-LC6BD:  bit     LC325                           ; C6BD 2C 25 C3                 ,%.
-        bpl     LC6C4                           ; C6C0 10 02                    ..
-        eor     #$FF                            ; C6C2 49 FF                    I.
-LC6C4:  sta     ($0E),y                         ; C6C4 91 0E                    ..
-        sta     ($0C),y                         ; C6C6 91 0C                    ..
-        tya                                     ; C6C8 98                       .
-        clc                                     ; C6C9 18                       .
-        adc     #$08                            ; C6CA 69 08                    i.
-        tay                                     ; C6CC A8                       .
-        bcc     LC6D3                           ; C6CD 90 04                    ..
-        inc     $0D                             ; C6CF E6 0D                    ..
-        inc     $0F                             ; C6D1 E6 0F                    ..
-LC6D3:  dec     $0A                             ; C6D3 C6 0A                    ..
-        beq     LC6EA                           ; C6D5 F0 13                    ..
-        lda     $10                             ; C6D7 A5 10                    ..
-        bit     LC325                           ; C6D9 2C 25 C3                 ,%.
-        bpl     LC6BD                           ; C6DC 10 DF                    ..
-        lda     ($0C),y                         ; C6DE B1 0C                    ..
-        clv                                     ; C6E0 B8                       .
-        bvc     LC6BD                           ; C6E1 50 DA                    P.
-LC6E3:  lda     $12                             ; C6E3 A5 12                    ..
-        ora     $13                             ; C6E5 05 13                    ..
-        clv                                     ; C6E7 B8                       .
-        bvc     LC6EC                           ; C6E8 50 02                    P.
-LC6EA:  lda     $13                             ; C6EA A5 13                    ..
-LC6EC:  bit     LC325                           ; C6EC 2C 25 C3                 ,%.
-        bmi     LC6F7                           ; C6EF 30 06                    0.
-        jsr     LC70C                           ; C6F1 20 0C C7                  ..
-        jmp     LC6FB                           ; C6F4 4C FB C6                 L..
+	lda #$80
+	sta LC325
+	lda r3H
+	pha
+	lda r3L
+	pha
+	lda r4H
+	pha
+	lda r4L
+	pha
+	jsr LC656
+	ldy r3L
+	lda r3H
+	beq LC69F
+	inc $0D
+	inc $0F
+LC69F:	lda r3H
+	cmp r4H
+	bne LC6A9
+	lda r3L
+	cmp r4L
+LC6A9:	beq LC6E3
+	jsr LC7A3
+	lda $12
+	bit LC325
+	bmi LC6BB
+	jsr LC70C
+	clv
+	bvc LC6BD
+LC6BB:	eor ($0C),y
+LC6BD:	bit LC325
+	bpl LC6C4
+	eor #$FF
+LC6C4:	sta ($0E),y
+	sta ($0C),y
+	tya
+	clc
+	adc #$08
+	tay
+	bcc LC6D3
+	inc $0D
+	inc $0F
+LC6D3:	dec r4L
+	beq LC6EA
+	lda r7L
+	bit LC325
+	bpl LC6BD
+	lda ($0C),y
+	clv
+	bvc LC6BD
+LC6E3:	lda $12
+	ora $13
+	clv
+	bvc LC6EC
+LC6EA:	lda $13
+LC6EC:	bit LC325
+	bmi LC6F7
+	jsr LC70C
+	jmp LC6FB
 
-; ----------------------------------------------------------------------------
-LC6F7:  eor     #$FF                            ; C6F7 49 FF                    I.
-        eor     ($0C),y                         ; C6F9 51 0C                    Q.
-LC6FB:  sta     ($0E),y                         ; C6FB 91 0E                    ..
-        sta     ($0C),y                         ; C6FD 91 0C                    ..
-LC6FF:  pla                                     ; C6FF 68                       h
-        sta     $0A                             ; C700 85 0A                    ..
-        pla                                     ; C702 68                       h
-        sta     $0B                             ; C703 85 0B                    ..
-        pla                                     ; C705 68                       h
-        sta     $08                             ; C706 85 08                    ..
-        pla                                     ; C708 68                       h
-        sta     $09                             ; C709 85 09                    ..
-        rts                                     ; C70B 60                       `
+LC6F7:	eor #$FF
+	eor ($0C),y
+LC6FB:	sta ($0E),y
+	sta ($0C),y
+LC6FF:	pla
+	sta r4L
+	pla
+	sta r4H
+	pla
+	sta r3L
+	pla
+	sta r3H
+	rts
 
-; ----------------------------------------------------------------------------
-LC70C:  sta     $19                             ; C70C 85 19                    ..
-        and     ($0E),y                         ; C70E 31 0E                    1.
-        sta     $11                             ; C710 85 11                    ..
-        lda     $19                             ; C712 A5 19                    ..
-        eor     #$FF                            ; C714 49 FF                    I.
-        and     $10                             ; C716 25 10                    %.
-        ora     $11                             ; C718 05 11                    ..
-        rts                                     ; C71A 60                       `
+LC70C:	sta $19
+	and ($0E),y
+	sta r7H
+	lda $19
+	eor #$FF
+	and r7L
+	ora r7H
+	rts
+
 
 .else
 ;---------------------------------------------------------------
@@ -354,13 +351,13 @@ LC71B:  lda     #$18                            ; C71B A9 18                    
         .byte   $2C                             ; C71D 2C                       ,
 LC71E:  lda     #$38                            ; C71E A9 38                    .8
         sta     LC73C                           ; C720 8D 3C C7                 .<.
-        lda     $09                             ; C723 A5 09                    ..
+        lda     r3H                             ; C723 A5 09                    ..
         pha                                     ; C725 48                       H
-        lda     $08                             ; C726 A5 08                    ..
+        lda     r3L                             ; C726 A5 08                    ..
         pha                                     ; C728 48                       H
-        lda     $0B                             ; C729 A5 0B                    ..
+        lda     r4H                             ; C729 A5 0B                    ..
         pha                                     ; C72B 48                       H
-        lda     $0A                             ; C72C A5 0A                    ..
+        lda     r4L                             ; C72C A5 0A                    ..
         pha                                     ; C72E 48                       H
         lda     $2F                             ; C72F A5 2F                    ./
         pha                                     ; C731 48                       H
@@ -379,16 +376,16 @@ LC73C:  clc                                     ; C73C 18                       
         ldy     $0F                             ; C749 A4 0F                    ..
         sta     $0F                             ; C74B 85 0F                    ..
         sty     $0D                             ; C74D 84 0D                    ..
-LC74F:  ldy     $08                             ; C74F A4 08                    ..
-        lda     $09                             ; C751 A5 09                    ..
+LC74F:  ldy     r3L                             ; C74F A4 08                    ..
+        lda     r3H                             ; C751 A5 09                    ..
         beq     LC759                           ; C753 F0 04                    ..
         inc     $0D                             ; C755 E6 0D                    ..
         inc     $0F                             ; C757 E6 0F                    ..
-LC759:  lda     $09                             ; C759 A5 09                    ..
-        cmp     $0B                             ; C75B C5 0B                    ..
+LC759:  lda     r3H                             ; C759 A5 09                    ..
+        cmp     r4H                             ; C75B C5 0B                    ..
         bne     LC763                           ; C75D D0 04                    ..
-        lda     $08                             ; C75F A5 08                    ..
-        cmp     $0A                             ; C761 C5 0A                    ..
+        lda     r3L                             ; C75F A5 08                    ..
+        cmp     r4L                             ; C761 C5 0A                    ..
 LC763:  beq     LC783                           ; C763 F0 1E                    ..
         jsr     LC7A3                           ; C765 20 A3 C7                  ..
         lda     $12                             ; C768 A5 12                    ..
@@ -400,7 +397,7 @@ LC76D:  tya                                     ; C76D 98                       
         bcc     LC778                           ; C772 90 04                    ..
         inc     $0D                             ; C774 E6 0D                    ..
         inc     $0F                             ; C776 E6 0F                    ..
-LC778:  dec     $0A                             ; C778 C6 0A                    ..
+LC778:  dec     r4L                             ; C778 C6 0A                    ..
         beq     LC78A                           ; C77A F0 0E                    ..
         lda     ($0E),y                         ; C77C B1 0E                    ..
         sta     ($0C),y                         ; C77E 91 0C                    ..
@@ -415,28 +412,28 @@ LC78C:  jsr     LC792                           ; C78C 20 92 C7                 
         jmp     LC6FF                           ; C78F 4C FF C6                 L..
 
 ; ----------------------------------------------------------------------------
-LC792:  sta     $10                             ; C792 85 10                    ..
+LC792:  sta     r7L                             ; C792 85 10                    ..
         and     ($0C),y                         ; C794 31 0C                    1.
-        sta     $11                             ; C796 85 11                    ..
-        lda     $10                             ; C798 A5 10                    ..
+        sta     r7H                             ; C796 85 11                    ..
+        lda     r7L                             ; C798 A5 10                    ..
         eor     #$FF                            ; C79A 49 FF                    I.
         and     ($0E),y                         ; C79C 31 0E                    1.
-        ora     $11                             ; C79E 05 11                    ..
+        ora     r7H                             ; C79E 05 11                    ..
         sta     ($0C),y                         ; C7A0 91 0C                    ..
         rts                                     ; C7A2 60                       `
 
 ; ----------------------------------------------------------------------------
-LC7A3:  lda     $0A                             ; C7A3 A5 0A                    ..
+LC7A3:  lda     r4L                             ; C7A3 A5 0A                    ..
         sec                                     ; C7A5 38                       8
-        sbc     $08                             ; C7A6 E5 08                    ..
-        sta     $0A                             ; C7A8 85 0A                    ..
-        lda     $0B                             ; C7AA A5 0B                    ..
-        sbc     $09                             ; C7AC E5 09                    ..
-        sta     $0B                             ; C7AE 85 0B                    ..
-        lsr     $0B                             ; C7B0 46 0B                    F.
-        ror     $0A                             ; C7B2 66 0A                    f.
-        lsr     $0A                             ; C7B4 46 0A                    F.
-        lsr     $0A                             ; C7B6 46 0A                    F.
+        sbc     r3L                             ; C7A6 E5 08                    ..
+        sta     r4L                             ; C7A8 85 0A                    ..
+        lda     r4H                             ; C7AA A5 0B                    ..
+        sbc     r3H                             ; C7AC E5 09                    ..
+        sta     r4H                             ; C7AE 85 0B                    ..
+        lsr     r4H                             ; C7B0 46 0B                    F.
+        ror     r4L                             ; C7B2 66 0A                    f.
+        lsr     r4L                             ; C7B4 46 0A                    F.
+        lsr     r4L                             ; C7B6 46 0A                    F.
         rts                                     ; C7B8 60                       `
 .else
 	PushW r3
