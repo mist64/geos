@@ -101,7 +101,7 @@ LC4A1:	.byte 0, 199
 
 ; ----------------------------------------------------------------------------
 .global _ColorizeRectangle
-.global LC4C2
+.global GetColorMatrixOffset
 _ColorizeRectangle:
 ; r1L   x
 ; r1H   y
@@ -110,7 +110,7 @@ _ColorizeRectangle:
 ; r4H   value
 	php
 	sei
-	jsr LC4C2
+	jsr GetColorMatrixOffset
 	ldx r2H
 @1:	ldy #0
 	lda r4H
@@ -124,7 +124,8 @@ _ColorizeRectangle:
 	plp
 	rts
 
-LC4C2:	clc
+GetColorMatrixOffset:
+	clc
 	lda r1L
 	adc #<COLOR_MATRIX
 	sta r5L

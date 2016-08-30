@@ -118,43 +118,42 @@ _InterruptMain:
 
 .if wheels
 LC4DA = $c4da
-.import LC4C2
+.import GetColorMatrixOffset
 LC325 = $c325
 .global _WheelsSyscall10, _WheelsSyscall11
 _WheelsSyscall11:
-	lda     #$00                            ; C38E A9 00                    ..
-        .byte   $2C                             ; C390 2C                       ,
+	lda #$00
+	.byte $2c
 _WheelsSyscall10:
-	lda     #$80                            ; C391 A9 80                    ..
-        sta     LC325                           ; C393 8D 25 C3                 .%.
-        jsr     LC4C2                           ; C396 20 C2 C4                  ..
-        lda     $03                             ; C399 A5 03                    ..
-        sta     $0F                             ; C39B 85 0F                    ..
-        lda     r0                              ; C39D A5 02                    ..
-        sta     $0E                             ; C39F 85 0E                    ..
-        ldx     $07                             ; C3A1 A6 07                    ..
-LC3A3:  ldy     #$00                            ; C3A3 A0 00                    ..
-LC3A5:  bit     LC325                           ; C3A5 2C 25 C3                 ,%.
-        bpl     LC3B1                           ; C3A8 10 07                    ..
-        lda     ($0C),y                         ; C3AA B1 0C                    ..
-        sta     ($0E),y                         ; C3AC 91 0E                    ..
-        clv                                     ; C3AE B8                       .
-        bvc     LC3B5                           ; C3AF 50 04                    P.
-LC3B1:  lda     ($0E),y                         ; C3B1 B1 0E                    ..
-        sta     ($0C),y                         ; C3B3 91 0C                    ..
-LC3B5:  iny                                     ; C3B5 C8                       .
-        cpy     $06                             ; C3B6 C4 06                    ..
-        bcc     LC3A5                           ; C3B8 90 EB                    ..
-        tya                                     ; C3BA 98                       .
-        clc                                     ; C3BB 18                       .
-        adc     $0E                             ; C3BC 65 0E                    e.
-        sta     $0E                             ; C3BE 85 0E                    ..
-        bcc     LC3C4                           ; C3C0 90 02                    ..
-        inc     $0F                             ; C3C2 E6 0F                    ..
-LC3C4:  jsr     LC4DA                           ; C3C4 20 DA C4                  ..
-        dex                                     ; C3C7 CA                       .
-        bne     LC3A3                           ; C3C8 D0 D9                    ..
-        rts                                     ; C3CA 60                       `
+	lda #$80
+	sta LC325
+	jsr GetColorMatrixOffset
+	lda r0H
+	sta r6H
+	lda r0L
+	sta r6L
+	ldx r2H
+LC3A3:	ldy #0
+LC3A5:	bit LC325
+	bpl LC3B1
+	lda (r5),y
+	sta (r6),y
+	bra LC3B5
+LC3B1:	lda (r6),y
+	sta (r5),y
+LC3B5:	iny
+	cpy r2L
+	bcc LC3A5
+	tya
+	clc
+	adc r6L
+	sta r6L
+	bcc LC3C4
+	inc r6H
+LC3C4:	jsr LC4DA
+	dex
+	bne LC3A3
+	rts
 
-        .byte   $00,$00,$00,$00                 ; C3CB 00 00 00 00              ....
+        .byte 0, 0, 0, 0
 .endif
