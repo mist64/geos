@@ -31,7 +31,7 @@
 ; syscall
 .global _GetNextChar
 
-.segment "keyboard"
+.segment "keyboard1"
 
 _DoKeyboardScan:
 .if wheels
@@ -183,6 +183,8 @@ KbdScanHelp1:
 	rts
 .endif
 
+.segment "keyboard2"
+
 .if !wheels
 KbdTab1:
 	.byte $db, $dd, $de, $ad, $af, $aa, $c0, $ba, $bb
@@ -211,6 +213,8 @@ KbdDecodeTab2:
 	.byte KEY_BPS, "*", "]", KEY_CLEAR, KEY_INVALID, "=", "^", "?"
 	.byte "!", KEY_LARROW, KEY_INVALID, $22, " ", KEY_INVALID, "Q", KEY_RUN
 .endif
+
+.segment "keyboard3"
 
 KbdScanHelp2:
 	php
