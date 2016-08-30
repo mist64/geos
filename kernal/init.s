@@ -92,7 +92,6 @@ L9FDD = $9fdd
 .import DrawCheckeredScreen
 .import i_ColorRectangle
 .global _FirstInit2
-LBF3F = $bf3f
 	MoveB L9FDA, screencolors
 	ldy #62
 @2:	lda #0

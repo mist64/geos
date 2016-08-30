@@ -144,22 +144,21 @@ _ColorRectangle:
 .global _i_ColorRectangle
 ; inline version of ColorRectangle
 _i_ColorRectangle:
-	PopB returnAddress
-        PopB returnAddress+1
-        ldy #5                            ; C4EC A0 05                    ..
-        lda (returnAddress),y                       ; C4EE B1 3D                    .=
-        sta     r4H                             ; C4F0 85 0B                    ..
-        dey                                     ; C4F2 88                       .
-        ldx     #$03                            ; C4F3 A2 03                    ..
-LC4F5:  lda     (returnAddress),y                       ; C4F5 B1 3D                    .=
-        sta     r1L,x                           ; C4F7 95 04                    ..
-        dey                                     ; C4F9 88                       .
-        dex                                     ; C4FA CA                       .
-        bpl     LC4F5                           ; C4FB 10 F8                    ..
-        jsr     _ColorRectangle                           ; C4FD 20 A8 C4                  ..
-        php                                     ; C500 08                       .
-        lda     #6                            ; C501 A9 06                    ..
-        jmp     DoInlineReturn                  ; C503 4C A4 C2                 L..
+	PopW returnAddress
+	ldy #5
+	lda (returnAddress),y
+	sta r4H
+	dey
+	ldx #3
+@1:	lda (returnAddress),y
+	sta r1L,x
+	dey
+	dex
+	bpl @1
+	jsr _ColorRectangle
+	php
+	lda #6
+	jmp DoInlineReturn
 .endif
 
 .segment "hw2"
