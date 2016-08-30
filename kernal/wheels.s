@@ -565,7 +565,12 @@ SerialNumber:
   .word $DF96                             ; 9FF4 96                       .
 
 
-	.byte   $68,$8D,$00,$FF,$68,$A8,$68 ; 9FF5 DF 68 8D 00 FF 68 A8 68  .h...h.h
-        .byte   $AA,$68,$40
+IntRoutine:
+	.byte $68, $8D, $00, $FF
+IrqRoutine:
+	.byte $68, $A8, $68
+        .byte $AA, $68
+nmiDefault:
+	.byte $40
 
 .endif
