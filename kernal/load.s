@@ -126,10 +126,10 @@ _StartAppl:
 L0002 = $0002
 LCA26 = $ca26
 LC064 = $c064
-LC5FA = $c5fa
 LE62A = $e62a
 LC54E = $c54e
 .import WheelsSyscall1
+.import UNK_4
 .import UNK_5
 	sei                                     ; C331 78                       x
         cld                                     ; C332 D8                       .
@@ -139,7 +139,7 @@ LC54E = $c54e
         jsr     WheelsSyscall1                           ; C339 20 FE C2                  ..
         jsr     LC54E                           ; C33C 20 4E C5                  N.
         jsr     LE62A                           ; C33F 20 2A E6                  *.
-        jsr     LC5FA                           ; C342 20 FA C5                  ..
+        jsr     UNK_4                           ; C342 20 FA C5                  ..
         ldx     $11                             ; C345 A6 11                    ..
         lda     $10                             ; C347 A5 10                    ..
         jmp     LC064                           ; C349 4C 64 C0                 Ld.
@@ -253,7 +253,7 @@ _GetFile:
 	jsr UNK_5
 	jsr FindFile
 	bnex GetFile_rts
-	jsr $C5FA;xxxUNK_4
+	jsr UNK_4
 	LoadW r9, dirEntryBuf
 	CmpBI dirEntryBuf + OFF_GFILE_TYPE, DESK_ACC
 	bne @1
@@ -466,7 +466,7 @@ LD84E:  jsr     UNK_5                           ; D84E 20 23 C6                 
         lda     $885E                           ; D857 AD 5E 88                 .^.
         and     #$01                            ; D85A 29 01                    ).
         bne     LD86E                           ; D85C D0 10                    ..
-        jsr     LC5FA                           ; D85E 20 FA C5                  ..
+        jsr     UNK_4                           ; D85E 20 FA C5                  ..
         lda     $814B                           ; D861 AD 4B 81                 .K.
         sta     $10                             ; D864 85 10                    ..
         lda     $814C                           ; D866 AD 4C 81                 .L.

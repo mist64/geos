@@ -191,7 +191,8 @@ SetVICRegs:
 
 .if wheels
 .include "jumptab.inc"
-LC5FA:  lda     $885D                           ; C5FA AD 5D 88                 .].
+.global UNK_4
+UNK_4:  lda     $885D                           ; C5FA AD 5D 88                 .].
         sta     $16                             ; C5FD 85 16                    ..
         lda     $885E                           ; C5FF AD 5E 88                 .^.
         sta     r0L                           ; C602 85 02                    ..
