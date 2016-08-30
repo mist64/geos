@@ -609,10 +609,10 @@ ColorRectangle:
 	UNIMPLEMENTED
 
 ; new Wheels syscalls
-.global WheelsSyscall1, WheelsSyscall9
-.import _WheelsSyscall1, _SuperCPUEnableGEOSOptimizations, _SuperCPUDisableGEOSOptimizations, _SuperCPUWriteRegister, _WheelsSyscall5, _WheelsSyscall6, _IRQHandler, _WheelsSyscall8, _WheelsSyscall9, _WheelsSyscall10, _WheelsSyscall11, _WheelsSyscall12
-WheelsSyscall1: ; $C2FE
-	jmp _WheelsSyscall1
+.global InitGEOS, WheelsSyscall9
+.import _InitGEOS, _SuperCPUEnableGEOSOptimizations, _SuperCPUDisableGEOSOptimizations, _SuperCPUWriteRegister, _WheelsSyscall5, _WheelsSyscall6, _IRQHandler, _WheelsSyscall8, _WheelsSyscall9, _WheelsSyscall10, _WheelsSyscall11, _WheelsSyscall12
+InitGEOS: ; $C2FE
+	jmp _InitGEOS
 SuperCPUEnableGEOSOptimizations: ; $C301
 	jmp _SuperCPUEnableGEOSOptimizations
 SuperCPUDisableGEOSOptimizations: ; $C304

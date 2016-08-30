@@ -65,14 +65,15 @@ _FillRam:
 @4:	rts
 
 .if wheels ; XXX wrong file
-.global _WheelsSyscall1
-_WheelsSyscall1:
+.global _InitGEOS
+_InitGEOS:
 .import _DoFirstInitIO
 	jsr _DoFirstInitIO
 
 .import InitRamTab
 .global InitGEOEnv
-InitGEOEnv:  LoadW r0, InitRamTab
+InitGEOEnv:
+	LoadW r0, InitRamTab
 
 .endif
 

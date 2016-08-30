@@ -128,7 +128,7 @@ LCA26 = $ca26
 LC064 = $c064
 LE62A = $e62a
 LC54E = $c54e
-.import WheelsSyscall1
+.import InitGEOS
 .import UNK_4
 .import UNK_5
 	sei                                     ; C331 78                       x
@@ -136,7 +136,7 @@ LC54E = $c54e
         ldx     #$FF                            ; C333 A2 FF                    ..
         txs                                     ; C335 9A                       .
         jsr     UNK_5                           ; C336 20 23 C6                  #.
-        jsr     WheelsSyscall1                           ; C339 20 FE C2                  ..
+        jsr     InitGEOS                           ; C339 20 FE C2                  ..
         jsr     LC54E                           ; C33C 20 4E C5                  N.
         jsr     LE62A                           ; C33F 20 2A E6                  *.
         jsr     UNK_4                           ; C342 20 FA C5                  ..
