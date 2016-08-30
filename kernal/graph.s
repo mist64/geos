@@ -298,7 +298,7 @@ _InvertLine:
 	eor (r5),Y
 	jmp HLinEnd1
 
-:
+ImprintLine:
 	PushW r3
 	PushW r4
 	PushB dispBufferOn
@@ -330,94 +330,85 @@ _InvertLine:
 _RecoverLine:
 .if wheels
 
-LC71B:  lda     #$18
-        .byte   $2C
-LC71E:  lda     #$38
-        sta     LC73C
-        lda     r3H
-        pha
-        lda     r3L
-        pha
-        lda     r4H
-        pha
-        lda     r4L
-        pha
-        lda     $2F
-        pha
-        ora     #$C0
-        sta     $2F
-        jsr     PrepareXCoord
-        pla
-        sta     $2F
-LC73C:  clc
-        bcc     LC74F
-        lda     r5L
-        ldy     r6L
-        sta     r6L
-        sty     r5L
-        lda     r5H
-        ldy     r6H
-        sta     r6H
-        sty     r5H
-LC74F:  ldy     r3L
-        lda     r3H
-        beq     LC759
-        inc     r5H
-        inc     r6H
-LC759:  lda     r3H
-        cmp     r4H
-        bne     LC763
-        lda     r3L
-        cmp     r4L
-LC763:  beq     LC783
-        jsr     LC7A3
-        lda     $12
-        jsr     LC792
-LC76D:  tya
-        clc
-        adc     #$08
-        tay
-        bcc     LC778
-        inc     r5H
-        inc     r6H
-LC778:  dec     r4L
-        beq     LC78A
-        lda     (r6),y
-        sta     (r5),y
-        clv
-        bvc     LC76D
-LC783:  lda     $12
-        ora     $13
-        clv
-        bvc     LC78C
-LC78A:  lda     $13
-LC78C:  jsr     LC792
-        jmp     LineEnd
+	lda #$18 ; clc
+	.byte $2c
+ImprintLine:
+	lda #$38 ; sec
+	sta LC73C
+	PushW r3
+	PushW r4
+	lda $2F
+	pha
+	ora #$C0
+	sta $2F
+	jsr PrepareXCoord
+	pla
+	sta $2F
+LC73C:	clc
+	bcc LC74F
+	lda r5L
+	ldy r6L
+	sta r6L
+	sty r5L
+	lda r5H
+	ldy r6H
+	sta r6H
+	sty r5H
+LC74F:	ldy r3L
+	lda r3H
+	beq LC759
+	inc r5H
+	inc r6H
+LC759:	lda r3H
+	cmp r4H
+	bne LC763
+	lda r3L
+	cmp r4L
+LC763:	beq LC783
+	jsr LC7A3
+	lda $12
+	jsr LC792
+LC76D:	tya
+	clc
+	adc #8
+	tay
+	bcc LC778
+	inc r5H
+	inc r6H
+LC778:	dec r4L
+	beq LC78A
+	lda (r6),y
+	sta (r5),y
+	bra LC76D
+LC783:	lda $12
+	ora $13
+	bra LC78C
+LC78A:	lda $13
+LC78C:	jsr LC792
+	jmp LineEnd
 
-; ----------------------------------------------------------------------------
-LC792:  sta     r7L                             ; C792 85 10                    ..
-        and     (r5),y                         ; C794 31 0C                    1.
-        sta     r7H                             ; C796 85 11                    ..
-        lda     r7L                             ; C798 A5 10                    ..
-        eor     #$FF                            ; C79A 49 FF                    I.
-        and     (r6),y                         ; C79C 31 0E                    1.
-        ora     r7H                             ; C79E 05 11                    ..
-        sta     (r5),y                         ; C7A0 91 0C                    ..
-        rts                                     ; C7A2 60                       `
+LC792:	sta r7L
+	and (r5),y
+	sta r7H
+	lda r7L
+	eor #$FF
+	and (r6),y
+	ora r7H
+	sta (r5),y
+	rts
 
-; ----------------------------------------------------------------------------
-LC7A3:  lda     r4L                             ; C7A3 A5 0A                    ..
-        sec                                     ; C7A5 38                       8
-        sbc     r3L                             ; C7A6 E5 08                    ..
-        sta     r4L                             ; C7A8 85 0A                    ..
-        lda     r4H                             ; C7AA A5 0B                    ..
-        sbc     r3H                             ; C7AC E5 09                    ..
-        sta     r4H                             ; C7AE 85 0B                    ..
-        lsr     r4H                             ; C7B0 46 0B                    F.
-        ror     r4L                             ; C7B2 66 0A                    f.
-        lsr     r4L                             ; C7B4 46 0A                    F.
-        lsr     r4L                             ; C7B6 46 0A                    F.
-        rts                                     ; C7B8 60                       `
+LC7A3:	lda r4L
+	sec
+	sbc r3L
+	sta r4L
+	lda r4H
+	sbc r3H
+	sta r4H
+	lsr r4H
+	ror r4L
+	lsr r4L
+	lsr r4L
+	rts
 .else
 	PushW r3
 	PushW r4
@@ -637,7 +628,7 @@ _i_ImprintRectangle:
 ;---------------------------------------------------------------
 _ImprintRectangle:
 	MoveB r2L, r11L
-@1:	jsr LC71E;xxxImprintLine
+@1:	jsr ImprintLine
 	lda r11L
 	inc r11L
 	cmp r2H
