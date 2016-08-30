@@ -610,7 +610,7 @@ ColorRectangle:
 
 ; new Wheels syscalls
 .global InitGEOS, i_ColorizeRectangle
-.import _InitGEOS, _SuperCPUEnableGEOSOptimizations, _SuperCPUDisableGEOSOptimizations, _SuperCPUWriteRegister, _FindFTypes, _WheelsSyscall6, _IRQHandler, _ColorizeRectangle, _i_ColorizeRectangle, _WheelsSyscall10, _WheelsSyscall11, _WheelsSyscall12
+.import _InitGEOS, _SuperCPUEnableGEOSOptimizations, _SuperCPUDisableGEOSOptimizations, _SuperCPUWriteRegister, _FindFTypes, _WheelsSyscall6, _IRQHandler, _ColorizeRectangle, _i_ColorizeRectangle, _SaveColorRectangle, _RestoreColorRectangle, _WheelsSyscall12
 InitGEOS: ; $C2FE
 	jmp _InitGEOS
 SuperCPUEnableGEOSOptimizations: ; $C301
@@ -629,10 +629,10 @@ ColorizeRectangle: ; $C313
 	jmp _ColorizeRectangle
 i_ColorizeRectangle: ; $C316
 	jmp _i_ColorizeRectangle
-WheelsSyscall10: ; $C319
-	jmp _WheelsSyscall10
-WheelsSyscall11: ; $C31C
-	jmp _WheelsSyscall11
+SaveColorRectangle: ; $C319
+	jmp _SaveColorRectangle
+RestoreColorRectangle: ; $C31C
+	jmp _RestoreColorRectangle
 WheelsSyscall12: ; $C31F
 	jmp _WheelsSyscall12
 

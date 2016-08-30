@@ -120,18 +120,19 @@ _InterruptMain:
 .import NextScreenLine
 .import GetColorMatrixOffset
 temp = $c325
-.global _WheelsSyscall10, _WheelsSyscall11
-_WheelsSyscall11: ; save
-	lda #$00
-	.byte $2c
-_WheelsSyscall10: ; restore
-	lda #$80
-	sta temp
-; in:  r0:  shadow color matrix address
+.global _SaveColorRectangle, _RestoreColorRectangle
+; Saves a rectangle into or restores it from a linear buffer
+; in:  r0:  buffer address
 ;      r1L: x
 ;      r1H: y
 ;      r2L: width
 ;      r2H: height
+_RestoreColorRectangle:
+	lda #0
+	.byte $2c
+_SaveColorRectangle:
+	lda #$80
+	sta temp
 	jsr GetColorMatrixOffset
 	MoveW r0, r6
 	ldx r2H
