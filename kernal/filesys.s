@@ -213,6 +213,21 @@ _WheelsSyscall6:
 	rts
 
 .global _WheelsSyscall12
+; Convert a rectangle in pixel space into a origin/size
+; rectangle in card space, i.e. convert it into a
+; color matrix rectangle for
+; * ColorizeRectangle
+; * SaveColorRectangle
+; * RestoreColorRectangle
+;
+; in:  r2L: y1
+;      r2H: y2
+;      r3:  x1
+;      r4:  x2
+; out: r1L: x1
+;      r1H: y1
+;      r2L: width
+;      r2H: height
 _WheelsSyscall12:
 	lda r2L
 	lsr
