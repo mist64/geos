@@ -687,13 +687,13 @@ _FrameRectangle:
 GetInlineDrwParms:
 	PopW r5
 	PopW returnAddress
-.if wheels
-        ldy     #$00                            ; C8DE A0 00                    ..
-LC8E0:  iny                                     ; C8E0 C8                       .
-        lda     ($3D),y                       ; C8E1 B1 3D                    .=
-        sta     r1H,y                           ; C8E3 99 05 00                 ...
-        cpy     #$06                            ; C8E6 C0 06                    ..
-        bne     LC8E0                           ; C8E8 D0 F6                    ..
+.if wheels_size
+	ldy #0
+@1:	iny
+	lda (returnAddress),y
+	sta r1H,y
+	cpy #6
+	bne @1
 .else
 	ldy #1
 	lda (returnAddress),Y
