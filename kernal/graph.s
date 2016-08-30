@@ -903,7 +903,7 @@ _SetPattern:
 	asl
 	asl
 	asl
-.if wheels
+.if wheels_size_and_speed
 	.assert <PatternTab = 0, error, "PatternTab must be page-aligned!"
 .else
 	adc #<PatternTab
@@ -948,12 +948,12 @@ Getr0AndInc:
 _GetScanLine:
 	txa
 	pha
-.if !wheels
+.if !wheels_size_and_speed
 	pha
 .endif
 	and #%00000111
 	sta r6H
-.if wheels
+.if wheels_size_and_speed
 	txa
 .else
 	pla
@@ -964,16 +964,17 @@ _GetScanLine:
 	tax
 	bbrf 7, dispBufferOn, @2 ; ST_WR_FORE
 	bbsf 6, dispBufferOn, @1 ; ST_WR_BACK
+	; xxx the macros above do "BIT dispBufferOn" twice
 	lda LineTabL,x
 	ora r6H
 	sta r5L
-.if wheels
-	sta r6L                             ; CA47 85 0E                    ..
+.if wheels_size_and_speed
+	sta r6L
 .endif
 	lda LineTabH,x
 	sta r5H
-.if wheels
-	sta r6H                             ; CA47 85 0E                    ..
+.if wheels_size_and_speed
+	sta r6H
 .else
 	MoveW r5, r6
 .endif
@@ -995,13 +996,13 @@ _GetScanLine:
 	lda LineTabL,x
 	ora r6H
 	sta r6L
-.if wheels
+.if wheels_size_and_speed
 	sta r5L
 .endif
 	lda LineTabH,x
 	subv >(SCREEN_BASE-BACK_SCR_BASE)
 	sta r6H
-.if wheels
+.if wheels_size_and_speed
 	sta r5H
 .else
 	MoveW r6, r5
