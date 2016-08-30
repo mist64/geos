@@ -114,14 +114,13 @@ LC54D:  .byte (DKGREY << 4)+LTGREY ; value
 LC54E:  ldx     CPU_DATA
 ASSERT_NOT_BELOW_IO
 	LoadB CPU_DATA, IO_IN
-        lda     sysExtClr                           ; C554 AD DD 9F                 ...
+        lda     sysExtClr
         sta     extclr
-        lda     sysMob0Clr                           ; C55A AD DC 9F                 ...
-        sta     $D027                           ; C55D 8D 27 D0                 .'.
-        sta     $D028                           ; C560 8D 28 D0                 .(.
+        MoveB sysMob0Clr, mob0clr
+        sta     mob1clr
         stx     CPU_DATA
 ASSERT_NOT_BELOW_IO
-        rts                                     ; C565 60                       `
+        rts
 .else
 	LoadB screencolors, (DKGREY << 4)+LTGREY
 	sta @1
