@@ -50,6 +50,8 @@ GetSerialNumber2:
 LFB71 = $FB71
 .include "jumptab.inc"
 .include "c64.inc"
+L88B8 = $88B8
+L88B6 = $88B6
 ; ----------------------------------------------------------------------------
 .global RunScreensaver
 RunScreensaver:
@@ -78,44 +80,42 @@ ASSERT_NOT_BELOW_IO
 	rts
 
 ; ----------------------------------------------------------------------------
-LCF88:  lda     saverStatus                           ; CF88 AD B4 88                 ...
-        lsr     a                               ; CF8B 4A                       J
-        bcs     LCF9A                           ; CF8C B0 0C                    ..
-        lda     saverStatus                           ; CF8E AD B4 88                 ...
-        and     #$30                            ; CF91 29 30                    )0
-        bne     LCF98                           ; CF93 D0 03                    ..
-        jsr     LCFB2                           ; CF95 20 B2 CF                  ..
-LCF98:  clc                                     ; CF98 18                       .
-        rts                                     ; CF99 60                       `
+LCF88:	lda saverStatus
+	lsr
+	bcs LCF9A ; screen saver on
+	lda saverStatus
+	and #$30
+	bne LCF98 ; timer stopped
+	jsr LCFB2
+LCF98:	clc
+	rts
+LCF9A:	jsr LCFB2
+	bcc LCFB0
+	lda saverStatus
+	and #$7E
+	sta saverStatus
+LCFA7:	jsr LFB71
+	bne LCFA7
+	lda #$00
+	sta pressFlag
+LCFB0:	sec
+	rts
 
 ; ----------------------------------------------------------------------------
-LCF9A:  jsr     LCFB2                           ; CF9A 20 B2 CF                  ..
-        bcc     LCFB0                           ; CF9D 90 11                    ..
-        lda     saverStatus                           ; CF9F AD B4 88                 ...
-        and     #$7E                            ; CFA2 29 7E                    )~
-        sta     saverStatus                           ; CFA4 8D B4 88                 ...
-LCFA7:  jsr     LFB71                           ; CFA7 20 71 FB                  q.
-        bne     LCFA7                           ; CFAA D0 FB                    ..
-        lda     #$00                            ; CFAC A9 00                    ..
-        sta     $39                             ; CFAE 85 39                    .9
-LCFB0:  sec                                     ; CFB0 38                       8
-        rts                                     ; CFB1 60                       `
-
-; ----------------------------------------------------------------------------
-LCFB2:  lda     saverStatus                           ; CFB2 AD B4 88                 ...
-        and     #$02                            ; CFB5 29 02                    ).
-        bne     LCFC0                           ; CFB7 D0 07                    ..
-        lda     $8506                           ; CFB9 AD 06 85                 ...
-        cmp     #$FF                            ; CFBC C9 FF                    ..
-        bne     LCFC5                           ; CFBE D0 05                    ..
-LCFC0:  jsr     LFB71                           ; CFC0 20 71 FB                  q.
-        beq     LCFD3                           ; CFC3 F0 0E                    ..
-LCFC5:  lda     $88B8                           ; CFC5 AD B8 88                 ...
-        sta     $88B6                           ; CFC8 8D B6 88                 ...
-        lda     saverCount                           ; CFCB AD B7 88                 ...
-        sta     saverTimer                           ; CFCE 8D B5 88                 ...
-        sec                                     ; CFD1 38                       8
-        rts                                     ; CFD2 60                       `
+LCFB2:  lda     saverStatus
+        and     #$02
+        bne     LCFC0
+        lda     inputData
+        cmp     #$FF
+        bne     LCFC5
+LCFC0:  jsr     LFB71
+        beq     LCFD3
+LCFC5:  lda     L88B8
+        sta     L88B6
+        lda     saverCount
+        sta     saverTimer
+        sec
+        rts
 
 ; ----------------------------------------------------------------------------
 LCFD3:  clc                                     ; CFD3 18                       .
