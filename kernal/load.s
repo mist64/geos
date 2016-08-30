@@ -244,7 +244,12 @@ U_51:
 
 .segment "load3"
 
+.if wheels
+.global _GetFileOld
+_GetFileOld:
+.else
 _GetFile:
+.endif
 	jsr $C623;xxxUNK_5
 	jsr FindFile
 	bnex GetFile_rts

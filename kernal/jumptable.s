@@ -610,15 +610,15 @@ ColorRectangle:
 
 ; new Wheels syscalls
 .global WheelsSyscall1, WheelsSyscall9
-.import _WheelsSyscall1, _WheelsSyscall2, _WheelsSyscall3, _WheelsSyscall4, _WheelsSyscall5, _WheelsSyscall6, _IRQHandler, _WheelsSyscall8, _WheelsSyscall9, _WheelsSyscall10, _WheelsSyscall11, _WheelsSyscall12
+.import _WheelsSyscall1, _SuperCPUEnableGEOSOptimizations, _SuperCPUDisableGEOSOptimizations, _SuperCPUWriteRegister, _WheelsSyscall5, _WheelsSyscall6, _IRQHandler, _WheelsSyscall8, _WheelsSyscall9, _WheelsSyscall10, _WheelsSyscall11, _WheelsSyscall12
 WheelsSyscall1: ; $C2FE
 	jmp _WheelsSyscall1
-WheelsSyscall2: ; $C301
-	jmp _WheelsSyscall2
-WheelsSyscall3: ; $C304
-	jmp _WheelsSyscall3
-WheelsSyscall4: ; $C307
-	jmp _WheelsSyscall4
+SuperCPUEnableGEOSOptimizations: ; $C301
+	jmp _SuperCPUEnableGEOSOptimizations
+SuperCPUDisableGEOSOptimizations: ; $C304
+	jmp _SuperCPUDisableGEOSOptimizations
+SuperCPUWriteRegister: ; $C307
+	jmp _SuperCPUWriteRegister
 WheelsSyscall5: ; $C30A
 	jmp _WheelsSyscall5
 WheelsSyscall6: ; $C30D

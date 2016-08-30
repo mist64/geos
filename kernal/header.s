@@ -52,7 +52,7 @@ version:
 .endif
 nationality:
 .if wheels
-	.word 1
+	.word 1 ; xxx this means GERMAN
 .else
 	.word 0
 .endif
@@ -81,17 +81,14 @@ dateCopy:
 .endif
 
 .if wheels
-.include "jumptab.inc"
-LD07F = $D07F
-LD074 = $D074
 
-.global _WheelsSyscall2, _WheelsSyscall3, _WheelsSyscall4
-_WheelsSyscall2:
+.global _SuperCPUEnableGEOSOptimizations, _SuperCPUDisableGEOSOptimizations, _SuperCPUWriteRegister
+_SuperCPUEnableGEOSOptimizations:
 	ldy #0 ; enable GEOS optimization
 	.byte $2c
-_WheelsSyscall3:
+_SuperCPUDisableGEOSOptimizations:
 	ldy #3 ; disable all optimizations
-_WheelsSyscall4:
+_SuperCPUWriteRegister:
 	php
 	sei
 	PushB CPU_DATA
@@ -104,8 +101,9 @@ ASSERT_NOT_BELOW_IO
 ASSERT_NOT_BELOW_IO
 	plp
 	rts
+.endif
 
-.else
+.if !wheels
 BootGEOS:
 	bbsf 5, sysFlgCopy, @1
 	jsr KERNALSETMSG

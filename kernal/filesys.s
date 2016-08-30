@@ -2123,8 +2123,8 @@ L9E96:  lda     $88C3                           ; 9E96 AD C3 88                 
         rts                                     ; 9EA6 60                       `
 
 ; ----------------------------------------------------------------------------
-LD513 = $D513
-L9EA7:  jmp     LD513                           ; 9EA7 4C 13 D5                 L..
+.import _GetFileOld
+L9EA7:	jmp _GetFileOld
 
 ; ----------------------------------------------------------------------------
 .global _VerifyRAM, _StashRAM, _SwapRAM, _FetchRAM, _DoRAMOp
