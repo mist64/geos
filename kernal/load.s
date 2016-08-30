@@ -129,8 +129,6 @@ LC064 = $c064
 LE62A = $e62a
 LC54E = $c54e
 .import InitGEOS
-.import UNK_4
-.import UNK_5
 	sei                                     ; C331 78                       x
         cld                                     ; C332 D8                       .
         ldx     #$FF                            ; C333 A2 FF                    ..
@@ -206,7 +204,6 @@ _EnterDT_Str1:
 
 .segment "load2"
 
-.if !wheels
 UNK_4:
 	MoveB A885D, r10L
 	MoveB A885E, r0L
@@ -240,7 +237,6 @@ U_50:
 	jsr CopyFString
 U_51:
 	rts
-.endif
 
 .segment "load3"
 

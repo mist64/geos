@@ -85,6 +85,7 @@ ASSERT_NOT_BELOW_IO
 	jmp ResetMseRegion
 
 .if wheels
+.include "jumptab.inc"
 LEC75 = $ec75
 LFD2F = $fd2f
 LC5E7 = $c5e7
@@ -188,52 +189,3 @@ SetVICRegs:
 	cpy r1L
 	bne @1
 	rts
-
-.if wheels
-.include "jumptab.inc"
-.global UNK_4
-UNK_4:  lda     $885D                           ; C5FA AD 5D 88                 .].
-        sta     $16                             ; C5FD 85 16                    ..
-        lda     $885E                           ; C5FF AD 5E 88                 .^.
-        sta     r0L                           ; C602 85 02                    ..
-        and     #$01                            ; C604 29 01                    ).
-        beq     LC612                           ; C606 F0 0A                    ..
-        lda     $8860                           ; C608 AD 60 88                 .`.
-        sta     $11                             ; C60B 85 11                    ..
-        lda     $885F                           ; C60D AD 5F 88                 ._.
-        sta     $10                             ; C610 85 10                    ..
-LC612:  lda     #$84                            ; C612 A9 84                    ..
-        sta     $07                             ; C614 85 07                    ..
-        lda     #$53                            ; C616 A9 53                    .S
-        sta     $06                             ; C618 85 06                    ..
-        lda     #$84                            ; C61A A9 84                    ..
-        sta     $09                             ; C61C 85 09                    ..
-        lda     #$42                            ; C61E A9 42                    .B
-        sta     $08                             ; C620 85 08                    ..
-        rts                                     ; C622 60                       `
-
-.global UNK_5 ; xxx moved
-UNK_5:  lda     $11                             ; C623 A5 11                    ..
-        sta     $8860                           ; C625 8D 60 88                 .`.
-        lda     $10                             ; C628 A5 10                    ..
-        sta     $885F                           ; C62A 8D 5F 88                 ._.
-        lda     $16                             ; C62D A5 16                    ..
-        sta     $885D                           ; C62F 8D 5D 88                 .].
-        lda     r0L                           ; C632 A5 02                    ..
-        sta     $885E                           ; C634 8D 5E 88                 .^.
-        and     #$C0                            ; C637 29 C0                    ).
-        beq     LC655                           ; C639 F0 1A                    ..
-        ldy     #$84                            ; C63B A0 84                    ..
-        lda     #$53                            ; C63D A9 53                    .S
-        ldx     #$06                            ; C63F A2 06                    ..
-        jsr     LC64A                           ; C641 20 4A C6                  J.
-        ldy     #$84                            ; C644 A0 84                    ..
-        lda     #$42                            ; C646 A9 42                    .B
-        ldx     #$08                            ; C648 A2 08                    ..
-LC64A:  sty     r4H                             ; C64A 84 0B                    ..
-        sta     r4L                             ; C64C 85 0A                    ..
-        ldy     #r4                            ; C64E A0 0A                    ..
-        lda     #$10                            ; C650 A9 10                    ..
-        jsr     CopyFString                     ; C652 20 68 C2                  h.
-LC655:  rts                                     ; C655 60                       `
-.endif

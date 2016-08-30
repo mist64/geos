@@ -81,7 +81,6 @@ dateCopy:
 .endif
 
 .if wheels
-
 .global _SuperCPUEnableGEOSOptimizations, _SuperCPUDisableGEOSOptimizations, _SuperCPUWriteRegister
 _SuperCPUEnableGEOSOptimizations:
 	ldy #0 ; enable GEOS optimization
