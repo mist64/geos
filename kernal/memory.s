@@ -22,7 +22,7 @@
 .global _i_FillRam
 .global _i_MoveData
 
-.segment "memory1"
+.segment "memory1a"
 
 ;---------------------------------------------------------------
 ; ClearRam                                                $C178
@@ -64,18 +64,7 @@ _FillRam:
 	bne @3
 @4:	rts
 
-.if wheels ; XXX wrong file
-.global _InitGEOS
-_InitGEOS:
-.import _DoFirstInitIO
-	jsr _DoFirstInitIO
-
-.import InitRamTab
-.global InitGEOEnv
-InitGEOEnv:
-	LoadW r0, InitRamTab
-
-.endif
+.segment "memory1b"
 
 ;---------------------------------------------------------------
 ; InitRam                                                 $C181

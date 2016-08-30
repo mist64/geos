@@ -37,16 +37,28 @@
 .import clkBoxTemp
 
 .global InitGEOEnv
+.if wheels
+.global _InitGEOS
+.else
 .global InitGEOS
+.endif
 .global _FirstInit
 
 .segment "init1"
 
-.if !wheels
+.if wheels
+_InitGEOS:
+.else
+InitGEOS:
+.endif
+
 InitGEOS:
 	jsr _DoFirstInitIO
 InitGEOEnv:
 	LoadW r0, InitRamTab
+.if wheels
+	.assert * = _InitRam, error, "Code must run into _InitRam"
+.else
 	jmp _InitRam
 .endif
 
