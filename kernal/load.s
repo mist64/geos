@@ -125,11 +125,9 @@ EDT6:
 
 _StartAppl:
 .if wheels
-L0002 = $0002
 LCA26 = $ca26
 LE62A = $e62a
 LC54E = $c54e
-;.import InitMachine
 	sei                                     ; C331 78                       x
         cld                                     ; C332 D8                       .
         ldx     #$FF                            ; C333 A2 FF                    ..
@@ -145,7 +143,7 @@ LC54E = $c54e
 
 ; ----------------------------------------------------------------------------
 LC34C:  jsr     LCA26                           ; C34C 20 26 CA                  &.
-LC34F:  jmp     (L0002)                         ; C34F 6C 02 00                 l..
+LC34F:  jmp     (r0)                         ; C34F 6C 02 00                 l..
 
 .else
 	sei
@@ -314,7 +312,7 @@ LD7C3:  jsr     GetFHdrInfo                     ; D7C3 20 29 C2                 
         sta     $05                             ; D7CD 85 05                    ..
         sta     LD81A                           ; D7CF 8D 1A D8                 ...
         lda     $10                             ; D7D2 A5 10                    ..
-        sta     L0002                           ; D7D4 85 02                    ..
+        sta     r0L                           ; D7D4 85 02                    ..
         sta     $04                             ; D7D6 85 04                    ..
         sta     LD819                           ; D7D8 8D 19 D8                 ...
         jsr     LD8D3                           ; D7DB 20 D3 D8                  ..
@@ -402,7 +400,7 @@ LD81D:  lda     LD81A                           ; D81D AD 1A D8                 
         sta     $03                             ; D820 85 03                    ..
         sta     $05                             ; D822 85 05                    ..
         lda     LD819                           ; D824 AD 19 D8                 ...
-        sta     L0002                           ; D827 85 02                    ..
+        sta     r0L                           ; D827 85 02                    ..
         sta     $04                             ; D829 85 04                    ..
         lda     LD81C                           ; D82B AD 1C D8                 ...
         sta     $07                             ; D82E 85 07                    ..
@@ -455,33 +453,20 @@ LD81D:  lda     LD81A                           ; D81D AD 1A D8                 
 .endif
 
 _LdApplic:
-.if wheels
-LD84E:  jsr     UNK_5                           ; D84E 20 23 C6                  #.
-        jsr     LdFile                          ; D851 20 11 C2                  ..
-        txa                                     ; D854 8A                       .
-        bne     LD86E                           ; D855 D0 17                    ..
-        lda     $885E                           ; D857 AD 5E 88                 .^.
-        and     #$01                            ; D85A 29 01                    ).
-        bne     LD86E                           ; D85C D0 10                    ..
-        jsr     UNK_4                           ; D85E 20 FA C5                  ..
-        lda     $814B                           ; D861 AD 4B 81                 .K.
-        sta     $10                             ; D864 85 10                    ..
-        lda     $814C                           ; D866 AD 4C 81                 .L.
-        sta     $11                             ; D869 85 11                    ..
-        jmp     StartAppl                       ; D86B 4C 2F C2                 L/.
-
-; ----------------------------------------------------------------------------
-LD86E:  rts                                     ; D86E 60                       `
-.else
 	jsr UNK_5
 	jsr LdFile
 	bnex @1
+.if wheels
+	lda A885E
+	and #1
+	bne @1
+.else
 	bbsf 0, A885E, @1
+.endif
 	jsr UNK_4
 	MoveW_ fileHeader+O_GHST_VEC, r7
 	jmp StartAppl
 @1:	rts
-.endif
 
 .if (!wheels)
 .if (!useRamExp)

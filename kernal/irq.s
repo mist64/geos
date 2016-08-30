@@ -66,11 +66,11 @@ ASSERT_NOT_BELOW_IO
 	dec alarmWarnFlag
 @5:
 .if wheels
-LEBAC = $EBAC
+.import ProcessMouse
 	lda saverStatus
 	lsr
 	bcc @Y
-	jsr LEBAC
+	jsr ProcessMouse
 	jsr GetRandom
 	bra @X
 .endif

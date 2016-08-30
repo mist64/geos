@@ -208,7 +208,7 @@ CheckClickPos:
 	lda mouseData
 	bmi @4
 .if wheels
-        bit     $30                             ; EC86 24 30                    $0
+        bit     mouseOn                             ; EC86 24 30                    $0
         bpl     @4
         bvc     @3                           ; EC8A 50 2F                    P/
 .else
@@ -242,7 +242,7 @@ CheckClickPos:
 
 DoMouseFault:
 .if wheels
-	bit $30
+	bit mouseOn
 	bpl @3
 	bvc @3
 .else
