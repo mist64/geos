@@ -102,45 +102,38 @@ LC4A1:	.byte 0, 199
 ; ----------------------------------------------------------------------------
 .global _WheelsSyscall8
 _WheelsSyscall8:
-	php                                     ; C4A8 08                       .
-        sei                                     ; C4A9 78                       x
-        jsr     LC4C2                           ; C4AA 20 C2 C4                  ..
-        ldx     r2H                             ; C4AD A6 07                    ..
-LC4AF:  ldy     #$00                            ; C4AF A0 00                    ..
-        lda     r4H                             ; C4B1 A5 0B                    ..
-LC4B3:  sta     (r5),y                         ; C4B3 91 0C                    ..
-        iny                                     ; C4B5 C8                       .
-        cpy     r2L                             ; C4B6 C4 06                    ..
-        bcc     LC4B3                           ; C4B8 90 F9                    ..
-        jsr     LC4DA                           ; C4BA 20 DA C4                  ..
-        dex                                     ; C4BD CA                       .
-        bne     LC4AF                           ; C4BE D0 EF                    ..
-        plp                                     ; C4C0 28                       (
-        rts                                     ; C4C1 60                       `
+	php
+	sei
+	jsr @3
+	ldx r2H
+@1:	ldy #$00
+	lda r4H
+@2:	sta (r5),y
+	iny
+	cpy r2L
+	bcc @2
+	jsr @6
+	dex
+	bne @1
+	plp
+	rts
 
-; ----------------------------------------------------------------------------
-LC4C2:  clc                                     ; C4C2 18                       .
-        lda     r1L                             ; C4C3 A5 04                    ..
-        adc     #$00                            ; C4C5 69 00                    i.
-        sta     r5L                             ; C4C7 85 0C                    ..
-        lda     #$8C                            ; C4C9 A9 8C                    ..
-        adc     #$00                            ; C4CB 69 00                    i.
-        sta     r5H                             ; C4CD 85 0D                    ..
-        ldx     r1H                             ; C4CF A6 05                    ..
-        beq     LC4D9                           ; C4D1 F0 06                    ..
-LC4D3:  jsr     LC4DA                           ; C4D3 20 DA C4                  ..
-        dex                                     ; C4D6 CA                       .
-        bne     LC4D3                           ; C4D7 D0 FA                    ..
-LC4D9:  rts                                     ; C4D9 60                       `
+@3:	clc
+	lda r1L
+	adc #0
+	sta r5L
+	lda #>COLOR_MATRIX
+	adc #0
+	sta r5H
+	ldx r1H
+	beq @5
+@4:	jsr @6
+	dex
+	bne @4
+@5:	rts
 
-; ----------------------------------------------------------------------------
-LC4DA:  clc                                     ; C4DA 18                       .
-        lda     #$28                            ; C4DB A9 28                    .(
-        adc     r5L                             ; C4DD 65 0C                    e.
-        sta     r5L                             ; C4DF 85 0C                    ..
-        bcc     LC4E5                           ; C4E1 90 02                    ..
-        inc     r5H                             ; C4E3 E6 0D                    ..
-LC4E5:  rts                                     ; C4E5 60                       `
+@6:	AddVW 40, r5
+	rts
 
 ; ----------------------------------------------------------------------------
 .global _WheelsSyscall9
