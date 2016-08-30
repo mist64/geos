@@ -329,7 +329,6 @@ ImprintLine:
 ;---------------------------------------------------------------
 _RecoverLine:
 .if wheels
-
 	lda #$18 ; clc
 	.byte $2c
 ImprintLine:
@@ -519,6 +518,10 @@ _VerticalLine:
 _i_Rectangle:
 	jsr GetInlineDrwParms
 	jsr _Rectangle
+.if wheels_size
+.global DoInlineReturn7
+DoInlineReturn7:
+.endif
 	php
 	lda #7
 	jmp DoInlineReturn
@@ -558,7 +561,7 @@ _Rectangle:
 ;---------------------------------------------------------------
 _InvertRectangle:
 	MoveB r2L, r11L
-@1:	jsr $C681;xxx_InvertLine
+@1:	jsr _InvertLine
 	lda r11L
 	inc r11L
 	cmp r2H
@@ -573,8 +576,8 @@ _InvertRectangle:
 _i_RecoverRectangle:
 	jsr GetInlineDrwParms
 	jsr _RecoverRectangle
-.if wheels
-	jmp $C81F
+.if wheels_size
+	jmp DoInlineReturn7
 .else
 	php
 	lda #7
@@ -608,8 +611,8 @@ _RecoverRectangle:
 _i_ImprintRectangle:
 	jsr GetInlineDrwParms
 	jsr _ImprintRectangle
-.if wheels
-	jmp $C81F
+.if wheels_size
+	jmp DoInlineReturn7
 .else
 	php
 	lda #7

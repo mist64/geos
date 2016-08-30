@@ -181,8 +181,9 @@ _i_MoveData:
 	lda (returnAddress),Y
 	sta r2H
 	jsr _MoveData
-.if wheels
-        jmp     LC81F                           ; CE16 4C 1F C8                 L..
+.if wheels_size
+.import DoInlineReturn7
+        jmp     DoInlineReturn7                           ; CE16 4C 1F C8                 L..
 .else
 	php
 	lda #7
@@ -192,7 +193,6 @@ _i_MoveData:
 GetMDataDatas:
 .if wheels
 L003D = $003D
-LC81F = $C81F
 LCE26 = $CE26
 
 	ldy     #$00                            ; CE19 A0 00                    ..
