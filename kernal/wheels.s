@@ -209,3 +209,47 @@ _i_ColorRectangle:
 	lda #6
 	jmp DoInlineReturn
 .endif
+
+.segment "wheels4"
+
+.if wheels
+temp = $c325
+.global _SaveColorRectangle, _RestoreColorRectangle
+; Saves a rectangle into or restores it from a linear buffer
+; in:  r0:  buffer address
+;      r1L: x
+;      r1H: y
+;      r2L: width
+;      r2H: height
+_RestoreColorRectangle:
+	lda #0
+	.byte $2c
+_SaveColorRectangle:
+	lda #$80
+	sta temp
+	jsr GetColorMatrixOffset
+	MoveW r0, r6
+	ldx r2H
+@1:	ldy #0
+@2:	bbrf 7, temp, @3
+	lda (r5),y
+	sta (r6),y
+	bra @4
+@3:	lda (r6),y
+	sta (r5),y
+@4:	iny
+	cpy r2L
+	bcc @2
+	tya
+	clc
+	adc r6L
+	sta r6L
+	bcc @5
+	inc r6H
+@5:	jsr NextScreenLine
+	dex
+	bne @1
+	rts
+
+        .byte 0, 0, 0, 0
+.endif
