@@ -90,7 +90,7 @@ L9FDA = $9FDA
 L9FDC = $9fdc
 L9FDD = $9fdd
 .import DrawCheckeredScreen
-.import i_ColorizeRectangle
+.import _i_ColorRectangle
 .global _FirstInit2
 	MoveB L9FDA, screencolors
 	ldy #62
@@ -107,7 +107,7 @@ _FirstInit2:
 	jsr DrawCheckeredScreen
 	lda screencolors
 	sta LC54D
-	jsr i_ColorizeRectangle
+	jsr i_ColorRectangle
 	.byte 0, 0                 ; origin
 	.byte 40, 25               ; size
 LC54D:  .byte (DKGREY << 4)+LTGREY ; value

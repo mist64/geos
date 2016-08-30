@@ -100,10 +100,10 @@ LC4A1:	.byte 0, 199
 	rts
 
 ; ----------------------------------------------------------------------------
-.global _ColorizeRectangle
+.global _ColorRectangle_W
 .global GetColorMatrixOffset
 .global NextScreenLine
-_ColorizeRectangle:
+_ColorRectangle_W:
 ; r1L   x
 ; r1H   y
 ; r2L   width
@@ -148,9 +148,9 @@ NextScreenLine:
 	rts
 
 ; ----------------------------------------------------------------------------
-.global _i_ColorizeRectangle
-; inline version of ColorizeRectangle
-_i_ColorizeRectangle:
+.global _i_ColorRectangle
+; inline version of ColorRectangle_W
+_i_ColorRectangle:
 	PopW returnAddress
 	ldy #5
 	lda (returnAddress),y
@@ -162,7 +162,7 @@ _i_ColorizeRectangle:
 	dey
 	dex
 	bpl @1
-	jsr _ColorizeRectangle
+	jsr _ColorRectangle_W
 	php
 	lda #6
 	jmp DoInlineReturn

@@ -181,8 +181,8 @@ DkNmTabH:
 
 .if wheels
 .include "c64.inc"
-.global _WheelsSyscall6
-_WheelsSyscall6:
+.global _ReadXYPot
+_ReadXYPot:
 	php
 	sei
 	lsr
@@ -211,11 +211,11 @@ _WheelsSyscall6:
 	plp
 	rts
 
-.global _ConvertRectangleToCardSpace
+.global _ConvToCards
 ; Convert a rectangle in pixel space into a origin/size
 ; rectangle in card space, i.e. convert it into a
 ; color matrix rectangle for
-; * ColorizeRectangle
+; * ColorRectangle_W
 ; * SaveColorRectangle
 ; * RestoreColorRectangle
 ;
@@ -227,7 +227,7 @@ _WheelsSyscall6:
 ;      r1H: y1
 ;      r2L: width
 ;      r2H: height
-_ConvertRectangleToCardSpace:
+_ConvToCards:
 	lda r2L
 	lsr
 	lsr

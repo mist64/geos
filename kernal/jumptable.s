@@ -189,40 +189,6 @@
 
 .assert * = $C100, error, "Jump table not at $C100"
 
-.if !wheels
-
-.byte $4c, $7f, $c3, $4c, $c4, $ca, $4c, $8f, $cb, $4c, $ae, $cb, $4c, $ab, $cb, $4c
-.byte $b5, $cb, $4c, $a8, $cb, $4c, $b8, $cb, $4c, $7c, $c6, $4c, $81, $c6, $4c, $1b
-.byte $c7, $4c, $b9, $c7, $4c, $25, $c8, $4c, $8d, $c8, $4c, $3c, $c8, $4c, $55, $c8
-.byte $4c, $77, $e9, $4c, $03, $eb, $4c, $04, $c9, $4c, $07, $ca, $4c, $2d, $ca, $4c
-.byte $40, $eb, $4c, $c1, $e3, $4c, $87, $e4, $4c, $17, $e6, $4c, $2a, $e6, $4c, $60
-.byte $eb, $4c, $f6, $ec, $4c, $68, $ef, $4c, $57, $ef, $4c, $a2, $f0, $4c, $d5, $cc
-.byte $4c, $e9, $cc, $4c, $0a, $cd, $4c, $0f, $cd, $4c, $42, $cd, $4c, $70, $cd, $4c
-.byte $8c, $cd, $4c, $91, $cd, $4c, $a4, $cd, $4c, $66, $c5, $4c, $6a, $c5, $4c, $26
-.byte $ce, $4c, $97, $c5, $4c, $c9, $e8, $4c, $b1, $cd, $4c, $a5, $eb, $4c, $9c, $eb
-.byte $4c, $e9, $ed, $4c, $d4, $ed, $4c, $4a, $cf, $4c, $29, $cc, $4c, $91, $eb, $4c
-.byte $19, $c8, $4c, $7e, $c8, $4c, $4c, $c8, $4c, $f1, $c8, $4c, $93, $e3, $4c, $de
-.byte $e5, $4c, $00, $e0, $4c, $01, $d5, $4c, $05, $ce, $4c, $75, $e6, $4c, $da, $ed
-.byte $4c, $22, $e8, $4c, $37, $c0, $4c, $49, $cc, $4c, $59, $e6, $4c, $32, $e6, $4c
-.byte $6f, $cc, $4c, $b1, $cc, $4c, $b4, $cc, $4c, $ce, $c5, $6c, $20, $90, $6c, $2c
-.byte $90, $6c, $0c, $90, $6c, $16, $90, $6c, $18, $90, $6c, $2e, $90, $4c, $6f, $d8
-.byte $4c, $08, $d9, $4c, $40, $d9, $6c, $1e, $90, $4c, $89, $9d, $6c, $2a, $90, $4c
-.byte $86, $9d, $4c, $0e, $e5, $4c, $7c, $d5, $4c, $53, $9e, $4c, $a3, $d6, $4c, $f1
-.byte $e8, $4c, $3c, $d5, $6c, $08, $90, $4c, $c3, $d7, $6c, $0e, $90, $4c, $4e, $d8
-.byte $6c, $10, $90, $6c, $12, $90, $4c, $c7, $d9, $4c, $69, $d7, $4c, $26, $c3, $4c
-.byte $31, $c3, $6c, $04, $90, $6c, $06, $90, $4c, $b8, $d9, $4c, $d3, $d5, $4c, $1d
-.byte $d8, $4c, $8c, $9d, $4c, $74, $da, $6c, $1a, $90, $6c, $1c, $90, $6c, $28, $90
-.byte $4c, $6e, $c8, $4c, $65, $c8, $4c, $e6, $f1, $4c, $b9, $da, $6c, $00, $90, $6c
-.byte $02, $90, $4c, $df, $cc, $4c, $e7, $cd, $4c, $e9, $cd, $4c, $a1, $ce, $4c, $a3
-.byte $ce, $4c, $06, $c5, $4c, $f2, $da, $4c, $6c, $db, $4c, $b9, $db, $4c, $c2, $db
-.byte $4c, $c8, $db, $4c, $e1, $db, $4c, $1b, $dc, $4c, $33, $dc, $4c, $4d, $dc, $4c
-.byte $60, $dc, $6c, $24, $90, $4c, $75, $db, $4c, $71, $c3, $4c, $e4, $e7, $4c, $08
-.byte $e8, $6c, $14, $90, $4c, $da, $c5, $4c, $5b, $fc, $4c, $46, $e3, $6c, $26, $90
-.byte $4c, $e9, $d6, $4c, $c4, $ce, $4c, $b6, $dd, $6c, $22, $90, $6c, $0a, $90, $4c
-.byte $56, $f3, $4c, $f0, $ce, $4c, $43, $e3, $4c, $ad, $9e, $4c, $b3, $9e, $4c, $b0
-.byte $9e, $4c, $aa, $9e, $4c, $b5, $9e
-
-.else
 InterruptMain:
 	jmp _InterruptMain
 InitProcesses:
@@ -559,7 +525,6 @@ DoRAMOp:
 	ldx #DEV_NOT_FOUND
 	rts
 .endif
-.endif
 
 .if wheels
 LC0CD = $C0CD
@@ -609,32 +574,32 @@ ColorRectangle:
 	UNIMPLEMENTED
 
 ; new Wheels syscalls
-.global InitGEOS, i_ColorizeRectangle
-.import _InitGEOS, _SuperCPUEnableGEOSOptimizations, _SuperCPUDisableGEOSOptimizations, _SuperCPUWriteRegister, _FindFTypes, _WheelsSyscall6, _IRQHandler, _ColorizeRectangle, _i_ColorizeRectangle, _SaveColorRectangle, _RestoreColorRectangle, _ConvertRectangleToCardSpace
+.global InitGEOS, _i_ColorRectangle
+.import _InitGEOS, _GEOSOptimize, _DEFOptimize, _DoOptimize, _FindFTypes, _ReadXYPot, _IRQHandler, _ColorRectangle_W, _i_ColorRectangle, _SaveColorRectangle, _RestoreColorRectangle, _ConvToCards
 InitGEOS: ; $C2FE
 	jmp _InitGEOS
-SuperCPUEnableGEOSOptimizations: ; $C301
-	jmp _SuperCPUEnableGEOSOptimizations
-SuperCPUDisableGEOSOptimizations: ; $C304
-	jmp _SuperCPUDisableGEOSOptimizations
-SuperCPUWriteRegister: ; $C307
-	jmp _SuperCPUWriteRegister
-FindFTypes_: ; $C30A
+GEOSOptimize: ; $C301
+	jmp _GEOSOptimize
+DEFOptimize: ; $C304
+	jmp _DEFOptimize
+DoOptimize: ; $C307
+	jmp _DoOptimize
+NFindFTypes: ; $C30A
 	jmp _FindFTypes
-WheelsSyscall6: ; $C30D
-	jmp _WheelsSyscall6
-IRQHandler: ; $C310
+ReadXYPot: ; $C30D
+	jmp _ReadXYPot
+MainIRQ: ; $C310
 	jmp _IRQHandler
-ColorizeRectangle: ; $C313
-	jmp _ColorizeRectangle
-i_ColorizeRectangle: ; $C316
-	jmp _i_ColorizeRectangle
+ColorRectangle_W: ; $C313
+	jmp _ColorRectangle_W
+i_ColorRectangle: ; $C316
+	jmp _i_ColorRectangle
 SaveColorRectangle: ; $C319
 	jmp _SaveColorRectangle
 RestoreColorRectangle: ; $C31C
 	jmp _RestoreColorRectangle
-ConvertRectangleToCardSpace: ; $C31F
-	jmp _ConvertRectangleToCardSpace
+ConvToCards: ; $C31F
+	jmp _ConvToCards
 
 	.byte 0, 0, 0 ; ???
 

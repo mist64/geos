@@ -81,13 +81,13 @@ dateCopy:
 .endif
 
 .if wheels
-.global _SuperCPUEnableGEOSOptimizations, _SuperCPUDisableGEOSOptimizations, _SuperCPUWriteRegister
-_SuperCPUEnableGEOSOptimizations:
+.global _GEOSOptimize, _DEFOptimize, _DoOptimize
+_GEOSOptimize:
 	ldy #0 ; enable GEOS optimization
 	.byte $2c
-_SuperCPUDisableGEOSOptimizations:
+_DEFOptimize:
 	ldy #3 ; disable all optimizations
-_SuperCPUWriteRegister:
+_DoOptimize:
 	php
 	sei
 	PushB CPU_DATA

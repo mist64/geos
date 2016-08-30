@@ -175,4 +175,18 @@ AccessCache             =       $c2ef
 HideOnlyMouse           =       $c2f2
 SetColorMode            =       $c2f5
 ColorCard               =       $c2f8
-ColorRectangle          =       $c2fb
+ColorRectangle          =       $c2fb ; Wheels renames this to ColorBox
+
+; only in Wheels
+InitMachine             =       $c2fe
+GEOSOptimize            =       $c301
+DEFOptimize             =       $c304
+DoOptimize              =       $c307
+NFindFTypes             =       $c30a
+ReadXYPot               =       $c30d
+MainIRQ                 =       $c310
+ColorRectangle_W        =       $c313 ; Original name is ColorRectangle
+i_ColorRectangle        =       $c316
+SaveColor               =       $c319
+RstrColor               =       $c31c
+ConvToCards             =       $c31f
