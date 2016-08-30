@@ -34,7 +34,8 @@ KERNAL_SOURCES= \
 	kernal/start.s \
 	kernal/time.s \
 	kernal/tobasic.s \
-	kernal/vars.s
+	kernal/vars.s \
+	kernal/wheels.s \
 
 DEPS= \
 	inc/c64.inc \

@@ -80,28 +80,6 @@ dateCopy:
 	.byte 88,4,20
 .endif
 
-.if wheels
-.global _GEOSOptimize, _DEFOptimize, _DoOptimize
-_GEOSOptimize:
-	ldy #0 ; enable GEOS optimization
-	.byte $2c
-_DEFOptimize:
-	ldy #3 ; disable all optimizations
-_DoOptimize:
-	php
-	sei
-	PushB CPU_DATA
-ASSERT_NOT_BELOW_IO
-	LoadB CPU_DATA, $35
-	sta scpu_hwreg_enable
-	sta scpu_base,y
-	sta scpu_hwreg_disable
-	PopB CPU_DATA
-ASSERT_NOT_BELOW_IO
-	plp
-	rts
-.endif
-
 .if !wheels
 BootGEOS:
 	bbsf 5, sysFlgCopy, @1
