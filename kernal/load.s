@@ -456,13 +456,7 @@ _LdApplic:
 	jsr UNK_5
 	jsr LdFile
 	bnex @1
-.if wheels
-	lda A885E
-	and #1
-	bne @1
-.else
 	bbsf 0, A885E, @1
-.endif
 	jsr UNK_4
 	MoveW_ fileHeader+O_GHST_VEC, r7
 	jmp StartAppl
