@@ -1048,7 +1048,7 @@ LineTabH:
 ;---------------------------------------------------------------
 _BitOtherClip:
 	ldx #$ff
-.if wheels
+.if wheels_size
 	.byte $2c
 .else
 	jmp BitmClp1
@@ -1156,7 +1156,7 @@ _i_BitmapUp:
 _BitmapUp:
 	PushB r9H
 	LoadB r9H, NULL
-.if !wheels
+.if !wheels_size_and_speed
 	lda #0
 .endif
 	sta r3L
@@ -1228,7 +1228,7 @@ BitmapDecode:
 	sta r7H
 	bra BitmapDecode
 
-.if wheels
+.if wheels ; moved, but identical
 IndirectR13:
 	jmp (r13)
 
@@ -1259,7 +1259,7 @@ BitmapDecode2:
 	dec r4L
 @3:	rts
 
-.if !wheels
+.if !wheels ; moved
 IndirectR13:
 	jmp (r13)
 
