@@ -75,7 +75,7 @@ InitGEOEnv:
 _FirstInit:
 	sei
 	cld
-	jsr $C2FE;xxxInitGEOS
+	jsr InitGEOS
 	LoadW EnterDeskTop+1, _EnterDeskTop
 	LoadB maxMouseSpeed, iniMaxMouseSpeed
 .if wheels
