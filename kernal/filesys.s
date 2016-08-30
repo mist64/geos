@@ -190,8 +190,7 @@ _WheelsSyscall6:
 	ror
 	sta cia1base+0
 	PushB cia1base+2 ; DDR A
-	lda #$C0
-	sta cia1base+2
+	LoadB cia1base+2, $C0
 	lda cia1base+14
 	and #$FE
 	sta cia1base+14 ; stop timer A
@@ -212,7 +211,7 @@ _WheelsSyscall6:
 	plp
 	rts
 
-.global _WheelsSyscall12
+.global _ConvertRectangleToCardSpace
 ; Convert a rectangle in pixel space into a origin/size
 ; rectangle in card space, i.e. convert it into a
 ; color matrix rectangle for
@@ -228,7 +227,7 @@ _WheelsSyscall6:
 ;      r1H: y1
 ;      r2L: width
 ;      r2H: height
-_WheelsSyscall12:
+_ConvertRectangleToCardSpace:
 	lda r2L
 	lsr
 	lsr
