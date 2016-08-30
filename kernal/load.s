@@ -129,13 +129,13 @@ LC064 = $c064
 LC5FA = $c5fa
 LE62A = $e62a
 LC54E = $c54e
-LC623 = $c623
 .import WheelsSyscall1
+.import UNK_5
 	sei                                     ; C331 78                       x
         cld                                     ; C332 D8                       .
         ldx     #$FF                            ; C333 A2 FF                    ..
         txs                                     ; C335 9A                       .
-        jsr     LC623                           ; C336 20 23 C6                  #.
+        jsr     UNK_5                           ; C336 20 23 C6                  #.
         jsr     WheelsSyscall1                           ; C339 20 FE C2                  ..
         jsr     LC54E                           ; C33C 20 4E C5                  N.
         jsr     LE62A                           ; C33F 20 2A E6                  *.
@@ -250,7 +250,7 @@ _GetFileOld:
 .else
 _GetFile:
 .endif
-	jsr $C623;xxxUNK_5
+	jsr UNK_5
 	jsr FindFile
 	bnex GetFile_rts
 	jsr $C5FA;xxxUNK_4
@@ -459,7 +459,7 @@ LD81D:  lda     LD81A                           ; D81D AD 1A D8                 
 
 _LdApplic:
 .if wheels
-LD84E:  jsr     LC623                           ; D84E 20 23 C6                  #.
+LD84E:  jsr     UNK_5                           ; D84E 20 23 C6                  #.
         jsr     LdFile                          ; D851 20 11 C2                  ..
         txa                                     ; D854 8A                       .
         bne     LD86E                           ; D855 D0 17                    ..

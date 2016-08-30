@@ -211,8 +211,8 @@ LC612:  lda     #$84                            ; C612 A9 84                    
         sta     $08                             ; C620 85 08                    ..
         rts                                     ; C622 60                       `
 
-
-LC623:  lda     $11                             ; C623 A5 11                    ..
+.global UNK_5 ; xxx moved
+UNK_5:  lda     $11                             ; C623 A5 11                    ..
         sta     $8860                           ; C625 8D 60 88                 .`.
         lda     $10                             ; C628 A5 10                    ..
         sta     $885F                           ; C62A 8D 5F 88                 ._.
