@@ -610,7 +610,7 @@ C128_ColorRectangle: ; XXX the real name is ColorRectangle
 
 ; new Wheels syscalls
 .global InitGEOS, i_ColorRectangle
-.import _InitGEOS, _SuperCPUEnableGEOSOptimizations, _SuperCPUDisableGEOSOptimizations, _SuperCPUWriteRegister, _WheelsSyscall5, _WheelsSyscall6, _IRQHandler, _ColorRectangle, _i_ColorRectangle, _WheelsSyscall10, _WheelsSyscall11, _WheelsSyscall12
+.import _InitGEOS, _SuperCPUEnableGEOSOptimizations, _SuperCPUDisableGEOSOptimizations, _SuperCPUWriteRegister, _FindFTypes, _WheelsSyscall6, _IRQHandler, _ColorRectangle, _i_ColorRectangle, _WheelsSyscall10, _WheelsSyscall11, _WheelsSyscall12
 InitGEOS: ; $C2FE
 	jmp _InitGEOS
 SuperCPUEnableGEOSOptimizations: ; $C301
@@ -619,8 +619,8 @@ SuperCPUDisableGEOSOptimizations: ; $C304
 	jmp _SuperCPUDisableGEOSOptimizations
 SuperCPUWriteRegister: ; $C307
 	jmp _SuperCPUWriteRegister
-WheelsSyscall5: ; $C30A
-	jmp _WheelsSyscall5
+FindFTypes_: ; $C30A
+	jmp _FindFTypes
 WheelsSyscall6: ; $C30D
 	jmp _WheelsSyscall6
 WheelsSyscall7: ; $C310
