@@ -49,14 +49,15 @@ GetSerialNumber2:
 .if wheels
 LFB71 = $FB71
 .include "jumptab.inc"
+.include "c64.inc"
 ; ----------------------------------------------------------------------------
 LCF55:  ldx     $01                             ; CF55 A6 01                    ..
         lda     #$35                            ; CF57 A9 35                    .5
         sta     $01                             ; CF59 85 01                    ..
-        lda     $D020                           ; CF5B AD 20 D0                 . .
+        lda     extclr                           ; CF5B AD 20 D0                 . .
         pha                                     ; CF5E 48                       H
         lda     #$00                            ; CF5F A9 00                    ..
-        sta     $D020                           ; CF61 8D 20 D0                 . .
+        sta     extclr                           ; CF61 8D 20 D0                 . .
         lda     $D011                           ; CF64 AD 11 D0                 ...
         pha                                     ; CF67 48                       H
         and     #$6F                            ; CF68 29 6F                    )o
@@ -73,7 +74,7 @@ LCF70:  lda     $88B4                           ; CF70 AD B4 88                 
         pla                                     ; CF7D 68                       h
         sta     $D011                           ; CF7E 8D 11 D0                 ...
         pla                                     ; CF81 68                       h
-        sta     $D020                           ; CF82 8D 20 D0                 . .
+        sta     extclr                           ; CF82 8D 20 D0                 . .
         stx     $01                             ; CF85 86 01                    ..
         rts                                     ; CF87 60                       `
 
