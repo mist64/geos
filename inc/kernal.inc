@@ -87,7 +87,8 @@ A885D           =       $885d
 A885E           =       $885e
 A885F           =       $885f
 A8860           =       $8860
-A88A7           =       $88a7   ; wheels only
+dblDBData       =       $88a7   ; icon number used for double clicking
+                                ; in the file requestor. Default is OPEN.
 e88b7           =       $88b7   ;4 bytes indexed by curDrive, 1571 disk type (SS/DS)
 A8FE8           =       $8fe8
 A8FF0           =       $8ff0

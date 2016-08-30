@@ -1058,7 +1058,7 @@ DBGFPressVector:
 .if wheels ; xxx
 	lda dblClickCount
 	beq @X
-	ldy A88A7
+	ldy dblDBData
 	dey
 	jmp DoKeyboardShortcut
 @X:	lda #30

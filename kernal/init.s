@@ -114,11 +114,11 @@ LC54D:  .byte (DKGREY << 4)+LTGREY ; value
 LC54E:  ldx     CPU_DATA
 ASSERT_NOT_BELOW_IO
 	LoadB CPU_DATA, IO_IN
-        lda     sysExtClr
-        sta     extclr
-        MoveB sysMob0Clr, mob0clr
-        sta     mob1clr
-        stx     CPU_DATA
+	lda sysExtClr
+	sta extclr
+	MoveB sysMob0Clr, mob0clr
+	sta mob1clr
+	stx CPU_DATA
 ASSERT_NOT_BELOW_IO
         rts
 .else
@@ -215,9 +215,9 @@ InitRamTab:
 	.byte 0                       ; IconDescVecH
 
 .if wheels ; ???
-	.word   A88A7
+	.word   dblDBData
 	.byte   1
-	.byte   5
+	.byte   OPEN
 .endif
 	.word obj0Pointer
 	.byte 8
