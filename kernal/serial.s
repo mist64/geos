@@ -51,31 +51,28 @@ LFB71 = $FB71
 .include "jumptab.inc"
 .include "c64.inc"
 ; ----------------------------------------------------------------------------
-LCF55:  ldx     CPU_DATA                             ; CF55 A6 01                    ..
+LCF55:
+	ldx CPU_DATA
 ASSERT_NOT_BELOW_IO
 	LoadB CPU_DATA, IO_IN
-        lda     extclr                           ; CF5B AD 20 D0                 . .
-        pha                                     ; CF5E 48                       H
-        lda     #$00                            ; CF5F A9 00                    ..
-        sta     extclr                           ; CF61 8D 20 D0                 . .
-        lda     $D011                           ; CF64 AD 11 D0                 ...
-        pha                                     ; CF67 48                       H
-        and     #$6F                            ; CF68 29 6F                    )o
-        sta     $D011                           ; CF6A 8D 11 D0                 ...
-        stx     CPU_DATA                             ; CF6D 86 01                    ..
-        cli                                     ; CF6F 58                       X
-LCF70:  lda     saverStatus                           ; CF70 AD B4 88                 ...
-        lsr     a                               ; CF73 4A                       J
-        bcs     LCF70                           ; CF74 B0 FA                    ..
-        sei                                     ; CF76 78                       x
-        ldx     CPU_DATA                             ; CF77 A6 01                    ..
+	PushB extclr
+	LoadB extclr, 0
+	PushB grcntrl1
+	and #$6F
+	sta grcntrl1
+	stx CPU_DATA
+	cli
+@1:	lda saverStatus
+	lsr
+	bcs @1
+	sei
+	ldx CPU_DATA
 	LoadB CPU_DATA, IO_IN
-        pla                                     ; CF7D 68                       h
-        sta     $D011                           ; CF7E 8D 11 D0                 ...
-        pla                                     ; CF81 68                       h
-        sta     extclr                           ; CF82 8D 20 D0                 . .
-        stx     CPU_DATA                             ; CF85 86 01                    ..
-        rts                                     ; CF87 60                       `
+	PopB grcntrl1
+	PopB extclr
+	stx CPU_DATA
+ASSERT_NOT_BELOW_IO
+	rts
 
 ; ----------------------------------------------------------------------------
 LCF88:  lda     saverStatus                           ; CF88 AD B4 88                 ...

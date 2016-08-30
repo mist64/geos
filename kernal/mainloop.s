@@ -42,7 +42,6 @@
 
 _MainLoop:
 .if wheels
-LD011 = $D011
 LFCBA = $FCBA
 LCBDB = $CBDB
 LCAFC = $CAFC
@@ -67,14 +66,14 @@ LC058:  jsr     LCBDB                           ; C058 20 DB CB                 
         jsr     LFCBA                           ; C05B 20 BA FC                  ..
         lda     $849B                           ; C05E AD 9B 84                 ...
         ldx     $849C                           ; C061 AE 9C 84                 ...
-LC064:  jsr     CallRoutine                     ; C064 20 D8 C1                  ..
+_MNLP:  jsr     CallRoutine                     ; C064 20 D8 C1                  ..
         cli                                     ; C067 58                       X
         ldx     $01                             ; C068 A6 01                    ..
         lda     #$35                            ; C06A A9 35                    .5
         sta     $01                             ; C06C 85 01                    ..
-        lda     LD011                           ; C06E AD 11 D0                 ...
+        lda     grcntrl1                           ; C06E AD 11 D0                 ...
         and     #$7F                            ; C071 29 7F                    ).
-LC073:  sta     LD011                           ; C073 8D 11 D0                 ...
+LC073:  sta     grcntrl1                           ; C073 8D 11 D0                 ...
         stx $01                                 ; C076 86                       .
 LC077:  jmp _MainLoop                         ; C077 01 4C                    .L
 .else

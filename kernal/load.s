@@ -127,7 +127,6 @@ _StartAppl:
 .if wheels
 L0002 = $0002
 LCA26 = $ca26
-LC064 = $c064
 LE62A = $e62a
 LC54E = $c54e
 ;.import InitMachine
@@ -142,7 +141,7 @@ LC54E = $c54e
         jsr     UNK_4                           ; C342 20 FA C5                  ..
         ldx     $11                             ; C345 A6 11                    ..
         lda     $10                             ; C347 A5 10                    ..
-        jmp     LC064                           ; C349 4C 64 C0                 Ld.
+        jmp     _MNLP                           ; C349 4C 64 C0                 Ld.
 
 ; ----------------------------------------------------------------------------
 LC34C:  jsr     LCA26                           ; C34C 20 26 CA                  &.
@@ -342,7 +341,7 @@ LD7C3:  jsr     GetFHdrInfo                     ; D7C3 20 29 C2                 
         stx     $8852                           ; D80C 8E 52 88                 .R.
         ldx     $814C                           ; D80F AE 4C 81                 .L.
         lda     $814B                           ; D812 AD 4B 81                 .K.
-        jmp     LC064                           ; D815 4C 64 C0                 Ld.
+        jmp     _MNLP                           ; D815 4C 64 C0                 Ld.
 
 ; ----------------------------------------------------------------------------
 LD818:  rts                                     ; D818 60                       `
