@@ -194,15 +194,15 @@ _WheelsSyscall6:
 	sta cia1base+2
 	lda cia1base+14
 	and #$FE
-	sta cia1base+14 ; stop timer
-	MoveW L9FEE, cia1base+4
+	sta cia1base+14 ; stop timer A
+	MoveW L9FEE, cia1base+4 ; timer A value
 	lda #$7F
-	sta cia1base+13
-	lda cia1base+13
+	sta cia1base+13 ; disabe all interrupts
+	lda cia1base+13 ; clear pending interrupts
 	lda cia1base+14
 	and #$40
 	ora #$19
-	sta cia1base+14
+	sta cia1base+14 ; load timer A, one shot, start
 	lda #$01
 @1:	bit cia1base+13 ; wait for timer A underflow
 	beq @1
@@ -2208,8 +2208,7 @@ L9FDC:  .byte   $06                             ; 9FDC 06                       
 L9FDD:  .byte   $00,$00,$00,$67,$63,$41,$61,$C3 ; 9FDD 00 00 00 67 63 41 61 C3  ...gcAa.
         .byte   $52,$95,$2D,$52,$8A,$6D,$94,$A2 ; 9FE5 52 95 2D 52 8A 6D 94 A2  R.-R.m..
         .byte   $01                             ; 9FED 01                       .
-L9FEE:  .byte   $00                             ; 9FEE 00                       .
-L9FEF:  .byte   $08                             ; 9FEF 08                       .
+L9FEE:  .word $0800
 L9FF0:  .byte   $00                             ; 9FF0 00                       .
 L9FF1:  .byte   $00                             ; 9FF1 00                       .
 L9FF2:  .byte   $00                             ; 9FF2 00                       .

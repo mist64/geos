@@ -623,7 +623,7 @@ FindFTypes_: ; $C30A
 	jmp _FindFTypes
 WheelsSyscall6: ; $C30D
 	jmp _WheelsSyscall6
-WheelsSyscall7: ; $C310
+IRQHandler: ; $C310
 	jmp _IRQHandler
 ColorRectangle: ; $C313
 	jmp _ColorRectangle
