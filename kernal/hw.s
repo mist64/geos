@@ -101,6 +101,7 @@ LC4A1:	.byte 0, 199
 
 ; ----------------------------------------------------------------------------
 .global _ColorizeRectangle
+.global LC4C2
 _ColorizeRectangle:
 ; r1L   x
 ; r1H   y
@@ -109,7 +110,7 @@ _ColorizeRectangle:
 ; r4H   value
 	php
 	sei
-	jsr @3
+	jsr LC4C2
 	ldx r2H
 @1:	ldy #0
 	lda r4H
@@ -117,13 +118,13 @@ _ColorizeRectangle:
 	iny
 	cpy r2L
 	bcc @2
-	jsr @6
+	jsr LC4DA
 	dex
 	bne @1
 	plp
 	rts
 
-@3:	clc
+LC4C2:	clc
 	lda r1L
 	adc #<COLOR_MATRIX
 	sta r5L
@@ -132,12 +133,12 @@ _ColorizeRectangle:
 	sta r5H
 	ldx r1H
 	beq @5
-@4:	jsr @6
+@4:	jsr LC4DA
 	dex
 	bne @4
 @5:	rts
 
-@6:	AddVW 40, r5
+LC4DA:	AddVW 40, r5
 	rts
 
 ; ----------------------------------------------------------------------------

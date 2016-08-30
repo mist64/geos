@@ -118,7 +118,7 @@ _InterruptMain:
 
 .if wheels
 LC4DA = $c4da
-LC4C2 = $c4c2
+.import LC4C2
 LC325 = $c325
 .global _WheelsSyscall10, _WheelsSyscall11
 _WheelsSyscall11:
