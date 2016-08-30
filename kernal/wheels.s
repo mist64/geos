@@ -4,9 +4,11 @@
 ; Wheels additions
 
 .include "config.inc"
+.include "const.inc"
 .include "geossym.inc"
 .include "geosmac.inc"
 .include "kernal.inc"
+.include "jumptab.inc"
 .include "c64.inc"
 
 .global modKeyCopy
@@ -175,7 +177,6 @@ _SaveColorRectangle:
 .segment "wheels4"
 
 .if wheels
-.include "jumptab.inc"
 LEC75 = $ec75
 LFD2F = $fd2f
 LC5E7 = $c5e7
@@ -568,4 +569,99 @@ IrqRoutine:
 nmiDefault:
 	.byte $40
 
+.endif
+
+.segment "screensaver"
+
+.if wheels
+.import KbdScanAll
+L88B8 = $88B8
+L88B6 = $88B6
+.global RunScreensaver
+RunScreensaver:
+	ldx CPU_DATA
+ASSERT_NOT_BELOW_IO
+	LoadB CPU_DATA, IO_IN
+	PushB extclr
+	LoadB extclr, 0 ; black border
+	PushB grcntrl1
+	and #$6F
+	sta grcntrl1 ; turn off screen
+	stx CPU_DATA
+ASSERT_NOT_BELOW_IO
+	cli
+@1:	lda saverStatus ; wait for IRQ to disable screen saver
+	lsr
+	bcs @1
+	sei
+	ldx CPU_DATA
+ASSERT_NOT_BELOW_IO
+	LoadB CPU_DATA, IO_IN
+	PopB grcntrl1
+	PopB extclr
+	stx CPU_DATA
+ASSERT_NOT_BELOW_IO
+	rts
+
+.global ScreenSaver1
+ScreenSaver1:
+	lda saverStatus
+	lsr
+	bcs @2 ; screen saver on
+	lda saverStatus
+	and #$30
+	bne @1 ; timer stopped
+	jsr @5
+@1:	clc
+	rts
+@2:	jsr @5
+	bcc @4
+	lda saverStatus
+	and #$7E
+	sta saverStatus
+@3:	jsr KbdScanAll
+	bne @3
+	lda #0
+	sta pressFlag
+@4:	sec
+	rts
+
+@5:	lda saverStatus
+	and #$02
+	bne @6 ; ignore mouse
+	lda inputData
+	cmp #$FF
+	bne @7 ; mouse moved
+@6:	jsr KbdScanAll
+	beq @8
+@7:	lda L88B8
+	sta L88B6
+	lda saverCount
+	sta saverTimer
+	sec
+	rts
+@8:	clc
+	rts
+
+	.byte 0, 0, 0, 0 ; ??? unused
+
+; ??? unused
+	lda #$40
+	sta $03
+	lda #$00
+	sta r0L
+	lda #$FE
+	sta $05
+	lda #$40
+	sta $04
+	lda #$01
+	sta $07
+	lda #$C0
+	sta $06
+	lda $88C3
+	sta $08
+	inc $88C3
+	jsr SwapRAM
+	dec $88C3
+	rts
 .endif
