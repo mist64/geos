@@ -19,62 +19,60 @@
 .segment "reu"
 
 .if wheels
-; ----------------------------------------------------------------------------
-.global _VerifyRAM, _StashRAM, _SwapRAM, _FetchRAM, _DoRAMOp
 _VerifyRAM:
-	ldy     #$93                            ; 9EAA A0 93                    ..
-        .byte   $2C                             ; 9EAC 2C                       ,
+	ldy     #$93
+        .byte   $2C
 _StashRAM:
-	ldy     #$90                            ; 9EAD A0 90                    ..
-        .byte   $2C                             ; 9EAF 2C                       ,
+	ldy     #$90
+        .byte   $2C
 _SwapRAM:
-	ldy     #$92                            ; 9EB0 A0 92                    ..
-        .byte   $2C                             ; 9EB2 2C                       ,
+	ldy     #$92
+        .byte   $2C
 _FetchRAM:
-	ldy     #$91                            ; 9EB3 A0 91                    ..
+	ldy     #$91
 _DoRAMOp:
-	ldx     #$0D                            ; 9EB5 A2 0D                    ..
-        lda     r3L                             ; 9EB7 A5 08                    ..
-        cmp     $88C3                           ; 9EB9 CD C3 88                 ...
-        bcs     L9F09                           ; 9EBC B0 4B                    .K
-        php                                     ; 9EBE 08                       .
-        sei                                     ; 9EBF 78                       x
-        lda     $01                             ; 9EC0 A5 01                    ..
-        pha                                     ; 9EC2 48                       H
-        lda     #$35                            ; 9EC3 A9 35                    .5
-        sta     $01                             ; 9EC5 85 01                    ..
-        lda     $D030                           ; 9EC7 AD 30 D0                 .0.
-        pha                                     ; 9ECA 48                       H
-        lda     #$00                            ; 9ECB A9 00                    ..
-        sta     $D030                           ; 9ECD 8D 30 D0                 .0.
-        ldx     #$04                            ; 9ED0 A2 04                    ..
-L9ED2:  lda     $01,x                           ; 9ED2 B5 01                    ..
-        sta     EXP_BASE+1,x                         ; 9ED4 9D 01 DF                 ...
-        dex                                     ; 9ED7 CA                       .
-        bne     L9ED2                           ; 9ED8 D0 F8                    ..
-        lda     r2H                             ; 9EDA A5 07                    ..
-        sta     EXP_BASE+8                           ; 9EDC 8D 08 DF                 ...
-        lda     r2L                             ; 9EDF A5 06                    ..
-        sta     EXP_BASE+7                           ; 9EE1 8D 07 DF                 ...
-        lda     r3L                             ; 9EE4 A5 08                    ..
-        sta     EXP_BASE+6                           ; 9EE6 8D 06 DF                 ...
-        stx     EXP_BASE+9                           ; 9EE9 8E 09 DF                 ...
-        stx     EXP_BASE+10                           ; 9EEC 8E 0A DF                 ...
-        sty     EXP_BASE+1                           ; 9EEF 8C 01 DF                 ...
-        ldx     EXP_BASE+1                           ; 9EF2 AE 01 DF                 ...
-        pla                                     ; 9EF5 68                       h
-        sta     $D030                           ; 9EF6 8D 30 D0                 .0.
-        pla                                     ; 9EF9 68                       h
-        sta     $01                             ; 9EFA 85 01                    ..
-        plp                                     ; 9EFC 28                       (
-        txa                                     ; 9EFD 8A                       .
-        and     #$60                            ; 9EFE 29 60                    )`
-        cmp     #$60                            ; 9F00 C9 60                    .`
-        beq     L9F07                           ; 9F02 F0 03                    ..
-        ldx     #$00                            ; 9F04 A2 00                    ..
-        .byte   $2C                             ; 9F06 2C                       ,
-L9F07:  ldx     #$25                            ; 9F07 A2 25                    .%
-L9F09:  rts                                     ; 9F09 60                       `
+	ldx     #$0D
+        lda     r3L
+        cmp     $88C3
+        bcs     L9F09
+        php
+        sei
+        lda     $01
+        pha
+        lda     #$35
+        sta     $01
+        lda     $D030
+        pha
+        lda     #$00
+        sta     $D030
+        ldx     #$04
+L9ED2:  lda     $01,x
+        sta     EXP_BASE+1,x
+        dex
+        bne     L9ED2
+        lda     r2H
+        sta     EXP_BASE+8
+        lda     r2L
+        sta     EXP_BASE+7
+        lda     r3L
+        sta     EXP_BASE+6
+        stx     EXP_BASE+9
+        stx     EXP_BASE+10
+        sty     EXP_BASE+1
+        ldx     EXP_BASE+1
+        pla
+        sta     $D030
+        pla
+        sta     $01
+        plp
+        txa
+        and     #$60
+        cmp     #$60
+        beq     L9F07
+        ldx     #$00
+        .byte   $2C
+L9F07:  ldx     #$25
+L9F09:  rts
 .endif
 
 .if !wheels
