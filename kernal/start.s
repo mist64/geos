@@ -27,6 +27,13 @@
 ; used by header.s
 .global _ResetHandle
 
+.if (usePlus60K)
+.import DetectPlus60K
+.endif
+.if (useRamExp)
+.import LoadDeskTop
+.endif
+
 .segment "start"
 
 ; The original version of GEOS 2.0 has purgeable init code
@@ -57,6 +64,7 @@ _ResetHandle:
 	ldx #$FF
 	txs
 
+ASSERT_NOT_BELOW_IO
 	lda #IO_IN
 	sta CPU_DATA
 
@@ -96,6 +104,7 @@ _ResetHandle:
 
 	lda #RAM_64K
 	sta CPU_DATA
+ASSERT_NOT_BELOW_IO
 
 	jsr i_FillRam
 	.word $0500
@@ -131,6 +140,9 @@ OrigResetHandle:
 	ldx #$ff
 	jsr _DoFirstInitIO
 	jsr InitGEOEnv
+.if (usePlus60K)
+	jsr DetectPlus60K
+.endif
 	jsr GetDirHead
 	MoveB bootSec, r1H
 	MoveB bootTr, r1L
@@ -143,6 +155,9 @@ OrigResetHandle:
 	bne @2
 	inc NUMDRV
 @2:	LoadW EnterDeskTop+1, _EnterDeskTop
+.if (useRamExp)
+	jsr LoadDeskTop
+.endif
 	jmp EnterDeskTop
 
 @3:	MoveB r1H, bootSec

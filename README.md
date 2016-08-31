@@ -61,6 +61,10 @@ This is the reverse engineered source code of the KERNAL (plus disk and input dr
 
 The source has been heavily reorganized and modularized, nevertheless, a standard compile will generate binaries that are identical with the GEOS 2.0 distribution binaries.
 
+Optionally, the following features that were not part of the original GEOS 2.0 can be enabled:
+
+* gateWay 2.51 KERNAL patches
+* +60K RAM support
 
 ## Requirements
 
@@ -92,6 +96,11 @@ By default, the "BSW" version of GEOS is built, which is the same binary as Engl
 
 * `cbmfiles = 1`: The [cbmfiles.com](http://www.cbmfiles.com/) version. It starts out with a different date, and has some variables in the kernel pre-filled.
 * `gateway = 1`: The patched KERNEL shipped by gateWay 2.51. It contains a slightly modified BSW font, has the `Panic` code replaced with code to swap the disk driver on a RESTORE press, and it loads `GATEWAY` instead of `DESK TOP` as the shell.
+
+The following options can be enabled:
+
+* `usePlus60K = 1`: Enable support for the +60K RAM expansion. This will use the extra RAM for caching deskTop and for holding the swap area when running desk accessories.
+* `removeToBASIC = 1`: Don't include the ToBASIC code required for deskTop to launch non-GEOS applications. Turn this off if the KERNAL code overflows RAM, e.g. when enabling +60K support.
 
 ## Source Tree
 

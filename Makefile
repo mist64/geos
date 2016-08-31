@@ -28,6 +28,7 @@ KERNAL_SOURCES= \
 	kernal/panic.s \
 	kernal/patterns.s \
 	kernal/process.s \
+	kernal/ramexp.s \
 	kernal/reu.s \
 	kernal/serial.s \
 	kernal/sprites.s \

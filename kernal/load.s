@@ -37,6 +37,21 @@
 .import DeskAccPC
 .import TempCurDrive
 
+.if (useRamExp)
+; reu.s
+.import RamExpRead
+.import RamExpWrite
+.import RamExpPutStat
+.import RamExpGetStat
+
+.import DeskTopExec
+.import DeskTopLgh
+.import DeskTopStart
+
+.global DeskTopName
+.global _EnterDT_DB
+.endif
+
 ; syscalls
 .global _EnterDeskTop
 .global _GetFile
@@ -124,7 +139,6 @@ _StartAppl:
 	lda r7L
 	jmp _MNLP
 
-.if (!useRamExp)
 _EnterDT_DB:
 	.byte DEF_DB_POS | 1
 	.byte DBTXTSTR, TXT_LN_X, TXT_LN_1_Y+6
@@ -133,7 +147,6 @@ _EnterDT_DB:
 	.word _EnterDT_Str1
 	.byte OK, DBI_X_2, DBI_Y_2
 	.byte NULL
-.endif
 
 DeskTopName:
 .if gateway
@@ -331,10 +344,14 @@ SwapFileName:
 
 .segment "load5"
 
+.if (!useRamExp)
 SaveSwapFile:
 	LoadB fileHeader+O_GHGEOS_TYPE, TEMPORARY
 	LoadW fileHeader, SwapFileName
 	LoadW r9, fileHeader
 	LoadB r10L, NULL
+
+.endif
+
 
 .assert * = _SaveFile, error, "Code must run into _SaveFile"

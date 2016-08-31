@@ -27,6 +27,17 @@
 .global SerialHiCompare
 .endif
 
+.if (useRamExp)
+; reu.s
+.import RamExpRead
+.import RamExpGetStat
+.import DeskTopRecord
+.import DeskTopOpen
+
+; load.s
+.import DeskTopName
+.endif
+
 ; syscalls
 .global _AppendRecord
 .global _BldGDirEntry
@@ -1149,19 +1160,3 @@ _ReadByte:
 	stx r5L
 	bra _ReadByte
 
-.segment "X"
-
-.if (useRamExp)
-DeskTopOpen:
-	.byte 0 ;these two bytes are here just
-DeskTopRecord:
-	.byte 0 ;to keep OS_JUMPTAB at $c100
-	.byte 0,0,0 ;three really unused
-
-DeskTopStart:
-	.word 0 ;these are for ensuring compatibility with
-DeskTopExec:
-	.word 0 ;DeskTop replacements - filename of desktop
-DeskTopLgh:
-	.byte 0 ;have to be at $c3cf .IDLE
-.endif

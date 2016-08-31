@@ -18,6 +18,7 @@ removeToBASIC   =       0               ; shorter code if you don't use BASIC re
 ; RAM expansions configuration
 ; (only one value may be '1', if all are 0 then REU is utililzed)
 usePlus60K      =       0               ; for +60K expansion users
+; XXX these are untested and probably broken XXX
 useRamCart64    =       0               ; for Ram Cart 64K
 useRamCart128   =       0               ; for Ram Cart 128K
 
