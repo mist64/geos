@@ -1440,15 +1440,15 @@ LDBE1:  jsr     LDC29                           ; DBE1 20 29 DC                 
         txa                                     ; DBE4 8A                       .
         bne     LDC1A                           ; DBE5 D0 33                    .3
         jsr     LDD41                           ; DBE7 20 41 DD                  A.
-        lda     $8496                           ; DBEA AD 96 84                 ...
+        lda     curRecord                           ; DBEA AD 96 84                 ...
         sta     r0L                           ; DBED 85 02                    ..
-        jsr     LDCEB                           ; DBEF 20 EB DC                  ..
+        jsr     MoveBackVLIRTab                           ; DBEF 20 EB DC                  ..
         txa                                     ; DBF2 8A                       .
         bne     LDC1A                           ; DBF3 D0 25                    .%
-        lda     $8496                           ; DBF5 AD 96 84                 ...
+        lda     curRecord                           ; DBF5 AD 96 84                 ...
         cmp     $8497                           ; DBF8 CD 97 84                 ...
         bcc     xLDC00                           ; DBFB 90 03                    ..
-        dec     $8496                           ; DBFD CE 96 84                 ...
+        dec     curRecord                           ; DBFD CE 96 84                 ...
 xLDC00:  .byte   $A2                             ; DC00 A2                       .
 	brk                                     ; DC01 00                       .
 	.byte   $A5                             ; DC02 A5                       .
@@ -1497,21 +1497,18 @@ LDC1A:  rts                                     ; DC1A 60                       
 
 _InsertRecord:
 .if wheels
-LDDA4 = $DDA4
-LDD10 = $DD10
-LDCEB = $DCEB
 LDD41 = $DD41
 LDC1B:  jsr     LDC29                           ; DC1B 20 29 DC                  ).
         txa                                     ; DC1E 8A                       .
         bne     LDC1A                           ; DC1F D0 F9                    ..
-        lda     $8496                           ; DC21 AD 96 84                 ...
+        lda     curRecord                           ; DC21 AD 96 84                 ...
         sta     r0L                           ; DC24 85 02                    ..
-        jmp     LDD10                           ; DC26 4C 10 DD                 L..
+        jmp     MoveForwVLIRTab                           ; DC26 4C 10 DD                 L..
 
 LDC29:  ldx     #$08                            ; DC29 A2 08                    ..
-        lda     $8496                           ; DC2B AD 96 84                 ...
+        lda     curRecord                           ; DC2B AD 96 84                 ...
         bmi     LDC1A                           ; DC2E 30 EA                    0.
-LDC30:  jmp     LDDA4                           ; DC30 4C A4 DD                 L..
+LDC30:  jmp     ReadyForUpdVLIR
 .else
 	ldx #INV_RECORD
 	lda curRecord
