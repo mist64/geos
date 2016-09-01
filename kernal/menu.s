@@ -183,8 +183,8 @@ DoMenu1_1:
 @3:	sec
 @4:	bbrf MOUSEON_BIT, mouseOn, @5
 .if wheels
-        lda     #$60                            ; EDC8 A9 60                    .`
-        .byte   $2C                             ; EDCA 2C                       ,
+	lda #1 << ICONSON_BIT | 1 << MENUON_BIT
+	.byte $2c ; skip the "LDA #" part of "smbf"
 .else
 	smbf ICONSON_BIT, mouseOn
 .endif
