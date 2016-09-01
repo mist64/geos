@@ -1,4 +1,4 @@
-; GEOS KERNAL by Berkeley Softworks
+; GEOS
 ; reverse engineered by Michael Steil
 ;
 ; Wheels additions
@@ -283,9 +283,11 @@ _WriteFile:
 _ToBASIC:
 	jmp __ToBASIC
 
-L9D8F:	.byte $4c ; jmp
+Execute:
+	.byte $4c ; jmp
 REUArgs:
 	.word $5000 ; CBM address
+REUAddr:
         .word $0100 ; REU address
 	.word $03bd ; byte count
 
@@ -295,6 +297,11 @@ SaveX:	.byte 3
 SaveY:	.byte 0
 
 _GetNewKernal:
+; The start of the private area of the REU contains
+; a four byte entry for every code bank, consisting
+; of a 16 bit REU address and a 16 bit length.
+; This allows for variable length code banks, and a
+; total of 64 KB of code.
 	pha
 	stx SaveX
 	sty SaveY
@@ -307,40 +314,40 @@ _GetNewKernal:
 	lda #0
 	sta r1H
 	sta r2H
-	lda #$04
+	lda #4 ; fetch 4 bytes
 	sta r2L
-	LoadW r0, $9D92
+	LoadW r0, REUAddr
 	jsr SetBank
-	jsr FetchDec
+	jsr FetchDec ; get address and count of block
 	jsr SetREUArgs
 	pla
 	pha
 	bmi @1
-	jsr SwapDec
+	jsr SwapDec  ; $80 = swap
 	bne @2
-@1:	jsr FetchDec
+@1:	jsr FetchDec ; otherwise fetch
 @2:	jsr RestoreRegs
 	ldx SaveX
 	ldy SaveY
 	pla
 	pha
-	and #$40
+	and #$40     ; $40 = and execute first function, then restore
 	beq @4
 	pla
 @3:	rts
-@4:	jsr L9D8F                           ; 9DE7 20 8F 9D                  ..
-        pla
-        bmi     @3
+@4:	jsr Execute
+	pla
+	bmi @3
 _RstrKernal:
-	stx     SaveX
-        sty     SaveY
-        jsr     SaveRegs
-        jsr     SetREUArgs
-        jsr     SwapDec
-        jsr     RestoreRegs
-        ldx     SaveX                           ; 9DFF AE 9D 9D                 ...
-        ldy     SaveY                           ; 9E02 AC 9E 9D                 ...
-        rts                                     ; 9E05 60                       `
+	stx SaveX
+	sty SaveY
+	jsr SaveRegs
+	jsr SetREUArgs
+	jsr SwapDec
+	jsr RestoreRegs
+	ldx SaveX
+	ldy SaveY
+	rts
 
 ; ----------------------------------------------------------------------------
 ; set up args, inc
@@ -356,14 +363,12 @@ SetBank:
 	inc ramExpSize ; allow accessing this bank
 	rts
 
-; swap
 SwapDec:
 	jsr     SwapRAM                         ; 9E19 20 CE C2                  ..
-        bra     L9E22                           ; 9E1D 50 03                    P.
-; fetch
+        bra     Decr
 FetchDec:
 	jsr     FetchRAM                        ; 9E1F 20 CB C2                  ..
-L9E22:	dec     ramExpSize ; restore original REU size
+Decr:	dec     ramExpSize ; restore original REU size
         rts                                     ; 9E25 60                       `
 
 RestoreRegs:
