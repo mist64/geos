@@ -1564,8 +1564,6 @@ ReaRec0:
 
 _WriteRecord:
 .if wheels
-LDD51 = $DD51
-LDD61 = $DD61
 LDC60:  lda     r2H                             ; DC60 A5 07                    ..
         pha                                     ; DC62 48                       H
         lda     r2L                             ; DC63 A5 06                    ..
@@ -1616,14 +1614,14 @@ LDC80:  lda     r2H                             ; DC80 A5 07                    
 LDCB0:  lda     r2L                             ; DCB0 A5 06                    ..
         ora     r2H                             ; DCB2 05 07                    ..
         beq     LDCB9                           ; DCB4 F0 03                    ..
-LDCB6:  jmp     LDD61                           ; DCB6 4C 61 DD                 La.
+LDCB6:  jmp     WriteVLIRChain                           ; DCB6 4C 61 DD                 La.
 
 ; ----------------------------------------------------------------------------
 LDCB9:  ldy     #$FF                            ; DCB9 A0 FF                    ..
         sty     r1H                             ; DCBB 84 05                    ..
         iny                                     ; DCBD C8                       .
         sty     r1L                             ; DCBE 84 04                    ..
-        jmp     LDD51                           ; DCC0 4C 51 DD                 LQ.
+        jmp     PutVLIRChainTS                           ; DCC0 4C 51 DD                 LQ.
 .else
 	ldx #INV_RECORD
 	lda curRecord
