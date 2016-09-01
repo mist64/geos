@@ -193,7 +193,6 @@ _GetPtrCurDkNm:
 
 _FollowChain:
 .if wheels
-L9069 = $9069
 LC325 = $C325
 LD57C:  php                                     ; D57C 08                       .
         sei                                     ; D57D 78                       x
@@ -203,7 +202,7 @@ LD57C:  php                                     ; D57C 08                       
 
         lda     #$00                            ; D584 A9 00                    ..
         sta     LC325                           ; D586 8D 25 C3                 .%.
-LD589:  jsr     L9069                           ; D589 20 69 90                  i.
+LD589:  jsr     GetLink                           ; D589 20 69 90                  i.
 LD58C:  txa                                     ; D58C 8A                       .
         bne     LD5C3                           ; D58D D0 34                    .4
         ldy     LC325                           ; D58F AC 25 C3                 .%.
@@ -278,9 +277,7 @@ LD5CA:  lda     #$80                            ; D5CA A9 80                    
 
 _FindFTypes:
 .if wheels
-L9033 = $9033
 LD795 = $D795
-L9030 = $9030
 .import fftIndicator
 	bit     fftIndicator                           ; D5D3 2C F3 9F                 ,..
         bmi     LD5FD                           ; D5D6 30 25                    0%
@@ -304,7 +301,7 @@ L9030 = $9030
         bcc     LD5FA                           ; D5F6 90 02                    ..
         inc     $03                             ; D5F8 E6 03                    ..
 LD5FA:  jsr     ClearRam                        ; D5FA 20 78 C1                  x.
-LD5FD:  jsr     L9030                           ; D5FD 20 30 90                  0.
+LD5FD:  jsr     Get1stDirEntry                           ; D5FD 20 30 90                  0.
         txa                                     ; D600 8A                       .
         bne     LD661                           ; D601 D0 5E                    .^
 LD603:  ldy     #$00                            ; D603 A0 00                    ..
@@ -350,7 +347,7 @@ LD640:  lda     #$00                            ; D640 A9 00                    
         inc     $0F                             ; D652 E6 0F                    ..
 LD654:  dec     $11                             ; D654 C6 11                    ..
         beq     LD661                           ; D656 F0 09                    ..
-LD658:  jsr     L9033                           ; D658 20 33 90                  3.
+LD658:  jsr     GetNxtDirEntry                           ; D658 20 33 90                  3.
         txa                                     ; D65B 8A                       .
         bne     LD661                           ; D65C D0 03                    ..
         tya                                     ; D65E 98                       .
@@ -485,7 +482,7 @@ LD6A3:  sec                                     ; D6A3 38                       
         sta     $0E                             ; D6A8 85 0E                    ..
         bcs     LD6AE                           ; D6AA B0 02                    ..
         dec     $0F                             ; D6AC C6 0F                    ..
-LD6AE:  jsr     L9030                           ; D6AE 20 30 90                  0.
+LD6AE:  jsr     Get1stDirEntry                           ; D6AE 20 30 90                  0.
         txa                                     ; D6B1 8A                       .
         bne     LD6E8                           ; D6B2 D0 34                    .4
 LD6B4:  ldy     #$00                            ; D6B4 A0 00                    ..
@@ -504,7 +501,7 @@ LD6C7:  cpy     #$13                            ; D6C7 C0 13                    
         iny                                     ; D6CD C8                       .
         cmp     #$A0                            ; D6CE C9 A0                    ..
         beq     LD6C7                           ; D6D0 F0 F5                    ..
-LD6D2:  jsr     L9033                           ; D6D2 20 33 90                  3.
+LD6D2:  jsr     GetNxtDirEntry                           ; D6D2 20 33 90                  3.
         txa                                     ; D6D5 8A                       .
         bne     LD6E8                           ; D6D6 D0 10                    ..
         tya                                     ; D6D8 98                       .
@@ -1153,7 +1150,7 @@ LDA38:  jsr     FreeBlock                       ; DA38 20 B9 C2                 
 LDA42:  inc     r2L                             ; DA42 E6 06                    ..
         bne     LDA48                           ; DA44 D0 02                    ..
         inc     r2H                             ; DA46 E6 07                    ..
-LDA48:  jsr     L9069                           ; DA48 20 69 90                  i.
+LDA48:  jsr     GetLink                           ; DA48 20 69 90                  i.
         txa                                     ; DA4B 8A                       .
         bne     LDA5E                           ; DA4C D0 10                    ..
         lda     $8001                           ; DA4E AD 01 80                 ...

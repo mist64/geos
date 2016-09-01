@@ -266,7 +266,6 @@ _GetFile:
 
 .if wheels
 LD78B = $D78B
-L903C = $903C
 .endif
 _LdFile:
 	jsr GetFHdrInfo
@@ -276,7 +275,7 @@ _LdFile:
 	ldy #OFF_DE_TR_SC
 .if wheels
         jsr     LD78B                           ; D54B 20 8B D7                  ..
-        jsr     L903C                           ; D54E 20 3C 90                  <.
+        jsr     ReadBuff                           ; D54E 20 3C 90                  <.
         bne     GetFile_rts                           ; D551 D0 28                    .(
 .else
 	lda (r9),y

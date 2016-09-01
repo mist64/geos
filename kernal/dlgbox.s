@@ -610,7 +610,7 @@ LF4CC:	lda DBDefIconsTabRoutine,y
 	jmp CallRoutine
 
 ShortcutKeys:
-	.byte 13, "cynod"
+	.byte 13, "cynod"; ok, cancel, yes, no, open, disk
 ShortcutKeysEnd:
 .else
 	CmpBI keyData, CR

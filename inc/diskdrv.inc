@@ -34,7 +34,35 @@ GetBorder               =       $9036
 AddDirBlock             =       $9039
 ReadBuff                =       $903c
 WriteBuff               =       $903f
-;??? = $9042
-;??? = $9045
+SendTSBytes             =       $9042
+CheckErrors             =       $9045
 AllocateBlock           =       $9048
 ReadLink                =       $904b
+
+; Wheels only
+ddriveType              =       $904e
+driverVersion           =       $904f
+OpenRoot                =       $9050
+OpenDirectory           =       $9053
+GetBamBlock             =       $9056
+PutBamBlock             =       $9059
+dirHeadTrack            =       $905c
+dirHeadSector           =       $905d
+curBamBlock             =       $905e
+lastBamByte             =       $905f
+lastBamSector           =       $9060
+bamAltered              =       $9061
+highestTrack            =       $9062
+GetHeadTS               =       $9063
+PutHeadTS               =       $9066
+GetLink                 =       $9069
+GetSysDirBlk            =       $906c
+startBank               =       $906f
+startPage               =       $9070
+pagesUsed               =       $9071
+cableType               =       $9073
+ckdBrdrYet              =       $9074 ; $ff means GetNxtDirEntry is working
+                                      ; in the system directory. (read only)
+dir3Head                =       $9c80 ; to be used by the disk drivers only.
+                                      ; It resides within each driver.
+                                      ; ($9c80-$9d7f)
