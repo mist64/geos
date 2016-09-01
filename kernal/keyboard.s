@@ -121,9 +121,9 @@ KbdScanHelp1:
 	adc r1L
 	tax
 	bbrf 7, r1H, @2
-	lda $FE25,x;xxxKbdDecodeTab2,x
+	lda KbdDecodeTab2,x
 	bra @3
-@2:	lda $FDE5,x;xxxKbdDecodeTab1,x
+@2:	lda KbdDecodeTab1,x
 @3:	sta r0H
 	bbrf 5, r1H, @4
 	lda r0H
