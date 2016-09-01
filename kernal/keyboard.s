@@ -153,7 +153,7 @@ KbdScanHelp1:
 	ldx r1L
 	lda r0L
 	and BitMaskPow2,x
-	and $887B,y;xxxKbdDMltTab,y
+	and KbdDMltTab,y
 .if wheels
 	beq @9
 	lda keyRptCount
