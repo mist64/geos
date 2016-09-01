@@ -275,25 +275,27 @@ RstrKernal:
 	jmp     L9DED
 
 _ReadFile:
-	jmp     L9E3C                           ; 9D86 4C 3C 9E                 L<.
+	jmp     __ReadFile                           ; 9D86 4C 3C 9E                 L<.
 
 _WriteFile:
-	jmp     L9E3F                           ; 9D89 4C 3F 9E                 L?.
+	jmp     __WriteFile                           ; 9D89 4C 3F 9E                 L?.
 
 _ToBASIC:
-	jmp     L9E44                           ; 9D8C 4C 44 9E                 LD.
+	jmp     __ToBASIC                           ; 9D8C 4C 44 9E                 LD.
 
 L9D8F:  jmp $5000
-        .byte   $00,$01,$BD,$03             ; 9D91 50 00 01 BD 03           P....
-L9D96:  .byte   $42,$04,$F4,$50,$EA,$06,$01     ; 9D96 42 04 F4 50 EA 06 01     B..P...
-L9D9D:  .byte   $03                             ; 9D9D 03                       .
-L9D9E:  .byte   $00                             ; 9D9E 00                       .
+        .word $0100 ; REU source
+	.word $03bd ; byte count
+L9D96:  .byte   $42
+	.byte $04,$F4,$50,$EA,$06,$01     ; 9D96 42 04 F4 50 EA 06 01     B..P...
+SaveX:	.byte 3
+SaveY:	.byte 0
 
 _GetNewKernal:
 	pha                                     ; 9D9F 48                       H
-        stx     L9D9D                           ; 9DA0 8E 9D 9D                 ...
-        sty     L9D9E                           ; 9DA3 8C 9E 9D                 ...
-        jsr     L9E31 ; read args                           ; 9DA6 20 31 9E                  1.
+        stx     SaveX                           ; 9DA0 8E 9D 9D                 ...
+        sty     SaveY                           ; 9DA3 8C 9E 9D                 ...
+        jsr     SaveRegs
         pla                                     ; 9DA9 68                       h
         pha                                     ; 9DAA 48                       H
         asl                               ; 9DAB 0A                       .
@@ -317,9 +319,9 @@ _GetNewKernal:
         jsr     L9E19 ; swap                           ; 9DCE 20 19 9E                  ..
         bne     L9DD6                           ; 9DD1 D0 03                    ..
 L9DD3:  jsr     L9E1F ; fetch                           ; 9DD3 20 1F 9E                  ..
-L9DD6:  jsr     L9E26                           ; 9DD6 20 26 9E                  &.
-        ldx     L9D9D                           ; 9DD9 AE 9D 9D                 ...
-        ldy     L9D9E                           ; 9DDC AC 9E 9D                 ...
+L9DD6:  jsr     RestoreRegs                           ; 9DD6 20 26 9E                  &.
+        ldx     SaveX                           ; 9DD9 AE 9D 9D                 ...
+        ldy     SaveY                           ; 9DDC AC 9E 9D                 ...
         pla                                     ; 9DDF 68                       h
         pha                                     ; 9DE0 48                       H
         and     #$40                            ; 9DE1 29 40                    )@
@@ -329,21 +331,21 @@ L9DE6:  rts                                     ; 9DE6 60                       
 
 ; ----------------------------------------------------------------------------
 L9DE7:  jsr     L9D8F                           ; 9DE7 20 8F 9D                  ..
-        pla                                     ; 9DEA 68                       h
-        bmi     L9DE6                           ; 9DEB 30 F9                    0.
-L9DED:  stx     L9D9D                           ; 9DED 8E 9D 9D                 ...
-        sty     L9D9E                           ; 9DF0 8C 9E 9D                 ...
-        jsr     L9E31 ; read args                           ; 9DF3 20 31 9E                  1.
-        jsr     L9E06                           ; 9DF6 20 06 9E                  ..
-        jsr     L9E19 ; swap                           ; 9DF9 20 19 9E                  ..
-        jsr     L9E26 ; set up args                           ; 9DFC 20 26 9E                  &.
-        ldx     L9D9D                           ; 9DFF AE 9D 9D                 ...
-        ldy     L9D9E                           ; 9E02 AC 9E 9D                 ...
+        pla
+        bmi     L9DE6
+L9DED:  stx     SaveX
+        sty     SaveY
+        jsr     SaveRegs
+        jsr     L9E06
+        jsr     L9E19 ; swap
+        jsr     RestoreRegs
+        ldx     SaveX                           ; 9DFF AE 9D 9D                 ...
+        ldy     SaveY                           ; 9E02 AC 9E 9D                 ...
         rts                                     ; 9E05 60                       `
 
 ; ----------------------------------------------------------------------------
 ; set up args, inc
-L9E06:  ldx     #$05                            ; 9E06 A2 05                    ..
+L9E06:  ldx     #5                            ; 9E06 A2 05                    ..
 L9E08:  lda     L9D8F+1,x                         ; 9E08 BD 90 9D                 ...
         sta     r0L,x                         ; 9E0B 95 02                    ..
         dex                                     ; 9E0D CA                       .
@@ -353,54 +355,44 @@ L9E10:  lda     $88C3                           ; 9E10 AD C3 88                 
         inc     $88C3                           ; 9E15 EE C3 88                 ...
         rts                                     ; 9E18 60                       `
 
-; ----------------------------------------------------------------------------
 ; swap
 L9E19:  jsr     SwapRAM                         ; 9E19 20 CE C2                  ..
-        clv                                     ; 9E1C B8                       .
-        bvc     L9E22                           ; 9E1D 50 03                    P.
+        bra     L9E22                           ; 9E1D 50 03                    P.
 ; fetch
 L9E1F:  jsr     FetchRAM                        ; 9E1F 20 CB C2                  ..
 L9E22:  dec     $88C3                           ; 9E22 CE C3 88                 ...
         rts                                     ; 9E25 60                       `
 
-; ----------------------------------------------------------------------------
-; set up args
-L9E26:  ldx     #$06                            ; 9E26 A2 06                    ..
+RestoreRegs:
+	ldx     #6                            ; 9E26 A2 06                    ..
 L9E28:  lda     L9D96,x                         ; 9E28 BD 96 9D                 ...
         sta     r0L,x                         ; 9E2B 95 02                    ..
         dex                                     ; 9E2D CA                       .
         bpl     L9E28                           ; 9E2E 10 F8                    ..
         rts                                     ; 9E30 60                       `
 
-; ----------------------------------------------------------------------------
-; copy back args
-L9E31:  ldx     #$06                            ; 9E31 A2 06                    ..
+SaveRegs:
+	ldx     #6                            ; 9E31 A2 06                    ..
 L9E33:  lda     r0L,x                         ; 9E33 B5 02                    ..
         sta     L9D96,x                         ; 9E35 9D 96 9D                 ...
         dex                                     ; 9E38 CA                       .
         bpl     L9E33                           ; 9E39 10 F8                    ..
         rts                                     ; 9E3B 60                       `
 
-; ----------------------------------------------------------------------------
-L9E3C:	lda #3 ; bank for OReadFile
+__ReadFile:
+	lda #3 ; bank for OReadFile
 	.byte $2c
-L9E3F:	lda #4 ; bank for OWriteFile
+__WriteFile:
+	lda #4 ; bank for OWriteFile
 	jmp _GetNewKernal
 
-; ----------------------------------------------------------------------------
-; ToBasic
-L9E44:  lda #$40 + 11
+__ToBASIC:
+	lda #$40 + 11
 	jsr _GetNewKernal
 	jmp KToBasic
 
-; ----------------------------------------------------------------------------
-        brk                                     ; 9E4C 00                       .
-        brk                                     ; 9E4D 00                       .
-        brk                                     ; 9E4E 00                       .
-        brk                                     ; 9E4F 00                       .
-        brk                                     ; 9E50 00                       .
-        brk                                     ; 9E51 00                       .
-        brk                                     ; 9E52 00                       .
+
+	.byte 0, 0, 0, 0, 0, 0, 0
 
 ; GetFile
 .global _GetFile
