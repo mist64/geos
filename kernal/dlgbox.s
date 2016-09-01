@@ -621,12 +621,11 @@ ShortcutKeysEnd:
 .if wheels_size
 DBIcDISK:
 .if wheels ; XXX disk swapping + REU? ATTN: *requires* wheels_size!!!
-L5009 = $5009
 .import GetNewKernal
 .import RstrKernal
-	lda #$45
+	lda #$40 + 5
 	jsr GetNewKernal
-	jsr L5009
+	jsr ChDiskDirectory
 	jsr RstrKernal ; REU swap, preserving r registers and x, y
 .endif
 	lda #DISK
@@ -889,7 +888,6 @@ DBDoGETFILES:
 	PopW r10
 	PopB r7L
 .if wheels ; xxx
-L500C = $500C
 .import extKrnlIn
 .import AEB87
 	lda extKrnlIn
@@ -907,13 +905,13 @@ L500C = $500C
 	ldx #r5
 	ldy #r10
 	jsr CopyString
-@A:	lda #$45
+@A:	lda #$40 + 5
 	jsr GetNewKernal
-	jsr L500C
+	jsr GetFEntries
 	jsr RstrKernal ; REU swap, preserving r registers and x, y
 	PopW r10
 	bra @C
-@B:	jsr L500C
+@B:	jsr GetFEntries
 @C:	PopB r2L
 	PopB r3L
 	sta DBGFArrowX

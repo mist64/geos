@@ -54,11 +54,10 @@ _EnterDeskTop:
 .if wheels
 .import GetNewKernal
 .import _FirstInit2
-L5003 = $5003
-	jsr     _FirstInit2                           ; C326 20 3D C5                  =.
-        lda     #$CA                            ; C329 A9 CA                    ..
-        jsr     GetNewKernal
-        jsr     L5003                           ; C32E 20 03 50                  .P
+	jsr _FirstInit2
+	lda #$C0 + 10
+	jsr GetNewKernal
+	jsr OEnterDesktop
 .else
 	sei
 	cld

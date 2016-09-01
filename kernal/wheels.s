@@ -381,17 +381,16 @@ L9E33:  lda     r0L,x                         ; 9E33 B5 02                    ..
         rts                                     ; 9E3B 60                       `
 
 ; ----------------------------------------------------------------------------
-L9E3C:  lda     #$03                            ; 9E3C A9 03                    ..
-        .byte   $2C                             ; 9E3E 2C                       ,
-L9E3F:  lda     #$04                            ; 9E3F A9 04                    ..
-        jmp     L9D9F                           ; 9E41 4C 9F 9D                 L..
+L9E3C:	lda #3 ; bank for OReadFile
+	.byte $2c
+L9E3F:	lda #4 ; bank for OWriteFile
+	jmp L9D9F
 
 ; ----------------------------------------------------------------------------
 ; ToBasic
-L5000 = $5000
-L9E44:  lda     #$4B                            ; 9E44 A9 4B                    .K
-        jsr     L9D9F ; far call                           ; 9E46 20 9F 9D                  ..
-        jmp     L5000                           ; 9E49 4C 00 50                 L.P
+L9E44:  lda #$40 + 11
+	jsr L9D9F ; far call
+	jmp KToBasic
 
 ; ----------------------------------------------------------------------------
         brk                                     ; 9E4C 00                       .
