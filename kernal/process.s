@@ -103,8 +103,9 @@ _ExecuteProcesses:
 	sta r0L
 	lda TimersRtns+1,x
 	sta r0H
-.if wheels
-	jsr $c34f;xxx
+.if wheels_size ; code reuse
+.import jmp_r0_ind
+	jsr jmp_r0_ind
 .else
 	jsr @4
 .endif
@@ -113,7 +114,7 @@ _ExecuteProcesses:
 @2:	dex
 	bpl @1
 @3:	rts
-.if !wheels
+.if !wheels_size ; code reuse
 @4:	jmp (r0)
 .endif
 

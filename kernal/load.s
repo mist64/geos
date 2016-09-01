@@ -128,6 +128,7 @@ _StartAppl:
 LCA26 = $ca26
 LE62A = $e62a
 LC54E = $c54e
+.global jmp_r0_ind
 	sei                                     ; C331 78                       x
         cld                                     ; C332 D8                       .
         ldx     #$FF                            ; C333 A2 FF                    ..
@@ -143,7 +144,8 @@ LC54E = $c54e
 
 ; ----------------------------------------------------------------------------
 LC34C:  jsr     LCA26                           ; C34C 20 26 CA                  &.
-LC34F:  jmp     (r0)                         ; C34F 6C 02 00                 l..
+jmp_r0_ind:
+	jmp     (r0)                         ; C34F 6C 02 00                 l..
 
 .else
 	sei
