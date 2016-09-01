@@ -283,59 +283,54 @@ _WriteFile:
 _ToBASIC:
 	jmp __ToBASIC
 
-L9D8F:  .byte $4c ; jmp
+L9D8F:	.byte $4c ; jmp
 REUArgs:
 	.word $5000 ; CBM address
         .word $0100 ; REU address
 	.word $03bd ; byte count
 
-L9D96:  .byte   $42
+L9D96:	.byte   $42
 	.byte $04,$F4,$50,$EA,$06,$01     ; 9D96 42 04 F4 50 EA 06 01     B..P...
 SaveX:	.byte 3
 SaveY:	.byte 0
 
 _GetNewKernal:
-	pha                                     ; 9D9F 48                       H
-        stx     SaveX                           ; 9DA0 8E 9D 9D                 ...
-        sty     SaveY                           ; 9DA3 8C 9E 9D                 ...
-        jsr     SaveRegs
-        pla                                     ; 9DA9 68                       h
-        pha                                     ; 9DAA 48                       H
-        asl                               ; 9DAB 0A                       .
-        asl                               ; 9DAC 0A                       .
-        sta     r1L                             ; 9DAD 85 04                    ..
-        lda     #$00                            ; 9DAF A9 00                    ..
-        sta     r1H                             ; 9DB1 85 05                    ..
-        sta     r2H                             ; 9DB3 85 07                    ..
-        lda     #$04                            ; 9DB5 A9 04                    ..
-        sta     r2L                             ; 9DB7 85 06                    ..
-        lda     #$9D                            ; 9DB9 A9 9D                    ..
-        sta     $03                             ; 9DBB 85 03                    ..
-        lda     #$92                            ; 9DBD A9 92                    ..
-        sta     r0L                           ; 9DBF 85 02                    ..
-        jsr     SetBank                           ; 9DC1 20 10 9E                  ..
-        jsr     FetchDec                           ; 9DC4 20 1F 9E                  ..
-        jsr     SetREUArgs                           ; 9DC7 20 06 9E                  ..
-        pla                                     ; 9DCA 68                       h
-        pha                                     ; 9DCB 48                       H
-        bmi     L9DD3                           ; 9DCC 30 05                    0.
-        jsr     SwapDec
-        bne     L9DD6                           ; 9DD1 D0 03                    ..
-L9DD3:  jsr     FetchDec
-L9DD6:  jsr     RestoreRegs                           ; 9DD6 20 26 9E                  &.
-        ldx     SaveX                           ; 9DD9 AE 9D 9D                 ...
-        ldy     SaveY                           ; 9DDC AC 9E 9D                 ...
-        pla                                     ; 9DDF 68                       h
-        pha                                     ; 9DE0 48                       H
-        and     #$40                            ; 9DE1 29 40                    )@
-        beq     L9DE7                           ; 9DE3 F0 02                    ..
-        pla                                     ; 9DE5 68                       h
-L9DE6:  rts                                     ; 9DE6 60                       `
-
-; ----------------------------------------------------------------------------
-L9DE7:  jsr     L9D8F                           ; 9DE7 20 8F 9D                  ..
+	pha
+	stx SaveX
+	sty SaveY
+	jsr SaveRegs
+	pla
+	pha
+	asl
+	asl ; bank * 4
+	sta r1L
+	lda #0
+	sta r1H
+	sta r2H
+	lda #$04
+	sta r2L
+	LoadW r0, $9D92
+	jsr SetBank
+	jsr FetchDec
+	jsr SetREUArgs
+	pla
+	pha
+	bmi @1
+	jsr SwapDec
+	bne @2
+@1:	jsr FetchDec
+@2:	jsr RestoreRegs
+	ldx SaveX
+	ldy SaveY
+	pla
+	pha
+	and #$40
+	beq @4
+	pla
+@3:	rts
+@4:	jsr L9D8F                           ; 9DE7 20 8F 9D                  ..
         pla
-        bmi     L9DE6
+        bmi     @3
 _RstrKernal:
 	stx     SaveX
         sty     SaveY
@@ -368,12 +363,12 @@ SwapDec:
 ; fetch
 FetchDec:
 	jsr     FetchRAM                        ; 9E1F 20 CB C2                  ..
-L9E22:  dec     ramExpSize ; restore original REU size
+L9E22:	dec     ramExpSize ; restore original REU size
         rts                                     ; 9E25 60                       `
 
 RestoreRegs:
 	ldx     #6                            ; 9E26 A2 06                    ..
-L9E28:  lda     L9D96,x                         ; 9E28 BD 96 9D                 ...
+L9E28:	lda     L9D96,x                         ; 9E28 BD 96 9D                 ...
         sta     r0L,x                         ; 9E2B 95 02                    ..
         dex                                     ; 9E2D CA                       .
         bpl     L9E28                           ; 9E2E 10 F8                    ..
@@ -381,7 +376,7 @@ L9E28:  lda     L9D96,x                         ; 9E28 BD 96 9D                 
 
 SaveRegs:
 	ldx     #6                            ; 9E31 A2 06                    ..
-L9E33:  lda     r0L,x                         ; 9E33 B5 02                    ..
+L9E33:	lda     r0L,x                         ; 9E33 B5 02                    ..
         sta     L9D96,x                         ; 9E35 9D 96 9D                 ...
         dex                                     ; 9E38 CA                       .
         bpl     L9E33                           ; 9E39 10 F8                    ..
@@ -417,7 +412,7 @@ _GetFile:
         ora     r0L                           ; 9E65 05 02                    ..
         bne     L9EA7                           ; 9E67 D0 3E                    .>
         lda     #$79                            ; 9E69 A9 79                    .y
-        sta     $03                             ; 9E6B 85 03                    ..
+        sta     r0H                             ; 9E6B 85 03                    ..
         lda     #$F8                            ; 9E6D A9 F8                    ..
         sta     r1H                             ; 9E6F 85 05                    ..
         lda     #$00                            ; 9E71 A9 00                    ..
@@ -429,7 +424,7 @@ _GetFile:
         sta     r2L                             ; 9E7D 85 06                    ..
         jsr     L9E96                           ; 9E7F 20 96 9E                  ..
         lda     #$81                            ; 9E82 A9 81                    ..
-        sta     $03                             ; 9E84 85 03                    ..
+        sta     r0H                             ; 9E84 85 03                    ..
         lda     #$F7                            ; 9E86 A9 F7                    ..
         sta     r1H                             ; 9E88 85 05                    ..
         lda     #$01                            ; 9E8A A9 01                    ..
@@ -438,7 +433,7 @@ _GetFile:
         sta     r0L                           ; 9E90 85 02                    ..
         sta     r1L                             ; 9E92 85 04                    ..
         sta     r2L                             ; 9E94 85 06                    ..
-L9E96:  lda     ramExpSize ; first bank after logical end of REU
+L9E96:	lda     ramExpSize ; first bank after logical end of REU
         sta     r3L                             ; 9E99 85 08                    ..
         inc     ramExpSize ; allow accessing this bank
         jsr     FetchRAM                        ; 9E9E 20 CB C2                  ..
@@ -479,9 +474,9 @@ L9EA7:	jmp _GetFileOld
         .byte   $00,$00,$00,$00,$00,$00,$00,$00 ; 9FC2 00 00 00 00 00 00 00 00  ........
         .byte   $00,$00,$00,$00,$00,$00,$00,$00 ; 9FCA 00 00 00 00 00 00 00 00  ........
         .byte   $00,$01,$00,$00,$00,$00,$00,$00 ; 9FD2 00 01 00 00 00 00 00 00  ........
-L9FDA:  .byte   $BF,$E0                         ; 9FDA BF E0                    ..
-L9FDC:  .byte   $06                             ; 9FDC 06                       .
-L9FDD:  .byte   $00,$00,$00,$67,$63,$41,$61,$C3 ; 9FDD 00 00 00 67 63 41 61 C3  ...gcAa.
+L9FDA:	.byte   $BF,$E0                         ; 9FDA BF E0                    ..
+L9FDC:	.byte   $06                             ; 9FDC 06                       .
+L9FDD:	.byte   $00,$00,$00,$67,$63,$41,$61,$C3 ; 9FDD 00 00 00 67 63 41 61 C3  ...gcAa.
 backSysPattern:
         .byte   $52,$95,$2D,$52,$8A,$6D,$94,$A2 ; 9FE5 52 95 2D 52 8A 6D 94 A2  R.-R.m..
         .byte   $01                             ; 9FED 01                       .
