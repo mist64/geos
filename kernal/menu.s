@@ -133,7 +133,11 @@ LC88D = $C88D
         sta     $18                             ; ED51 85 18                    ..
 .endif
 	lda #$ff
-	jsr $C67C;xxx_FrameRectangle
+.if wheels
+	jsr _HorizontalLine
+.else
+	jsr _FrameRectangle
+.endif
 @Y:	PopW r11
 	jsr Menu_1
 .if ((menuVSeparator | menuHSeparator)<>0)
