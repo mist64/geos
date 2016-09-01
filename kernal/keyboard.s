@@ -36,7 +36,7 @@
 _DoKeyboardScan:
 .if wheels
 .import ScreenSaver1
-	jsr     ScreenSaver1                           ; FB05 20 88 CF                  ..
+	jsr     ScreenSaver1
 	bcs @5
 .endif
 	lda KbdQueFlag
@@ -44,24 +44,24 @@ _DoKeyboardScan:
 	lda KbdNextKey
 	jsr KbdScanHelp2
 .if wheels
-        sec                                     ; FB15 38                       8
-        lda     $88B3                           ; FB16 AD B3 88                 ...
-        sbc     $88B2                           ; FB19 ED B2 88                 ...
-        bcc     @X                           ; FB1C 90 0A                    ..
-        cmp     $88B0                           ; FB1E CD B0 88                 ...
-        bcc     @X                           ; FB21 90 05                    ..
-        asl     $88B2                           ; FB23 0E B2 88                 ...
-        bcc     @Y                           ; FB26 90 03                    ..
-@X:	lda     $88B0                           ; FB28 AD B0 88                 ...
-@Y:	sta     $87D9                           ; FB2B 8D D9 87                 ...
+	sec
+	lda keyRptCount
+	sbc keyAccel
+	bcc @X
+	cmp minKeyRepeat
+	bcc @X
+	asl keyAccel
+	bcc @Y
+@X:	lda minKeyRepeat
+@Y:	sta A87D9
 .else
 	LoadB KbdQueFlag, 15
 .endif
 @1:	LoadB r1H, 0
 .if wheels
-        ldy     #$FF                            ; FB32 A0 FF                    ..
+        ldy     #$FF
         sty     cia1base+2
-        iny                                     ; FB37 C8                       .
+        iny
         sty     cia1base+3
 .endif
 	jsr KbdScanRow
@@ -156,17 +156,17 @@ KbdScanHelp1:
 	and $887B,y;xxxKbdDMltTab,y
 .if wheels
         beq     @9                           ; FBF5 F0 14                    ..
-        lda     $88B3                           ; FBF7 AD B3 88                 ...
-        sta     $87D9                           ; FBFA 8D D9 87                 ...
-        lda     $88B1                           ; FBFD AD B1 88                 ...
-        sta     $88B2                           ; FC00 8D B2 88                 ...
+        lda     keyRptCount
+        sta     A87D9                           ; FBFA 8D D9 87                 ...
+        lda     keyAccFlag                           ; FBFD AD B1 88                 ...
+        sta     keyAccel                           ; FC00 8D B2 88                 ...
         lda     $03                             ; FC03 A5 03                    ..
-        sta     $87EA                           ; FC05 8D EA 87                 ...
-        jmp     $FC16;xxxKbdScanHelp2                           ; FC08 4C 16 FC                 L..
+        sta     keyScanChar                           ; FC05 8D EA 87                 ...
+        jmp     KbdScanHelp2                           ; FC08 4C 16 FC                 L..
 @9:	lda     #$FF                            ; FC0B A9 FF                    ..
-        sta     $87D9                           ; FC0D 8D D9 87                 ...
+        sta     A87D9                           ; FC0D 8D D9 87                 ...
         lda     #$00                            ; FC10 A9 00                    ..
-        sta     $87EA                           ; FC12 8D EA 87                 ...
+        sta     keyScanChar                           ; FC12 8D EA 87                 ...
         rts                                     ; FC15 60                       `
 .else
 	beq @9

@@ -77,7 +77,10 @@ obj7Pointer     =       $8fff ; ---
 BVBuff          =       $0400
 RunREU          =       $6000
 
-; locations to be defined later
+A87D9           =       $87d9 ; If this flag is zero,  then the value of
+                              ; NXTKEY, location $87EA, is placed in the
+                              ; keyboard queue
+keyScanChar     =       $87ea ; character fetched during the last interrupt. (Wheels)
 E87FC           =       $87fc
 E87FD           =       $87fd
 E87FE           =       $87fe
@@ -89,7 +92,11 @@ A885F           =       $885f
 A8860           =       $8860
 dblDBData       =       $88a7   ; icon number used for double clicking
                                 ; in the file requestor. Default is OPEN.
-e88b7           =       $88b7   ;4 bytes indexed by curDrive, 1571 disk type (SS/DS)
+minKeyRepeat    =       $88b0   ; minimum key repeat value during accel. (Wheels)
+keyAccFlag      =       $88b1   ; zero turns off key acceleration. (Wheels)
+keyAccel        =       $88b2   ; used during key acceleration. (Wheels)
+keyRptCount     =       $88b3   ; user defined key repeat delay. (Wheels)
+e88b7           =       $88b7   ; 4 bytes indexed by curDrive, 1571 disk type (SS/DS)
 A8FE8           =       $8fe8
 A8FF0           =       $8ff0
 
