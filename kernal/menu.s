@@ -119,7 +119,6 @@ DoMenu1_1:
 	jsr _Rectangle
 	PopW curPattern
 .if wheels
-LC67C = $C67C
 LC88D = $C88D
         lda     $07                             ; ED3B A5 07                    ..
         sta     $18                             ; ED3D 85 18                    ..
@@ -129,7 +128,7 @@ LC88D = $C88D
         jsr     LC88D                           ; ED46 20 8D C8                  ..
         clv                                     ; ED49 B8                       .
         bvc     @Y                           ; ED4A 50 0C                    P.
-@X:	jsr     LC67C                           ; ED4C 20 7C C6                  |.
+@X:	jsr     _HorizontalLine                           ; ED4C 20 7C C6                  |.
         lda     $06                             ; ED4F A5 06                    ..
         sta     $18                             ; ED51 85 18                    ..
 .endif
@@ -432,7 +431,7 @@ LEF9E:  ldx     $06                             ; EF9E A6 06                    
         lda     $86D3,x                         ; EFA0 BD D3 86                 ...
         sta     $18                             ; EFA3 85 18                    ..
         lda     #$FF                            ; EFA5 A9 FF                    ..
-        jsr     LC67C                           ; EFA7 20 7C C6                  |.
+        jsr     _HorizontalLine                           ; EFA7 20 7C C6                  |.
         dec     $06                             ; EFAA C6 06                    ..
         bne     LEF9E                           ; EFAC D0 F0                    ..
 LEFAE:  rts                                     ; EFAE 60                       `
