@@ -106,11 +106,11 @@ KbdScanHelp1:
 	ldx r1L
 	and BitMaskPow2,x
 .if wheels
-        beq     @X                           ; FB8C F0 03                    ..
-        jsr @Y
-@X:  dec     r1L                             ; FB91 C6 04                    ..
-        bpl     @1                           ; FB93 10 F0                    ..
-        rts                                     ; FB95 60                       `
+	beq @X
+	jsr @Y
+@X:	dec r1L
+	bpl @1
+	rts
 .else
 	beq @A	; really dirty trick...
 .endif
@@ -155,19 +155,19 @@ KbdScanHelp1:
 	and BitMaskPow2,x
 	and $887B,y;xxxKbdDMltTab,y
 .if wheels
-        beq     @9                           ; FBF5 F0 14                    ..
-        lda     keyRptCount
-        sta     A87D9                           ; FBFA 8D D9 87                 ...
-        lda     keyAccFlag                           ; FBFD AD B1 88                 ...
-        sta     keyAccel                           ; FC00 8D B2 88                 ...
-        lda     r0H                             ; FC03 A5 03                    ..
-        sta     keyScanChar                           ; FC05 8D EA 87                 ...
-        jmp     KbdScanHelp2                           ; FC08 4C 16 FC                 L..
-@9:	lda     #$FF                            ; FC0B A9 FF                    ..
-        sta     A87D9                           ; FC0D 8D D9 87                 ...
-        lda     #$00                            ; FC10 A9 00                    ..
-        sta     keyScanChar                           ; FC12 8D EA 87                 ...
-        rts                                     ; FC15 60                       `
+	beq @9
+	lda keyRptCount
+	sta A87D9
+	lda keyAccFlag
+	sta keyAccel
+	lda r0H
+	sta keyScanChar
+	jmp KbdScanHelp2
+@9:	lda #$FF
+	sta A87D9
+	lda #0
+	sta keyScanChar
+	rts
 .else
 	beq @9
 	LoadB KbdQueFlag, 15
