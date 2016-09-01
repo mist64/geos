@@ -291,8 +291,9 @@ REUAddr:
         .word $0100 ; REU address
 	.word $03bd ; byte count
 
-L9D96:	.byte   $42
-	.byte $04,$F4,$50,$EA,$06,$01     ; 9D96 42 04 F4 50 EA 06 01     B..P...
+SavedRegs:
+	.byte $42, $04, $F4, $50, $EA, $06, $01
+
 SaveX:	.byte 3
 SaveY:	.byte 0
 
@@ -364,28 +365,28 @@ SetBank:
 	rts
 
 SwapDec:
-	jsr     SwapRAM                         ; 9E19 20 CE C2                  ..
-        bra     Decr
+	jsr SwapRAM
+	bra Decr
 FetchDec:
-	jsr     FetchRAM                        ; 9E1F 20 CB C2                  ..
-Decr:	dec     ramExpSize ; restore original REU size
-        rts                                     ; 9E25 60                       `
+	jsr FetchRAM
+Decr:	dec ramExpSize ; restore original REU size
+	rts
 
 RestoreRegs:
-	ldx     #6                            ; 9E26 A2 06                    ..
-L9E28:	lda     L9D96,x                         ; 9E28 BD 96 9D                 ...
-        sta     r0L,x                         ; 9E2B 95 02                    ..
-        dex                                     ; 9E2D CA                       .
-        bpl     L9E28                           ; 9E2E 10 F8                    ..
-        rts                                     ; 9E30 60                       `
+	ldx #6
+@1:	lda SavedRegs,x
+	sta r0L,x
+	dex
+	bpl @1
+	rts
 
 SaveRegs:
-	ldx     #6                            ; 9E31 A2 06                    ..
-L9E33:	lda     r0L,x                         ; 9E33 B5 02                    ..
-        sta     L9D96,x                         ; 9E35 9D 96 9D                 ...
-        dex                                     ; 9E38 CA                       .
-        bpl     L9E33                           ; 9E39 10 F8                    ..
-        rts                                     ; 9E3B 60                       `
+	ldx #6
+@1:	lda r0L,x
+	sta SavedRegs,x
+	dex
+	bpl @1
+	rts
 
 __ReadFile:
 	lda #3 ; bank for OReadFile
@@ -404,6 +405,7 @@ __ToBASIC:
 
 ; GetFile
 .global _GetFile
+.import _GetFileOld
 _GetFile:
 	lda     $88C4                           ; 9E53 AD C4 88                 ...
         and     #$10                            ; 9E56 29 10                    ).
@@ -445,9 +447,6 @@ L9E96:	lda     ramExpSize ; first bank after logical end of REU
         dec     ramExpSize ; restore original REU size
         ldx     #$00                            ; 9EA4 A2 00                    ..
         rts                                     ; 9EA6 60                       `
-
-; ----------------------------------------------------------------------------
-.import _GetFileOld
 L9EA7:	jmp _GetFileOld
 
 .segment "wheels_lokernal1b"
