@@ -413,29 +413,23 @@ RcvrMnu0:
 .if ((menuVSeparator | menuHSeparator)<>0)
 DrawMenu:
 .if wheels
-LEF7C:  lda     menuOptNumber
-        bpl     LEFAE
-        and     #$1F
-        sec
-        sbc     #1
-        beq     LEFAE
-        sta     r2L
-        lda     menuLeft+1
-        sta     r3H
-        lda     menuLeft
-        sta     r3L
-        lda     menuRight+1
-        sta     r4H
-        lda     menuRight
-        sta     r4L
-LEF9E:  ldx     r2L
-        lda     menuLimitTabL,x
-        sta     r11L
-        lda     #$FF
-        jsr     _HorizontalLine
-        dec     r2L
-        bne     LEF9E
-LEFAE:  rts
+	lda menuOptNumber
+	bpl LEFAE
+	and #$1F
+	sec
+	sbc #1
+	beq LEFAE
+	sta r2L
+	MoveW menuLeft, r3
+	MoveW menuRight, r4
+LEF9E:	ldx r2L
+	lda menuLimitTabL,x
+	sta r11L
+	lda #$FF
+	jsr _HorizontalLine
+	dec r2L
+	bne LEF9E
+LEFAE:	rts
 .else
 	lda menuOptNumber
 	and #%00011111
