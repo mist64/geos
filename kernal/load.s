@@ -130,6 +130,7 @@ LE62A = $e62a
 LC54E = $c54e
 .global LC34C
 .global jmp_r0_ind
+.impotr Incr0
 	sei                                     ; C331 78                       x
         cld                                     ; C332 D8                       .
         ldx     #$FF                            ; C333 A2 FF                    ..
@@ -144,7 +145,7 @@ LC54E = $c54e
         jmp     _MNLP                           ; C349 4C 64 C0                 Ld.
 
 ; ----------------------------------------------------------------------------
-LC34C:  jsr     LCA26                           ; C34C 20 26 CA                  &.
+LC34C:  jsr     Incr0                           ; C34C 20 26 CA                  &.
 jmp_r0_ind:
 	jmp     (r0)                         ; C34F 6C 02 00                 l..
 

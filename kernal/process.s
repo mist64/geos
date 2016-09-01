@@ -323,7 +323,7 @@ _DoCheckDelays:
 	txa
 	pha
 	jsr _RemoveDelay
-.if wheels
+.if wheels_size ; code reuse
 .import LC34C
 	jsr LC34C
 .else
