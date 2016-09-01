@@ -70,7 +70,7 @@ _DoKeyboardScan:
 	ldy #7
 @2:	jsr KbdScanRow
 	bne @5
-	lda $FDDD,y;xxxKbdTestTab,y
+	lda KbdTestTab,y
 	sta cia1base+0
 	lda cia1base+1
 	cmp $8870,y;xxxKbdDBncTab,y
@@ -139,12 +139,12 @@ KbdScanHelp1:
 @5:	lda r0H
 	sty r0H
 	ldy #8
-@6:	cmp $FDCB,y;xxxKbdTab1,y
+@6:	cmp KbdTab1,y
 	beq @7
 	dey
 	bpl @6
 	bmi @8
-@7:	lda $FDD4,y;xxxKbdTab2,y
+@7:	lda KbdTab2,y
 @8:	ldy r0H
 	sta r0H
 	and #%01111111
