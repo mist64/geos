@@ -416,8 +416,7 @@ DrawMenu:
 	lda menuOptNumber
 	bpl LEFAE
 	and #$1F
-	sec
-	sbc #1
+	subv 1
 	beq LEFAE
 	sta r2L
 	MoveW menuLeft, r3
@@ -493,8 +492,8 @@ LF077 = $F077
 LF000 = $F000
 LEB9C = $EB9C
 
-LEFBA:  jsr     LEB9C                           ; EFBA 20 9C EB                  ..
-        jsr     LF000                           ; EFBD 20 00 F0                  ..
+LEFBA:  jsr     _MouseOff                           ; EFBA 20 9C EB                  ..
+        jsr     Menu_7                           ; EFBD 20 00 F0                  ..
         jsr     MenuDoInvert
         lda     $14                             ; EFC3 A5 14                    ..
         ldx     $84B7                           ; EFC5 AE B7 84                 ...
