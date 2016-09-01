@@ -229,7 +229,7 @@ CheckClickPos:
 	CmpW mouseXPos, menuRight
 	beq @2
 	bcs @3
-@2:	jmp $EFBA;xxxMenu_5
+@2:	jmp Menu_5
 @3:	bbrf ICONSON_BIT, mouseOn, @4
 	jmp ProcessClick
 @4:	lda otherPressVec

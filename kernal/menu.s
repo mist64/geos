@@ -665,7 +665,7 @@ Menu_8:
 	stx r0L
 	rts
 
-.if !wheels
+.if !wheels ; xxx moved
 MenuDoInvert:
 	PushB dispBufferOn
 	LoadB dispBufferOn, ST_WR_FORE
