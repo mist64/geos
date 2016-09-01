@@ -91,6 +91,7 @@ _FirstInit:
 .import DrawCheckeredScreen
 .import _i_ColorRectangle
 .global _FirstInit2
+.global _FirstInit3
 	MoveB sysScrnColors, screencolors
 	ldy #62
 @2:	lda #0
@@ -111,7 +112,8 @@ _FirstInit2:
 	.byte 40, 25               ; size
 LC54D:  .byte (DKGREY << 4)+LTGREY ; value
 ; ----------------------------------------------------------------------------
-LC54E:  ldx     CPU_DATA
+_FirstInit3:
+	ldx     CPU_DATA
 ASSERT_NOT_BELOW_IO
 	LoadB CPU_DATA, IO_IN
 	lda sysExtClr

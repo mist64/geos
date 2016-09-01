@@ -124,17 +124,17 @@ EDT6:
 
 _StartAppl:
 .if wheels
-LC54E = $c54e
 .global IncR0JmpInd
 .global JmpR0Ind
 .import IncR0
+.import _FirstInit3
 	sei                                     ; C331 78                       x
         cld                                     ; C332 D8                       .
         ldx     #$FF                            ; C333 A2 FF                    ..
         txs                                     ; C335 9A                       .
         jsr     UNK_5                           ; C336 20 23 C6                  #.
         jsr     InitMachine                           ; C339 20 FE C2                  ..
-        jsr     LC54E                           ; C33C 20 4E C5                  N.
+        jsr     _FirstInit3                           ; C33C 20 4E C5                  N.
         jsr     _UseSystemFont                           ; C33F 20 2A E6                  *.
         jsr     UNK_4                           ; C342 20 FA C5                  ..
         ldx     $11                             ; C345 A6 11                    ..
