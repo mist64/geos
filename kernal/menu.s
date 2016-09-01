@@ -501,7 +501,7 @@ LEB9C = $EB9C
 
 LEFBA:  jsr     LEB9C                           ; EFBA 20 9C EB                  ..
         jsr     LF000                           ; EFBD 20 00 F0                  ..
-        jsr     LEFED                           ; EFC0 20 ED EF                  ..
+        jsr     MenuDoInvert
         lda     $14                             ; EFC3 A5 14                    ..
         ldx     $84B7                           ; EFC5 AE B7 84                 ...
         sta     $86CF,x                         ; EFC8 9D CF 86                 ...
@@ -524,17 +524,13 @@ LEFE4:  ldx     $84B7                           ; EFE4 AE B7 84                 
         lda     $86CF,x                         ; EFE7 BD CF 86                 ...
         jmp     (r0L)                         ; EFEA 6C 02 00                 l..
 
-; ----------------------------------------------------------------------------
-.global MenuDoInvert
+; xxx moved
 MenuDoInvert:
-LEFED:  lda     $2F                             ; EFED A5 2F                    ./
-        pha                                     ; EFEF 48                       H
-        lda     #$80                            ; EFF0 A9 80                    ..
-        sta     $2F                             ; EFF2 85 2F                    ./
-        jsr     LC83C                           ; EFF4 20 3C C8                  <.
-        pla                                     ; EFF7 68                       h
-        sta     $2F                             ; EFF8 85 2F                    ./
-        rts                                     ; EFFA 60                       `
+  	PushB dispBufferOn
+	LoadB dispBufferOn, ST_WR_FORE
+	jsr _InvertRectangle
+	PopB dispBufferOn
+	rts
 
         .byte   $00,$00,$00,$00,$00             ; EFFB 00 00 00 00 00           .....
 
