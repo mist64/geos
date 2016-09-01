@@ -104,8 +104,8 @@ _ExecuteProcesses:
 	lda TimersRtns+1,x
 	sta r0H
 .if wheels_size ; code reuse
-.import jmp_r0_ind
-	jsr jmp_r0_ind
+.import JmpR0Ind
+	jsr JmpR0Ind
 .else
 	jsr @4
 .endif
@@ -324,8 +324,8 @@ _DoCheckDelays:
 	pha
 	jsr _RemoveDelay
 .if wheels_size ; code reuse
-.import LC34C
-	jsr LC34C
+.import IncR0JmpInd
+	jsr IncR0JmpInd
 .else
 	jsr _DoExecDelay
 .endif

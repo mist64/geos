@@ -750,7 +750,7 @@ _i_GraphicsString:
 ; Destroyed: a, x, y, r0 - r15
 ;---------------------------------------------------------------
 _GraphicsString:
-	jsr Getr0AndInc
+	jsr GetR0AndInc
 .if wheels_size_and_speed
 	tay
 	beq @1
@@ -802,15 +802,15 @@ _DoNothing:
 .endif
 
 _DoNewPattern:
-	jsr Getr0AndInc
+	jsr GetR0AndInc
 	jmp _SetPattern
 
 _DoESC_PutString:
-	jsr Getr0AndInc
+	jsr GetR0AndInc
 	sta r11L
-	jsr Getr0AndInc
+	jsr GetR0AndInc
 	sta r11H
-	jsr Getr0AndInc
+	jsr GetR0AndInc
 	sta r1H
 .if wheels_size_and_speed
 	jmp _PutString
@@ -915,20 +915,20 @@ _SetPattern:
 	rts
 
 GetCoords:
-	jsr Getr0AndInc
+	jsr GetR0AndInc
 	tax
-	jsr Getr0AndInc
+	jsr GetR0AndInc
 	sta r2L
-	jsr Getr0AndInc
+	jsr GetR0AndInc
 	ldy r2L
 	rts ;x/y - x, a - y
 
-Getr0AndInc:
+GetR0AndInc:
 	ldy #0
 	lda (r0),Y
 .if wheels_size
-.global Incr0
-Incr0:
+.global IncR0
+IncR0:
 .endif
 	inc r0L
 	bne @1
