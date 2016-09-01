@@ -268,24 +268,27 @@ _i_ColorRectangle:
 .global _ToBASIC
 
 GetNewKernal:
-	jmp     _GetNewKernal
+	jmp _GetNewKernal
 
 ; REU swap, preserving r registers and x, y
 RstrKernal:
-	jmp     L9DED
+	jmp _RstrKernal
 
 _ReadFile:
-	jmp     __ReadFile                           ; 9D86 4C 3C 9E                 L<.
+	jmp __ReadFile
 
 _WriteFile:
-	jmp     __WriteFile                           ; 9D89 4C 3F 9E                 L?.
+	jmp __WriteFile
 
 _ToBASIC:
-	jmp     __ToBASIC                           ; 9D8C 4C 44 9E                 LD.
+	jmp __ToBASIC
 
-L9D8F:  jmp $5000
-        .word $0100 ; REU source
+L9D8F:  .byte $4c ; jmp
+REUArgs:
+	.word $5000 ; CBM address
+        .word $0100 ; REU address
 	.word $03bd ; byte count
+
 L9D96:  .byte   $42
 	.byte $04,$F4,$50,$EA,$06,$01     ; 9D96 42 04 F4 50 EA 06 01     B..P...
 SaveX:	.byte 3
@@ -310,15 +313,15 @@ _GetNewKernal:
         sta     $03                             ; 9DBB 85 03                    ..
         lda     #$92                            ; 9DBD A9 92                    ..
         sta     r0L                           ; 9DBF 85 02                    ..
-        jsr     L9E10                           ; 9DC1 20 10 9E                  ..
-        jsr     L9E1F                           ; 9DC4 20 1F 9E                  ..
-        jsr     L9E06                           ; 9DC7 20 06 9E                  ..
+        jsr     SetBank                           ; 9DC1 20 10 9E                  ..
+        jsr     FetchDec                           ; 9DC4 20 1F 9E                  ..
+        jsr     SetREUArgs                           ; 9DC7 20 06 9E                  ..
         pla                                     ; 9DCA 68                       h
         pha                                     ; 9DCB 48                       H
         bmi     L9DD3                           ; 9DCC 30 05                    0.
-        jsr     L9E19 ; swap                           ; 9DCE 20 19 9E                  ..
+        jsr     SwapDec
         bne     L9DD6                           ; 9DD1 D0 03                    ..
-L9DD3:  jsr     L9E1F ; fetch                           ; 9DD3 20 1F 9E                  ..
+L9DD3:  jsr     FetchDec
 L9DD6:  jsr     RestoreRegs                           ; 9DD6 20 26 9E                  &.
         ldx     SaveX                           ; 9DD9 AE 9D 9D                 ...
         ldy     SaveY                           ; 9DDC AC 9E 9D                 ...
@@ -333,11 +336,12 @@ L9DE6:  rts                                     ; 9DE6 60                       
 L9DE7:  jsr     L9D8F                           ; 9DE7 20 8F 9D                  ..
         pla
         bmi     L9DE6
-L9DED:  stx     SaveX
+_RstrKernal:
+	stx     SaveX
         sty     SaveY
         jsr     SaveRegs
-        jsr     L9E06
-        jsr     L9E19 ; swap
+        jsr     SetREUArgs
+        jsr     SwapDec
         jsr     RestoreRegs
         ldx     SaveX                           ; 9DFF AE 9D 9D                 ...
         ldy     SaveY                           ; 9E02 AC 9E 9D                 ...
@@ -345,22 +349,26 @@ L9DED:  stx     SaveX
 
 ; ----------------------------------------------------------------------------
 ; set up args, inc
-L9E06:  ldx     #5                            ; 9E06 A2 05                    ..
-L9E08:  lda     L9D8F+1,x                         ; 9E08 BD 90 9D                 ...
-        sta     r0L,x                         ; 9E0B 95 02                    ..
-        dex                                     ; 9E0D CA                       .
-        bpl     L9E08                           ; 9E0E 10 F8                    ..
-L9E10:  lda     $88C3                           ; 9E10 AD C3 88                 ...
-        sta     r3L                             ; 9E13 85 08                    ..
-        inc     $88C3                           ; 9E15 EE C3 88                 ...
-        rts                                     ; 9E18 60                       `
+SetREUArgs:
+	ldx #5 ; only src, dst and count
+@1:	lda REUArgs,x
+	sta r0L,x
+	dex
+	bpl @1
+SetBank:
+	lda ramExpSize ; first bank after logical end of REU
+	sta r3L
+	inc ramExpSize ; allow accessing this bank
+	rts
 
 ; swap
-L9E19:  jsr     SwapRAM                         ; 9E19 20 CE C2                  ..
+SwapDec:
+	jsr     SwapRAM                         ; 9E19 20 CE C2                  ..
         bra     L9E22                           ; 9E1D 50 03                    P.
 ; fetch
-L9E1F:  jsr     FetchRAM                        ; 9E1F 20 CB C2                  ..
-L9E22:  dec     $88C3                           ; 9E22 CE C3 88                 ...
+FetchDec:
+	jsr     FetchRAM                        ; 9E1F 20 CB C2                  ..
+L9E22:  dec     ramExpSize ; restore original REU size
         rts                                     ; 9E25 60                       `
 
 RestoreRegs:
@@ -430,11 +438,11 @@ _GetFile:
         sta     r0L                           ; 9E90 85 02                    ..
         sta     r1L                             ; 9E92 85 04                    ..
         sta     r2L                             ; 9E94 85 06                    ..
-L9E96:  lda     $88C3                           ; 9E96 AD C3 88                 ...
+L9E96:  lda     ramExpSize ; first bank after logical end of REU
         sta     r3L                             ; 9E99 85 08                    ..
-        inc     $88C3                           ; 9E9B EE C3 88                 ...
+        inc     ramExpSize ; allow accessing this bank
         jsr     FetchRAM                        ; 9E9E 20 CB C2                  ..
-        dec     $88C3                           ; 9EA1 CE C3 88                 ...
+        dec     ramExpSize ; restore original REU size
         ldx     #$00                            ; 9EA4 A2 00                    ..
         rts                                     ; 9EA6 60                       `
 
@@ -574,22 +582,13 @@ ScreenSaver1:
 	.byte 0, 0, 0, 0 ; ??? unused
 
 ; ??? unused
-	lda #$40
-	sta $03
-	lda #$00
-	sta r0L
-	lda #$FE
-	sta $05
-	lda #$40
-	sta $04
-	lda #$01
-	sta $07
-	lda #$C0
-	sta $06
-	lda $88C3
-	sta $08
-	inc $88C3
+	LoadW r0, $4000
+	LoadW r1, $fe40
+	LoadW r2, $01c0
+	lda ramExpSize
+	sta r3L
+	inc ramExpSize
 	jsr SwapRAM
-	dec $88C3
+	dec ramExpSize
 	rts
 .endif

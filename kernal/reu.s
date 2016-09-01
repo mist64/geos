@@ -33,8 +33,8 @@ _FetchRAM:
 _DoRAMOp:
 	ldx     #$0D
         lda     r3L
-        cmp     $88C3
-        bcs     L9F09
+        cmp     ramExpSize
+        bcs     L9F09 ; beyond end of REU
         php
         sei
         lda     $01
