@@ -268,7 +268,7 @@ _i_ColorRectangle:
 .global _ToBASIC
 
 GetNewKernal:
-	jmp     L9D9F ; far call
+	jmp     _GetNewKernal
 
 ; REU swap, preserving r registers and x, y
 RstrKernal:
@@ -289,7 +289,8 @@ L9D96:  .byte   $42,$04,$F4,$50,$EA,$06,$01     ; 9D96 42 04 F4 50 EA 06 01     
 L9D9D:  .byte   $03                             ; 9D9D 03                       .
 L9D9E:  .byte   $00                             ; 9D9E 00                       .
 
-L9D9F:  pha                                     ; 9D9F 48                       H
+_GetNewKernal:
+	pha                                     ; 9D9F 48                       H
         stx     L9D9D                           ; 9DA0 8E 9D 9D                 ...
         sty     L9D9E                           ; 9DA3 8C 9E 9D                 ...
         jsr     L9E31 ; read args                           ; 9DA6 20 31 9E                  1.
@@ -384,12 +385,12 @@ L9E33:  lda     r0L,x                         ; 9E33 B5 02                    ..
 L9E3C:	lda #3 ; bank for OReadFile
 	.byte $2c
 L9E3F:	lda #4 ; bank for OWriteFile
-	jmp L9D9F
+	jmp _GetNewKernal
 
 ; ----------------------------------------------------------------------------
 ; ToBasic
 L9E44:  lda #$40 + 11
-	jsr L9D9F ; far call
+	jsr _GetNewKernal
 	jmp KToBasic
 
 ; ----------------------------------------------------------------------------
