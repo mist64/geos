@@ -127,7 +127,7 @@ DoMenu1_1:
 	jsr _FrameRectangle
 	bra @Y
 @X:	jsr _HorizontalLine
-	lda $06
+	lda r2L
 	sta r11L
 .endif
 	lda #$ff
@@ -420,7 +420,7 @@ LEF7C:  lda     menuOptNumber                           ; EF7C AD C0 86         
         sec                                     ; EF83 38                       8
         sbc     #$01                            ; EF84 E9 01                    ..
         beq     LEFAE                           ; EF86 F0 26                    .&
-        sta     $06                             ; EF88 85 06                    ..
+        sta     r2L                             ; EF88 85 06                    ..
         lda     $86C4                           ; EF8A AD C4 86                 ...
         sta     $09                             ; EF8D 85 09                    ..
         lda     $86C3                           ; EF8F AD C3 86                 ...
@@ -429,12 +429,12 @@ LEF7C:  lda     menuOptNumber                           ; EF7C AD C0 86         
         sta     $0B                             ; EF97 85 0B                    ..
         lda     $86C5                           ; EF99 AD C5 86                 ...
         sta     $0A                             ; EF9C 85 0A                    ..
-LEF9E:  ldx     $06                             ; EF9E A6 06                    ..
+LEF9E:  ldx     r2L                             ; EF9E A6 06                    ..
         lda     $86D3,x                         ; EFA0 BD D3 86                 ...
         sta     r11L                             ; EFA3 85 18                    ..
         lda     #$FF                            ; EFA5 A9 FF                    ..
         jsr     _HorizontalLine                           ; EFA7 20 7C C6                  |.
-        dec     $06                             ; EFAA C6 06                    ..
+        dec     r2L                             ; EFAA C6 06                    ..
         bne     LEF9E                           ; EFAC D0 F0                    ..
 LEFAE:  rts                                     ; EFAE 60                       `
 .else
