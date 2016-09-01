@@ -488,14 +488,14 @@ extKrnlIn:
 dbFieldWidth:
 	.byte $00
 fftIndicator:
-	.byte   $00
+	.byte $00
 
 .segment "wheels_lokernal2"
 
 IntRoutine:
-	.byte $68, $8D, $00, $FF
+	.byte $68, $8d, $00, $ff
 IrqRoutine:
-	.byte $68, $A8, $68, $AA, $68
+	.byte $68, $a8, $68, $aa, $68
 nmiDefault:
 	.byte $40
 
@@ -505,8 +505,6 @@ nmiDefault:
 
 .if wheels
 .import KbdScanAll
-L88B8 = $88B8
-L88B6 = $88B6
 .global RunScreensaver
 RunScreensaver:
 	ldx CPU_DATA
@@ -564,8 +562,8 @@ ScreenSaver1:
 	bne @7 ; mouse moved
 @6:	jsr KbdScanAll
 	beq @8
-@7:	lda L88B8
-	sta L88B6
+@7:	lda saverCount+1
+	sta saverTimer+1
 	lda saverCount
 	sta saverTimer
 	sec
