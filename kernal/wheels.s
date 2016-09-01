@@ -401,23 +401,23 @@ __ToBASIC:
 	jmp KToBasic
 
 
-	.byte 0, 0, 0, 0, 0, 0, 0
+	.byte 0, 0, 0, 0, 0, 0, 0 ; ???
 
 ; GetFile
 .global _GetFile
 .import _GetFileOld
 _GetFile:
-	lda     $88C4                           ; 9E53 AD C4 88                 ...
+	lda     sysRAMFlg
         and     #$10                            ; 9E56 29 10                    ).
-        beq     L9EA7                           ; 9E58 F0 4D                    .M
-        lda     $0F                             ; 9E5A A5 0F                    ..
-        cmp     #$84                            ; 9E5C C9 84                    ..
-        bne     L9EA7                           ; 9E5E D0 47                    .G
-        lda     $0E                             ; 9E60 A5 0E                    ..
+        beq     @2                           ; 9E58 F0 4D                    .M
+        lda     r6H                             ; 9E5A A5 0F                    ..
+        cmp     #>PrntFilename
+        bne     @2                           ; 9E5E D0 47                    .G
+        lda     r6L                             ; 9E60 A5 0E                    ..
         sec                                     ; 9E62 38                       8
-        sbc     #$65                            ; 9E63 E9 65                    .e
+        sbc     #<PrntFilename
         ora     r0L                           ; 9E65 05 02                    ..
-        bne     L9EA7                           ; 9E67 D0 3E                    .>
+        bne     @2                           ; 9E67 D0 3E                    .>
         lda     #$79                            ; 9E69 A9 79                    .y
         sta     r0H                             ; 9E6B 85 03                    ..
         lda     #$F8                            ; 9E6D A9 F8                    ..
@@ -429,7 +429,7 @@ _GetFile:
         sta     r2H                             ; 9E79 85 07                    ..
         lda     #$40                            ; 9E7B A9 40                    .@
         sta     r2L                             ; 9E7D 85 06                    ..
-        jsr     L9E96                           ; 9E7F 20 96 9E                  ..
+        jsr     @1                           ; 9E7F 20 96 9E                  ..
         lda     #$81                            ; 9E82 A9 81                    ..
         sta     r0H                             ; 9E84 85 03                    ..
         lda     #$F7                            ; 9E86 A9 F7                    ..
@@ -440,14 +440,14 @@ _GetFile:
         sta     r0L                           ; 9E90 85 02                    ..
         sta     r1L                             ; 9E92 85 04                    ..
         sta     r2L                             ; 9E94 85 06                    ..
-L9E96:	lda     ramExpSize ; first bank after logical end of REU
+@1:	lda     ramExpSize ; first bank after logical end of REU
         sta     r3L                             ; 9E99 85 08                    ..
         inc     ramExpSize ; allow accessing this bank
         jsr     FetchRAM                        ; 9E9E 20 CB C2                  ..
         dec     ramExpSize ; restore original REU size
         ldx     #$00                            ; 9EA4 A2 00                    ..
         rts                                     ; 9EA6 60                       `
-L9EA7:	jmp _GetFileOld
+@2:	jmp _GetFileOld
 
 .segment "wheels_lokernal1b"
 
