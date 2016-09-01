@@ -98,7 +98,7 @@ KbdQueTail:     .byte 0
 KbdQueFlag:     .byte 0
 KbdQueue:       .res 16, 0
 KbdNextKey:     .byte 0
-.if wheels
+.if wheels ; used for something else; original contents moved
 .global AEB87
 AEB87:		.res 28, 0
 .else
@@ -132,7 +132,8 @@ TempCurDrive:   .byte 0
 
 		.res 7, 0
 		
-.if wheels
+.if wheels ; moved
 KbdDBncTab:     .res 8, 0
+		.res 3, 0
 KbdDMltTab:     .res 20, 0
 .endif

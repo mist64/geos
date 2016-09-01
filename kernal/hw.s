@@ -44,7 +44,7 @@ ASSERT_NOT_BELOW_IO
 .endif
 	ldx #7
 	lda #$ff
-@1:	sta $887B,x;xxxKbdDMltTab,x
+@1:	sta KbdDMltTab,x
 	sta KbdDBncTab,x
 	dex
 	bpl @1

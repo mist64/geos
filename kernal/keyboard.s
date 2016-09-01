@@ -73,17 +73,17 @@ _DoKeyboardScan:
 	lda KbdTestTab,y
 	sta cia1base+0
 	lda cia1base+1
-	cmp $8870,y;xxxKbdDBncTab,y
-	sta $8870,y;xxxKbdDBncTab,y
+	cmp KbdDBncTab,y
+	sta KbdDBncTab,y
 	bne @4
-	cmp $887B,y;xxxKbdDMltTab,y
+	cmp KbdDMltTab,y
 	beq @4
 	pha
-	eor $887B,y;xxxKbdDMltTab,y
+	eor KbdDMltTab,y
 	beq @3
 	jsr KbdScanHelp1
 @3:	pla
-	sta $887B,y;xxxKbdDMltTab,y
+	sta KbdDMltTab,y
 @4:	dey
 	bpl @2
 @5:	rts
@@ -153,7 +153,7 @@ KbdScanHelp1:
 	ldx r1L
 	lda r0L
 	and BitMaskPow2,x
-	and $887B,y;xxxKbdDMltTab,y
+	and KbdDMltTab,y
 .if wheels
 	beq @9
 	lda keyRptCount
