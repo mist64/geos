@@ -486,36 +486,28 @@ CopyMenuCoords:
 	rts
 
 .if wheels
-LC83C = $C83C
-LED00 = $ED00
-LF077 = $F077
-LF000 = $F000
-LEB9C = $EB9C
-
-LEFBA:  jsr     _MouseOff                           ; EFBA 20 9C EB                  ..
+	jsr     _MouseOff                           ; EFBA 20 9C EB                  ..
         jsr     Menu_7                           ; EFBD 20 00 F0                  ..
         jsr     MenuDoInvert
-        lda     $14                             ; EFC3 A5 14                    ..
-        ldx     $84B7                           ; EFC5 AE B7 84                 ...
-        sta     $86CF,x                         ; EFC8 9D CF 86                 ...
-        jsr     LF077                           ; EFCB 20 77 F0                  w.
-        bit     $04                             ; EFCE 24 04                    $.
+        lda     r9L                             ; EFC3 A5 14                    ..
+        ldx     menuNumber                           ; EFC5 AE B7 84                 ...
+        sta     menuOptionTab,x                         ; EFC8 9D CF 86                 ...
+        jsr     Menu_8                           ; EFCB 20 77 F0                  w.
+        bit     r1L                             ; EFCE 24 04                    $.
         bmi     LEFDE                           ; EFD0 30 0C                    0.
         bvc     LEFE4                           ; EFD2 50 10                    P.
         jsr     LEFE4                           ; EFD4 20 E4 EF                  ..
         lda     r0L                           ; EFD7 A5 02                    ..
-        ora     $03                             ; EFD9 05 03                    ..
+        ora     r0H                             ; EFD9 05 03                    ..
         bne     LEFDE                           ; EFDB D0 01                    ..
         rts                                     ; EFDD 60                       `
+LEFDE:  inc     menuNumber                           ; EFDE EE B7 84                 ...
+        jmp     DoMenu0                           ; EFE1 4C 00 ED                 L..
 
 ; ----------------------------------------------------------------------------
-LEFDE:  inc     $84B7                           ; EFDE EE B7 84                 ...
-        jmp     LED00                           ; EFE1 4C 00 ED                 L..
-
-; ----------------------------------------------------------------------------
-LEFE4:  ldx     $84B7                           ; EFE4 AE B7 84                 ...
-        lda     $86CF,x                         ; EFE7 BD CF 86                 ...
-        jmp     (r0L)                         ; EFEA 6C 02 00                 l..
+LEFE4:  ldx     menuNumber                           ; EFE4 AE B7 84                 ...
+        lda     menuOptionTab,x                         ; EFE7 BD CF 86                 ...
+        jmp     (r0)                         ; EFEA 6C 02 00                 l..
 
 ; xxx moved
 MenuDoInvert:
