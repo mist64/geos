@@ -124,8 +124,6 @@ EDT6:
 
 _StartAppl:
 .if wheels
-LCA26 = $ca26
-LE62A = $e62a
 LC54E = $c54e
 .global IncR0JmpInd
 .global JmpR0Ind
@@ -137,7 +135,7 @@ LC54E = $c54e
         jsr     UNK_5                           ; C336 20 23 C6                  #.
         jsr     InitMachine                           ; C339 20 FE C2                  ..
         jsr     LC54E                           ; C33C 20 4E C5                  N.
-        jsr     LE62A                           ; C33F 20 2A E6                  *.
+        jsr     _UseSystemFont                           ; C33F 20 2A E6                  *.
         jsr     UNK_4                           ; C342 20 FA C5                  ..
         ldx     $11                             ; C345 A6 11                    ..
         lda     $10                             ; C347 A5 10                    ..
