@@ -193,7 +193,7 @@ _GetPtrCurDkNm:
 
 _FollowChain:
 .if wheels
-LC325 = $C325
+.import WheelsTemp
 LD57C:  php                                     ; D57C 08                       .
         sei                                     ; D57D 78                       x
         jsr     LD5CA                           ; D57E 20 CA D5                  ..
@@ -201,11 +201,11 @@ LD57C:  php                                     ; D57C 08                       
         pha                                     ; D583 48                       H
 
         lda     #$00                            ; D584 A9 00                    ..
-        sta     LC325                           ; D586 8D 25 C3                 .%.
+        sta     WheelsTemp                           ; D586 8D 25 C3                 .%.
 LD589:  jsr     GetLink                           ; D589 20 69 90                  i.
 LD58C:  txa                                     ; D58C 8A                       .
         bne     LD5C3                           ; D58D D0 34                    .4
-        ldy     LC325                           ; D58F AC 25 C3                 .%.
+        ldy     WheelsTemp                           ; D58F AC 25 C3                 .%.
 
         lda     r1L                             ; D592 A5 04                    ..
         sta     (r3),y                         ; D594 91 08                    ..
@@ -213,7 +213,7 @@ LD58C:  txa                                     ; D58C 8A                       
         lda     r1H                             ; D597 A5 05                    ..
         sta     (r3),y                         ; D599 91 08                    ..
         iny                                     ; D59B C8                       .
-        sty     LC325                           ; D59C 8C 25 C3                 .%.
+        sty     WheelsTemp                           ; D59C 8C 25 C3                 .%.
         bne     LD5A3                           ; D59F D0 02                    ..
         inc     r3H                             ; D5A1 E6 09                    ..
 LD5A3:  lda     r1L                             ; D5A3 A5 04                    ..

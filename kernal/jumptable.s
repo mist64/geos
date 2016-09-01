@@ -603,5 +603,7 @@ ConvToCards: ; $C31F
 
 	.byte 0, 0, 0 ; ???
 
-LC325:	.byte 0
+.global WheelsTemp
+WheelsTemp: ; xxx
+	.byte 0
 .endif

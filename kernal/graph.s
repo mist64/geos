@@ -110,15 +110,14 @@ PrepareXCoord:
 	rts
 
 .if wheels
-LC325 = $C325
-
+.import WheelsTemp
 _HorizontalLine:
 	sta r7L
 	lda #0
 	.byte $2c
 _InvertLine:
 	lda #$80
-	sta LC325
+	sta WheelsTemp
 	PushW r3
 	PushW r4
 	jsr PrepareXCoord
@@ -135,12 +134,12 @@ _InvertLine:
 @2:	beq @7
 	jsr LC7A3
 	lda $12
-	bit LC325
+	bit WheelsTemp
 	bmi @3
 	jsr LineCommon
 	bra @4
 @3:	eor (r5),y
-@4:	bit LC325
+@4:	bit WheelsTemp
 	bpl @5
 	eor #$FF
 @5:	sta (r6),y
@@ -155,7 +154,7 @@ _InvertLine:
 @6:	dec r4L
 	beq @8
 	lda r7L
-	bit LC325
+	bit WheelsTemp
 	bpl @4
 	lda (r5),y
 	bra @4
@@ -163,7 +162,7 @@ _InvertLine:
 	ora $13
 	bra @9
 @8:	lda $13
-@9:	bit LC325
+@9:	bit WheelsTemp
 	bmi @A
 	jsr LineCommon
 	jmp @B

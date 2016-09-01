@@ -131,8 +131,8 @@ _ConvToCards:
 .segment "wheels3"
 
 .if wheels
-temp = $c325
 .global _SaveColorRectangle, _RestoreColorRectangle
+.import WheelsTemp
 ; Saves a rectangle into or restores it from a linear buffer
 ; in:  r0:  buffer address
 ;      r1L: x
@@ -144,12 +144,12 @@ _RestoreColorRectangle:
 	.byte $2c
 _SaveColorRectangle:
 	lda #$80
-	sta temp
+	sta WheelsTemp
 	jsr GetColorMatrixOffset
 	MoveW r0, r6
 	ldx r2H
 @1:	ldy #0
-@2:	bbrf 7, temp, @3
+@2:	bbrf 7, WheelsTemp, @3
 	lda (r5),y
 	sta (r6),y
 	bra @4
@@ -175,16 +175,12 @@ _SaveColorRectangle:
 .segment "wheels4"
 
 .if wheels
-LEC75 = $ec75
-LFD2F = $fd2f
-LC5E7 = $c5e7
-
 .global DrawCheckeredScreen
 DrawCheckeredScreen:
 	lda #2
 	jsr SetPattern
 	jsr i_Rectangle
-LC4A1:	.byte 0, 199
+	.byte 0, 199
 	.word 0, 319
 	rts
 
@@ -270,7 +266,6 @@ _i_ColorRectangle:
 GetNewKernal:
 	jmp _GetNewKernal
 
-; REU swap, preserving r registers and x, y
 RstrKernal:
 	jmp _RstrKernal
 
@@ -284,7 +279,7 @@ _ToBASIC:
 	jmp __ToBASIC
 
 Execute:
-	.byte $4c ; jmp
+	.byte $4c   ; jmp
 REUArgs:
 	.word $5000 ; CBM address
 REUAddr:
