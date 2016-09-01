@@ -124,29 +124,19 @@ EDT6:
 
 _StartAppl:
 .if wheels
-.global IncR0JmpInd
-.global JmpR0Ind
-.import IncR0
 .import _FirstInit3
-	sei                                     ; C331 78                       x
-        cld                                     ; C332 D8                       .
-        ldx     #$FF                            ; C333 A2 FF                    ..
-        txs                                     ; C335 9A                       .
-        jsr     UNK_5                           ; C336 20 23 C6                  #.
-        jsr     InitMachine                           ; C339 20 FE C2                  ..
-        jsr     _FirstInit3                           ; C33C 20 4E C5                  N.
-        jsr     _UseSystemFont                           ; C33F 20 2A E6                  *.
-        jsr     UNK_4                           ; C342 20 FA C5                  ..
-        ldx     $11                             ; C345 A6 11                    ..
-        lda     $10                             ; C347 A5 10                    ..
-        jmp     _MNLP                           ; C349 4C 64 C0                 Ld.
-
-; ----------------------------------------------------------------------------
-IncR0JmpInd:
-	jsr     IncR0                           ; C34C 20 26 CA                  &.
-JmpR0Ind:
-	jmp     (r0)                         ; C34F 6C 02 00                 l..
-
+	sei
+	cld
+	ldx #$FF
+	txs
+	jsr UNK_5
+	jsr InitMachine
+	jsr _FirstInit3
+	jsr _UseSystemFont
+	jsr UNK_4
+	ldx r7H
+	lda r7L
+	jmp _MNLP
 .else
 	sei
 	cld
@@ -171,6 +161,16 @@ _EnterDT_DB:
 	.byte NULL
 .endif
 
+.endif
+
+.if wheels
+.global IncR0JmpInd
+.global JmpR0Ind
+.import IncR0
+IncR0JmpInd:
+	jsr IncR0
+JmpR0Ind:
+	jmp (r0)
 .endif
 
 .segment "load1c"
@@ -308,11 +308,11 @@ LD8D3 = $D8D3
 LD7C3:  jsr     GetFHdrInfo                     ; D7C3 20 29 C2                  ).
         txa                                     ; D7C6 8A                       .
         bne     LD818                           ; D7C7 D0 4F                    .O
-        lda     $11                             ; D7C9 A5 11                    ..
+        lda     r7H                             ; D7C9 A5 11                    ..
         sta     $03                             ; D7CB 85 03                    ..
         sta     $05                             ; D7CD 85 05                    ..
         sta     LD81A                           ; D7CF 8D 1A D8                 ...
-        lda     $10                             ; D7D2 A5 10                    ..
+        lda     r7L                             ; D7D2 A5 10                    ..
         sta     r0L                           ; D7D4 85 02                    ..
         sta     $04                             ; D7D6 85 04                    ..
         sta     LD819                           ; D7D8 8D 19 D8                 ...
