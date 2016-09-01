@@ -486,39 +486,26 @@ CopyMenuCoords:
 	rts
 
 .if wheels
-	jsr     _MouseOff                           ; EFBA 20 9C EB                  ..
-        jsr     Menu_7                           ; EFBD 20 00 F0                  ..
+	jsr     _MouseOff
+        jsr     Menu_7
         jsr     MenuDoInvert
-        lda     r9L                             ; EFC3 A5 14                    ..
-        ldx     menuNumber                           ; EFC5 AE B7 84                 ...
-        sta     menuOptionTab,x                         ; EFC8 9D CF 86                 ...
-        jsr     Menu_8                           ; EFCB 20 77 F0                  w.
-        bit     r1L                             ; EFCE 24 04                    $.
-        bmi     LEFDE                           ; EFD0 30 0C                    0.
-        bvc     LEFE4                           ; EFD2 50 10                    P.
-        jsr     LEFE4                           ; EFD4 20 E4 EF                  ..
-        lda     r0L                           ; EFD7 A5 02                    ..
-        ora     r0H                             ; EFD9 05 03                    ..
-        bne     LEFDE                           ; EFDB D0 01                    ..
-        rts                                     ; EFDD 60                       `
-LEFDE:  inc     menuNumber                           ; EFDE EE B7 84                 ...
-        jmp     DoMenu0                           ; EFE1 4C 00 ED                 L..
-
-; ----------------------------------------------------------------------------
-LEFE4:  ldx     menuNumber                           ; EFE4 AE B7 84                 ...
-        lda     menuOptionTab,x                         ; EFE7 BD CF 86                 ...
-        jmp     (r0)                         ; EFEA 6C 02 00                 l..
-
-; xxx moved
-MenuDoInvert:
-  	PushB dispBufferOn
-	LoadB dispBufferOn, ST_WR_FORE
-	jsr _InvertRectangle
-	PopB dispBufferOn
-	rts
-
-        .byte   $00,$00,$00,$00,$00             ; EFFB 00 00 00 00 00           .....
-
+        lda     r9L                         
+        ldx     menuNumber                  
+        sta     menuOptionTab,x             
+        jsr     Menu_8                      
+        bit     r1L                         
+        bmi     LEFDE                       
+        bvc     LEFE4                       
+        jsr     LEFE4                       
+        lda     r0L                         
+        ora     r0H                         
+        bne     LEFDE                       
+        rts                                 
+LEFDE:  inc     menuNumber                  
+        jmp     DoMenu0                     
+LEFE4:  ldx     menuNumber
+        lda     menuOptionTab,x             
+        jmp     (r0)
 .else
 .if (oldMenu_5)
 Menu_5:
@@ -530,7 +517,6 @@ Menu_5:
 	sta menuOptionTab,x
 	jsr Menu_8
 	bbsf 7, r1L, Menu_52
-
 	bvs Menu_51
 	MoveB selectionFlash, r0L
 	LoadB r0H, NULL
@@ -588,6 +574,17 @@ Menu_6:
 	jsr Menu_8
 	pla
 	jmp (r0)
+.endif
+
+.if wheels ; xxx moved
+MenuDoInvert:
+  	PushB dispBufferOn
+	LoadB dispBufferOn, ST_WR_FORE
+	jsr _InvertRectangle
+	PopB dispBufferOn
+	rts
+
+        .byte 0, 0, 0, 0, 0 ; ???
 .endif
 
 Menu_7:
