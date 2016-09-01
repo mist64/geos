@@ -119,18 +119,16 @@ DoMenu1_1:
 	jsr _Rectangle
 	PopW curPattern
 .if wheels
-LC88D = $C88D
-        lda     $07                             ; ED3B A5 07                    ..
-        sta     $18                             ; ED3D 85 18                    ..
-        lda     #$FF                            ; ED3F A9 FF                    ..
-        bit     $86C0                           ; ED41 2C C0 86                 ,..
-        bpl     @X                           ; ED44 10 06                    ..
-        jsr     LC88D                           ; ED46 20 8D C8                  ..
-        clv                                     ; ED49 B8                       .
-        bvc     @Y                           ; ED4A 50 0C                    P.
-@X:	jsr     _HorizontalLine                           ; ED4C 20 7C C6                  |.
-        lda     $06                             ; ED4F A5 06                    ..
-        sta     $18                             ; ED51 85 18                    ..
+	lda r2H
+	sta r11L
+	lda #$FF
+	bit menuOptNumber
+	bpl @X
+	jsr _FrameRectangle
+	bra @Y
+@X:	jsr _HorizontalLine
+	lda $06
+	sta r11L
 .endif
 	lda #$ff
 .if wheels
@@ -337,7 +335,7 @@ Menu_2:
 	sta StringFaultVec
 	PushB r1H
 .if wheels
-        bit     $86C0                           ; EEDE 2C C0 86                 ,..
+        bit     menuOptNumber                           ; EEDE 2C C0 86                 ,..
         bmi     LEEED                           ; EEE1 30 0A                    0.
         sec                                     ; EEE3 38                       8
         lda     $86C2                           ; EEE4 AD C2 86                 ...
@@ -416,7 +414,7 @@ RcvrMnu0:
 .if ((menuVSeparator | menuHSeparator)<>0)
 DrawMenu:
 .if wheels
-LEF7C:  lda     $86C0                           ; EF7C AD C0 86                 ...
+LEF7C:  lda     menuOptNumber                           ; EF7C AD C0 86                 ...
         bpl     LEFAE                           ; EF7F 10 2D                    .-
         and     #$1F                            ; EF81 29 1F                    ).
         sec                                     ; EF83 38                       8
@@ -433,7 +431,7 @@ LEF7C:  lda     $86C0                           ; EF7C AD C0 86                 
         sta     $0A                             ; EF9C 85 0A                    ..
 LEF9E:  ldx     $06                             ; EF9E A6 06                    ..
         lda     $86D3,x                         ; EFA0 BD D3 86                 ...
-        sta     $18                             ; EFA3 85 18                    ..
+        sta     r11L                             ; EFA3 85 18                    ..
         lda     #$FF                            ; EFA5 A9 FF                    ..
         jsr     _HorizontalLine                           ; EFA7 20 7C C6                  |.
         dec     $06                             ; EFAA C6 06                    ..
