@@ -182,7 +182,7 @@ DoMenu1_1:
 	ror r11L
 @3:	sec
 @4:	bbrf MOUSEON_BIT, mouseOn, @5
-.if wheels
+.if wheels_size_and_speed
 	lda #1 << ICONSON_BIT | 1 << MENUON_BIT
 	.byte $2c ; skip the "LDA #" part of "smbf"
 .else
@@ -289,7 +289,7 @@ Menu_1:
 	sec
 	jsr Menu_4
 @2:
-.if wheels
+.if wheels_size_and_speed
 	inc r10H
 .else
 	AddVB 1, r10H
@@ -314,7 +314,7 @@ Menu_2:
 	PushW leftMargin
 	PushW rightMargin
 	PushW StringFaultVec
-.if wheels
+.if wheels_size_and_speed
 	lda #$00
 	sta leftMargin+1
 	sta leftMargin
@@ -335,13 +335,13 @@ Menu_2:
 	PushB r1H
 .if wheels
         bit     menuOptNumber                           ; EEDE 2C C0 86                 ,..
-        bmi     LEEED                           ; EEE1 30 0A                    0.
+        bmi     @1                           ; EEE1 30 0A                    0.
         sec                                     ; EEE3 38                       8
-        lda     $86C2                           ; EEE4 AD C2 86                 ...
-        sbc     $29                             ; EEE7 E5 29                    .)
+        lda     menuBottom                           ; EEE4 AD C2 86                 ...
+        sbc     curHeight                             ; EEE7 E5 29                    .)
         sbc     #$01                            ; EEE9 E9 01                    ..
         sta     $05                             ; EEEB 85 05                    ..
-LEEED:  clc                                     ; EEED 18                       .
+@1:  clc                                     ; EEED 18                       .
         adc     $26                             ; EEEE 65 26                    e&
         adc     #$01                            ; EEF0 69 01                    i.
         sta     $05                             ; EEF2 85 05                    ..

@@ -77,9 +77,6 @@ obj7Pointer     =       $8fff ; ---
 BVBuff          =       $0400
 RunREU          =       $6000
 
-A87D9           =       $87d9 ; If this flag is zero,  then the value of
-                              ; NXTKEY, location $87EA, is placed in the
-                              ; keyboard queue
 keyScanChar     =       $87ea ; character fetched during the last interrupt. (Wheels)
 E87FC           =       $87fc
 E87FD           =       $87fd

@@ -53,7 +53,7 @@ _DoKeyboardScan:
 	asl keyAccel
 	bcc @Y
 @X:	lda minKeyRepeat
-@Y:	sta A87D9
+@Y:	sta KbdQueFlag
 .else
 	LoadB KbdQueFlag, 15
 .endif
@@ -157,14 +157,14 @@ KbdScanHelp1:
 .if wheels
 	beq @9
 	lda keyRptCount
-	sta A87D9
+	sta KbdQueFlag
 	lda keyAccFlag
 	sta keyAccel
 	lda r0H
 	sta keyScanChar
 	jmp KbdScanHelp2
 @9:	lda #$FF
-	sta A87D9
+	sta KbdQueFlag
 	lda #0
 	sta keyScanChar
 	rts
