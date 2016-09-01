@@ -121,7 +121,7 @@ DoMenu1_1:
 .if wheels
 	lda r2H
 	sta r11L
-	lda #$FF
+	lda #$ff
 	bit menuOptNumber
 	bpl @X
 	jsr _FrameRectangle
@@ -129,11 +129,10 @@ DoMenu1_1:
 @X:	jsr _HorizontalLine
 	lda r2L
 	sta r11L
-.endif
 	lda #$ff
-.if wheels
 	jsr _HorizontalLine
 .else
+	lda #$ff
 	jsr _FrameRectangle
 .endif
 @Y:	PopW r11
