@@ -108,7 +108,7 @@ KbdScanHelp1:
 .if wheels
         beq     @X                           ; FB8C F0 03                    ..
         jsr @Y
-@X:  dec     $04                             ; FB91 C6 04                    ..
+@X:  dec     r1L                             ; FB91 C6 04                    ..
         bpl     @1                           ; FB93 10 F0                    ..
         rts                                     ; FB95 60                       `
 .else
@@ -160,7 +160,7 @@ KbdScanHelp1:
         sta     A87D9                           ; FBFA 8D D9 87                 ...
         lda     keyAccFlag                           ; FBFD AD B1 88                 ...
         sta     keyAccel                           ; FC00 8D B2 88                 ...
-        lda     $03                             ; FC03 A5 03                    ..
+        lda     r0H                             ; FC03 A5 03                    ..
         sta     keyScanChar                           ; FC05 8D EA 87                 ...
         jmp     KbdScanHelp2                           ; FC08 4C 16 FC                 L..
 @9:	lda     #$FF                            ; FC0B A9 FF                    ..
