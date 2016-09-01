@@ -424,9 +424,9 @@ LEF7C:  lda     menuOptNumber
         sta     r3H
         lda     menuLeft
         sta     r3L
-        lda     $86C6
+        lda     menuRight+1
         sta     r4H
-        lda     $86C5
+        lda     menuRight
         sta     r4L
 LEF9E:  ldx     r2L
         lda     menuLimitTabL,x
