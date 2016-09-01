@@ -450,7 +450,7 @@ DialogCopyTab:
 
 ; handler for commands 1-6
 DBDoIcons:
-.if wheels_buttons_shortcuts ; install keyVector for all button types
+.if wheels_button_shortcuts ; install keyVector for all button types
 	lda keyVector+1
 .else
 	dey ; command-1: "OK"==0
@@ -464,7 +464,7 @@ DBDoIcons:
 	lda #<DBKeyVector
 	sta keyVector
 @1:
-.if wheels_buttons_shortcuts
+.if wheels_button_shortcuts
 	dey
 .endif
 	tya
@@ -572,7 +572,7 @@ DBDefIconsTabRoutine:
 	.word DBIcDISK
 
 DBKeyVector:
-.if wheels_buttons_shortcuts
+.if wheels_button_shortcuts
 	lda keyData
 	ldy #ShortcutKeysEnd - ShortcutKeys - 1
 @1:	cmp ShortcutKeys,y
