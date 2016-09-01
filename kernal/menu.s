@@ -485,29 +485,6 @@ CopyMenuCoords:
 	bne @1
 	rts
 
-.if wheels
-	jsr     _MouseOff
-        jsr     Menu_7
-        jsr     MenuDoInvert
-        lda     r9L                         
-        ldx     menuNumber                  
-        sta     menuOptionTab,x             
-        jsr     Menu_8                      
-        bit     r1L                         
-        bmi     LEFDE                       
-        bvc     LEFE4                       
-        jsr     LEFE4                       
-        lda     r0L                         
-        ora     r0H                         
-        bne     LEFDE                       
-        rts                                 
-LEFDE:  inc     menuNumber                  
-        jmp     DoMenu0                     
-LEFE4:  ldx     menuNumber
-        lda     menuOptionTab,x             
-        jmp     (r0)
-.else
-.if (oldMenu_5)
 Menu_5:
 	jsr _MouseOff
 	jsr Menu_7
@@ -517,6 +494,21 @@ Menu_5:
 	sta menuOptionTab,x
 	jsr Menu_8
 	bbsf 7, r1L, Menu_52
+.if wheels
+	bvc LEFE4
+	jsr LEFE4
+	lda r0L
+	ora r0H
+	bne Menu_52
+	rts
+Menu_52:
+	inc menuNumber
+	jmp DoMenu0
+LEFE4:  ldx menuNumber
+	lda menuOptionTab,x
+	jmp (r0)
+.else
+.if (oldMenu_5)
 	bvs Menu_51
 	MoveB selectionFlash, r0L
 	LoadB r0H, NULL
