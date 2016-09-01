@@ -128,6 +128,7 @@ _StartAppl:
 LCA26 = $ca26
 LE62A = $e62a
 LC54E = $c54e
+.global LC34C
 .global jmp_r0_ind
 	sei                                     ; C331 78                       x
         cld                                     ; C332 D8                       .

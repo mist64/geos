@@ -323,7 +323,12 @@ _DoCheckDelays:
 	txa
 	pha
 	jsr _RemoveDelay
-	jsr $C34C;xxx_DoExecDelay
+.if wheels
+.import LC34C
+	jsr LC34C
+.else
+	jsr _DoExecDelay
+.endif
 	pla
 	tax
 @2:	dex
