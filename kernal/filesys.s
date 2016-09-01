@@ -1439,7 +1439,7 @@ _DeleteRecord:
 LDBE1:  jsr     LDC29                           ; DBE1 20 29 DC                  ).
         txa                                     ; DBE4 8A                       .
         bne     LDC1A                           ; DBE5 D0 33                    .3
-        jsr     LDD41                           ; DBE7 20 41 DD                  A.
+        jsr     GetVLIRChainTS                           ; DBE7 20 41 DD                  A.
         lda     curRecord                           ; DBEA AD 96 84                 ...
         sta     r0L                           ; DBED 85 02                    ..
         jsr     MoveBackVLIRTab                           ; DBEF 20 EB DC                  ..
@@ -1497,7 +1497,6 @@ LDC1A:  rts                                     ; DC1A 60                       
 
 _InsertRecord:
 .if wheels
-LDD41 = $DD41
 LDC1B:  jsr     LDC29                           ; DC1B 20 29 DC                  ).
         txa                                     ; DC1E 8A                       .
         bne     LDC1A                           ; DC1F D0 F9                    ..
@@ -1578,7 +1577,7 @@ LDC60:  lda     r2H                             ; DC60 A5 07                    
         sta     r2H                             ; DC6D 85 07                    ..
         txa                                     ; DC6F 8A                       .
         bne     LDC7F                           ; DC70 D0 0D                    ..
-        jsr     LDD41                           ; DC72 20 41 DD                  A.
+        jsr     GetVLIRChainTS                           ; DC72 20 41 DD                  A.
         bne     LDC80                           ; DC75 D0 09                    ..
         ldx     #$00                            ; DC77 A2 00                    ..
         lda     r2L                             ; DC79 A5 06                    ..
