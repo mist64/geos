@@ -172,7 +172,7 @@ KbdScanHelp1:
 	beq @9
 	LoadB KbdQueFlag, 15
 	MoveB r0H, KbdNextKey
-	jsr $FC16;xxxKbdScanHelp2
+	jsr KbdScanHelp2
 	bra @A
 @9:	LoadB KbdQueFlag, $ff
 	LoadB KbdNextKey, 0
