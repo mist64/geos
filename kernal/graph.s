@@ -926,7 +926,7 @@ GetCoords:
 Getr0AndInc:
 	ldy #0
 	lda (r0),Y
-if wheels_size:
+.if wheels_size
 .global Incr0
 Incr0:
 .endif

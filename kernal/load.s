@@ -130,7 +130,7 @@ LE62A = $e62a
 LC54E = $c54e
 .global LC34C
 .global jmp_r0_ind
-.impotr Incr0
+.import Incr0
 	sei                                     ; C331 78                       x
         cld                                     ; C332 D8                       .
         ldx     #$FF                            ; C333 A2 FF                    ..
