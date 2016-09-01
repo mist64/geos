@@ -449,20 +449,44 @@ _GetFile:
 	.res 200, 0
 	.byte $00,$01,$00,$00,$00,$00,$00,$00
 
-L9FDA:	.byte   $BF,$E0
-L9FDC:	.byte   $06
-L9FDD:	.byte   $00,$00,$00,$67,$63,$41,$61,$C3
+.global sysScrnColors
+.global sysMob0Clr
+.global sysExtClr
+sysScrnColors:
+	.byte $bf
+sys80ScrnColors: ; Wheels 128 only
+	.byte $e0
+sysMob0Clr:
+	.byte $06
+sysExtClr:
+	.byte $00
+sysBorder:
+	.byte $00
+sys80Border: ; Wheels 128 only
+	.byte $00
+miscColor:
+	.byte $67
+sysDBColor:
+	.byte $63
+appDBColor:
+	.byte $41
+menuColor:
+	.byte $61
+backColor:
+	.byte $c3
+
 backSysPattern:
-        .byte   $52,$95,$2D,$52,$8A,$6D,$94,$A2
-        .byte   $01
+	.byte $52, $95, $2d, $52, $8a, $6d, $94, $a2
+ramExpType:
+	.byte $01
 relayDelay:
 	.word $0800
 modKeyCopy:
-	.byte   $00
+	.byte $00
 extKrnlIn:
-	.byte   $00
+	.byte $00
 dbFieldWidth:
-	.byte   $00
+	.byte $00
 fftIndicator:
 	.byte   $00
 

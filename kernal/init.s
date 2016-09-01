@@ -85,9 +85,9 @@ _FirstInit:
 .endif
 
 .if wheels
-sysScrnColors = $9FDA
-sysMob0Clr = $9fdc
-sysExtClr = $9fdd
+.import sysScrnColors
+.import sysMob0Clr
+.import sysExtClr
 .import DrawCheckeredScreen
 .import _i_ColorRectangle
 .global _FirstInit2
