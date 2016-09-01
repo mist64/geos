@@ -277,7 +277,6 @@ LD5CA:  lda     #$80                            ; D5CA A9 80                    
 
 _FindFTypes:
 .if wheels
-LD795 = $D795
 .import fftIndicator
 	bit     fftIndicator                           ; D5D3 2C F3 9F                 ,..
         bmi     LD5FD                           ; D5D6 30 25                    0%
@@ -318,7 +317,7 @@ LD603:  ldy     #$00                            ; D603 A0 00                    
         bne     LD624                           ; D619 D0 09                    ..
 LD61B:  cmp     ($0C),y                         ; D61B D1 0C                    ..
         bne     LD658                           ; D61D D0 39                    .9
-        jsr     LD795                           ; D61F 20 95 D7                  ..
+        jsr     GetHeaderFileName                           ; D61F 20 95 D7                  ..
         bne     LD658                           ; D622 D0 34                    .4
 LD624:  clc                                     ; D624 18                       .
         lda     $0C                             ; D625 A5 0C                    ..
