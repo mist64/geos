@@ -334,17 +334,17 @@ Menu_2:
 	sta StringFaultVec
 	PushB r1H
 .if wheels
-        bit     menuOptNumber                           ; EEDE 2C C0 86                 ,..
-        bmi     @1                           ; EEE1 30 0A                    0.
-        sec                                     ; EEE3 38                       8
-        lda     menuBottom                           ; EEE4 AD C2 86                 ...
-        sbc     curHeight                             ; EEE7 E5 29                    .)
-        sbc     #$01                            ; EEE9 E9 01                    ..
-        sta     $05                             ; EEEB 85 05                    ..
-@1:  clc                                     ; EEED 18                       .
-        adc     $26                             ; EEEE 65 26                    e&
-        adc     #$01                            ; EEF0 69 01                    i.
-        sta     $05                             ; EEF2 85 05                    ..
+	bit menuOptNumber
+	bmi @1
+	sec
+	lda menuBottom
+	sbc curHeight
+	sbc #1
+	sta r1H
+@1:	clc
+	adc baselineOffset
+	adc #1
+	sta r1H
 .else
 	AddB_ baselineOffset, r1H
 	inc r1H
@@ -375,7 +375,7 @@ Menu_3:
 Menu_4:
 	bcc @1
 	bbrf 7, menuOptNumber, @2
-.if wheels
+.if wheels_size_and_speed
 	bmi @3
 .else
 	bra @3
@@ -403,7 +403,7 @@ RcvrMnu0:
 	lda RecoverVector
 	ora RecoverVector+1
 	bne @1
-.if !wheels
+.if !wheels_size_and_speed
 	lda #0
 .endif
 	jsr SetPattern
@@ -413,29 +413,29 @@ RcvrMnu0:
 .if ((menuVSeparator | menuHSeparator)<>0)
 DrawMenu:
 .if wheels
-LEF7C:  lda     menuOptNumber                           ; EF7C AD C0 86                 ...
-        bpl     LEFAE                           ; EF7F 10 2D                    .-
-        and     #$1F                            ; EF81 29 1F                    ).
-        sec                                     ; EF83 38                       8
-        sbc     #$01                            ; EF84 E9 01                    ..
-        beq     LEFAE                           ; EF86 F0 26                    .&
-        sta     r2L                             ; EF88 85 06                    ..
-        lda     $86C4                           ; EF8A AD C4 86                 ...
-        sta     $09                             ; EF8D 85 09                    ..
-        lda     $86C3                           ; EF8F AD C3 86                 ...
-        sta     $08                             ; EF92 85 08                    ..
-        lda     $86C6                           ; EF94 AD C6 86                 ...
-        sta     $0B                             ; EF97 85 0B                    ..
-        lda     $86C5                           ; EF99 AD C5 86                 ...
-        sta     $0A                             ; EF9C 85 0A                    ..
-LEF9E:  ldx     r2L                             ; EF9E A6 06                    ..
-        lda     $86D3,x                         ; EFA0 BD D3 86                 ...
-        sta     r11L                             ; EFA3 85 18                    ..
-        lda     #$FF                            ; EFA5 A9 FF                    ..
-        jsr     _HorizontalLine                           ; EFA7 20 7C C6                  |.
-        dec     r2L                             ; EFAA C6 06                    ..
-        bne     LEF9E                           ; EFAC D0 F0                    ..
-LEFAE:  rts                                     ; EFAE 60                       `
+LEF7C:  lda     menuOptNumber
+        bpl     LEFAE
+        and     #$1F
+        sec
+        sbc     #1
+        beq     LEFAE
+        sta     r2L
+        lda     menuLeft+1
+        sta     r3H
+        lda     menuLeft
+        sta     r3L
+        lda     $86C6
+        sta     r4H
+        lda     $86C5
+        sta     r4L
+LEF9E:  ldx     r2L
+        lda     menuLimitTabL,x
+        sta     r11L
+        lda     #$FF
+        jsr     _HorizontalLine
+        dec     r2L
+        bne     LEF9E
+LEFAE:  rts
 .else
 	lda menuOptNumber
 	and #%00011111
