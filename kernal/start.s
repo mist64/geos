@@ -30,6 +30,9 @@
 .if (usePlus60K)
 .import DetectPlus60K
 .endif
+.if (useRamCart64 | useRamCart128)
+.import DetectRamCart
+.endif
 .if (useRamExp)
 .import LoadDeskTop
 .endif
@@ -142,6 +145,9 @@ OrigResetHandle:
 	jsr InitGEOEnv
 .if (usePlus60K)
 	jsr DetectPlus60K
+.endif
+.if (useRamCart64 | useRamCart128)
+	jsr DetectRamCart
 .endif
 	jsr GetDirHead
 	MoveB bootSec, r1H

@@ -65,6 +65,7 @@ Optionally, the following features that were not part of the original GEOS 2.0 c
 
 * gateWay 2.51 KERNAL patches
 * +60K RAM support
+* Ram Cart 64/128 support
 
 ## Requirements
 
@@ -99,8 +100,11 @@ By default, the "BSW" version of GEOS is built, which is the same binary as Engl
 
 The following options can be enabled:
 
-* `usePlus60K = 1`: Enable support for the +60K RAM expansion. This will use the extra RAM for caching deskTop and for holding the swap area when running desk accessories.
-* `removeToBASIC = 1`: Don't include the ToBASIC code required for deskTop to launch non-GEOS applications. Turn this off if the KERNAL code overflows RAM, e.g. when enabling +60K support.
+* `removeToBASIC = 1`: Don't include the ToBASIC code required for deskTop to launch non-GEOS applications. Turn this off if the KERNAL code overflows RAM, e.g. when enabling RAM expansion support.
+* `usePlus60K = 1`: Enable support for the +60K RAM expansion.
+* `useRamCart64 = 1`, `useRamCart128 = 1`: Enable support for the [Ram Cart](https://github.com/ytmytm/c64-ramcart128) expansion. 
+
+With RAM expansion support, GEOS will use the extra RAM for caching deskTop and for holding the swap area when running desk accessories. GEOS will show an error at startup and reset the system if support for a particular memory expansion is enabled but it is not available.
 
 ## Source Tree
 

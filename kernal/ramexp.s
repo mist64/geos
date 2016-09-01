@@ -25,6 +25,7 @@
 .global DeskTopRecord
 
 .global DetectPlus60K
+.global DetectRamCart
 .global LoadDeskTop
 
 .segment "ramexp1"
@@ -64,6 +65,35 @@ Plus60KTest:
 	cmp #'M'
 	rts
 Plus60KTestEnd:
+.endif
+
+.if (useRamCart64 | useRamCart128)
+DetectRamCart:
+ASSERT_NOT_BELOW_IO
+	LoadB CPU_DATA, IO_IN
+	LoadW RAMC_BASE, 0
+	ldx RAMC_WINDOW
+	ldy RAMC_WINDOW+$80
+	lda #'M'
+	sta RAMC_WINDOW
+	lda #'W'
+	sta RAMC_WINDOW+$80
+	cmp RAMC_WINDOW+$80
+	bne @1
+	lda RAMC_WINDOW
+	cmp #'M'
+	bne @1
+	stx RAMC_WINDOW
+	sty RAMC_WINDOW
+	jmp @2
+@1:	LoadB CPU_DATA, RAM_64K
+ASSERT_NOT_BELOW_IO
+	LoadW r0, ExpFaultDB
+	jsr DoDlgBox
+	jmp ToBASIC
+@2:	LoadB CPU_DATA, RAM_64K
+ASSERT_NOT_BELOW_IO
+	rts
 .endif
 
 .if (useRamExp)
