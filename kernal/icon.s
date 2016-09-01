@@ -144,14 +144,14 @@ ProcessClick:
 	bmi @3
 	bvs @4
 @3:	jsr CalcIconCoords
-	jsr $EFED;xxxMenuDoInvert
+	jsr MenuDoInvert
 	MoveB selectionFlash, r0L
 	LoadB r0H, NULL
 	jsr _Sleep
 	MoveB clkBoxTemp2, r0L
 	ldy clkBoxTemp
 @4:	jsr CalcIconCoords
-	jsr $EFED;xxxMenuDoInvert
+	jsr MenuDoInvert
 @5:	ldy #$1e
 	ldx #0
 	lda dblClickCount

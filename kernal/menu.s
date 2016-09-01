@@ -525,6 +525,8 @@ LEFE4:  ldx     $84B7                           ; EFE4 AE B7 84                 
         jmp     (r0L)                         ; EFEA 6C 02 00                 l..
 
 ; ----------------------------------------------------------------------------
+.global MenuDoInvert
+MenuDoInvert:
 LEFED:  lda     $2F                             ; EFED A5 2F                    ./
         pha                                     ; EFEF 48                       H
         lda     #$80                            ; EFF0 A9 80                    ..
@@ -693,8 +695,8 @@ Menu_8:
 	stx r0L
 	rts
 
-MenuDoInvert:
 .if !wheels
+MenuDoInvert:
 	PushB dispBufferOn
 	LoadB dispBufferOn, ST_WR_FORE
 	jsr _InvertRectangle
