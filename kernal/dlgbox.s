@@ -891,6 +891,7 @@ DBDoGETFILES:
 .if wheels ; xxx
 L500C = $500C
 .import extKrnlIn
+.import AEB87
 	lda extKrnlIn
 	cmp #5
 	beq @B
@@ -902,7 +903,7 @@ L500C = $500C
 	sta r5H
 	ora r5L
 	beq @A
-	LoadW r10, KbdDBncTab
+	LoadW r10, AEB87
 	ldx #r5
 	ldy #r10
 	jsr CopyString

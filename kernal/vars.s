@@ -4,6 +4,8 @@
 ; KERNAL internal variables
 ; These are not part of the API and can be changed.
 
+.include "config.inc"
+
 .global menuOptNumber
 .global menuTop
 .global menuBottom
@@ -96,8 +98,13 @@ KbdQueTail:     .byte 0
 KbdQueFlag:     .byte 0
 KbdQueue:       .res 16, 0
 KbdNextKey:     .byte 0
+.if wheels
+.global AEB87
+AEB87:		.res 28, 0
+.else
 KbdDBncTab:     .res 8, 0
 KbdDMltTab:     .res 20, 0
+.endif
 
 PrvCharWidth:   .byte 0
 clkBoxTemp:     .byte 0
@@ -121,4 +128,11 @@ RecordDirTS:    .word 0
 RecordDirOffs:  .word 0
 RecordTableTS:  .word 0
 verifyFlag:     .byte 0
-TempCurDrive:   .res 83, 0
+TempCurDrive:   .byte 0
+
+		.res 7, 0
+		
+.if wheels
+KbdDBncTab:     .res 8, 0
+KbdDMltTab:     .res 20, 0
+.endif

@@ -45,7 +45,7 @@ ASSERT_NOT_BELOW_IO
 	ldx #7
 	lda #$ff
 @1:	sta $887B,x;xxxKbdDMltTab,x
-	sta $8870,x;xxxKbdDBncTab,x
+	sta KbdDBncTab,x
 	dex
 	bpl @1
 	stx KbdQueFlag
