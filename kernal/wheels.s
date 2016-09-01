@@ -417,7 +417,8 @@ _GetFile:
 	bne @2
 	lda #>PRINTBASE ; CBM destination
 	sta r0H
-	lda #>$F800     ; REU source
+	lda #>prtCodeStorage ; REU source
+	.assert <prtCodeStorage = 0, error, "prtCodeStorage must be page-aligned!"
 	sta r1H
 	lda #0
 	sta r0L
@@ -426,7 +427,8 @@ _GetFile:
 	jsr @1
 	lda #>fileHeader; CBM destination
 	sta r0H
-	lda #>$F700     ; REU source
+	lda #>prtHdrStorage ; REU source
+	.assert <prtHdrStorage = 0, error, "prtHdrStorage must be page-aligned!"
 	sta r1H
 	lda #>$0100     ; count
 	sta r2H

@@ -97,6 +97,10 @@ e88b7           =       $88b7   ; 4 bytes indexed by curDrive, 1571 disk type (S
 A8FE8           =       $8fe8
 A8FF0           =       $8ff0
 
+; Wheels
+prtHdrStorage   =       $f700   ; print driver header stored here.
+prtCodeStorage  =       $f800   ; print driver code stored here.
+
 ; RamExp stats block structure
 DACC_ST_ADDR    =       $80     ;deskAccessory load addr
 DACC_LGH        =       $82     ;deskAccessory lenght
