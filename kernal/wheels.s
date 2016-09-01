@@ -407,46 +407,45 @@ __ToBASIC:
 .global _GetFile
 .import _GetFileOld
 _GetFile:
-	lda     sysRAMFlg
-        and     #$10                            ; 9E56 29 10                    ).
-        beq     @2                           ; 9E58 F0 4D                    .M
-        lda     r6H                             ; 9E5A A5 0F                    ..
-        cmp     #>PrntFilename
-        bne     @2                           ; 9E5E D0 47                    .G
-        lda     r6L                             ; 9E60 A5 0E                    ..
-        sec                                     ; 9E62 38                       8
-        sbc     #<PrntFilename
-        ora     r0L                           ; 9E65 05 02                    ..
-        bne     @2                           ; 9E67 D0 3E                    .>
-        lda     #$79                            ; 9E69 A9 79                    .y
-        sta     r0H                             ; 9E6B 85 03                    ..
-        lda     #$F8                            ; 9E6D A9 F8                    ..
-        sta     r1H                             ; 9E6F 85 05                    ..
-        lda     #$00                            ; 9E71 A9 00                    ..
-        sta     r0L                           ; 9E73 85 02                    ..
-        sta     r1L                             ; 9E75 85 04                    ..
-        lda     #$06                            ; 9E77 A9 06                    ..
-        sta     r2H                             ; 9E79 85 07                    ..
-        lda     #$40                            ; 9E7B A9 40                    .@
-        sta     r2L                             ; 9E7D 85 06                    ..
-        jsr     @1                           ; 9E7F 20 96 9E                  ..
-        lda     #$81                            ; 9E82 A9 81                    ..
-        sta     r0H                             ; 9E84 85 03                    ..
-        lda     #$F7                            ; 9E86 A9 F7                    ..
-        sta     r1H                             ; 9E88 85 05                    ..
-        lda     #$01                            ; 9E8A A9 01                    ..
-        sta     r2H                             ; 9E8C 85 07                    ..
-        lda     #$00                            ; 9E8E A9 00                    ..
-        sta     r0L                           ; 9E90 85 02                    ..
-        sta     r1L                             ; 9E92 85 04                    ..
-        sta     r2L                             ; 9E94 85 06                    ..
-@1:	lda     ramExpSize ; first bank after logical end of REU
-        sta     r3L                             ; 9E99 85 08                    ..
-        inc     ramExpSize ; allow accessing this bank
-        jsr     FetchRAM                        ; 9E9E 20 CB C2                  ..
-        dec     ramExpSize ; restore original REU size
-        ldx     #$00                            ; 9EA4 A2 00                    ..
-        rts                                     ; 9EA6 60                       `
+; If the printer driver is supposed to be loaded,
+; fetch it from REU, otherwise jump to original code.
+	lda sysRAMFlg
+	and #$10
+	beq @2
+	lda r6H
+	cmp #>PrntFilename
+	bne @2
+	lda r6L
+	sec
+	sbc #<PrntFilename
+	ora r0L         ; options: load at regular address, no args, no printing
+	bne @2
+	lda #>PRINTBASE ; CBM destination
+	sta r0H
+	lda #>$F800     ; REU source
+	sta r1H
+	lda #0
+	sta r0L
+	sta r1L
+	LoadW r2, 1600  ; count
+	jsr @1
+	lda #>fileHeader; CBM destination
+	sta r0H
+	lda #>$F700     ; REU source
+	sta r1H
+	lda #>$0100     ; count
+	sta r2H
+	lda #$00
+	sta r0L
+	sta r1L
+	sta r2L
+@1:	lda ramExpSize ; first bank after logical end of REU
+	sta r3L
+	inc ramExpSize ; allow accessing this bank
+	jsr FetchRAM
+	dec ramExpSize ; restore original REU size
+	ldx #$00
+	rts
 @2:	jmp _GetFileOld
 
 .segment "wheels_lokernal1b"
