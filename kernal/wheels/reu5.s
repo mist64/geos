@@ -407,14 +407,11 @@ L5317:	lda #$50
 L5322:	lda $9FE1
 	sta L532F
 	jsr i_ColorRectangle
-	php
-	.byte $04
-	clc
-	.byte $0F
+	.byte 8, 4, 24, 15
 L532F:	.byte $B3
 	jsr i_FrameRectangle
-	.byte $22,$96
-	.word $0042,$00FE
+	.byte 34, 150
+	.word 66, 254
 	.byte $FF
 	rts
 
