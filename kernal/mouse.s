@@ -215,10 +215,10 @@ ResetMseRegion:
 CheckClickPos:
 	lda mouseData
 	bmi @4
-.if wheels
-        bit     mouseOn                             ; EC86 24 30                    $0
-        bpl     @4
-        bvc     @3                           ; EC8A 50 2F                    P/
+.if wheels_size_and_speed
+	bit mouseOn
+	bpl @4
+	bvc @3
 .else
 	lda mouseOn
 	and #SET_MSE_ON
@@ -249,7 +249,7 @@ CheckClickPos:
 .endif
 
 DoMouseFault:
-.if wheels
+.if wheels_size_and_speed
 	bit mouseOn
 	bpl @3
 	bvc @3
