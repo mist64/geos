@@ -13,6 +13,17 @@ L9063 = $9063
 L9D80 = $9D80
 L9D83 = $9D83
 
+L5087 = L793F - PRINTBASE + L5048
+L5721 = L7FD9 - PRINTBASE + L5048
+L5722 = L7FDA - PRINTBASE + L5048
+L5723 = L7FDB - PRINTBASE + L5048
+L5724 = L7FDC - PRINTBASE + L5048
+L5725 = L7FDD - PRINTBASE + L5048
+L5727 = L7FDF - PRINTBASE + L5048
+L5729 = L7FE1 - PRINTBASE + L5048
+L572D = L7FE5 - PRINTBASE + L5048
+L5732 = L7FEA - PRINTBASE + L5048
+
 .segment "reu8"
 
 CopyDisk:
@@ -51,64 +62,67 @@ L5021:	asl z8d
 	.word $06EB
 	jmp PRINTBASE
 
-L5048:	lda #$00
-	sta $7B8F
-	sta $79A8
+L5048:
+	.org PRINTBASE
+code2_start:
+	lda #$00
+	sta L7B8F
+	sta L79A8
 	jsr L9D83
 	lda #$45
 	jsr L9D80
-	jsr $79C9
+	jsr L79C9
 	txa
-	bne L5071
-	bit $793F
-	bmi L5071
+	bne L7929
+	bit L793F
+	bmi L7929
 	jsr L9D83
-	jsr $7940
+	jsr L7940
 	lda #$45
 	jsr L9D80
-	jsr $7BC7
-L5071:	txa
+	jsr L7BC7
+L7929:	txa
 	pha
-	jsr $7B52
+	jsr L7B52
 	jsr OpenDisk
 	jsr L9D83
-	jsr $79B0
+	jsr L79B0
 	lda #$48
 	jsr L9D80
 	pla
 	tax
 	rts
 
-L5087:	brk
-	lda $7FDE
-	bpl L508E
-L508D:	rts
+L793F:	brk
+L7940:	lda L7FDE
+	bpl L7946
+L7945:	rts
 
-L508E:	and #$F0
+L7946:	and #$F0
 	cmp #$30
-	beq L508D
-	lda $7FDD
-	bmi L508D
+	beq L7945
+	lda L7FDD
+	bmi L7945
 	and #$F0
 	cmp #$30
-	beq L508D
+	beq L7945
 	lda #$40
 	jsr L9D80
 	jsr L500F
 	lda r2L
-	beq L50E8
-	bpl L50AF
+	beq L79A0
+	bpl L7967
 	lda #$80
-L50AF:	sta $79A8
+L7967:	sta L79A8
 	ldy #$01
-L50B4:	jsr L501E
+L796C:	jsr L501E
 	lda r3L
-	beq L50C2
+	beq L797A
 	iny
 	cpy #$09
-	bcc L50B4
-	bcs L50E8
-L50C2:	lda $79A8
+	bcc L796C
+	bcs L79A0
+L797A:	lda L79A8
 	sta r2L
 	lda #$5D
 	sta r7L
@@ -120,211 +134,210 @@ L50C2:	lda $79A8
 	sty r3L
 	jsr L5018
 	txa
-	bne L50E8
+	bne L79A0
 	lda r3L
-	sta $79A9
-	sty $79AA
+	sta L79A9
+	sty L79AA
 	jmp L9D83
 
-L50E8:	lda #$00
-	sta $79A8
+L79A0:	lda #$00
+	sta L79A8
 	jmp L9D83
 
-	brk
-	brk
-	brk
-	.byte $44
-	.byte $43
-	and $38,y
-	bit $793F
-	bpl L50FE
-L50FD:	rts
+L79A8:	brk
+L79A9:	brk
+L79AA:	brk
+	.byte "DC98"
+	.byte $00
+L79B0:	bit L793F
+	bpl L79B6
+L79B5:	rts
 
-L50FE:	lda $79A8
-	beq L50FD
+L79B6:	lda L79A8
+	beq L79B5
 	lda #$40
 	jsr L9D80
-	ldy $79AA
+	ldy L79AA
 	jsr L501B
 	jmp L9D83
 
-	lda #$01
-	sta $7B8F
-	lda $7FDA
+L79C9:	lda #$01
+	sta L7B8F
+	lda L7FDA
 	jsr SetDevice
-	bne L513E
-	bit $7FEA
-	bvc L5151
+	bne L79F6
+	bit L7FEA
+	bvc L7A09
 	lda $88C6
 	and #$F0
-	beq L5139
+	beq L79F1
 	cmp #$10
-	beq L5139
-	lda $7FEA
+	beq L79F1
+	lda L7FEA
 	and #$BF
-	sta $7FEA
+	sta L7FEA
 	clv
-	bvc L5151
-L5139:	jsr $7B90
-	beq L513F
-L513E:	rts
+	bvc L7A09
+L79F1:	jsr L7B90
+	beq L79F7
+L79F6:	rts
 
-L513F:	lda $88C6
+L79F7:	lda $88C6
 	and #$F0
-	beq L5151
+	beq L7A09
 	jsr L501E
 	jsr L9063
 	lda r2L
-	sta $7FDC
-L5151:	jsr EnterTurbo
-	ldx $7FDC
+	sta L7FDC
+L7A09:	jsr EnterTurbo
+	ldx L7FDC
 	jsr L5018
 	txa
-	bne L51AB
+	bne L7A63
 	jsr L9050
 	txa
-	bne L51AB
+	bne L7A63
 	lda $8203
-	sta $7FE6
+	sta L7FE6
 	lda $88C6
 	and #$0F
-	sta $7FDE
-	cmp $7FDD
-	bne L5179
-	jmp $7A64
+	sta L7FDE
+	cmp L7FDD
+	bne L7A31
+	jmp L7A64
 
-L5179:	cmp #$03
-	bcs L51A6
-	lda $7FDD
+L7A31:	cmp #$03
+	bcs L7A5E
+	lda L7FDD
 	cmp #$03
-	bcs L51A6
+	bcs L7A5E
 	cmp #$01
-	bne L518F
-	lda $7FE5
-	bmi L51A6
-	bpl L519E
-L518F:	lda $7FE6
-	bmi L51A6
-	lda $7FE5
-	bpl L519E
-	jsr $7AB3
-	bne L51A9
-L519E:	lda #$01
-	sta $7FE1
+	bne L7A47
+	lda L7FE5
+	bmi L7A5E
+	bpl L7A56
+L7A47:	lda L7FE6
+	bmi L7A5E
+	lda L7FE5
+	bpl L7A56
+	jsr L7AB3
+	bne L7A61
+L7A56:	lda #$01
+	sta L7FE1
 	ldx #$00
 	rts
 
-L51A6:	ldx #$73
+L7A5E:	ldx #$73
 	rts
 
-L51A9:	ldx #$03
-L51AB:	rts
+L7A61:	ldx #$03
+L7A63:	rts
 
-	lda $7FE1
+L7A64:	lda L7FE1
 	cmp #$03
-	beq L51F2
+	beq L7AAA
 	cmp #$04
-	bne L51C9
+	bne L7A81
 	lda $9062
-	sta $7FE0
-	cmp $7FDF
-	bcs L51F2
-	jsr $7AE1
-	bne L51F8
-	beq L51F2
-L51C9:	cmp #$01
-	bne L51D7
-	lda $7FE5
-	ora $7FE6
-	bmi L51F5
-	bpl L51EA
-L51D7:	cmp #$02
-	bne L51F5
-	lda $7FE5
-	bpl L51EA
-	lda $7FE6
-	bmi L51ED
-	jsr $7AB3
-	bne L51F8
-L51EA:	lda #$01
+	sta L7FE0
+	cmp L7FDF
+	bcs L7AAA
+	jsr L7AE1
+	bne L7AB0
+	beq L7AAA
+L7A81:	cmp #$01
+	bne L7A8F
+	lda L7FE5
+	ora L7FE6
+	bmi L7AAD
+	bpl L7AA2
+L7A8F:	cmp #$02
+	bne L7AAD
+	lda L7FE5
+	bpl L7AA2
+	lda L7FE6
+	bmi L7AA5
+	jsr L7AB3
+	bne L7AB0
+L7AA2:	lda #$01
 	.byte $2C
-L51ED:	lda #$02
-	sta $7FE1
-L51F2:	ldx #$00
+L7AA5:	lda #$02
+	sta L7FE1
+L7AAA:	ldx #$00
 	rts
 
-L51F5:	ldx #$73
+L7AAD:	ldx #$73
 	rts
 
-L51F8:	ldx #$03
+L7AB0:	ldx #$03
 	rts
 
-	jsr $7B52
+L7AB3:	jsr L7B52
 	jsr GetDirHead
 	lda #$24
 	sta r1L
 	lda #$00
 	sta r1H
-L5209:	lda r1H
+L7AC1:	lda r1H
 	sta r6H
 	lda r1L
 	sta r6L
 	jsr FindBAMBit
-	beq L5226
-L5216:	jsr $7E74
+	beq L7ADE
+L7ACE:	jsr L7E74
 	lda r1L
 	cmp #$35
-	beq L5216
+	beq L7ACE
 	cmp #$47
-	bcc L5209
+	bcc L7AC1
 	ldx #$00
 	rts
 
-L5226:	ldx #$06
+L7ADE:	ldx #$06
 	rts
 
-	jsr $7B52
+L7AE1:	jsr L7B52
 	lda #$01
 	sta r1L
-	lda $7FDF
-	jsr $7B38
-	sty $7FE8
+	lda L7FDF
+	jsr L7B38
+	sty L7FE8
 	clc
 	adc #$02
-	sta $7FE7
-	lda $7FE0
-	jsr $7B38
-	sty $7FE9
+	sta L7FE7
+	lda L7FE0
+	jsr L7B38
+	sty L7FE9
 	clc
 	adc #$02
 	sta r1H
 	jsr L903C
 	txa
-	bne L527F
-L5253:	ldy $7FE9
+	bne L7B37
+L7B0B:	ldy L7FE9
 	lda diskBlkBuf,y
 	cmp #$FF
-	bne L527D
+	bne L7B35
 	iny
-	sty $7FE9
-	bne L526B
+	sty L7FE9
+	bne L7B23
 	inc r1H
 	jsr L903C
 	txa
-	bne L527F
-L526B:	lda r1H
-	cmp $7FE7
-	bcc L5253
-	lda $7FE9
-	cmp $7FE8
-	bcc L5253
+	bne L7B37
+L7B23:	lda r1H
+	cmp L7FE7
+	bcc L7B0B
+	lda L7FE9
+	cmp L7FE8
+	bcc L7B0B
 	ldx #$00
 	rts
 
-L527D:	ldx #$03
-L527F:	rts
+L7B35:	ldx #$03
+L7B37:	rts
 
-	ldx #$00
+L7B38:	ldx #$00
 	stx r1H
 	clc
 	adc #$01
@@ -342,203 +355,206 @@ L527F:	rts
 	lda r1H
 	rts
 
-	ldx #$00
-	bit $01A2
-	cpx $7B8F
-	beq L52D3
-	stx $7B8F
-	lda $7FD9,x
+L7B52:	ldx #$00
+	.byte $2C
+L7B55:	ldx #$01
+	cpx L7B8F
+	beq L7B8B
+	stx L7B8F
+	lda L7FD9,x
 	jsr SetDevice
-	bne L52D5
-	lda $7FD9
-	cmp $7FDA
-	bne L52C6
-	jsr $7B90
-	bne L52D5
-	ldx $7B8F
-	lda $7FDB,x
+	bne L7B8D
+	lda L7FD9
+	cmp L7FDA
+	bne L7B7E
+	jsr L7B90
+	bne L7B8D
+	ldx L7B8F
+	lda L7FDB,x
 	tax
 	jsr L5018
-L52C6:	jsr EnterTurbo
+L7B7E:	jsr EnterTurbo
 	lda $88C6
 	cmp #$03
-	bcs L52D3
+	bcs L7B8B
 	jsr NewDisk
-L52D3:	ldx #$00
-L52D5:	txa
+L7B8B:	ldx #$00
+L7B8D:	txa
 	rts
 
-	brk
-	bit $7FEA
-	bvc L52E3
-	ldx $7B8F
+L7B8F:	brk
+L7B90:	bit L7FEA
+	bvc L7B9B
+	ldx L7B8F
 	jmp L5021
 
-L52E3:	ldx #$00
+L7B9B:	ldx #$00
 	rts
 
-	ldx #$00
+L7B9E:	ldx #$00
 	lda #$7F
 	sta $DC00
 	bit $DC01
-	bmi L52F4
+	bmi L7BAC
 	ldx #$0C
-L52F4:	txa
+L7BAC:	txa
 	rts
 
-	ldy #$90
-	bit $91A0
+L7BAE:	ldy #$90
+	.byte $2C
+L7BB1:	ldy #$91
 	ldx #$06
-L52FD:	lda $7BC0,x
+L7BB5:	lda L7BC0,x
 	sta r0L,x
 	dex
-	bpl L52FD
+	bpl L7BB5
 	jmp DoRAMOp
 
-	.byte $00,$10,$00,$C8,$00,$36,$00
-	lda $7FE1
+L7BC0:	.byte $00,$10,$00,$C8,$00,$36,$00
+L7BC7:	lda L7FE1
 	cmp #$01
-	beq L5330
+	beq L7BE8
 	cmp #$02
-	beq L532D
+	beq L7BE5
 	cmp #$03
-	beq L532A
-	lda $7FDF
-	cmp $7FE0
-	bcc L5329
-	lda $7FE0
-L5329:	.byte $2C
-L532A:	lda #$50
+	beq L7BE2
+	lda L7FDF
+	cmp L7FE0
+	bcc L7BE1
+	lda L7FE0
+L7BE1:	.byte $2C
+L7BE2:	lda #$50
 	.byte $2C
-L532D:	lda #$46
+L7BE5:	lda #$46
 	.byte $2C
-L5330:	lda #$23
-	sta $7FE4
+L7BE8:	lda #$23
+	sta L7FE4
 	ldx #$00
-	stx $7FE3
+	stx L7FE3
 	inx
-	stx $7FE2
-	jsr $7BAE
-	ldx $79A8
-	beq L5347
+	stx L7FE2
+	jsr L7BAE
+	ldx L79A8
+	beq L7BFF
 	dex
-L5347:	stx $7FD6
-	jsr $7B52
+L7BFF:	stx L7FD6
+	jsr L7B52
 	jsr GetDirHead
 	txa
-	bne L537B
-L5353:	jsr $7B52
-	bne L537B
-	jsr $7D02
-	bne L537B
-	lda $7C40
-	beq L5379
-	jsr $7B55
-	bne L537B
-	jsr $7EB8
-	bne L537B
-	lda $7FE2
-	beq L5379
-	lda $7FE4
-	cmp $7FE2
-	bcs L5353
-L5379:	lda #$00
-L537B:	pha
+	bne L7C33
+L7C0B:	jsr L7B52
+	bne L7C33
+	jsr L7D02
+	bne L7C33
+	lda L7C40
+	beq L7C31
+	jsr L7B55
+	bne L7C33
+	jsr L7EB8
+	bne L7C33
+	lda L7FE2
+	beq L7C31
+	lda L7FE4
+	cmp L7FE2
+	bcs L7C0B
+L7C31:	lda #$00
+L7C33:	pha
 	tax
-	bne L5382
-	jsr $7C41
-L5382:	jsr $7BB1
+	bne L7C3A
+	jsr L7C41
+L7C3A:	jsr L7BB1
 	pla
 	tax
 	rts
 
-	brk
-	jsr $7B55
-	lda $7FE1
+L7C40:	brk
+L7C41:	jsr L7B55
+	lda L7FE1
 	cmp #$04
-	beq L53E4
+	beq L7C9C
 	cmp #$03
-	beq L53F8
+	beq L7CB0
 	cmp #$02
-	beq L53F8
-	lda $7FE6
-	ora $7FE5
-	bpl L53F8
+	beq L7CB0
+	lda L7FE6
+	ora L7FE5
+	bpl L7CB0
 	lda #$12
 	sta r1L
 	lda #$00
 	sta r1H
 	jsr L903C
-	lda $7FE6
+	lda L7FE6
 	sta $8003
-	bmi L53BE
+	bmi L7C76
 	ldy #$BE
-	jsr $7CB3
+	jsr L7CB3
 	jmp L903F
 
-L53BE:	ldy #$01
+L7C76:	ldy #$01
 	ldx #$03
-L53C2:	lda $7EB0,x
+L7C7A:	lda L7EB0,x
 	sta $80DC,y
 	iny
 	tya
-	cmp $7EAC,x
-	bcc L53C2
+	cmp L7EAC,x
+	bcc L7C7A
 	dex
-	bpl L53C2
+	bpl L7C7A
 	lda #$00
 	sta $80EE
 	jsr L903F
-	jsr $7CBF
+	jsr L7CBF
 	lda #$35
 	sta r1L
 	jmp L903F
 
-L53E4:	lda #$01
+L7C9C:	lda #$01
 	sta r1L
 	lda #$02
 	sta r1H
 	jsr L903C
-	lda $7FE0
+	lda L7FE0
 	sta $8008
 	jmp L903F
 
-L53F8:	ldx #$00
+L7CB0:	ldx #$00
 	rts
 
-	lda #$00
-	bit $FFA9
-L5400:	sta diskBlkBuf,y
+L7CB3:	lda #$00
+	.byte $2C
+L7CB6:	lda #$FF
+L7CB8:	sta diskBlkBuf,y
 	iny
-	bne L5400
+	bne L7CB8
 	rts
 
-	ldy #$00
-	jsr $7CB6
+L7CBF:	ldy #$00
+	jsr L7CB6
 	ldy #$69
-	jsr $7CB3
+	jsr L7CB3
 	ldy #$02
 	ldx #$11
 	lda #$1F
-	jsr $7CF4
+	jsr L7CF4
 	ldx #$07
 	lda #$07
-	jsr $7CF4
+	jsr L7CF4
 	ldx #$06
 	lda #$03
-	jsr $7CF4
+	jsr L7CF4
 	ldx #$05
 	lda #$01
-	jsr $7CF4
+	jsr L7CF4
 	lda #$00
 	ldy #$33
-L5433:	sta diskBlkBuf,y
+L7CEB:	sta diskBlkBuf,y
 	iny
 	cpy #$36
-	bcc L5433
+	bcc L7CEB
 	rts
 
-L543C:	sta diskBlkBuf,y
+L7CF4:	sta diskBlkBuf,y
 	pha
 	tya
 	clc
@@ -546,301 +562,302 @@ L543C:	sta diskBlkBuf,y
 	tay
 	pla
 	dex
-	bne L543C
+	bne L7CF4
 	rts
 
-	jsr InitForIO
+L7D02:	jsr InitForIO
 	ldy #$00
-	sty $7FD8
-	sty $7C40
-	sty $7F67
-	sty $7F68
-	sty $7FD4
-	sty $7FD5
-	lda $79A8
-	bne L5497
+	sty L7FD8
+	sty L7C40
+	sty L7F67
+	sty L7F68
+	sty L7FD4
+	sty L7FD5
+	lda L79A8
+	bne L7D4F
 	lda #$12
-	sta $7FD7
-	jsr $7DF4
-L546E:	jsr $7B9E
-	bne L5492
-	lda $7FE3
+	sta L7FD7
+	jsr L7DF4
+L7D26:	jsr L7B9E
+	bne L7D4A
+	lda L7FE3
 	sta r1H
-	lda $7FE2
+	lda L7FE2
 	sta r1L
-	beq L5490
-	lda $7FE4
+	beq L7D48
+	lda L7FE4
 	cmp r1L
-	bcc L5490
-	jsr $7DB6
-	lda $7FD7
+	bcc L7D48
+	jsr L7DB6
+	lda L7FD7
 	cmp #$46
-	bcc L546E
-L5490:	ldx #$00
-L5492:	jsr DoneWithIO
+	bcc L7D26
+L7D48:	ldx #$00
+L7D4A:	jsr DoneWithIO
 	txa
 	rts
 
-L5497:	ldy #$00
-	sty $7FD8
-	jsr $7DF4
-L549F:	lda #$12
-	sta $7FD7
-L54A4:	jsr $7B9E
-	bne L54F9
-	lda $7FE3
+L7D4F:	ldy #$00
+	sty L7FD8
+	jsr L7DF4
+L7D57:	lda #$12
+	sta L7FD7
+L7D5C:	jsr L7B9E
+	bne L7DB1
+	lda L7FE3
 	sta r1H
-	lda $7FE2
+	lda L7FE2
 	sta r1L
-	jsr $7DB6
-	bne L54F9
+	jsr L7DB6
+	bne L7DB1
 	tax
-	beq L54C9
-	lda $7FE4
+	beq L7D81
+	lda L7FE4
 	cmp r1L
-	bcc L54C9
-	lda $7FD7
+	bcc L7D81
+	lda L7FD7
 	cmp #$32
-	bcc L54A4
-L54C9:	jsr $7E1A
-	inc $7F67
-	bne L54DB
-	inc $7F68
-	lda $7F68
+	bcc L7D5C
+L7D81:	jsr L7E1A
+	inc L7F67
+	bne L7D93
+	inc L7F68
+	lda L7F68
 	cmp #$04
-	beq L54F7
-L54DB:	lda $7FE4
-	cmp $7FE2
-	bcc L54F7
-	lda $7FD6
-	beq L54F2
-	lda $7FD5
-	cmp $7FD6
-	bcc L5497
-	bcs L54F7
-L54F2:	lda $7FD8
-	bne L549F
-L54F7:	ldx #$00
-L54F9:	jsr DoneWithIO
+	beq L7DAF
+L7D93:	lda L7FE4
+	cmp L7FE2
+	bcc L7DAF
+	lda L7FD6
+	beq L7DAA
+	lda L7FD5
+	cmp L7FD6
+	bcc L7D4F
+	bcs L7DAF
+L7DAA:	lda L7FD8
+	bne L7D57
+L7DAF:	ldx #$00
+L7DB1:	jsr DoneWithIO
 	txa
 	rts
 
-	lda $7FD7
+L7DB6:	lda L7FD7
 	sta r4H
 	lda #$00
 	sta r4L
 	jsr ReadBlock
-	inc $7FD7
+	inc L7FD7
 	txa
-	bne L553B
+	bne L7DF3
 	inx
-	stx $7C40
-	ldy $7FD8
+	stx L7C40
+	ldy L7FD8
 	lda r1L
 	sta $1000,y
 	lda r1H
 	sta $1100,y
-	inc $7FD8
-	inc $7FD4
-	bne L552C
-	inc $7FD5
-L552C:	jsr $7E32
+	inc L7FD8
+	inc L7FD4
+	bne L7DE4
+	inc L7FD5
+L7DE4:	jsr L7E32
 	lda r1H
-	sta $7FE3
+	sta L7FE3
 	lda r1L
-	sta $7FE2
+	sta L7FE2
 	ldx #$00
-L553B:	rts
+L7DF3:	rts
 
-	ldy #$00
+L7DF4:	ldy #$00
 	tya
-L553F:	sta $1000,y
+L7DF7:	sta $1000,y
 	sta $1100,y
 	iny
-	bne L553F
+	bne L7DF7
 	rts
 
-	lda #$20
+L7E01:	lda #$20
 	sta r0L
-	jsr $7E0D
+	jsr L7E0D
 	ldy #$02
 	jmp BMult
 
-	lda $7F68
+L7E0D:	lda L7F68
 	sta r1H
-	lda $7F67
+	lda L7F67
 	sta r1L
 	ldx #$04
 	rts
 
-	jsr $7F96
+L7E1A:	jsr L7F96
 	jsr StashRAM
-	lda $7FD6
-	beq L5579
-	jsr $7FBA
+	lda L7FD6
+	beq L7E31
+	jsr L7FBA
 	jsr StashRAM
-	jsr $7F80
+	jsr L7F80
 	jsr StashRAM
-L5579:	rts
+L7E31:	rts
 
-	bit $7FEA
-	bpl L559B
-L557F:	jsr $7E53
+L7E32:	bit L7FEA
+	bpl L7E53
+L7E37:	jsr L7E53
 	lda r1L
-	beq L559A
-	lda $7FE4
+	beq L7E52
+	lda L7FE4
 	cmp r1L
-	bcc L559A
+	bcc L7E52
 	lda r1H
 	sta r6H
 	lda r1L
 	sta r6L
 	jsr FindBAMBit
-	bne L557F
-L559A:	rts
+	bne L7E37
+L7E52:	rts
 
-L559B:	lda $7FE1
+L7E53:	lda L7FE1
 	cmp #$03
-	bne L55B1
+	bne L7E69
 	inc r1H
 	lda r1H
 	cmp #$28
-	bcc L55B0
+	bcc L7E68
 	inc r1L
 	lda #$00
 	sta r1H
-L55B0:	rts
+L7E68:	rts
 
-L55B1:	cmp #$04
-	bne L55BC
+L7E69:	cmp #$04
+	bne L7E74
 	inc r1H
-	bne L55BB
+	bne L7E73
 	inc r1L
-L55BB:	rts
+L7E73:	rts
 
-L55BC:	jsr $7E94
+L7E74:	jsr L7E94
 	clc
 	adc r1H
 	sta r1H
-	jsr $7E8B
-	bcc L55D2
-	sbc $7EB0,x
+	jsr L7E8B
+	bcc L7E8A
+	sbc L7EB0,x
 	sta r1H
-	bne L55D2
+	bne L7E8A
 	inc r1L
-L55D2:	rts
+L7E8A:	rts
 
-	jsr $7E9B
+L7E8B:	jsr L7E9B
 	lda r1H
-	cmp $7EB0,x
+	cmp L7EB0,x
 	rts
 
-	jsr $7E9B
-	lda $7EB4,x
+L7E94:	jsr L7E9B
+	lda L7EB4,x
 	rts
 
-	lda r1L
+L7E9B:	lda r1L
 	cmp #$24
-	bcc L55EB
+	bcc L7EA3
 	sbc #$23
-L55EB:	ldx #$04
-L55ED:	cmp $7EAB,x
+L7EA3:	ldx #$04
+L7EA5:	cmp L7EAB,x
 	dex
-	bcs L55ED
-	rts
+	bcs L7EA5
+L7EAB:	rts
 
-	.byte $24,$1F,$19,$12,$11,$12,$13,$15
-	.byte $0A,$0B,$0A,$0A
-	jsr InitForIO
+L7EAC:	.byte $24,$1F,$19,$12
+L7EB0:	.byte $11,$12,$13,$15
+L7EB4:	.byte $0A,$0B,$0A,$0A
+L7EB8:	jsr InitForIO
 	ldy #$00
-	sty $7FD8
-	sty $7F67
-	sty $7F68
-	lda $79A8
-	bne L562A
+	sty L7FD8
+	sty L7F67
+	sty L7F68
+	lda L79A8
+	bne L7EE2
 	lda #$12
-	sta $7FD7
-L5618:	jsr $7B9E
-	bne L5625
-	jsr $7F2B
-	bne L5625
+	sta L7FD7
+L7ED0:	jsr L7B9E
+	bne L7EDD
+	jsr L7F2B
+	bne L7EDD
 	tya
-	beq L5618
-L5625:	jsr DoneWithIO
+	beq L7ED0
+L7EDD:	jsr DoneWithIO
 	txa
 	rts
 
-L562A:	ldy #$00
-	sty $7FD8
-	lda $7FD6
-	beq L5637
-	jsr $7DF4
-L5637:	lda #$12
-	sta $7FD7
-	jsr $7F69
-L563F:	jsr $7B9E
-	bne L566E
-	jsr $7F2B
-	bne L566E
+L7EE2:	ldy #$00
+	sty L7FD8
+	lda L7FD6
+	beq L7EEF
+	jsr L7DF4
+L7EEF:	lda #$12
+	sta L7FD7
+	jsr L7F69
+L7EF7:	jsr L7B9E
+	bne L7F26
+	jsr L7F2B
+	bne L7F26
 	tya
-	bne L566C
-	lda $7FD7
+	bne L7F24
+	lda L7FD7
 	cmp #$32
-	bcc L563F
-	inc $7F67
-	bne L5662
-	inc $7F68
-	lda $7F68
+	bcc L7EF7
+	inc L7F67
+	bne L7F1A
+	inc L7F68
+	lda L7F68
 	cmp #$04
-	beq L566C
-L5662:	lda $7FD6
-	bne L562A
-	lda $7FD8
-	bne L5637
-L566C:	ldx #$00
-L566E:	jsr DoneWithIO
+	beq L7F24
+L7F1A:	lda L7FD6
+	bne L7EE2
+	lda L7FD8
+	bne L7EEF
+L7F24:	ldx #$00
+L7F26:	jsr DoneWithIO
 	txa
 	rts
 
-	ldx #$00
-	ldy $7FD8
+L7F2B:	ldx #$00
+	ldy L7FD8
 	lda $1100,y
 	sta r1H
 	lda $1000,y
 	sta r1L
-	beq L56AB
-	inc $7FD8
-	lda $7FD7
+	beq L7F63
+	inc L7FD8
+	lda L7FD7
 	sta r4H
 	lda #$00
 	sta r4L
 	jsr WriteBlock
-	inc $7FD7
-	lda $7FD4
-	bne L569E
-	dec $7FD5
-L569E:	dec $7FD4
-	bne L56A8
-	lda $7FD5
-	beq L56AB
-L56A8:	ldy #$00
+	inc L7FD7
+	lda L7FD4
+	bne L7F56
+	dec L7FD5
+L7F56:	dec L7FD4
+	bne L7F60
+	lda L7FD5
+	beq L7F63
+L7F60:	ldy #$00
 	.byte $2C
-L56AB:	ldy #$FF
+L7F63:	ldy #$FF
 	txa
 	rts
 
-	brk
-	brk
-	lda $7FD6
-	beq L56C2
-	jsr $7FBA
+L7F67:	brk
+L7F68:	brk
+L7F69:	lda L7FD6
+	beq L7F7A
+	jsr L7FBA
 	jsr FetchRAM
-	jsr $7F80
+	jsr L7F80
 	jsr FetchRAM
-L56C2:	jsr $7F96
+L7F7A:	jsr L7F96
 	jmp FetchRAM
 
-	clc
+L7F80:	clc
 	lda #$00
 	adc r1L
 	sta r1L
@@ -853,10 +870,10 @@ L56C2:	jsr $7F96
 	sta r0L
 	rts
 
-	jsr $7E01
+L7F96:	jsr L7E01
 	clc
 	lda r1H
-	adc $79A9
+	adc L79A9
 	sta r3L
 	lda r1L
 	sta r1H
@@ -872,10 +889,10 @@ L56C2:	jsr $7F96
 	sta r2L
 	rts
 
-	clc
-	adc $79A9
+L7FBA:	clc
+	adc L79A9
 	sta r3L
-	jsr $7E01
+	jsr L7E01
 	lda #$00
 	sta r2H
 	lda #$20
@@ -886,13 +903,40 @@ L56C2:	jsr $7F96
 	sta r0L
 	rts
 
-	.byte $00,$00,$00,$00,$00
-L5721:	.byte $00
-L5722:	.byte $00
-L5723:	.byte $00
-L5724:	.byte $00
-L5725:	.byte $00,$00
-L5727:	.byte $00,$00
-L5729:	.byte $00,$00,$00,$00
-L572D:	.byte $00,$00,$00,$00,$00
-L5732:	.byte $00
+L7FD4:	.byte $00
+L7FD5:	.byte $00
+L7FD6:	.byte $00
+L7FD7:	.byte $00
+L7FD8:	.byte $00
+L7FD9:	.byte $00
+L7FDA:	.byte $00
+L7FDB:	.byte $00
+L7FDC:	.byte $00
+L7FDD:	.byte $00
+L7FDE:	.byte $00
+L7FDF:	.byte $00
+L7FE0:	.byte $00
+L7FE1:	.byte $00
+L7FE2:	.byte $00
+L7FE3:	.byte $00
+L7FE4:	.byte $00
+L7FE5:	.byte $00
+L7FE6:	.byte $00
+L7FE7:	.byte $00
+L7FE8:	.byte $00
+L7FE9:	.byte $00
+L7FEA:	.byte $00
+code2_end:
+
+
+
+;	.byte $00,$00,$00,$00,$00
+;L5721:	.byte $00
+;L5722:	.byte $00
+;L5723:	.byte $00
+;L5724:	.byte $00
+;L5725:	.byte $00,$00
+;L5727:	.byte $00,$00
+;L5729:	.byte $00,$00,$00,$00
+;L572D:	.byte $00,$00,$00,$00,$00
+;L5732:	.byte $00
