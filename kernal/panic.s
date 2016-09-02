@@ -98,32 +98,29 @@ StackPtr:
 ;---------------------------------------------------------------
 _Panic:
 .if wheels
-	sec                                     ; CEF0 38                       8
-	pla                                     ; CEF1 68                       h
-	sbc     #$02                            ; CEF2 E9 02                    ..
-	tay                                     ; CEF4 A8                       .
-	pla                                     ; CEF5 68                       h
-	sbc     #$00                            ; CEF6 E9 00                    ..
+	sec
+	pla
+	sbc #2
+	tay
+	pla
+	sbc #0
 .else
 	PopW r0
 	SubVW 2, r0
 	lda r0H
 .endif
-.endif
-
 	ldx #0
 	jsr @1
 .if wheels
-	tya                                     ; CEFD 98                       .
+	tya
 .else
 	lda r0L
 .endif
 	jsr @1
 	LoadW r0, _PanicDB_DT
 	jsr DoDlgBox
-
 .if wheels
-	jmp     EnterDeskTop                    ; CF0C 4C 2C C2                 L,.
+	jmp EnterDeskTop
 .endif
 @1:	pha
 	lsr
@@ -150,7 +147,7 @@ _PanicDB_DT:
 	.byte DBTXTSTR, TXT_LN_X, TXT_LN_1_Y
 	.word _PanicDB_Str
 .if wheels
-	.byte $0E
+	.byte DBSYSOPV
 .endif
 	.byte NULL
 
@@ -160,6 +157,7 @@ _PanicDB_Str:
 	.byte "Error near "
 .else
 	.byte "System error near "
+.endif
 .endif
 
 	.byte "$"
