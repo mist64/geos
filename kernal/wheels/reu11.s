@@ -18,7 +18,7 @@ LFFB1 = $FFB1
 
 KToBasic:
 	sei
-	MoveW r0, L5055+1 - SPRITE_PICS + L5050
+	MoveW r0, scr+1 - SPRITE_PICS + L5050
 	jsr MouseOff
 	jsr DEFOptimize
 	PushB CPU_DATA
@@ -26,17 +26,17 @@ KToBasic:
 	ldx $D0BC
 	PopB CPU_DATA
 	txa
-	bmi L5044
+	bmi @1
 	lda $9FED
 	cmp #$04
-	bne L5044
+	bne @1
 	lda $9FD6
 	; ???
 	.byte $8F,$7C,$D2,$01,$AD,$D7,$9F,$8F
 	.byte $7D,$D2,$01,$AD,$D8,$9F,$8F,$7E
 	.byte $D2,$01,$AD,$D9,$9F,$8F,$7F,$D2
 	.byte $01
-L5044:	jsr i_MoveData
+@1:	jsr i_MoveData
 	.addr L5050
 	.addr SPRITE_PICS
 	.word code2_end - code2_start
@@ -47,22 +47,22 @@ L5050:
 code2_start:
 	jsr RstrKernal
 	ldy #40 - 1
-L5055:	lda $0400,y
+scr:	lda $0400,y
 	cmp #'['
-	bcs L5062
+	bcs @2
 	cmp #'A'
-	bcc L5062
+	bcc @2
 	sbc #'@'
-L5062:	sta LF1FB,y
+@2:	sta LF1FB,y
 	dey
-	bpl L5055
+	bpl scr
 	lda r5H
-	beq L50B9
+	beq @4
 	iny
 	tya
-L506E:	sta BASICspace,y
+@3:	sta BASICspace,y
 	iny
-	bne L506E
+	bne @3
 	sec
 	lda r7L
 	sbc #$02
@@ -99,31 +99,31 @@ L506E:	sta BASICspace,y
 	dey
 	pla
 	sta (r0L),y
-L50B9:	jsr PurgeTurbo
+@4:	jsr PurgeTurbo
 	jsr InitForIO
 	lda #$37
 	sta CPU_DATA
 	sei
 	ldy #3
-L50C6:	lda BASICspace,y
+@5:	lda BASICspace,y
 	sta SaveBASICspace,y
 	dey
-	bpl L50C6
+	bpl @5
 	lda #0
 	sta STATUS
 	lda curDevice
 	sta SaveDevice
 	cmp #8
-	bcc L5105
+	bcc @7
 	cmp #12
-	bcs L5105
+	bcs @7
 	jsr LFFB1
 	lda STATUS
-	bne L5102
+	bne @6
 	lda #$6F
 	jsr LFF93
 	lda STATUS
-	bne L5102
+	bne @6
 	lda #$49
 	jsr LFFA8
 	lda #$0D
@@ -131,8 +131,8 @@ L50C6:	lda BASICspace,y
 	jsr LFFAE
 	lda curDevice
 	jsr LFFB1
-L5102:	jsr LFFAE
-L5105:	ldx #$FF
+@6:	jsr LFFAE
+@7:	ldx #$FF
 	txs
 	cld
 	lda #$00
@@ -140,11 +140,11 @@ L5105:	ldx #$FF
 	jsr LFF84
 	ldy #0
 	tya
-L5114:	sta r0L,y
+@8:	sta r0L,y
 	sta $0200,y
 	sta $0300,y
 	iny
-	bne L5114
+	bne @8
 	LoadB $b3, 3
 	LoadB tapeBuffVec, $3c
 	LoadB BASICMemTop, >BASIC_START
@@ -156,9 +156,9 @@ L5114:	sta r0L,y
 
 BASICvector:
 	LoadB CPU_DATA, KRNL_BAS_IO_IN
-	jsr L8B42
-	jsr L8B45
-	jsr L8B48
+	jsr @1
+	jsr @2
+	jsr @3
 	LoadW nmivec, NMIHandler
 	lda #6
 	sta LF1FB_2
@@ -180,11 +180,9 @@ BASICvector:
 	cli
 	jmp $E39D ; continue with BASIC cold start
 
-L8B42:	jmp ($E395) ; initialise the BASIC vector table
-
-L8B45:	jmp ($E398) ; initialise the BASIC RAM locations
-
-L8B48:	jmp ($E39B) ; print the start up message and
+@1:	jmp ($E395) ; initialise the BASIC vector table
+@2:	jmp ($E398) ; initialise the BASIC RAM locations
+@3:	jmp ($E39B) ; print the start up message and
                     ; initialise the memory pointers
 
 NMIHandler:
