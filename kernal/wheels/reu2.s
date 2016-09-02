@@ -59,7 +59,7 @@ _NSetGEOSDisk:
 	bne L5068
 	bit isGEOS
 	bmi L5068
-	lda $88C6
+	lda curType
 	and #$0F
 	cmp #$04
 	bne L5073
@@ -197,7 +197,7 @@ L5167:	brk
 L5168:	brk
 L5169:	brk
 L516A:	brk
-L516B:	lda $88C6
+L516B:	lda curType
 	cmp #$02
 	bne L5175
 	lda #$12
@@ -291,7 +291,7 @@ L5246:	sta L52FD,y
 	sta L5226
 	jsr L5562
 	beq L5271
-	lda $88C6
+	lda curType
 	cmp #$83
 	bne L5270
 	bit $9073
@@ -474,10 +474,10 @@ L5445:	jsr L9050
 	lda $904F
 	cmp #$50
 	bcc L548A
-	lda $88C6
+	lda curType
 	and #$0F
 	sta L548D
-	lda $88C6
+	lda curType
 	bpl L5464
 	jmp L54D4
 
@@ -602,7 +602,7 @@ L553B:	jsr L5562
 	beq L555C
 	lda L55DB
 	bne L555F
-	lda $88C6
+	lda curType
 	and #$F0
 	cmp #$10
 	bne L555C
@@ -613,7 +613,7 @@ L555C:	ldx #$00
 L555F:	ldx #$0D
 	rts
 
-L5562:	lda $88C6
+L5562:	lda curType
 	and #$F0
 	beq L5570
 	cmp #$40
@@ -627,7 +627,7 @@ L5570:	lda #$80
 L5573:	jsr PurgeTurbo
 	jsr InitForIO
 	jsr L55A5
-	lda $88C6
+	lda curType
 	and #$F0
 	cmp #$10
 	bne L559F
@@ -1395,7 +1395,7 @@ L5C75:	rts
 
 L5C76:	brk
 L5C77:	brk
-L5C78:	lda $88C6
+L5C78:	lda curType
 	and #$0F
 	cmp #$04
 	bne L5C84

@@ -374,7 +374,7 @@ L7AB4:	bit L7F32
 	lda L7F0B
 	cmp L7F30
 	bne L7AF2
-	lda $88C6
+	lda curType
 	and #$0F
 	cmp #$04
 	bne L7AF7

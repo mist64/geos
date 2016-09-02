@@ -20,7 +20,7 @@ ValDisk:
 	sta L54D0
 	jsr GetDirHead
 	bne L5033
-	lda $88C6
+	lda curType
 	and #$0F
 	beq L5031
 	cmp #$05
@@ -346,7 +346,7 @@ L5265:	jsr L544B
 	bmi L524C
 L528D:	lda #$00
 	sta L5435
-	lda $88C6
+	lda curType
 	and #$0F
 	cmp #$04
 	bne L52A0

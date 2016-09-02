@@ -295,7 +295,7 @@ _RemoveDrive:
 	ldy curDrive
 	sta $8486,y
 	sta $88BF,y
-	sta $88C6
+	sta curType
 	sta curDrive
 	sta curDevice
 	dec NUMDRV

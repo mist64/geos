@@ -31,9 +31,9 @@ _DevNumChange:
 	jsr InitForIO
 	LoadW z8b, L5056
 	ldy #L5056_end - L5056
-	lda $88C6
+	lda curType
 	bmi L503E
-	cmp #$01
+	cmp #1
 	beq L5039
 	LoadW z8b, L505E
 	ldy #L505E_end - L505E
@@ -44,7 +44,7 @@ L503E:	ldy L5061
 	bcc L5053
 	cpy #$0C
 	bcs L5053
-	lda #$00
+	lda #0
 	sta diskOpenFlg,y
 	sty curDrive
 	sty curDevice
@@ -63,7 +63,7 @@ L505E_end:
 
 L5062:	sty L5097
 	jsr LFFAE
-	lda #$00
+	lda #0
 	sta STATUS
 	lda curDevice
 	jsr LFFB1
@@ -73,14 +73,14 @@ L5062:	sty L5097
 	jsr LFF93
 	lda STATUS
 	bne L5091
-	ldy #$00
+	ldy #0
 L5080:	lda (z8b),y
 	jsr LFFA8
 	iny
 	cpy L5097
 	bcc L5080
 	jsr LFFAE
-	ldx #$00
+	ldx #0
 	rts
 
 L5091:	jsr LFFAE
@@ -101,9 +101,9 @@ _SwapDrives:
 	ldx #$19
 	jsr _DevNumChange
 	ldx r5L
-	lda #$00
+	lda #0
 	sta $8486,x
-	sta $88C6
+	sta curType
 L50B9:	ldx r5H
 	lda $8486,x
 	sta L5169
@@ -113,16 +113,16 @@ L50B9:	ldx r5H
 	ldx r5L
 	jsr _DevNumChange
 	ldx r5H
-	lda #$00
+	lda #0
 	sta $8486,x
-	sta $88C6
+	sta curType
 L50D6:	ldx r5L
 	jsr L513F
 	ldx r5H
 	jsr L513F
 	ldx r5L
 	jsr L513F
-	lda #$00
+	lda #0
 	sta curDrive
 	ldx r5L
 	lda L5169
@@ -183,5 +183,5 @@ DriverOffsetsL:
 DriverOffsetsH:
 	.hibytes DriverOffsets
 
-L5168:	.byte $00
-L5169:	.byte $00
+L5168:	.byte 0
+L5169:	.byte 0

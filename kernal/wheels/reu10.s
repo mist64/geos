@@ -208,7 +208,7 @@ L7909:	sei
 	lda curDrive
 	jsr SetDevice
 	bne L7940
-	lda $88C6
+	lda curType
 	bmi L7931
 	and #$F0
 	cmp #$30
@@ -407,7 +407,7 @@ L7AA9:	tya
 	sec
 	rts
 
-L7AC9:	lda $88C6
+L7AC9:	lda curType
 	and #$0F
 	cmp #$04
 	bne L7B0F
@@ -526,7 +526,7 @@ L7BA4:	lda $905D
 	sta L7D14
 	cmp $8869
 	bne L7BC6
-	lda $88C6
+	lda curType
 	and #$F0
 	cmp #$10
 	bne L7BD5
@@ -534,7 +534,7 @@ L7BC6:	jsr L7CB7
 	bcc L7BCC
 L7BCB:	rts
 
-L7BCC:	lda $88C6
+L7BCC:	lda curType
 	and #$F0
 	cmp #$10
 	bne L7BCB
@@ -542,7 +542,7 @@ L7BD5:	jmp L7CEC
 
 L7BD8:	lda L7D13
 	bpl L7BE8
-	lda $88C6
+	lda curType
 	and #$F0
 	cmp #$30
 	bne L7BF4
@@ -551,10 +551,10 @@ L7BE6:	sec
 
 L7BE8:	cmp #$30
 	bne L7BF4
-	lda $88C6
+	lda curType
 	and $9073
 	bmi L7BE6
-L7BF4:	lda $88C6
+L7BF4:	lda curType
 	and #$F0
 	cmp L7D13
 	beq L7BE6

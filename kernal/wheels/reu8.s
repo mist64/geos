@@ -48,7 +48,7 @@ L501E:	.byte $63
 L5021:	asl z8d
 	.byte $23
 	.byte $57
-	lda $88C6
+	lda curType
 	and #$0F
 	sta L5725
 	sta L5729
@@ -168,7 +168,7 @@ L79C9:	lda #$01
 	bne L79F6
 	bit L7FEA
 	bvc L7A09
-	lda $88C6
+	lda curType
 	and #$F0
 	beq L79F1
 	cmp #$10
@@ -182,7 +182,7 @@ L79F1:	jsr L7B90
 	beq L79F7
 L79F6:	rts
 
-L79F7:	lda $88C6
+L79F7:	lda curType
 	and #$F0
 	beq L7A09
 	jsr L501E
@@ -199,7 +199,7 @@ L7A09:	jsr EnterTurbo
 	bne L7A63
 	lda $8203
 	sta L7FE6
-	lda $88C6
+	lda curType
 	and #$0F
 	sta L7FDE
 	cmp L7FDD
@@ -374,7 +374,7 @@ L7B55:	ldx #$01
 	tax
 	jsr L5018
 L7B7E:	jsr EnterTurbo
-	lda $88C6
+	lda curType
 	cmp #$03
 	bcs L7B8B
 	jsr NewDisk

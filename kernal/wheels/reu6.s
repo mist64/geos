@@ -19,7 +19,7 @@ MakeSysDir:
 	jmp _MakeSysDir
 
 _MakeDirectory:
-	lda $88C6
+	lda curType
 	and #$0F
 	cmp #$04
 	bne L5074
@@ -230,7 +230,7 @@ L5195:	sta $8413,y
 	rts
 
 _MakeSysDir:
-	lda $88C6
+	lda curType
 	and #$0F
 	cmp #$04
 	beq L51D0

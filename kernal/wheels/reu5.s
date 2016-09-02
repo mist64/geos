@@ -74,14 +74,14 @@ L5030:	cmp #$04
 	.byte $2C
 L5037:	lda #$04
 	sta r4L
-	lda $88C6
+	lda curType
 	and #$0F
 	cmp r4L
 	beq L50BC
 	jsr L5161
 L5047:	bne L50B8
 	jsr PurgeTurbo
-	lda $88C6
+	lda curType
 	and #$F0
 	ora r4L
 	sta r4L
@@ -118,7 +118,7 @@ L5089:	lda $88C3
 	ldy curDrive
 	lda $904E
 	sta $8486,y
-	sta $88C6
+	sta curType
 	pla
 	sta $9073
 	.byte $B9
@@ -225,12 +225,12 @@ L516E:	lda #$00
 L5171:	lda #$80
 	rts
 
-L5174:	lda $88C6
+L5174:	lda curType
 	and #$0F
 	cmp #$04
 	rts
 
-L517C:	lda $88C6
+L517C:	lda curType
 	cmp #$83
 	bne L518A
 	bit $9073
@@ -994,7 +994,7 @@ L57E7:	lda L518C
 	jsr _DownDirectory
 	clv
 	bvc L57D0
-L57FD:	lda $88C6
+L57FD:	lda curType
 	and #$70
 	beq L5806
 	lda #$12
