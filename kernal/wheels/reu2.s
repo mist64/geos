@@ -43,6 +43,7 @@ EraseDisk:
 L500F:	.byte $00,$00,$00,$00,$00,$00,$00,$00
 	.byte $00,$00,$00,$00,$00,$00,$00,$00
 	.byte $00
+
 L5020:	jsr LCFD9
 	jsr L4000
 	jmp LCFD9
@@ -206,14 +207,8 @@ L5175:	lda #$00
 	sta L51F9
 	lda #$00
 	sta L500F
-	lda #$51
-	sta r0H
-	lda #$E2
-	sta r0L
-	lda #$50
-	sta r5H
-	lda #$0F
-	sta r5L
+	LoadW r0, L51E2
+	LoadW r5, L500F
 	jsr DoDlgBox
 	lda r0L
 	cmp #$02
@@ -251,7 +246,8 @@ L51D8:	ldx #$0C
 	rts
 
 L51DE:	.byte $1C,$13
-L51E0:	.byte $54,$5C,$00,$28,$5F,$38,$00,$07
+L51E0:	.byte $54,$5C
+L51E2:	.byte $00,$28,$5F,$38,$00,$07
 	.byte $01,$13,$29,$52,$02,$13,$20,$0B
 	.byte $10,$0E,$BB,$52,$0D,$18,$18,$0C
 	.byte $10
