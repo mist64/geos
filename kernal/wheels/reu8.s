@@ -6,8 +6,16 @@
 .include "c64.inc"
 .include "jumptab.inc"
 
+L903C
+L903F
+L9050
+L9063
+L9D80
+L9D83
+
 	lda #$00
-	bit $80A9
+	.byte $2c
+	lda #$80
 	sta L5087
 	lda r2L
 	sta L5724
@@ -45,22 +53,22 @@ L5048:	lda #$00
 	jsr L9D83
 	lda #$45
 	jsr L9D80
-	jsr L79C9
+	jsr $79C9
 	txa
 	bne L5071
 	bit $793F
 	bmi L5071
 	jsr L9D83
-	jsr L7940
+	jsr $7940
 	lda #$45
 	jsr L9D80
-	jsr L7BC7
+	jsr $7BC7
 L5071:	txa
 	pha
-	jsr L7B52
+	jsr $7B52
 	jsr OpenDisk
 	jsr L9D83
-	jsr L79B0
+	jsr $79B0
 	lda #$48
 	jsr L9D80
 	pla
@@ -153,7 +161,7 @@ L50FE:	lda $79A8
 	sta $7FEA
 	clv
 	bvc L5151
-L5139:	jsr L7B90
+L5139:	jsr $7B90
 	beq L513F
 L513E:	rts
 
@@ -179,7 +187,7 @@ L5151:	jsr EnterTurbo
 	sta $7FDE
 	cmp $7FDD
 	bne L5179
-	jmp L7A64
+	jmp $7A64
 
 L5179:	cmp #$03
 	bcs L51A6
@@ -195,7 +203,7 @@ L518F:	lda $7FE6
 	bmi L51A6
 	lda $7FE5
 	bpl L519E
-	jsr L7AB3
+	jsr $7AB3
 	bne L51A9
 L519E:	lda #$01
 	sta $7FE1
@@ -217,7 +225,7 @@ L51AB:	rts
 	sta $7FE0
 	cmp $7FDF
 	bcs L51F2
-	jsr L7AE1
+	jsr $7AE1
 	bne L51F8
 	beq L51F2
 L51C9:	cmp #$01
@@ -232,7 +240,7 @@ L51D7:	cmp #$02
 	bpl L51EA
 	lda $7FE6
 	bmi L51ED
-	jsr L7AB3
+	jsr $7AB3
 	bne L51F8
 L51EA:	lda #$01
 	.byte $2C
@@ -247,7 +255,7 @@ L51F5:	ldx #$73
 L51F8:	ldx #$03
 	rts
 
-	jsr L7B52
+	jsr $7B52
 	jsr GetDirHead
 	lda #$24
 	sta r1L
@@ -259,7 +267,7 @@ L5209:	lda r1H
 	sta r6L
 	jsr FindBAMBit
 	beq L5226
-L5216:	jsr L7E74
+L5216:	jsr $7E74
 	lda r1L
 	cmp #$35
 	beq L5216
@@ -271,17 +279,17 @@ L5216:	jsr L7E74
 L5226:	ldx #$06
 	rts
 
-	jsr L7B52
+	jsr $7B52
 	lda #$01
 	sta r1L
 	lda $7FDF
-	jsr L7B38
+	jsr $7B38
 	sty $7FE8
 	clc
 	adc #$02
 	sta $7FE7
 	lda $7FE0
-	jsr L7B38
+	jsr $7B38
 	sty $7FE9
 	clc
 	adc #$02
@@ -341,7 +349,7 @@ L527F:	rts
 	lda $7FD9
 	cmp $7FDA
 	bne L52C6
-	jsr L7B90
+	jsr $7B90
 	bne L52D5
 	ldx $7B8F
 	lda $7FDB,x
@@ -406,24 +414,24 @@ L5330:	lda #$23
 	stx $7FE3
 	inx
 	stx $7FE2
-	jsr L7BAE
+	jsr $7BAE
 	ldx $79A8
 	beq L5347
 	dex
 L5347:	stx $7FD6
-	jsr L7B52
+	jsr $7B52
 	jsr GetDirHead
 	txa
 	bne L537B
-L5353:	jsr L7B52
+L5353:	jsr $7B52
 	bne L537B
-	jsr L7D02
+	jsr $7D02
 	bne L537B
 	lda $7C40
 	beq L5379
-	jsr L7B55
+	jsr $7B55
 	bne L537B
-	jsr L7EB8
+	jsr $7EB8
 	bne L537B
 	lda $7FE2
 	beq L5379
@@ -434,14 +442,14 @@ L5379:	lda #$00
 L537B:	pha
 	tax
 	bne L5382
-	jsr L7C41
-L5382:	jsr L7BB1
+	jsr $7C41
+L5382:	jsr $7BB1
 	pla
 	tax
 	rts
 
 	brk
-	jsr L7B55
+	jsr $7B55
 	lda $7FE1
 	cmp #$04
 	beq L53E4
@@ -461,7 +469,7 @@ L5382:	jsr L7BB1
 	sta $8003
 	bmi L53BE
 	ldy #$BE
-	jsr L7CB3
+	jsr $7CB3
 	jmp L903F
 
 L53BE:	ldy #$01
@@ -477,7 +485,7 @@ L53C2:	lda $7EB0,x
 	lda #$00
 	sta $80EE
 	jsr L903F
-	jsr L7CBF
+	jsr $7CBF
 	lda #$35
 	sta r1L
 	jmp L903F
@@ -502,22 +510,22 @@ L5400:	sta diskBlkBuf,y
 	rts
 
 	ldy #$00
-	jsr L7CB6
+	jsr $7CB6
 	ldy #$69
-	jsr L7CB3
+	jsr $7CB3
 	ldy #$02
 	ldx #$11
 	lda #$1F
-	jsr L7CF4
+	jsr $7CF4
 	ldx #$07
 	lda #$07
-	jsr L7CF4
+	jsr $7CF4
 	ldx #$06
 	lda #$03
-	jsr L7CF4
+	jsr $7CF4
 	ldx #$05
 	lda #$01
-	jsr L7CF4
+	jsr $7CF4
 	lda #$00
 	ldy #$33
 L5433:	sta diskBlkBuf,y
@@ -549,8 +557,8 @@ L543C:	sta diskBlkBuf,y
 	bne L5497
 	lda #$12
 	sta $7FD7
-	jsr L7DF4
-L546E:	jsr L7B9E
+	jsr $7DF4
+L546E:	jsr $7B9E
 	bne L5492
 	lda $7FE3
 	sta r1H
@@ -560,7 +568,7 @@ L546E:	jsr L7B9E
 	lda $7FE4
 	cmp r1L
 	bcc L5490
-	jsr L7DB6
+	jsr $7DB6
 	lda $7FD7
 	cmp #$46
 	bcc L546E
@@ -571,16 +579,16 @@ L5492:	jsr DoneWithIO
 
 L5497:	ldy #$00
 	sty $7FD8
-	jsr L7DF4
+	jsr $7DF4
 L549F:	lda #$12
 	sta $7FD7
-L54A4:	jsr L7B9E
+L54A4:	jsr $7B9E
 	bne L54F9
 	lda $7FE3
 	sta r1H
 	lda $7FE2
 	sta r1L
-	jsr L7DB6
+	jsr $7DB6
 	bne L54F9
 	tax
 	beq L54C9
@@ -590,7 +598,7 @@ L54A4:	jsr L7B9E
 	lda $7FD7
 	cmp #$32
 	bcc L54A4
-L54C9:	jsr L7E1A
+L54C9:	jsr $7E1A
 	inc $7F67
 	bne L54DB
 	inc $7F68
@@ -632,7 +640,7 @@ L54F9:	jsr DoneWithIO
 	inc $7FD4
 	bne L552C
 	inc $7FD5
-L552C:	jsr L7E32
+L552C:	jsr $7E32
 	lda r1H
 	sta $7FE3
 	lda r1L
@@ -650,7 +658,7 @@ L553F:	sta $1000,y
 
 	lda #$20
 	sta r0L
-	jsr L7E0D
+	jsr $7E0D
 	ldy #$02
 	jmp BMult
 
@@ -661,19 +669,19 @@ L553F:	sta $1000,y
 	ldx #$04
 	rts
 
-	jsr L7F96
+	jsr $7F96
 	jsr StashRAM
 	lda $7FD6
 	beq L5579
-	jsr L7FBA
+	jsr $7FBA
 	jsr StashRAM
-	jsr L7F80
+	jsr $7F80
 	jsr StashRAM
 L5579:	rts
 
 	bit $7FEA
 	bpl L559B
-L557F:	jsr L7E53
+L557F:	jsr $7E53
 	lda r1L
 	beq L559A
 	lda $7FE4
@@ -706,11 +714,11 @@ L55B1:	cmp #$04
 	inc r1L
 L55BB:	rts
 
-L55BC:	jsr L7E94
+L55BC:	jsr $7E94
 	clc
 	adc r1H
 	sta r1H
-	jsr L7E8B
+	jsr $7E8B
 	bcc L55D2
 	sbc $7EB0,x
 	sta r1H
@@ -718,12 +726,12 @@ L55BC:	jsr L7E94
 	inc r1L
 L55D2:	rts
 
-	jsr L7E9B
+	jsr $7E9B
 	lda r1H
 	cmp $7EB0,x
 	rts
 
-	jsr L7E9B
+	jsr $7E9B
 	lda $7EB4,x
 	rts
 
@@ -748,9 +756,9 @@ L55ED:	cmp $7EAB,x
 	bne L562A
 	lda #$12
 	sta $7FD7
-L5618:	jsr L7B9E
+L5618:	jsr $7B9E
 	bne L5625
-	jsr L7F2B
+	jsr $7F2B
 	bne L5625
 	tya
 	beq L5618
@@ -762,13 +770,13 @@ L562A:	ldy #$00
 	sty $7FD8
 	lda $7FD6
 	beq L5637
-	jsr L7DF4
+	jsr $7DF4
 L5637:	lda #$12
 	sta $7FD7
-	jsr L7F69
-L563F:	jsr L7B9E
+	jsr $7F69
+L563F:	jsr $7B9E
 	bne L566E
-	jsr L7F2B
+	jsr $7F2B
 	bne L566E
 	tya
 	bne L566C
@@ -821,11 +829,11 @@ L56AB:	ldy #$FF
 	brk
 	lda $7FD6
 	beq L56C2
-	jsr L7FBA
+	jsr $7FBA
 	jsr FetchRAM
-	jsr L7F80
+	jsr $7F80
 	jsr FetchRAM
-L56C2:	jsr L7F96
+L56C2:	jsr $7F96
 	jmp FetchRAM
 
 	clc
@@ -841,7 +849,7 @@ L56C2:	jsr L7F96
 	sta r0L
 	rts
 
-	jsr L7E01
+	jsr $7E01
 	clc
 	lda r1H
 	adc $79A9
@@ -863,7 +871,7 @@ L56C2:	jsr L7F96
 	clc
 	adc $79A9
 	sta r3L
-	jsr L7E01
+	jsr $7E01
 	lda #$00
 	sta r2H
 	lda #$20
