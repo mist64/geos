@@ -16,6 +16,11 @@ L906C = $906C
 L9D80 = $9D80
 L9D83 = $9D83
 
+L5704 = L7F0A - PRINTBASE + L50FA
+L5708 = L7F0E - PRINTBASE + L50FA
+L570B = L7F11 - PRINTBASE + L50FA
+L5726 = L7F2C - PRINTBASE + L50FA
+
 .segment "reu9"
 
 CopyFile:
@@ -140,9 +145,6 @@ L50DA:	clc
 
 L50F7:	ldx #$05
 L50F9:	rts
-
-
-
 
 L50FA:
 	.org $7900
@@ -893,7 +895,8 @@ L7F0C:	.byte $00
 L7F0D:	.byte $00
 L7F0E:	.byte $00
 L7F0F:	.byte $00
-L7F10:	.byte $00,$00,$00,$00,$00,$00,$00,$00
+L7F10:	.byte $00
+L7F11:	.byte $00,$00,$00,$00,$00,$00,$00
 	.byte $00,$00,$00,$00,$00,$00,$00,$00
 	.byte $00
 L7F21:	.byte $00
@@ -909,16 +912,5 @@ L7F30:	.byte $00
 L7F31:	.byte $00
 L7F32:	.byte $00
 L7F33:	.byte $00
-
-;	.byte $00,$00,$00,$00,$00,$00,$00,$00
-;	.byte $00,$00,$00,$00,$00,$00,$00,$00
-;	.byte $00,$00
-L5704 = L7F0A - PRINTBASE + L50FA ;:	.byte $00,$00,$00,$00
-L5708 = L7F0E - PRINTBASE + L50FA ;:	.byte $00,$00,$00
-L570B = L7F10+1 - PRINTBASE + L50FA ;:	.byte $00,$00,$00,$00,$00,$00,$00,$00
-;	.byte $00,$00,$00,$00,$00,$00,$00,$00
-;	.byte $00,$00,$00,$00,$00,$00,$00,$00
-;	.byte $00,$00,$00
-L5726 = L7F2C - PRINTBASE + L50FA ;:	.byte $00,$00,$00,$00,$00,$00,$00,$00
 
 code2_end:
