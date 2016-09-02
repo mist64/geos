@@ -22,7 +22,7 @@ LFF93 = $FF93
 LFFA8 = $FFA8
 LFFAE = $FFAE
 LFFB1 = $FFB1
-.import scrAddyHi
+.import scrAddrHi
 
 	sei
 	lda r0H
@@ -168,7 +168,7 @@ L5114:	sta r0L,y
 	lda #$08
 	sta BASICMemBot
 	lda #$04
-	sta scrAddyHi
+	sta scrAddrHi
 	lda #$36
 	sta CPU_DATA
 	lda #$8A
