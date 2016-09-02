@@ -578,11 +578,12 @@ ScreenSaver1:
 
 	.byte 0, 0, 0, 0 ; ??? unused
 
+; called from extended KERNAL
 .global LCFD9
 LCFD9:
-	LoadW r0, $4000
-	LoadW r1, $fe40
-	LoadW r2, $01c0
+	LoadW r0, $4000 ; CBM address
+	LoadW r1, $fe40 ; REU address
+	LoadW r2, $01c0 ; size
 	lda ramExpSize
 	sta r3L
 	inc ramExpSize

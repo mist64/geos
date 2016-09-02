@@ -48,6 +48,7 @@ KERNAL_SOURCES= \
 	kernal/wheels/reu9.s \
 	kernal/wheels/reu10.s \
 	kernal/wheels/reu11.s \
+	kernal/wheels/reux.s \
 
 DEPS= \
 	inc/c64.inc \
