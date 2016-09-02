@@ -161,20 +161,24 @@ L5134:	lda r5L
 	jsr EnterTurbo
 L513E:	rts
 
-L513F:	lda #$90
-	sta r0H
-	lda #$00
-	sta r0L
-	lda L5160-8,x
+L513F:	LoadW r0, DISK_BASE
+	lda DriverOffsetsL-8,x
 	sta r1L
-	lda L5164-8,x
+	lda DriverOffsetsH-8,x
 	sta r1H
-	LoadW r2, $0d80
+	LoadW r2, DISK_DRV_LGH
 	lda #$00
 	sta r3L
 	jmp SwapRAM
 
-L5160:	.byte $00,$80,$00,$80
-L5164:	.byte $83,$90,$9E,$AB
+DRIVER_BASE_REU = $8300
+
+.define DriverOffsets DRIVER_BASE_REU, DRIVER_BASE_REU + 1 * DISK_DRV_LGH, DRIVER_BASE_REU + 2 * DISK_DRV_LGH, DRIVER_BASE_REU + 3 * DISK_DRV_LGH
+
+DriverOffsetsL:
+	.lobytes DriverOffsets
+DriverOffsetsH:
+	.hibytes DriverOffsets
+
 L5168:	.byte $00
 L5169:	.byte $00
