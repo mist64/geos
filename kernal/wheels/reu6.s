@@ -13,11 +13,13 @@ L9048 = $9048
 
 .segment "reu6"
 
-	jmp L5006
+MakeDirectory:
+	jmp _MakeDirectory
+MakeSysDir:
+	jmp _MakeSysDir
 
-	jmp L51C4
-
-L5006:	lda $88C6
+_MakeDirectory:
+	lda $88C6
 	and #$0F
 	cmp #$04
 	bne L5074
@@ -227,7 +229,8 @@ L5195:	sta $8413,y
 	sta $841C
 	rts
 
-L51C4:	lda $88C6
+_MakeSysDir:
+	lda $88C6
 	and #$0F
 	cmp #$04
 	beq L51D0

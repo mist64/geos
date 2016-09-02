@@ -29,15 +29,16 @@ LFFAE = $FFAE
 LFFB1 = $FFB1
 LFFB4 = $FFB4
 
-	jmp L5032
-
-	jmp L50CA
-
-	jmp L5431
-
-	jmp L5C04
-
-	jmp L5C13
+NSetGEOSDisk:
+	jmp _NSetGEOSDisk
+DBFormat:
+	jmp _DBFormat
+FormatDisk:
+	jmp _FormatDisk
+DBEraseDisk:
+	jmp _DBEraseDisk
+EraseDisk:
+	jmp _EraseDisk
 
 L500F:	.byte $00,$00,$00,$00,$00,$00,$00,$00
 	.byte $00,$00,$00,$00,$00,$00,$00,$00
@@ -50,7 +51,8 @@ L5020:	jsr LCFD9
 	jsr L4003
 	jmp LCFD9
 
-L5032:	lda #$31
+_NSetGEOSDisk:
+	lda #$31
 	sta L50C9
 	jsr L9036
 	txa
@@ -117,7 +119,9 @@ L50AE:	lda L50BA,y
 L50BA:	.byte "GEOS format V1."
 
 L50C9:	.byte "0"
-L50CA:	jsr L50FD
+
+_DBFormat:
+	jsr L50FD
 	jsr L516B
 	jsr L50D7
 	ldx L5430
@@ -453,7 +457,9 @@ L53D7:	.byte $53,$01,$13,$20
 L542F:	rts
 
 L5430:	brk
-L5431:	stx L571C
+
+_FormatDisk:
+	stx L571C
 	lda #$50
 	sta r1H
 	lda #$0F
@@ -503,7 +509,7 @@ L548D:	brk
 L548E:	jsr L9050
 	txa
 	bne L5498
-	jsr L5032
+	jsr _NSetGEOSDisk
 	txa
 L5498:	pha
 	jsr ExitTurbo
@@ -1338,14 +1344,16 @@ L5BFE:	jsr LFFAB
 	ldx #$0D
 	rts
 
-L5C04:	jsr L50FD
+_DBEraseDisk:
+	jsr L50FD
 	ldx #$01
 	jsr L519F
 	jsr L50D7
 	ldx L5430
 	rts
 
-L5C13:	jsr L9050
+_EraseDisk:
+	jsr L9050
 	lda #$00
 	sta r2L
 	jsr L9066

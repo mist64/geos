@@ -8,6 +8,7 @@
 
 .segment "reu4"
 
+OWriteFile:
 	jsr EnterTurbo
 	txa
 	beq L5007

@@ -8,6 +8,7 @@
 
 .segment "reu3"
 
+OReadFile:
 	jsr EnterTurbo
 	txa
 	beq L5007

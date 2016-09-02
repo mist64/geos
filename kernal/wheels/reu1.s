@@ -13,11 +13,13 @@ LFF93 = $FF93
 LFFB1 = $FFB1
 LFFAE = $FFAE
 
-	jmp L5006
+DevNumChange:
+	jmp _DevNumChange
+SwapDrives:
+	jmp _SwapDrives
 
-	jmp L5098
-
-L5006:	stx L5061
+_DevNumChange:
+	stx L5061
 	txa
 	ora #$20
 	sta L505C
@@ -88,7 +90,9 @@ L5091:	jsr LFFAE
 	rts
 
 L5097:	brk
-L5098:	lda curDrive
+
+_SwapDrives:
+	lda curDrive
 	pha
 	ldx r5L
 	lda $8486,x
@@ -97,7 +101,7 @@ L5098:	lda curDrive
 	txa
 	jsr SetDevice
 	ldx #$19
-	jsr L5006
+	jsr _DevNumChange
 	ldx r5L
 	lda #$00
 	sta $8486,x
@@ -109,7 +113,7 @@ L50B9:	ldx r5H
 	txa
 	jsr SetDevice
 	ldx r5L
-	jsr L5006
+	jsr _DevNumChange
 	ldx r5H
 	lda #$00
 	sta $8486,x
@@ -147,7 +151,7 @@ L50D6:	ldx r5L
 	lda #$19
 	sta curDevice
 	ldx r5H
-	jsr L5006
+	jsr _DevNumChange
 L5127:	pla
 	cmp r5L
 	beq L5131

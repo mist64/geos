@@ -31,39 +31,41 @@ LFFB4 = $FFB4
 
 .segment "reu5"
 
-	jmp L502A
-
-	jmp L50DD
-
-	jmp L57C5
-
-	jmp L573F
-
-	jmp L5AB7
-
-	jmp L5889
-
-	jmp L587A
-
-	jmp L5864
-
-	jmp L56C3
-
+ChgParType:
+	jmp _ChgParType
+ChPartition:
+	jmp _ChPartition
+ChSubdir:
+	jmp _ChSubdir
+ChDiskDirectory:
+	jmp _ChDiskDirectory
+GetFEntries:
+	jmp _GetFEntries
+TopDirectory:
+	jmp _TopDirectory
+UpDirectory:
+	jmp _UpDirectory
+DownDirectory:
+	jmp _DownDirectory
+GoPartition:
+	jmp _GoPartition
+; ???
 	rts
-
 	nop
 	nop
+ChPartOnly:
 	jmp L50D7
-
-	jmp L51CC
-
+Syscall_5_11:; ???
+	jmp _Syscall_5_11
+; ???
 	rts
-
 	nop
 	nop
+FindRamLink:
 	jmp L527C
 
-L502A:	lda r4L
+_ChgParType:
+	lda r4L
 	cmp #$01
 	beq L5037
 L5030:	cmp #$04
@@ -142,7 +144,8 @@ L50CB:	.byte $23,$24,$33,$34,$00,$80,$00,$80
 L50D7:	jsr L9050
 	lda #$80
 	.byte $2C
-L50DD:	lda #$00
+_ChPartition:
+	lda #$00
 	sta L5134
 	jsr L5161
 	beq L50EA
@@ -166,7 +169,7 @@ L50EA:	jsr L5149
 	.byte $2C
 L510A:	lda #$01
 	sta r4L
-	jsr L502A
+	jsr _ChgParType
 	jsr L56F8
 	bit L5134
 	bpl L5126
@@ -179,7 +182,7 @@ L510A:	lda #$01
 
 L5126:	jsr L9063
 	jsr L9053
-L512C:	jmp L57C5
+L512C:	jmp _ChSubdir
 
 L512F:	cmp #$32
 	beq L512C
@@ -251,7 +254,9 @@ L51AA:	.byte $00,$00,$20,$97,$40,$00,$FF,$00
 	.byte $60,$10,$06,$1A
 L51BE:	.byte $12,$11,$4C,$C4,$51,$00,$0F,$5A
 	.byte $00,$00,$06,$10,$14,$53
-L51CC:	lda L51E7,x
+
+_Syscall_5_11:
+	lda L51E7,x
 	sta L522B
 	lda L51E9,x
 	sta L522C
@@ -834,14 +839,15 @@ L56A9:	jsr LFFAE
 	clc
 	rts
 
-L56C3:	stx L56F7
+_GoPartition:
+	stx L56F7
 	jsr L5161
 	bne L56F1
 	ldx L56F7
 	jsr L5417
 	lda L54B8
 	sta r4L
-	jsr L502A
+	jsr _ChgParType
 	lda r4L
 	bmi L56F4
 	jsr L5135
@@ -888,7 +894,9 @@ L5730:	lda #$0D
 	jmp EnterTurbo
 
 L573E:	brk
-L573F:	jsr L515C
+
+_ChDiskDirectory:
+	jsr L515C
 	beq L5747
 	ldx #$00
 	rts
@@ -900,10 +908,10 @@ L5747:	jsr L576F
 	sta L57AF
 	jsr L5174
 	bne L575F
-	jsr L57C5
+	jsr _ChSubdir
 	clv
 	bvc L5762
-L575F:	jsr L50DD
+L575F:	jsr _ChPartition
 L5762:	lda L57B0
 	sta DBoxDescH
 	lda L57AF
@@ -956,7 +964,8 @@ L57B3:	jsr LCFD9
 	jsr L4003
 	jmp LCFD9
 
-L57C5:	jsr L5174
+_ChSubdir:
+	jsr L5174
 	beq L57CD
 	ldx #$00
 	rts
@@ -969,7 +978,7 @@ L57D0:	ldx #$01
 	beq L57D0
 	cmp #$55
 	bne L57E2
-	jmp L50DD
+	jmp _ChPartition
 
 L57E2:	cmp #$05
 	beq L57E7
@@ -982,7 +991,7 @@ L57E7:	lda L518C
 	lda #$8C
 	sta r6L
 	jsr FindFile
-	jsr L5864
+	jsr _DownDirectory
 	clv
 	bvc L57D0
 L57FD:	lda $88C6
@@ -1032,7 +1041,9 @@ L585E:	.byte $97,$91
 L5860:	.byte $AB
 	.byte ","
 L5862:	.byte "QY"
-L5864:	lda dirEntryBuf
+
+_DownDirectory:
+	lda dirEntryBuf
 	and #$BF
 	cmp #$86
 	bne L589E
@@ -1042,13 +1053,15 @@ L5864:	lda dirEntryBuf
 	sta r1L
 	clv
 	bvc L588F
-L587A:	jsr GetDirHead
+_UpDirectory:
+	jsr GetDirHead
 	lda $8223
 	sta r1H
 	lda $8222
 	sta r1L
 	bne L588F
-L5889:	lda #$01
+_TopDirectory:
+	lda #$01
 	sta r1L
 	sta r1H
 L588F:	jsr L5174
@@ -1124,12 +1137,12 @@ L5910:	lda #$51
 
 L591A:	brk
 L591B:	brk
-	jsr L587A
+	jsr _UpDirectory
 	txa
 	beq L5929
 L5922:	rts
 
-	jsr L5889
+	jsr _TopDirectory
 	txa
 	bne L5922
 L5929:	jmp L5317
@@ -1184,7 +1197,9 @@ L5949:	.byte $12,$11,$4C,$5F,$59,$00,$BB,$59
 	.byte $80,$18,$0F,$B0,$EC,$03,$80,$04
 	.byte $00,$82,$03,$80,$04,$00,$81,$03
 	.byte $06,$FF,$81,$7F,$05,$FF
-L5AB7:	.byte $A9,$FF
+
+_GetFEntries:
+	lda #$FF
 	sta r7H
 	lda #$C3
 	sta r5H
