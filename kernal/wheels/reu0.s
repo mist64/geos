@@ -68,12 +68,11 @@ L5109:	.byte $59,$17,$35,$1F,$2F,$3D,$FF,$FF
 	.byte $FF,$69,$15,$1F,$33,$35,$1B,$FF
 	.byte $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
 	.byte $FF,$FF,$51,$6F,$A5,$9D,$9B,$99
-	.byte $9B,$7D
+	.byte $9B,$7D,$FF
 L5109_end1:
-	.byte $FF,$61,$11,$23,$35,$1B
-	.byte $8B,$BF,$FF,$53,$6D,$63,$8B,$BF
+	.byte $61,$11,$23,$35,$1B
+	.byte $8B,$BF,$FF,$53,$6D,$63,$8B,$BF, $FF
 L5109_end2:
-	.byte $FF
 
 	jsr L51A7
 	PushW r11
@@ -89,17 +88,17 @@ L5109_end2:
 	sta r1H
 	jsr L5197
 	jsr L5191
-L516C:	ldx #L5109_end2 - L5109
-L516E:	lda L5109,x
+L516C:	ldx #L5109_end2 - L5109 - 1
+@1:	lda L5109,x
 	asl a
 	eor #$FF
 	sta L5109,x
 	dex
-	bpl L516E
+	bpl @1
 	rts
 
 	jsr L51A7
-	ldy #L5109_end1 - L5109
+	ldy #L5109_end1 - L5109 - 1
 L5180:	lda L5109,y
 	sta (r0L),y
 	dey
@@ -123,7 +122,7 @@ L5197:	lda #$33
 	sta r0H
 	jmp PutString
 
-L51A7:	ldx #L5109_end2 - L5109
+L51A7:	ldx #L5109_end2 - L5109 - 1
 L51A9:	lda L5109,x
 	eor #$FF
 	lsr a
