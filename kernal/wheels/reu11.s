@@ -59,7 +59,7 @@ L5055:	lda $0400,y
 	cmp #'A'
 	bcc L5062
 	sbc #'@'
-L5062:	sta $8BAB,y
+L5062:	sta LF1FB,y
 	dey
 	bpl L5055
 	lda r5H
@@ -95,9 +95,9 @@ L506E:	sta BASICspace,y
 	sta r2H
 	jsr ReadFile
 	lda r7H
-	sta $8BD9
+	sta LF1FB+$2E
 	lda r7L
-	sta $8BD8
+	sta LF1FB+$2D
 	pla
 	sta r0L
 	pla
@@ -231,7 +231,7 @@ L51B8:	lda $8BD4,y
 	sta currentMode
 	MoveB $8BD8, $2D
 	iny
-L51CC:	lda $8BAB,y
+L51CC:	lda LF1FB,y
 	beq L51DD
 	sta (curScrLine),y
 	lda $0286
@@ -252,5 +252,6 @@ L51F7:	pla
 	tay
 	pla
 	rti
+LF1FB: ; L51FB
 	.res 48, 0
 code2_end:
