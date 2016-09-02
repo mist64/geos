@@ -18,6 +18,7 @@ L9D83 = $9D83
 
 .segment "reu9"
 
+CopyFile:
 	ldx #$05
 	lda dirEntryBuf
 	and #$BF

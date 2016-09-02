@@ -14,6 +14,7 @@ L9053 = $9053
 
 .segment "reu7"
 
+ValDisk:
 	lda #$00
 	sta L54CF
 	sta L54D0

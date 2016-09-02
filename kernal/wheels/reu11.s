@@ -25,6 +25,7 @@ LFFA8 = $FFA8
 LFFAE = $FFAE
 LFFB1 = $FFB1
 
+KToBasic:
 	sei
 	lda r0H
 	sta L5057

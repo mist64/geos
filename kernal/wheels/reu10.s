@@ -20,12 +20,19 @@ LC313 = $C313
 LCFD9 = $CFD9
 .import TempCurDrive
 
+NewDesktop              =       $5000
 	jmp L5021
-
+OEnterDesktop           =       $5003
 	lda #$00
-	bit $80A9
-	bit $03A9
-	bit $06A9
+	.byte $2c
+InstallDriver           =       $5006
+	lda #$80
+	.byte $2c
+FindDesktop             =       $5009
+	lda #$03
+	.byte $2c
+FindAFile               =       $500c
+	lda #$06
 	tax
 	bmi L5034
 	pha

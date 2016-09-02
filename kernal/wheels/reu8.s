@@ -15,8 +15,10 @@ L9D83 = $9D83
 
 .segment "reu8"
 
+CopyDisk:
 	lda #$00
 	.byte $2c
+TestCompatibility:
 	lda #$80
 	sta L5087
 	lda r2L
