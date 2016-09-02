@@ -9,9 +9,7 @@
 .segment "reu11"
 
 .import RstrKernal
-LE39D = $E39D
 LE4B7 = $E4B7
-LFCF8 = $FCF8
 LFF84 = $FF84
 LFF93 = $FF93
 LFFA8 = $FFA8
@@ -149,14 +147,15 @@ L5114:	sta r0L,y
 	bne L5114
 	LoadB $b3, 3
 	LoadB tapeBuffVec, $3c
-	LoadB BASICMemTop, >$a000
-	LoadB BASICMemBot, >$0800
+	LoadB BASICMemTop, >BASIC_START
+	LoadB BASICMemBot, >BASICspace
 	LoadB scrAddrHi, >$0400
 	LoadB CPU_DATA, KRNL_IO_IN
-	LoadW $a000, L5148
-	jmp LFCF8
+	LoadW BASIC_START, BASICvector ; catch CBM KERNAL's jump to BASIC
+	jmp $FCF8 ; CBM KERNAL RESET
 
-L5148:	LoadB CPU_DATA, KRNL_BAS_IO_IN
+BASICvector:
+	LoadB CPU_DATA, KRNL_BAS_IO_IN
 	jsr L8B42
 	jsr L8B45
 	jsr L8B48
@@ -173,10 +172,8 @@ L5148:	LoadB CPU_DATA, KRNL_BAS_IO_IN
 	and #$80
 	ora #$11
 	sta cia2base+14
-	lda #$2F
-	sta CPU_DDR
-	lda #$E7
-	sta CPU_DATA
+	LoadB CPU_DDR, $2f
+	LoadB CPU_DATA, $e7
 	sta scpu_turbo
 	lda SaveDevice
 	sta curDevice
@@ -224,9 +221,9 @@ NMIHandler:
 	LoadB kbdQuePos, 1
 	LoadB kbdQue, CR
 @4:	lda $F0D9
-	cmp #$50
+	cmp #'P' ; "PRESS PLAY ON TAPE" message exists?
 	beq @5
-	jsr LE4B7
+	jsr $E4B7 ; unused in standard KERNAL - JiffyDOS?
 @5:	pla
 	tay
 	pla
