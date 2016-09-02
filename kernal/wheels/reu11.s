@@ -8,9 +8,6 @@
 
 .segment "reu11"
 
-L8B42 = $8B42
-L8B45 = $8B45
-L8B48 = $8B48
 L9D83 = $9D83
 LC304 = $C304
 LE395 = $E395
@@ -27,25 +24,20 @@ LFFB1 = $FFB1
 
 KToBasic:
 	sei
-	lda r0H
-	sta L5057
-	lda r0L
-	sta L5056
+	MoveW r0, L5055+1 - SPRITE_PICS + L5050
 	jsr MouseOff
-	jsr LC304
-	lda CPU_DATA
-	pha
-	lda #$35
-	sta CPU_DATA
+	jsr DEFOptimize
+	PushB CPU_DATA
+	LoadB CPU_DATA, IO_IN
 	ldx $D0BC
-	pla
-	sta CPU_DATA
+	PopB CPU_DATA
 	txa
 	bmi L5044
 	lda $9FED
 	cmp #$04
 	bne L5044
 	lda $9FD6
+	; ???
 	.byte $8F,$7C,$D2,$01,$AD,$D7,$9F,$8F
 	.byte $7D,$D2,$01,$AD,$D8,$9F,$8F,$7E
 	.byte $D2,$01,$AD,$D9,$9F,$8F,$7F,$D2
@@ -53,14 +45,15 @@ KToBasic:
 L5044:	jsr i_MoveData
 	.addr L5050
 	.addr SPRITE_PICS
-	.word $01DB
+	.word code2_end - code2_start
 	jmp SPRITE_PICS
 
-L5050:	jsr L9D83
+L5050:
+	.org SPRITE_PICS
+code2_start:
+	jsr L9D83
 	ldy #$27
-L5055:	.byte $B9
-L5056:	brk
-L5057:	.byte $04
+L5055:	lda $0400,y
 	cmp #$5B
 	bcs L5062
 	cmp #$41
@@ -210,11 +203,11 @@ L5114:	sta r0L,y
 	cli
 	jmp LE39D
 
-	jmp (LE395)
+L8B42:	jmp (LE395)
 
-	jmp (LE398)
+L8B45:	jmp (LE398)
 
-	jmp (LE39B)
+L8B48:	jmp (LE39B)
 
 	pha
 	tya
@@ -229,15 +222,14 @@ L5114:	sta r0L,y
 	sta $0319
 	lda #$47
 	sta nmivec
-	ldy #$03
+	ldy #3
 L51B8:	lda $8BD4,y
 	sta BASICspace,y
 	dey
 	bpl L51B8
 	lda $8BD9
 	sta currentMode
-	lda $8BD8
-	sta $2D
+	MoveB $8BD8, $2D
 	iny
 L51CC:	lda $8BAB,y
 	beq L51DD
@@ -249,12 +241,9 @@ L51CC:	lda $8BAB,y
 	bcc L51CC
 L51DD:	tya
 	beq L51ED
-	lda #$28
-	sta curPos
-	lda #$01
-	sta kbdQuePos
-	lda #$0D
-	sta kbdQue
+	LoadB curPos, 40
+	LoadB kbdQuePos, 1
+	LoadB kbdQue, CR
 L51ED:	lda $F0D9
 	cmp #$50
 	beq L51F7
@@ -263,52 +252,5 @@ L51F7:	pla
 	tay
 	pla
 	rti
-
-	brk
-	brk
-	brk
-	brk
-	brk
-	brk
-	brk
-	brk
-	brk
-	brk
-	brk
-	brk
-	brk
-	brk
-	brk
-	brk
-	brk
-	brk
-	brk
-	brk
-	brk
-	brk
-	brk
-	brk
-	brk
-	brk
-	brk
-	brk
-	brk
-	brk
-	brk
-	brk
-	brk
-	brk
-	brk
-	brk
-	brk
-	brk
-	brk
-	brk
-	brk
-	brk
-	brk
-	brk
-	brk
-	brk
-	brk
-	brk
+	.res 48, 0
+code2_end:
