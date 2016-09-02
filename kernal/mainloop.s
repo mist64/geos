@@ -42,16 +42,12 @@
 
 _MainLoop:
 .if wheels_screensaver
-LFCBA = $FCBA
-LCBDB = $CBDB
-LCAFC = $CAFC
-LFA27 = $FA27
 .import RunScreensaver
 	bit     saverStatus
-        bpl     LC052 ; no time out
-        bvs     LC052 ; blocked
+        bpl     @1 ; no time out
+        bvs     @1 ; blocked
         bit     alphaFlag
-        bvs     LC052 ; text input active
+        bvs     @1 ; text input active
         sei
         lda     saverStatus
         and     #$7F
@@ -59,9 +55,8 @@ LFA27 = $FA27
         sta     saverStatus ; enable
         jsr     RunScreensaver
         cli
+@1:
 .endif
-
-LC052:
 	jsr _DoCheckButtons
 	jsr _ExecuteProcesses
 	jsr _DoCheckDelays
@@ -71,14 +66,13 @@ LC052:
 _MNLP:	jsr CallRoutine
 	cli
 .if wheels
-        ldx     $01
-        lda     #$35
-        sta     $01
-        lda     grcntrl1
-        and     #$7F
-LC073:  sta     grcntrl1
-        stx $01
-LC077:  jmp _MainLoop
+	ldx     CPU_DATA
+	LoadB CPU_DATA, IO_IN
+	lda     grcntrl1
+	and     #$7F
+	sta     grcntrl1
+        stx CPU_DATA
+	jmp _MainLoop
 .else
 	jmp _MainLoop2
 .endif
