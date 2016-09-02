@@ -48,12 +48,12 @@ code2_start:
 	jsr RstrKernal
 	ldy #40 - 1
 scr:	lda $0400,y
-	cmp #'['
+	cmp #'Z'+1
 	bcs @2
 	cmp #'A'
 	bcc @2
 	sbc #'@'
-@2:	sta LF1FB,y
+@2:	sta ScreenLine,y
 	dey
 	bpl scr
 	lda r5H
@@ -205,13 +205,13 @@ NMIHandler:
 	sta currentMode
 	MoveB LF1FB_4, $2D
 	iny
-@2:	lda LF1FB,y
+@2:	lda ScreenLine,y
 	beq @3
 	sta (curScrLine),y
 	lda $0286
 	sta ($F3),y
 	iny
-	cpy #$28
+	cpy #40
 	bcc @2
 @3:	tya
 	beq @4
@@ -226,7 +226,7 @@ NMIHandler:
 	tay
 	pla
 	rti
-LF1FB:
+ScreenLine:
 	.res 40, 0
 LF1FB_2:
 	.byte 0

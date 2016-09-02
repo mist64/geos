@@ -125,7 +125,16 @@ _MouseUp:
 	rts
 
 ProcessMouse:
-.if wheels
+.if wheels_bad_ideas
+	; While the mouse pointer is not showing,
+	; Wheels doesn't call the mouse driver.
+	; For a joystick, this means that the 
+	; pointer can't be moved while it's
+	; invisible, and for a 1531 mouse, it means
+	; the input registers may overflow in the
+	; worst case, causing the pointer to jump.
+	;
+	; This is probably not a good idea.
 	bbrf MOUSEON_BIT, mouseOn, @1
 	jsr UpdateMouse
 .else

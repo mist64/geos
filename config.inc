@@ -26,6 +26,8 @@ wheels   = 1
 	wheels_button_shortcuts = 1
 
 	wheels_enhanced_list_scrolling = 1
+
+	wheels_bad_ideas = 1
 .else
 	trap = 1
 	wheels_size = 0
@@ -33,6 +35,7 @@ wheels   = 1
 	wheels_fixes = 0
 	wheels_button_shortcuts = 0
 	wheels_enhanced_list_scrolling = 0
+	wheels_bad_ideas = 0
 .endif
 
 ; general code generation/optimization control:

@@ -18,7 +18,7 @@
 ;---------------------------------------------------------------
 ;---------------------------------------------------------------
 _CallRoutine:
-.if !wheels
+.if !wheels_size_and_speed
 	cmp #0
 	bne @1
 	cpx #0
@@ -26,7 +26,7 @@ _CallRoutine:
 .endif
 @1:	sta CallRLo
 	stx CallRHi
-.if wheels
+.if wheels_size_and_speed
 	ora CallRHi
 	beq @2
 .endif
