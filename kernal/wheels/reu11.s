@@ -6,6 +6,24 @@
 .include "c64.inc"
 .include "jumptab.inc"
 
+L8B42 = $8B42
+L8B45 = $8B45
+L8B48 = $8B48
+L9D83 = $9D83
+LC304 = $C304
+LE395 = $E395
+LE398 = $E398
+LE39B = $E39B
+LE39D = $E39D
+LE4B7 = $E4B7
+LFCF8 = $FCF8
+LFF84 = $FF84
+LFF93 = $FF93
+LFFA8 = $FFA8
+LFFAE = $FFAE
+LFFB1 = $FFB1
+.import scrAddyHi
+
 	sei
 	lda r0H
 	sta L5057
