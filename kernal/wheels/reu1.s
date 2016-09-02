@@ -52,11 +52,12 @@ L5053:	jmp DoneWithIO
 L5056:	.byte "M-W"
 	.byte $77
 	.word $0200
-L505C:	plp
-L505D:	pha
-L505E:	eor mouseOn,x
-	.byte $3E
-L5061:	php
+L505C:	.byte $28
+L505D:	.byte $48
+
+L505E:	.byte "U0>"
+L5061:	.byte $08
+
 L5062:	sty L5097
 	jsr LFFAE
 	lda #$00
@@ -164,20 +165,19 @@ L513F:	lda #$90
 	sta r0H
 	lda #$00
 	sta r0L
-	lda L5158,x
+	lda L5160-8,x
 	sta r1L
-	lda L515C,x
+	lda L5164-8,x
 	sta r1H
 	lda #$0D
 	sta r2H
 	lda #$80
-	.byte $85
-L5158:	asl $A9
-	brk
-	.byte $85
-L515C:	php
+	sta r2L
+	lda #$00
+	sta r3L
 	jmp SwapRAM
 
-	.byte $00,$80,$00,$80,$83,$90,$9E,$AB
+L5160:	.byte $00,$80,$00,$80
+L5164:	.byte $83,$90,$9E,$AB
 L5168:	.byte $00
 L5169:	.byte $00
