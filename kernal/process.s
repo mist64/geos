@@ -142,7 +142,7 @@ _ProcessTimers:
 	ora TimersTab+1,Y
 	bne @3
 	jsr RProc0
-.if wheels
+.if wheels_size
 	jsr EnableProcess
 .else
 	lda TimersCMDs,x
@@ -156,30 +156,27 @@ _ProcessTimers:
 	bne @1
 
 @4:
-.if wheels
-	lda     saverStatus                           ; CB63 AD B4 88                 ...
-        and     #$30                            ; CB66 29 30                    )0
-        bne     @Y                           ; CB68 D0 1D                    ..
-        jsr     LCB88                           ; CB6A 20 88 CB                  ..
-        beq     @Y                           ; CB6D F0 18                    ..
-        lda     saverTimer                           ; CB6F AD B5 88                 ...
-        bne     @X                           ; CB72 D0 03                    ..
-        dec     $88B6                           ; CB74 CE B6 88                 ...
-@X:	dec     saverTimer                           ; CB77 CE B5 88                 ...
-        jsr     LCB88                           ; CB7A 20 88 CB                  ..
-        bne     @Y                           ; CB7D D0 08                    ..
-        lda     saverStatus                           ; CB7F AD B4 88                 ...
-        ora     #$80                            ; CB82 09 80                    ..
-        sta     saverStatus                           ; CB84 8D B4 88                 ...
-@Y:	rts                                     ; CB87 60                       `
+.if wheels_screensaver
+	lda saverStatus
+	and #$30
+	bne @Y
+	jsr @Z
+	beq @Y
+	lda saverTimer
+	bne @X
+	dec $88B6
+@X:	dec saverTimer
+	jsr @Z
+	bne @Y
+	lda saverStatus
+	ora #$80
+	sta saverStatus
+@Y:	rts
 
-; ----------------------------------------------------------------------------
-LCB88:  lda     saverTimer                           ; CB88 AD B5 88                 ...
-        ora     $88B6                           ; CB8B 0D B6 88                 ...
-        rts                                     ; CB8E 60                       `
-.else
-	rts
+@Z:	lda saverTimer
+	ora $88B6
 .endif
+	rts
 
 ;---------------------------------------------------------------
 ; RestartProcess                                          $C106

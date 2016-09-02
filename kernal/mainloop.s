@@ -59,10 +59,10 @@ LFA27 = $FA27
         sta     saverStatus ; enable
         jsr     RunScreensaver
         cli
-LC052:  jsr     LFA27
-        jsr     LCAFC
-LC058:  jsr     LCBDB
-        jsr     LFCBA
+LC052:  jsr     _DoCheckButtons
+        jsr     _ExecuteProcesses
+LC058:  jsr     _DoCheckDelays
+        jsr     _DoUpdateTime
         lda     $849B
         ldx     $849C
 _MNLP:  jsr     CallRoutine

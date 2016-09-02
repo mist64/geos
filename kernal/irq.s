@@ -65,11 +65,11 @@ ASSERT_NOT_BELOW_IO
 	beq @5
 	dec alarmWarnFlag
 @5:
-.if wheels
+.if wheels_screensaver
 .import ProcessMouse
 	lda saverStatus
 	lsr
-	bcc @Y
+	bcc @Y ; screensaver not running
 	jsr ProcessMouse
 	jsr GetRandom
 	bra @X
