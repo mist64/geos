@@ -1,4 +1,12 @@
- jmp L51B6
+.include "const.inc"
+.include "geossym.inc"
+.include "geosmac.inc"
+.include "config.inc"
+.include "kernal.inc"
+.include "c64.inc"
+.include "jumptab.inc"
+
+	jmp L51B6
 
 	jmp L51D8
 
@@ -190,13 +198,8 @@ L5212:	sec
 	clc
 L522C:	rts
 
-L522D:	.byte $80
-	rti
+L522D:	.byte $80, $40, $20, $10, $08, $04, 02, $01
 
-	jsr L0810
-	.byte $04
-	.byte $02
-	.byte $01
 L5235:	jsr L51B6
 	ldx $88C3
 	dex

@@ -1,4 +1,17 @@
- jmp L5006
+.include "const.inc"
+.include "geossym.inc"
+.include "geosmac.inc"
+.include "config.inc"
+.include "kernal.inc"
+.include "c64.inc"
+.include "jumptab.inc"
+
+LFFA8 = $FFA8
+LFF93 = $FF93
+LFFB1 = $FFB1
+LFFAE = $FFAE
+
+	jmp L5006
 
 	jmp L5098
 

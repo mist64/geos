@@ -1,4 +1,35 @@
- jmp L502A
+.include "const.inc"
+.include "geossym.inc"
+.include "geosmac.inc"
+.include "config.inc"
+.include "kernal.inc"
+.include "c64.inc"
+.include "jumptab.inc"
+
+L4000 = $4000
+L4003 = $4003
+L9030 = $9030
+L9033 = $9033
+L9050 = $9050
+L9053 = $9053
+L9063 = $9063
+L9066 = $9066
+LC316 = $C316
+LCFD9 = $CFD9
+LFF93 = $FF93
+LFF96 = $FF96
+LFFA5 = $FFA5
+LFFA8 = $FFA8
+LFFAB = $FFAB
+LFFAE = $FFAE
+LFFB1 = $FFB1
+LFFB4 = $FFB4
+.import DBGFileSelected
+.import DBGFTableIndex
+.import DBGFilesFound
+.import DBGFNameTable
+
+	jmp L502A
 
 	jmp L50DD
 
@@ -33,7 +64,7 @@
 L502A:	lda r4L
 	cmp #$01
 	beq L5037
-	cmp #$04
+L5030:	cmp #$04
 	bne L5047
 	lda #$03
 	.byte $2C
@@ -88,7 +119,7 @@ L5089:	lda $88C3
 	sta $9073
 	.byte $B9
 	.byte $C7
-L50A9:	bvc $5030
+L50A9:	bvc L5030
 	.byte $04
 	lda L50CB,y
 	sta r1H

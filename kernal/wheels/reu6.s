@@ -1,4 +1,17 @@
- jmp L5006
+.include "const.inc"
+.include "geossym.inc"
+.include "geosmac.inc"
+.include "config.inc"
+.include "kernal.inc"
+.include "c64.inc"
+.include "jumptab.inc"
+
+L9036 = $9036
+L903C = $903C
+L903F = $903F
+L9048 = $9048
+
+	jmp L5006
 
 	jmp L51C4
 

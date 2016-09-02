@@ -1,4 +1,12 @@
- lda #$00
+.include "const.inc"
+.include "geossym.inc"
+.include "geosmac.inc"
+.include "config.inc"
+.include "kernal.inc"
+.include "c64.inc"
+.include "jumptab.inc"
+
+	lda #$00
 	bit $80A9
 	sta L5087
 	lda r2L

@@ -1,4 +1,18 @@
- lda #$00
+.include "const.inc"
+.include "geossym.inc"
+.include "geosmac.inc"
+.include "config.inc"
+.include "kernal.inc"
+.include "c64.inc"
+.include "jumptab.inc"
+
+L903C = $903C
+L9048 = $9048
+L904B = $904B
+L9050 = $9050
+L9053 = $9053
+
+	lda #$00
 	sta L54CF
 	sta L54D0
 	jsr GetDirHead

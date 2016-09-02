@@ -1,4 +1,33 @@
- jmp L5032
+.include "const.inc"
+.include "geossym.inc"
+.include "geosmac.inc"
+.include "config.inc"
+.include "kernal.inc"
+.include "c64.inc"
+.include "jumptab.inc"
+
+L4000 = $4000
+L4003 = $4003
+L9036 = $9036
+L903C = $903C
+L903F = $903F
+L9048 = $9048
+L9050 = $9050
+L9063 = $9063
+L9066 = $9066
+LC316 = $C316
+LCFD9 = $CFD9
+LFF54 = $FF54
+LFF93 = $FF93
+LFF96 = $FF93
+LFFA5 = $FFA5
+LFFA8 = $FFA8
+LFFAB = $FFAB
+LFFAE = $FFAE
+LFFB1 = $FFB1
+LFFB4 = $FFB4
+
+	jmp L5032
 
 	jmp L50CA
 

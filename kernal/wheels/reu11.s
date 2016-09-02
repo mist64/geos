@@ -1,4 +1,12 @@
- sei
+.include "const.inc"
+.include "geossym.inc"
+.include "geosmac.inc"
+.include "config.inc"
+.include "kernal.inc"
+.include "c64.inc"
+.include "jumptab.inc"
+
+	sei
 	lda r0H
 	sta L5057
 	lda r0L

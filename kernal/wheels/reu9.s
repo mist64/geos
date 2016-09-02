@@ -1,3 +1,10 @@
+.include "const.inc"
+.include "geossym.inc"
+.include "geosmac.inc"
+.include "config.inc"
+.include "kernal.inc"
+.include "c64.inc"
+.include "jumptab.inc"
 
 	ldx #$05
 	lda dirEntryBuf
