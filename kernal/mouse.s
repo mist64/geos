@@ -262,12 +262,12 @@ DoMouseFault:
 	beq @3
 	bbsf OFFMENU_BIT, faultData, @2
 
-.if wheels
-        lda     #$80                            ; ECDF A9 80                    ..
-        bit     $86C0                           ; ECE1 2C C0 86                 ,..
-        bmi     @X                           ; ECE4 30 02                    0.
-        lda     #$20                            ; ECE6 A9 20                    .
-@X:	and     $84B6                           ; ECE8 2D B6 84                 -..
+.if wheels_size_and_speed
+	lda #SET_OFFTOP
+	bit menuOptNumber
+	bmi @X
+	lda #SET_OFFLEFT
+@X:	and faultData
 .else
 	ldx #SET_OFFTOP
 	lda #$C0
@@ -278,7 +278,7 @@ DoMouseFault:
 	and faultData
 .endif
 	bne @2
-.if !wheels
+.if !wheels_size_and_speed ; seems unnecessary?
 	tya
 .endif
 	bbsf 6, menuOptNumber, @3

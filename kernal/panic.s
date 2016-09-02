@@ -131,9 +131,6 @@ LCF29:  clc                                     ; CF29 18                       
 LCF2C:  sta     _PanicAddr,x                         ; CF2C 9D 45 CF                 .E.
         rts                                     ; CF2F 60                       `
 
-        .byte   $81,$0B,$10,$10,$38,$CF,$0E,$00 ; CF30 81 0B 10 10 38 CF 0E 00  ....8...
-        .byte   $18,$45,$72,$72,$6F,$72,$20,$6E ; CF38 18 45 72 72 6F 72 20 6E  .Error n
-        .byte   $65,$61,$72,$20
 
 .else
 ;---------------------------------------------------------------
@@ -172,14 +169,24 @@ _Panic:
 @4:	sta _PanicAddr,x
 	rts
 
+
+.endif
+
 _PanicDB_DT:
+.if wheels
+        .byte   $81,$0B,$10,$10,$38,$CF,$0E,$00 ; CF30 81 0B 10 10 38 CF 0E 00  ....8...
+.else
 	.byte DEF_DB_POS | 1
 	.byte DBTXTSTR, TXT_LN_X, TXT_LN_1_Y
 	.word _PanicDB_Str
 	.byte NULL
+.endif
 
 _PanicDB_Str:
 	.byte BOLDON
+.if wheels_size
+	.byte "Error near "
+.else
 	.byte "System error near "
 .endif
 
