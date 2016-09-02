@@ -173,13 +173,11 @@ _Panic:
 .endif
 
 _PanicDB_DT:
-.if wheels
-        .byte DEF_DB_POS | 1, DBTXTSTR, TXT_LN_X, TXT_LN_1_Y
-	.byte $38,$CF,$0E
-.else
 	.byte DEF_DB_POS | 1
 	.byte DBTXTSTR, TXT_LN_X, TXT_LN_1_Y
 	.word _PanicDB_Str
+.if wheels
+	.byte $0E
 .endif
 	.byte NULL
 
