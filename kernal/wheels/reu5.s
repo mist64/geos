@@ -14,7 +14,6 @@ L9050 = $9050
 L9053 = $9053
 L9063 = $9063
 L9066 = $9066
-LC316 = $C316
 LCFD9 = $CFD9
 LFF93 = $FF93
 LFF96 = $FF96
@@ -316,7 +315,7 @@ L522C:	.byte "R"
 	.byte $1B,$00
 	lda $9FE1
 	sta L5270
-	jsr LC316
+	jsr i_ColorRectangle
 	.byte $08,$04,$18,$0A
 L5270:	.byte $B3
 	jsr i_FrameRectangle
@@ -407,7 +406,7 @@ L5317:	lda #$50
 
 L5322:	lda $9FE1
 	sta L532F
-	jsr LC316
+	jsr i_ColorRectangle
 	php
 	.byte $04
 	clc

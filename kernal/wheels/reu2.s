@@ -17,7 +17,6 @@ L9048 = $9048
 L9050 = $9050
 L9063 = $9063
 L9066 = $9066
-LC316 = $C316
 LCFD9 = $CFD9
 LFF54 = $FF54
 LFF93 = $FF93
@@ -259,16 +258,15 @@ L51F9:	.byte $12,$13,$08,$A1,$53,$0B,$A6,$0F
 	.byte $D2,$52,$0B,$14,$18
 L5226:	.byte $F2
 L5227:	.byte $52,$00
+
 	lda $9FE1
 	sta L5236
-	jsr LC316
-	.byte $07
-	ora r12L
-	.byte $07
+	jsr i_ColorRectangle
+	.byte 7, 5, 26, 7
 L5236:	.byte $B3
 	jsr i_FrameRectangle
-	.byte $2A,$5E
-	.word $003A,$0106
+	.byte 42, 94
+	.word 58, 262
 	.byte $FF
 	rts
 
