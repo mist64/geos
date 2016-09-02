@@ -41,7 +41,7 @@
 .segment "mainloop1"
 
 _MainLoop:
-.if wheels
+.if wheels_screensaver
 LFCBA = $FCBA
 LCBDB = $CBDB
 LCAFC = $CAFC
@@ -59,14 +59,18 @@ LFA27 = $FA27
         sta     saverStatus ; enable
         jsr     RunScreensaver
         cli
-LC052:  jsr     _DoCheckButtons
-        jsr     _ExecuteProcesses
-LC058:  jsr     _DoCheckDelays
-        jsr     _DoUpdateTime
-        lda     $849B
-        ldx     $849C
-_MNLP:  jsr     CallRoutine
-        cli
+.endif
+
+LC052:
+	jsr _DoCheckButtons
+	jsr _ExecuteProcesses
+	jsr _DoCheckDelays
+	jsr _DoUpdateTime
+	lda appMain+0
+	ldx appMain+1
+_MNLP:	jsr CallRoutine
+	cli
+.if wheels
         ldx     $01
         lda     #$35
         sta     $01
@@ -76,15 +80,6 @@ LC073:  sta     grcntrl1
         stx $01
 LC077:  jmp _MainLoop
 .else
-	jsr _DoCheckButtons
-	jsr _ExecuteProcesses
-	jsr _DoCheckDelays
-	jsr _DoUpdateTime
-	lda appMain+0
-	ldx appMain+1
-_MNLP:
-	jsr CallRoutine
-	cli
 	jmp _MainLoop2
 .endif
 
