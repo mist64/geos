@@ -510,7 +510,7 @@ nmiDefault:
 
 .segment "screensaver"
 
-.if wheels
+.if wheels_screensaver
 .import KbdScanAll
 .global RunScreensaver
 RunScreensaver:
@@ -579,7 +579,9 @@ ScreenSaver1:
 	rts
 
 	.byte 0, 0, 0, 0 ; ??? unused
+.endif
 
+.if wheels
 ; called from extended KERNAL
 .global LCFD9
 LCFD9:
