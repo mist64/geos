@@ -1,12 +1,256 @@
 ; da65 V2.15
-; Created:    2016-09-01 03:54:00
+; Created:    2016-09-01 21:51:58
 ; Input file: reu4.bin
 ; Page:       1
 
 
         .setcpu "6502"
 
-; ----------------------------------------------------------------------------
+CPU_DDR         := $0000
+CPU_DATA        := $0001
+r0L             := $0002
+r0H             := $0003
+r1L             := $0004
+r1H             := $0005
+r2L             := $0006
+r2H             := $0007
+r3L             := $0008
+r3H             := $0009
+r4L             := $000A
+r4H             := $000B
+r5L             := $000C
+r5H             := $000D
+r6L             := $000E
+r6H             := $000F
+r7L             := $0010
+r7H             := $0011
+r8L             := $0012
+r8H             := $0013
+r9L             := $0014
+r9H             := $0015
+r10L            := $0016
+r10H            := $0017
+r11L            := $0018
+r11H            := $0019
+r12L            := $001A
+r12H            := $001B
+r13L            := $001C
+r13H            := $001D
+r14L            := $001E
+r14H            := $001F
+r15L            := $0020
+r15H            := $0021
+curPattern      := $0022
+string          := $0024
+baselineOffset  := $0026
+curSetWidth     := $0027
+curHeight       := $0029
+curIndexTable   := $002A
+cardDataPntr    := $002C
+currentMode     := $002E
+dispBufferOn    := $002F
+mouseOn         := $0030
+msePicPtr       := $0031
+windowTop       := $0033
+windowBottom    := $0034
+leftMargin      := $0035
+rightMargin     := $0037
+pressFlag       := $0039
+mouseXPos       := $003A
+mouseYPos       := $003C
+returnAddress   := $003D
+graphMode       := $003F
+CallRLo         := $0041
+CallRHi         := $0042
+DBoxDescL       := $0043
+DBoxDescH       := $0044
+Z45             := $0045
+Z46             := $0046
+Z47             := $0047
+a2L             := $0070
+a2H             := $0071
+a3L             := $0072
+a3H             := $0073
+a4L             := $0074
+a4H             := $0075
+a5L             := $0076
+a5H             := $0077
+a6L             := $0078
+a6H             := $0079
+a7L             := $007A
+a7H             := $007B
+a8L             := $007C
+a8H             := $007D
+a9L             := $007E
+a9H             := $007F
+DACC_ST_ADDR    := $0080
+DACC_LGH        := $0082
+DTOP_CHNUM      := $0083
+DTOP_CHAIN      := $0085
+z8b             := $008B
+z8c             := $008C
+z8d             := $008D
+z8e             := $008E
+z8f             := $008F
+STATUS          := $0090
+tapeBuffVec     := $00B2
+curDevice       := $00BA
+kbdQuePos       := $00C6
+curScrLine      := $00D1
+curPos          := $00D3
+a0L             := $00FB
+a0H             := $00FC
+a1L             := $00FD
+a1H             := $00FE
+kbdQue          := $0277
+BASICMemBot     := $0282
+BASICMemTop     := $0284
+scrAddyHi       := $0288
+PALNTSCFLAG     := $02A6
+irqvec          := $0314
+bkvec           := $0316
+nmivec          := $0318
+APP_RAM         := $0400
+BASICspace      := $0800
+BACK_SCR_BASE   := $6000
+PRINTBASE       := $7900
+diskBlkBuf      := $8000
+fileHeader      := $8100
+curDirHead      := $8200
+fileTrScTab     := $8300
+dirEntryBuf     := $8400
+DrACurDkNm      := $841E
+DrBCurDkNm      := $8430
+dataFileName    := $8442
+dataDiskName    := $8453
+PrntFilename    := $8465
+PrntDiskName    := $8476
+curDrive        := $8489
+diskOpenFlg     := $848A
+isGEOS          := $848B
+interleave      := $848C
+NUMDRV          := $848D
+driveType       := $848E
+turboFlags      := $8492
+curRecord       := $8496
+usedRecords     := $8497
+fileWritten     := $8498
+fileSize        := $8499
+appMain         := $849B
+intTopVector    := $849D
+intBotVector    := $849F
+mouseVector     := $84A1
+keyVector       := $84A3
+inputVector     := $84A5
+mouseFaultVec   := $84A7
+otherPressVec   := $84A9
+StringFaultVec  := $84AB
+alarmTmtVector  := $84AD
+BRKVector       := $84AF
+RecoverVector   := $84B1
+selectionFlash  := $84B3
+alphaFlag       := $84B4
+iconSelFlg      := $84B5
+faultData       := $84B6
+menuNumber      := $84B7
+mouseTop        := $84B8
+mouseBottom     := $84B9
+mouseLeft       := $84BA
+mouseRight      := $84BC
+stringX         := $84BE
+stringY         := $84C0
+mousePicData    := $84C1
+maxMouseSpeed   := $8501
+minMouseSpeed   := $8502
+mouseAccel      := $8503
+keyData         := $8504
+mouseData       := $8505
+inputData       := $8506
+mouseSpeed      := $8507
+random          := $850A
+saveFontTab     := $850C
+dblClickCount   := $8515
+year            := $8516
+month           := $8517
+day             := $8518
+hour            := $8519
+minutes         := $851A
+seconds         := $851B
+alarmSetFlag    := $851C
+sysDBData       := $851D
+screencolors    := $851E
+dlgBoxRamBuf    := $851F
+menuOptNumber   := $86C0
+menuTop         := $86C1
+menuBottom      := $86C2
+menuLeft        := $86C3
+menuRight       := $86C5
+menuStackL      := $86C7
+menuStackH      := $86CB
+menuOptionTab   := $86CF
+menuLimitTabL   := $86D3
+menuLimitTabH   := $86E2
+TimersTab       := $86F1
+TimersCMDs      := $8719
+TimersRtns      := $872D
+TimersVals      := $8755
+NumTimers       := $877D
+DelaySP         := $877E
+DelayValL       := $877F
+DelayValH       := $8793
+DelayRtnsL      := $87A7
+DelayRtnsH      := $87BB
+stringLen       := $87CF
+stringMaxLen    := $87D0
+tmpKeyVector    := $87D1
+stringMargCtrl  := $87D3
+GraphPenXL      := $87D4
+GraphPenXH      := $87D5
+KbdQueHead      := $87D7
+KbdQueTail      := $87D8
+KbdQueFlag      := $87D9
+KbdQueue        := $87DA
+KbdNextKey      := $87EA
+KbdDBncTab      := $87EB
+KbdDMltTab      := $87F3
+E87FC           := $87FC
+E87FD           := $87FD
+E87FE           := $87FE
+E87FF           := $87FF
+E8800           := $8800
+PrvCharWidth    := $8807
+clkBoxTemp      := $8808
+clkBoxTemp2     := $8809
+alarmWarnFlag   := $880A
+tempIRQAcc      := $880B
+defIconTab      := $880C
+DeskAccPC       := $8850
+DeskAccSP       := $8852
+dlgBoxCallerPC  := $8853
+dlgBoxCallerSP  := $8855
+DBGFilesFound   := $8856
+DBGFOffsLeft    := $8857
+DBGFOffsTop     := $8858
+DBGFNameTable   := $8859
+DBGFTableIndex  := $885B
+DBGFileSelected := $885C
+A885D           := $885D
+A885E           := $885E
+A885F           := $885F
+A8860           := $8860
+RecordDirTS     := $8861
+RecordDirOffs   := $8863
+RecordTableTS   := $8865
+verifyFlag      := $8867
+TempCurDrive    := $8868
+e88b7           := $88B7
+SPRITE_PICS     := $8A00
+COLOR_MATRIX    := $8C00
+A8FE8           := $8FE8
+A8FF0           := $8FF0
+DISK_BASE       := $9000
+SCREEN_BASE     := $A000
+OS_ROM          := $C000
 InterruptMain   := $C100
 InitProcesses   := $C103
 RestartProcess  := $C106
@@ -177,207 +421,214 @@ HideOnlyMouse   := $C2F2
 SetColorMode    := $C2F5
 ColorCard       := $C2F8
 ColorRectangle  := $C2FB
-; ----------------------------------------------------------------------------
-        jsr     EnterTurbo                      ; 5000 20 14 C2                  ..
-        txa                                     ; 5003 8A                       .
-        beq     L5007                           ; 5004 F0 01                    ..
-        rts                                     ; 5006 60                       `
+curScrLineColor := $D8F0
+EXP_BASE        := $DF00
+MOUSE_JMP_128   := $FD00
+KERNALVecTab    := $FD30
+KERNALCIAInit   := $FDA3
+MOUSE_BASE      := $FE80
+config          := $FF00
+KERNALVICInit   := $FF81
+NMI_VECTOR      := $FFFA
+RESET_VECTOR    := $FFFC
+IRQ_VECTOR      := $FFFE
+InitKernal:
+        jsr     EnterTurbo
+        txa
+        beq     L5007
+        rts
 
-; ----------------------------------------------------------------------------
-L5007:  jsr     InitForIO                       ; 5007 20 5C C2                  \.
-        lda     #$80                            ; 500A A9 80                    ..
-        sta     $0B                             ; 500C 85 0B                    ..
-        lda     #$00                            ; 500E A9 00                    ..
-        sta     $0A                             ; 5010 85 0A                    ..
-        lda     $0F                             ; 5012 A5 0F                    ..
-        pha                                     ; 5014 48                       H
-        lda     $0E                             ; 5015 A5 0E                    ..
-        pha                                     ; 5017 48                       H
-        lda     $11                             ; 5018 A5 11                    ..
-        pha                                     ; 501A 48                       H
-        lda     $10                             ; 501B A5 10                    ..
-        pha                                     ; 501D 48                       H
-L501E:  ldy     #$00                            ; 501E A0 00                    ..
-        lda     ($0E),y                         ; 5020 B1 0E                    ..
-        beq     L5076                           ; 5022 F0 52                    .R
-        sta     $04                             ; 5024 85 04                    ..
-        iny                                     ; 5026 C8                       .
-        lda     ($0E),y                         ; 5027 B1 0E                    ..
-        sta     $05                             ; 5029 85 05                    ..
-        dey                                     ; 502B 88                       .
-        clc                                     ; 502C 18                       .
-        lda     #$02                            ; 502D A9 02                    ..
-        adc     $0E                             ; 502F 65 0E                    e.
-        sta     $0E                             ; 5031 85 0E                    ..
-        bcc     L5037                           ; 5033 90 02                    ..
-        inc     $0F                             ; 5035 E6 0F                    ..
-L5037:  lda     ($0E),y                         ; 5037 B1 0E                    ..
-        sta     ($0A),y                         ; 5039 91 0A                    ..
-        iny                                     ; 503B C8                       .
-        lda     ($0E),y                         ; 503C B1 0E                    ..
-        sta     ($0A),y                         ; 503E 91 0A                    ..
-        ldy     #$FE                            ; 5040 A0 FE                    ..
-        lda     #$30                            ; 5042 A9 30                    .0
-        sta     $01                             ; 5044 85 01                    ..
-        lda     $11                             ; 5046 A5 11                    ..
-        cmp     #$4F                            ; 5048 C9 4F                    .O
-        bcc     L5056                           ; 504A 90 0A                    ..
-        cmp     #$52                            ; 504C C9 52                    .R
-        bcs     L5056                           ; 504E B0 06                    ..
-        jsr     L5086                           ; 5050 20 86 50                  .P
-        clv                                     ; 5053 B8                       .
-        bvc     L505F                           ; 5054 50 09                    P.
-L5056:  dey                                     ; 5056 88                       .
-        lda     ($10),y                         ; 5057 B1 10                    ..
-        sta     $8002,y                         ; 5059 99 02 80                 ...
-        tya                                     ; 505C 98                       .
-        bne     L5056                           ; 505D D0 F7                    ..
-L505F:  lda     #$36                            ; 505F A9 36                    .6
-        sta     $01                             ; 5061 85 01                    ..
-        jsr     WriteBlock                      ; 5063 20 20 C2                   .
-        txa                                     ; 5066 8A                       .
-        bne     L5077                           ; 5067 D0 0E                    ..
-        clc                                     ; 5069 18                       .
-        lda     #$FE                            ; 506A A9 FE                    ..
-        adc     $10                             ; 506C 65 10                    e.
-        sta     $10                             ; 506E 85 10                    ..
-        bcc     L501E                           ; 5070 90 AC                    ..
-        inc     $11                             ; 5072 E6 11                    ..
-        bne     L501E                           ; 5074 D0 A8                    ..
-L5076:  tax                                     ; 5076 AA                       .
-L5077:  pla                                     ; 5077 68                       h
-        sta     $10                             ; 5078 85 10                    ..
-        pla                                     ; 507A 68                       h
-        sta     $11                             ; 507B 85 11                    ..
-        pla                                     ; 507D 68                       h
-        sta     $0E                             ; 507E 85 0E                    ..
-        pla                                     ; 5080 68                       h
-        sta     $0F                             ; 5081 85 0F                    ..
-        jmp     DoneWithIO                      ; 5083 4C 5F C2                 L_.
+L5007:  jsr     InitForIO
+        lda     #$80
+        sta     r4H
+        lda     #$00
+        sta     r4L
+        lda     r6H
+        pha
+        lda     r6L
+        pha
+        lda     r7H
+        pha
+        lda     r7L
+        pha
+L501E:  ldy     #$00
+        lda     (r6L),y
+        beq     L5076
+        sta     r1L
+        iny
+        lda     (r6L),y
+        sta     r1H
+        dey
+        clc
+        lda     #$02
+        adc     r6L
+        sta     r6L
+        bcc     L5037
+        inc     r6H
+L5037:  lda     (r6L),y
+        sta     (r4L),y
+        iny
+        lda     (r6L),y
+        sta     (r4L),y
+        ldy     #$FE
+        lda     #$30
+        sta     CPU_DATA
+        lda     r7H
+        cmp     #$4F
+        bcc     L5056
+        cmp     #$52
+        bcs     L5056
+        jsr     L5086
+        clv
+        bvc     L505F
+L5056:  dey
+        lda     (r7L),y
+        sta     $8002,y
+        tya
+        bne     L5056
+L505F:  lda     #$36
+        sta     CPU_DATA
+        jsr     WriteBlock
+        txa
+        bne     L5077
+        clc
+        lda     #$FE
+        adc     r7L
+        sta     r7L
+        bcc     L501E
+        inc     r7H
+        bne     L501E
+L5076:  tax
+L5077:  pla
+        sta     r7L
+        pla
+        sta     r7H
+        pla
+        sta     r6L
+        pla
+        sta     r6H
+        jmp     DoneWithIO
 
-; ----------------------------------------------------------------------------
-L5086:  lda     $15                             ; 5086 A5 15                    ..
-        pha                                     ; 5088 48                       H
-        lda     $14                             ; 5089 A5 14                    ..
-        pha                                     ; 508B 48                       H
-        lda     $09                             ; 508C A5 09                    ..
-        pha                                     ; 508E 48                       H
-        lda     $08                             ; 508F A5 08                    ..
-        pha                                     ; 5091 48                       H
-        lda     $07                             ; 5092 A5 07                    ..
-        pha                                     ; 5094 48                       H
-        lda     $06                             ; 5095 A5 06                    ..
-        pha                                     ; 5097 48                       H
-        lda     $05                             ; 5098 A5 05                    ..
-        pha                                     ; 509A 48                       H
-        lda     $04                             ; 509B A5 04                    ..
-        pha                                     ; 509D 48                       H
-        lda     $03                             ; 509E A5 03                    ..
-        pha                                     ; 50A0 48                       H
-        lda     $02                             ; 50A1 A5 02                    ..
-        pha                                     ; 50A3 48                       H
-        ldx     #$02                            ; 50A4 A2 02                    ..
-        lda     $11                             ; 50A6 A5 11                    ..
-        sta     $15                             ; 50A8 85 15                    ..
-        lda     $10                             ; 50AA A5 10                    ..
-        sta     $14                             ; 50AC 85 14                    ..
-L50AE:  lda     $15                             ; 50AE A5 15                    ..
-        cmp     #$50                            ; 50B0 C9 50                    .P
-        bne     L50B8                           ; 50B2 D0 04                    ..
-        lda     $14                             ; 50B4 A5 14                    ..
-        cmp     #$00                            ; 50B6 C9 00                    ..
-L50B8:  bcc     L50C6                           ; 50B8 90 0C                    ..
-        lda     $15                             ; 50BA A5 15                    ..
-        cmp     #$51                            ; 50BC C9 51                    .Q
-        bne     L50C4                           ; 50BE D0 04                    ..
-        lda     $14                             ; 50C0 A5 14                    ..
-        cmp     #$5F                            ; 50C2 C9 5F                    ._
-L50C4:  bcc     L50DD                           ; 50C4 90 17                    ..
-L50C6:  ldy     #$00                            ; 50C6 A0 00                    ..
-        lda     ($14),y                         ; 50C8 B1 14                    ..
-        sta     $8000,x                         ; 50CA 9D 00 80                 ...
-        clc                                     ; 50CD 18                       .
-        lda     #$01                            ; 50CE A9 01                    ..
-        adc     $14                             ; 50D0 65 14                    e.
-        sta     $14                             ; 50D2 85 14                    ..
-        bcc     L50D8                           ; 50D4 90 02                    ..
-        inc     $15                             ; 50D6 E6 15                    ..
-L50D8:  inx                                     ; 50D8 E8                       .
-        bne     L50AE                           ; 50D9 D0 D3                    ..
-        beq     L5107                           ; 50DB F0 2A                    .*
-L50DD:  jsr     L5126                           ; 50DD 20 26 51                  &Q
-        ldx     $02                             ; 50E0 A6 02                    ..
-L50E2:  clc                                     ; 50E2 18                       .
-        lda     #$01                            ; 50E3 A9 01                    ..
-        adc     $14                             ; 50E5 65 14                    e.
-        sta     $14                             ; 50E7 85 14                    ..
-        bcc     L50ED                           ; 50E9 90 02                    ..
-        inc     $15                             ; 50EB E6 15                    ..
-L50ED:  inx                                     ; 50ED E8                       .
-        beq     L5107                           ; 50EE F0 17                    ..
-        lda     $15                             ; 50F0 A5 15                    ..
-        cmp     #$51                            ; 50F2 C9 51                    .Q
-        bne     L50FA                           ; 50F4 D0 04                    ..
-        lda     $14                             ; 50F6 A5 14                    ..
-        cmp     #$5F                            ; 50F8 C9 5F                    ._
-L50FA:  bcc     L50E2                           ; 50FA 90 E6                    ..
-        ldy     #$00                            ; 50FC A0 00                    ..
-L50FE:  lda     ($14),y                         ; 50FE B1 14                    ..
-        sta     $8000,x                         ; 5100 9D 00 80                 ...
-        iny                                     ; 5103 C8                       .
-        inx                                     ; 5104 E8                       .
-        bne     L50FE                           ; 5105 D0 F7                    ..
-L5107:  pla                                     ; 5107 68                       h
-        sta     $02                             ; 5108 85 02                    ..
-        pla                                     ; 510A 68                       h
-        sta     $03                             ; 510B 85 03                    ..
-        pla                                     ; 510D 68                       h
-        sta     $04                             ; 510E 85 04                    ..
-        pla                                     ; 5110 68                       h
-        sta     $05                             ; 5111 85 05                    ..
-        pla                                     ; 5113 68                       h
-        sta     $06                             ; 5114 85 06                    ..
-        pla                                     ; 5116 68                       h
-        sta     $07                             ; 5117 85 07                    ..
-        pla                                     ; 5119 68                       h
-        sta     $08                             ; 511A 85 08                    ..
-        pla                                     ; 511C 68                       h
-        sta     $09                             ; 511D 85 09                    ..
-        pla                                     ; 511F 68                       h
-        sta     $14                             ; 5120 85 14                    ..
-        pla                                     ; 5122 68                       h
-        sta     $15                             ; 5123 85 15                    ..
-        rts                                     ; 5125 60                       `
+L5086:  lda     r9H
+        pha
+        lda     r9L
+        pha
+        lda     r3H
+        pha
+        lda     r3L
+        pha
+        lda     r2H
+        pha
+        lda     r2L
+        pha
+        lda     r1H
+        pha
+        lda     r1L
+        pha
+        lda     r0H
+        pha
+        lda     r0L
+        pha
+        ldx     #$02
+        lda     r7H
+        sta     r9H
+        lda     r7L
+        sta     r9L
+L50AE:  lda     r9H
+        cmp     #$50
+        bne     L50B8
+        lda     r9L
+        cmp     #$00
+L50B8:  bcc     L50C6
+        lda     r9H
+        cmp     #$51
+        bne     L50C4
+        lda     r9L
+        cmp     #$5F
+L50C4:  bcc     L50DD
+L50C6:  ldy     #$00
+        lda     (r9L),y
+        sta     diskBlkBuf,x
+        clc
+        lda     #$01
+        adc     r9L
+        sta     r9L
+        bcc     L50D8
+        inc     r9H
+L50D8:  inx
+        bne     L50AE
+        beq     L5107
+L50DD:  jsr     L5126
+        ldx     r0L
+L50E2:  clc
+        lda     #$01
+        adc     r9L
+        sta     r9L
+        bcc     L50ED
+        inc     r9H
+L50ED:  inx
+        beq     L5107
+        lda     r9H
+        cmp     #$51
+        bne     L50FA
+        lda     r9L
+        cmp     #$5F
+L50FA:  bcc     L50E2
+        ldy     #$00
+L50FE:  lda     (r9L),y
+        sta     diskBlkBuf,x
+        iny
+        inx
+        bne     L50FE
+L5107:  pla
+        sta     r0L
+        pla
+        sta     r0H
+        pla
+        sta     r1L
+        pla
+        sta     r1H
+        pla
+        sta     r2L
+        pla
+        sta     r2H
+        pla
+        sta     r3L
+        pla
+        sta     r3H
+        pla
+        sta     r9L
+        pla
+        sta     r9H
+        rts
 
-; ----------------------------------------------------------------------------
-L5126:  sec                                     ; 5126 38                       8
-        lda     $14                             ; 5127 A5 14                    ..
-        sbc     #$00                            ; 5129 E9 00                    ..
-        sta     $04                             ; 512B 85 04                    ..
-        lda     $15                             ; 512D A5 15                    ..
-        sbc     #$50                            ; 512F E9 50                    .P
-        sta     $05                             ; 5131 85 05                    ..
-        stx     $02                             ; 5133 86 02                    ..
-        lda     #$80                            ; 5135 A9 80                    ..
-        sta     $03                             ; 5137 85 03                    ..
-        dex                                     ; 5139 CA                       .
-        txa                                     ; 513A 8A                       .
-        eor     #$FF                            ; 513B 49 FF                    I.
-        sta     $06                             ; 513D 85 06                    ..
-        lda     #$00                            ; 513F A9 00                    ..
-        sta     $07                             ; 5141 85 07                    ..
-        clc                                     ; 5143 18                       .
-        lda     #$7B                            ; 5144 A9 7B                    .{
-        adc     $04                             ; 5146 65 04                    e.
-        sta     $04                             ; 5148 85 04                    ..
-        lda     #$0D                            ; 514A A9 0D                    ..
-        adc     $05                             ; 514C 65 05                    e.
-        sta     $05                             ; 514E 85 05                    ..
-        lda     $88C3                           ; 5150 AD C3 88                 ...
-        sta     $08                             ; 5153 85 08                    ..
-        inc     $88C3                           ; 5155 EE C3 88                 ...
-        jsr     FetchRAM                        ; 5158 20 CB C2                  ..
-        dec     $88C3                           ; 515B CE C3 88                 ...
-        rts                                     ; 515E 60                       `
+L5126:  sec
+        lda     r9L
+        sbc     #$00
+        sta     r1L
+        lda     r9H
+        sbc     #$50
+        sta     r1H
+        stx     r0L
+        lda     #$80
+        sta     r0H
+        dex
+        txa
+        eor     #$FF
+        sta     r2L
+        lda     #$00
+        sta     r2H
+        clc
+        lda     #$7B
+        adc     r1L
+        sta     r1L
+        lda     #$0D
+        adc     r1H
+        sta     r1H
+        lda     $88C3
+        sta     r3L
+        inc     $88C3
+        jsr     FetchRAM
+        dec     $88C3
+        rts
 
-; ----------------------------------------------------------------------------
