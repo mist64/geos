@@ -152,16 +152,11 @@ L5114:	sta r0L,y
 	iny
 	bne L5114
 	LoadB $b3, 3
-	lda #$3C
-	sta tapeBuffVec
-	lda #$A0
-	sta BASICMemTop
-	lda #$08
-	sta BASICMemBot
-	lda #$04
-	sta scrAddrHi
-	lda #$36
-	sta CPU_DATA
+	LoadB tapeBuffVec, $3c
+	LoadB BASICMemTop, >$a000
+	LoadB BASICMemBot, >$0800
+	LoadB scrAddrHi, >$0400
+	LoadB CPU_DATA, KRNL_IO_IN
 	lda #$8A
 	sta $A001
 	lda #$F8
