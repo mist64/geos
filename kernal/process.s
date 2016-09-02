@@ -122,8 +122,6 @@ _ExecuteProcesses:
 ; called from main loop
 ;---------------------------------------------------------------
 _ProcessTimers:
-LCB33 = $CB33
-LCB95 = $CB95
 	lda #0
 	tay
 	tax
@@ -143,11 +141,10 @@ LCB95 = $CB95
 	sta TimersTab,Y
 	ora TimersTab+1,Y
 	bne @3
-.if wheels
-        jsr     LCB95                           ; CB55 20 95 CB                  ..
-        jsr     EnableProcess                   ; CB58 20 09 C1                  ..
-.else
 	jsr RProc0
+.if wheels
+	jsr EnableProcess
+.else
 	lda TimersCMDs,x
 	ora #SET_RUNABLE
 	sta TimersCMDs,x
