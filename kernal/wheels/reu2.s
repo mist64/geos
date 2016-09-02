@@ -21,7 +21,7 @@ LC316 = $C316
 LCFD9 = $CFD9
 LFF54 = $FF54
 LFF93 = $FF93
-LFF96 = $FF93
+LFF96 = $FF96
 LFFA5 = $FFA5
 LFFA8 = $FFA8
 LFFAB = $FFAB
@@ -349,7 +349,7 @@ L52EE:	.byte "A,"
 	.byte $1B,$00,$18
 	.byte "Partition "
 
-L52FD:	.byte "  "
+L52FD:	.byte "      "
 	.byte $18
 	.byte "...Continue?"
 
