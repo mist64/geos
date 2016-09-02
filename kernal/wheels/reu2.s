@@ -5,13 +5,12 @@
 .include "kernal.inc"
 .include "c64.inc"
 .include "jumptab.inc"
+.include "diskdrv.inc"
 
 .segment "reu2"
 
 L4000 = $4000
 L4003 = $4003
-L9036 = $9036
-L903C = $903C
 L903F = $903F
 L9048 = $9048
 L9050 = $9050
@@ -54,7 +53,7 @@ L5020:	jsr LCFD9
 _NSetGEOSDisk:
 	lda #$31
 	sta L50C9
-	jsr L9036
+	jsr GetBorder
 	txa
 	bne L5068
 	bit isGEOS
@@ -68,7 +67,7 @@ _NSetGEOSDisk:
 	lda $8222
 	sta r1L
 	beq L5069
-	jsr L903C
+	jsr ReadBuff
 	bne L5068
 	lda $80AC
 	sta r1H
@@ -1422,7 +1421,7 @@ L5CA9:	lda r1H
 	lda r1L
 	sta r6L
 	jsr L9048
-L5CB4:	jsr L903C
+L5CB4:	jsr ReadBuff
 	stx $8002
 	stx $8022
 	stx $8042
@@ -1541,7 +1540,7 @@ L5D91:	sta L5DAD
 L5DAD:	brk
 L5DAE:	jsr ExitTurbo
 	jsr EnterTurbo
-	jsr L903C
+	jsr ReadBuff
 	ldy #$00
 L5DB9:	lda #$00
 	sta $8002,y

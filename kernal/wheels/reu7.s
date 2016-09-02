@@ -5,8 +5,8 @@
 .include "kernal.inc"
 .include "c64.inc"
 .include "jumptab.inc"
+.include "diskdrv.inc"
 
-L903C = $903C
 L9048 = $9048
 L904B = $904B
 L9050 = $9050
@@ -305,7 +305,7 @@ L5232:	jsr L9048
 	sta r1H
 	lda r6L
 	sta r1L
-	jsr L903C
+	jsr ReadBuff
 	txa
 	beq L5244
 	rts
@@ -538,7 +538,7 @@ L53FF:	lda $82AC
 	beq L542D
 	txa
 	bne L542F
-	jsr L903C
+	jsr ReadBuff
 	lda #$80
 	sta r5H
 	lda #$02

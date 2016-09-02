@@ -5,9 +5,8 @@
 .include "kernal.inc"
 .include "c64.inc"
 .include "jumptab.inc"
+.include "diskdrv.inc"
 
-L9036 = $9036
-L903C = $903C
 L903F = $903F
 L9048 = $9048
 
@@ -59,7 +58,7 @@ L5032:	jsr L5092
 	sta r1L
 	lda L5091
 	sta r1H
-	jsr L903C
+	jsr ReadBuff
 	txa
 	bne L5076
 	ldy L508F
@@ -237,7 +236,7 @@ _MakeSysDir:
 	ldx #$0D
 L51CF:	rts
 
-L51D0:	jsr L9036
+L51D0:	jsr GetBorder
 	txa
 	bne L51CF
 	bit isGEOS

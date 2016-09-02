@@ -5,11 +5,11 @@
 .include "kernal.inc"
 .include "c64.inc"
 .include "jumptab.inc"
+.include "diskdrv.inc"
 
 .import KbdNextKey
 L4400 = $4400
 L9033 = $9033
-L903C = $903C
 L903F = $903F
 L9063 = $9063
 L906C = $906C
@@ -111,7 +111,7 @@ L50AF:	stx r1L
 	sta $7EF9
 	txa
 	beq L50F7
-L50B9:	jsr L903C
+L50B9:	jsr ReadBuff
 	bne L50F9
 	lda #$80
 	sta r5H
@@ -157,7 +157,7 @@ code2_start:
 	lda $8413
 	sta r1L
 	beq L792C
-	jsr L903C
+	jsr ReadBuff
 	bne L792C
 	inc L7F01
 	jsr L7C56
@@ -405,7 +405,7 @@ L7AFC:	jsr L7B76
 	sta r1L
 	lda L7EFB
 	sta r1H
-	jsr L903C
+	jsr ReadBuff
 	bne L7B30
 	ldy L7EFC
 	lda #$00

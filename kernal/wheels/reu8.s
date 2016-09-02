@@ -5,8 +5,8 @@
 .include "kernal.inc"
 .include "c64.inc"
 .include "jumptab.inc"
+.include "diskdrv.inc"
 
-L903C = $903C
 L903F = $903F
 L9050 = $9050
 L9063 = $9063
@@ -311,7 +311,7 @@ L7AE1:	jsr L7B52
 	clc
 	adc #$02
 	sta r1H
-	jsr L903C
+	jsr ReadBuff
 	txa
 	bne L7B37
 L7B0B:	ldy L7FE9
@@ -322,7 +322,7 @@ L7B0B:	ldy L7FE9
 	sty L7FE9
 	bne L7B23
 	inc r1H
-	jsr L903C
+	jsr ReadBuff
 	txa
 	bne L7B37
 L7B23:	lda r1H
@@ -483,7 +483,7 @@ L7C41:	jsr L7B55
 	sta r1L
 	lda #$00
 	sta r1H
-	jsr L903C
+	jsr ReadBuff
 	lda L7FE6
 	sta $8003
 	bmi L7C76
@@ -513,7 +513,7 @@ L7C9C:	lda #$01
 	sta r1L
 	lda #$02
 	sta r1H
-	jsr L903C
+	jsr ReadBuff
 	lda L7FE0
 	sta $8008
 	jmp L903F

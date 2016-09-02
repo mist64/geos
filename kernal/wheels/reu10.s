@@ -5,12 +5,12 @@
 .include "kernal.inc"
 .include "c64.inc"
 .include "jumptab.inc"
+.include "diskdrv.inc"
 
 .segment "reu10"
 
 L4000 = $4000
 L4003 = $4003
-L903C = $903C
 L9050 = $9050
 L9053 = $9053
 L9063 = $9063
@@ -457,7 +457,7 @@ L7B11:	sec
 	lda $8146
 	cmp #$01
 	bne L7B3F
-	jsr L903C
+	jsr ReadBuff
 	txa
 	bne L7B55
 	lda $8003
