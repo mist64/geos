@@ -169,10 +169,7 @@ L513F:	lda #$90
 	sta r1L
 	lda L5164-8,x
 	sta r1H
-	lda #$0D
-	sta r2H
-	lda #$80
-	sta r2L
+	LoadW r2, $0d80
 	lda #$00
 	sta r3L
 	jmp SwapRAM
