@@ -183,6 +183,8 @@ DrawCheckeredScreen:
 	lda #2
 	jsr SetPattern
 	jsr i_Rectangle
+.global ScreenDimensions
+ScreenDimensions:
 	.byte 0, 199
 	.word 0, 319
 	rts

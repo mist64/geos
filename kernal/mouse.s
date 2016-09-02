@@ -203,14 +203,14 @@ CheckMsePos:
 
 .if wheels
 ; this got moved :(
-LC4A1 = $C4A1
+.import ScreenDimensions
 ResetMseRegion:
-LEC75:  ldy     #$05                            ; EC75 A0 05                    ..
-LEC77:  lda     LC4A1,y                         ; EC77 B9 A1 C4                 ...
-        sta     $84B8,y                         ; EC7A 99 B8 84                 ...
-        dey                                     ; EC7D 88                       .
-        bpl     LEC77                           ; EC7E 10 F7                    ..
-        rts                                     ; EC80 60                       `
+	ldy #5
+@1:	lda ScreenDimensions,y
+	sta mouseTop,y
+	dey
+	bpl @1
+	rts
 .endif
 
 CheckClickPos:
