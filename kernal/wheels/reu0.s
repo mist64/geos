@@ -8,27 +8,28 @@
 
 .segment "reu0"
 
-	jmp L51B6
-
-	jmp L51D8
-
-	jmp L51E6
-
-	jmp L51F3
-
-	jmp L5208
-
-	jmp L5235
-
-	jmp L5266
-
-	jmp L52C8
-
-	jmp L5325
-
-	jmp L5374
-
-	jmp L52F4
+GetRAMBam:
+	jmp _GetRAMBam
+PutRAMBam:
+	jmp _PutRAMBam
+AllocAllRAM:
+	jmp _AllocAllRAM
+AllocRAMBlock:
+	jmp _AllocRAMBlock
+FreeRAMBlock:
+	jmp _FreeRAMBlock
+GetRAMInfo:
+	jmp _GetRAMInfo
+RamBlkAlloc:
+	jmp _RamBlkAlloc
+RemoveDrive:
+	jmp _RemoveDrive
+SvRamDevice:
+	jmp _SvRamDevice
+DelRamDevice:
+	jmp _DelRamDevice
+RamDevInfo:
+	jmp _RamDevInfo
 
 	.byte "MR"
 	.byte $22
@@ -133,7 +134,8 @@ L51A9:	lda L5109,x
 	bpl L51A9
 	rts
 
-L51B6:	ldy #$1F
+_GetRAMBam:
+	ldy #$1F
 L51B8:	lda L5025,y
 	sta L5045,y
 	dey
@@ -153,21 +155,24 @@ L51C6:	eor L5025,y
 	tay
 	rts
 
-L51D8:	ldy #$1F
+_PutRAMBam:
+	ldy #$1F
 L51DA:	lda L5045,y
 	sta L5025,y
 	dey
 	bpl L51DA
 	jmp L51C1
 
-L51E6:	ldy #$1F
+_AllocAllRAM:
+	ldy #$1F
 	lda #$00
 L51EA:	sta L5045,y
 	dey
 	bpl L51EA
 	jmp L51C1
 
-L51F3:	jsr L5212
+_AllocRAMBlock:
+	jsr L5212
 	bcs L520F
 	beq L520F
 L51FA:	lda L522D,x
@@ -176,7 +181,8 @@ L51FA:	lda L522D,x
 	ldx #$00
 	jmp L51C1
 
-L5208:	jsr L5212
+_FreeRAMBlock:
+	jsr L5212
 	bcs L520F
 	beq L51FA
 L520F:	ldx #$06
@@ -202,16 +208,17 @@ L522C:	rts
 
 L522D:	.byte $80, $40, $20, $10, $08, $04, 02, $01
 
-L5235:	jsr L51B6
+_GetRAMInfo:
+	jsr _GetRAMBam
 	ldx $88C3
 	dex
 	stx r2L
 	lda #$00
 	sta r3L
-	jsr L5266
+	jsr _RamBlkAlloc
 	lda r6H
 	sta r2L
-	jsr L51B6
+	jsr _GetRAMBam
 	lda #$00
 	sta r4L
 	sta r4H
@@ -223,9 +230,10 @@ L5256:	jsr L5212
 	inc r4H
 L525F:	inc r6L
 	bne L5256
-L5263:	jmp L51B6
+L5263:	jmp _GetRAMBam
 
-L5266:	ldx r3L
+_RamBlkAlloc:
+	ldx r3L
 	stx L52C7
 	bne L526E
 	inx
@@ -265,7 +273,7 @@ L52A1:	inc r6L
 	beq L52B8
 	cmp r3L
 	bne L52C4
-L52B8:	jsr L51F3
+L52B8:	jsr _AllocRAMBlock
 	inc r6L
 	dec r3H
 	bne L52B8
@@ -276,7 +284,8 @@ L52C4:	ldx #$03
 	rts
 
 L52C7:	.byte $01
-L52C8:	lda NUMDRV
+_RemoveDrive:
+	lda NUMDRV
 	cmp #$02
 	bcc L52F3
 	ldy r4L
@@ -295,7 +304,8 @@ L52C8:	lda NUMDRV
 	dec NUMDRV
 L52F3:	rts
 
-L52F4:	tya
+_RamDevInfo:
+	tya
 	pha
 	lda L5064,y
 	sta r7L
@@ -324,7 +334,8 @@ L5321:	dey
 	bne L5316
 L5324:	rts
 
-L5325:	ldx #$04
+_SvRamDevice:
+	ldx #$04
 	tya
 	beq L5334
 	cpy #$09
@@ -342,8 +353,8 @@ L5335:	lda L506C,y
 	rts
 
 L5340:	sty L5373
-	jsr L51B6
-	jsr L5266
+	jsr _GetRAMBam
+	jsr _RamBlkAlloc
 	txa
 	bne L5372
 	ldy L5373
@@ -359,13 +370,14 @@ L5363:	lda (r0L),y
 	sta (r1L),y
 	dey
 	bpl L5363
-	jsr L51D8
+	jsr _PutRAMBam
 	ldy L5373
 	ldx #$00
 L5372:	rts
 
 L5373:	.byte $01
-L5374:	ldx #$0D
+_DelRamDevice:
+	ldx #$0D
 	tya
 	beq L5382
 	cpy #$09
@@ -375,14 +387,14 @@ L5374:	ldx #$0D
 L5382:	rts
 
 L5383:	sty L5373
-	jsr L51B6
+	jsr _GetRAMBam
 	ldy L5373
 	lda L506C,y
 	sta r6L
 	lda L5074,y
 	sta r3H
 	beq L53A1
-L5398:	jsr L5208
+L5398:	jsr _FreeRAMBlock
 	inc r6L
 	dec r3H
 	bne L5398
@@ -395,7 +407,7 @@ L53A1:	ldy L5373
 	ldy #$00
 	tya
 	sta (r1L),y
-	jsr L51D8
+	jsr _PutRAMBam
 	ldx #$00
 	rts
 

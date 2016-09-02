@@ -10,6 +10,9 @@
 .include "kernal.inc"
 .include "diskdrv.inc"
 .include "jumptab.inc"
+.if wheels
+.include "jumptab_wheels.inc"
+.endif
 
 ; conio.s
 .import _UseSystemFont

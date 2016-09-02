@@ -10,6 +10,9 @@
 .include "kernal.inc"
 .include "jumptab.inc"
 .include "c64.inc"
+.if wheels
+.include "jumptab_wheels.inc"
+.endif
 
 ; conio.s
 .import _UseSystemFont
