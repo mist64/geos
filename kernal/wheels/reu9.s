@@ -16,6 +16,8 @@ L906C = $906C
 L9D80 = $9D80
 L9D83 = $9D83
 
+.segment "reu9"
+
 	ldx #$05
 	lda dirEntryBuf
 	and #$BF

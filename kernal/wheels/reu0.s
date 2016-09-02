@@ -6,6 +6,8 @@
 .include "c64.inc"
 .include "jumptab.inc"
 
+.segment "reu0"
+
 	jmp L51B6
 
 	jmp L51D8

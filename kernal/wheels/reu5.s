@@ -29,6 +29,8 @@ LFFB4 = $FFB4
 .import DBGFilesFound
 .import DBGFNameTable
 
+.segment "reu5"
+
 	jmp L502A
 
 	jmp L50DD

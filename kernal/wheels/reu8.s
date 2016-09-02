@@ -13,6 +13,8 @@ L9063 = $9063
 L9D80 = $9D80
 L9D83 = $9D83
 
+.segment "reu8"
+
 	lda #$00
 	.byte $2c
 	lda #$80

@@ -6,6 +6,8 @@
 .include "c64.inc"
 .include "jumptab.inc"
 
+.segment "reu1"
+
 LFFA8 = $FFA8
 LFF93 = $FF93
 LFFB1 = $FFB1

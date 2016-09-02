@@ -6,6 +6,8 @@
 .include "c64.inc"
 .include "jumptab.inc"
 
+.segment "reu4"
+
 	jsr EnterTurbo
 	txa
 	beq L5007

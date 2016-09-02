@@ -12,6 +12,8 @@ L904B = $904B
 L9050 = $9050
 L9053 = $9053
 
+.segment "reu7"
+
 	lda #$00
 	sta L54CF
 	sta L54D0

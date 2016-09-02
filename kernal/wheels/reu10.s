@@ -6,6 +6,8 @@
 .include "c64.inc"
 .include "jumptab.inc"
 
+.segment "reu10"
+
 L4000 = $4000
 L4003 = $4003
 L903C = $903C

@@ -6,6 +6,8 @@
 .include "c64.inc"
 .include "jumptab.inc"
 
+.segment "reu11"
+
 L8B42 = $8B42
 L8B45 = $8B45
 L8B48 = $8B48
