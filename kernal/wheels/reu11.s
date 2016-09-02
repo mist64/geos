@@ -9,10 +9,6 @@
 .segment "reu11"
 
 .import RstrKernal
-LC304 = $C304
-LE395 = $E395
-LE398 = $E398
-LE39B = $E39B
 LE39D = $E39D
 LE4B7 = $E4B7
 LFCF8 = $FCF8
@@ -157,10 +153,10 @@ L5114:	sta r0L,y
 	LoadB BASICMemBot, >$0800
 	LoadB scrAddrHi, >$0400
 	LoadB CPU_DATA, KRNL_IO_IN
-	LoadW $a000, $8af8
+	LoadW $a000, L5148
 	jmp LFCF8
 
-	LoadB CPU_DATA, KRNL_BAS_IO_IN
+L5148:	LoadB CPU_DATA, KRNL_BAS_IO_IN
 	jsr L8B42
 	jsr L8B45
 	jsr L8B48
@@ -185,13 +181,14 @@ L5114:	sta r0L,y
 	lda SaveDevice
 	sta curDevice
 	cli
-	jmp LE39D
+	jmp $E39D ; continue with BASIC cold start
 
-L8B42:	jmp (LE395)
+L8B42:	jmp ($E395) ; initialise the BASIC vector table
 
-L8B45:	jmp (LE398)
+L8B45:	jmp ($E398) ; initialise the BASIC RAM locations
 
-L8B48:	jmp (LE39B)
+L8B48:	jmp ($E39B) ; print the start up message and
+                    ; initialise the memory pointers
 
 NMIHandler:
 	pha
@@ -203,7 +200,7 @@ NMIHandler:
 	bne @5
 	lda #$7F
 	sta cia2base+13
-	LoadW nmivec, $fe47
+	LoadW nmivec, $fe47 ; CBM KERNAL NMI handler
 	ldy #3
 @1:	lda SaveBASICspace,y
 	sta BASICspace,y
