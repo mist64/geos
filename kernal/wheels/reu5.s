@@ -14,7 +14,6 @@ L9050 = $9050
 L9053 = $9053
 L9063 = $9063
 L9066 = $9066
-LCFD9 = $CFD9
 LFF93 = $FF93
 LFF96 = $FF96
 LFFA5 = $FFA5
@@ -23,6 +22,7 @@ LFFAB = $FFAB
 LFFAE = $FFAE
 LFFB1 = $FFB1
 LFFB4 = $FFB4
+.import LCFD9
 .import DBGFileSelected
 .import DBGFTableIndex
 .import DBGFilesFound

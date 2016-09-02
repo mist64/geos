@@ -17,7 +17,7 @@ L9063 = $9063
 L9D80 = $9D80
 L9D83 = $9D83
 LC313 = $C313
-LCFD9 = $CFD9
+.import LCFD9
 .import TempCurDrive
 
 L5018 = $5018

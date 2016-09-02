@@ -578,7 +578,8 @@ ScreenSaver1:
 
 	.byte 0, 0, 0, 0 ; ??? unused
 
-; ??? unused
+.global LCFD9
+LCFD9:
 	LoadW r0, $4000
 	LoadW r1, $fe40
 	LoadW r2, $01c0
