@@ -160,27 +160,23 @@ L5114:	sta r0L,y
 	LoadW $a000, $8af8
 	jmp LFCF8
 
-	lda #$37
-	sta CPU_DATA
+	LoadB CPU_DATA, KRNL_BAS_IO_IN
 	jsr L8B42
 	jsr L8B45
 	jsr L8B48
-	lda #$8B
-	sta $0319
-	lda #$4B
-	sta nmivec
+	LoadW nmivec, $8b4b
 	lda #$06
 	sta LF1FB_2
-	lda $DD0D
+	lda cia2base+13
 	lda #$FF
-	sta $DD04
-	sta $DD05
+	sta cia2base+4
+	sta cia2base+5
 	lda #$81
-	sta $DD0D
-	lda $DD0E
+	sta cia2base+13
+	lda cia2base+14
 	and #$80
 	ora #$11
-	sta $DD0E
+	sta cia2base+14
 	lda #$2F
 	sta CPU_DDR
 	lda #$E7
@@ -201,11 +197,11 @@ L8B48:	jmp (LE39B)
 	tya
 	pha
 	cld
-	lda $DD0D
+	lda cia2base+13
 	dec LF1FB_2
 	bne L51F7
 	lda #$7F
-	sta $DD0D
+	sta cia2base+13
 	lda #$FE
 	sta $0319
 	lda #$47
