@@ -18,6 +18,7 @@ DevNumChange:
 SwapDrives:
 	jmp _SwapDrives
 
+; x   new device number
 _DevNumChange:
 	stx L5061
 	txa
@@ -29,13 +30,13 @@ _DevNumChange:
 	jsr PurgeTurbo
 	jsr InitForIO
 	LoadW z8b, L5056
-	ldy #$08
+	ldy #L5056_end - L5056
 	lda $88C6
 	bmi L503E
 	cmp #$01
 	beq L5039
 	LoadW z8b, L505E
-	ldy #$04
+	ldy #L505E_end - L505E
 L5039:	jsr L5062
 	bne L5053
 L503E:	ldy L5061
@@ -54,9 +55,11 @@ L5056:	.byte "M-W"
 	.word $0200
 L505C:	.byte $28
 L505D:	.byte $48
+L5056_end:
 
 L505E:	.byte "U0>"
-L5061:	.byte $08
+L5061:	.byte 8
+L505E_end:
 
 L5062:	sty L5097
 	jsr LFFAE
@@ -152,9 +155,9 @@ L5127:	pla
 	beq L5131
 	cmp r5H
 	beq L5134
-	.byte $2C
+	.byte $2c
 L5131:	lda r5H
-	.byte $2C
+	.byte $2c
 L5134:	lda r5L
 	jsr SetDevice
 	bne L513E
@@ -167,7 +170,7 @@ L513F:	LoadW r0, DISK_BASE
 	lda DriverOffsetsH-8,x
 	sta r1H
 	LoadW r2, DISK_DRV_LGH
-	lda #$00
+	lda #0
 	sta r3L
 	jmp SwapRAM
 
