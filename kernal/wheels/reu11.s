@@ -22,7 +22,6 @@ LFF93 = $FF93
 LFFA8 = $FFA8
 LFFAE = $FFAE
 LFFB1 = $FFB1
-.import scrAddrHi
 
 	sei
 	lda r0H
