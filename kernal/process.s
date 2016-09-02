@@ -186,9 +186,9 @@ _ProcessTimers:
 ; Destroyed: a
 ;---------------------------------------------------------------
 _RestartProcess:
-.if wheels
-LCB8F:  jsr     UnblockProcess                  ; CB8F 20 0F C1                  ..
-        jsr     UnfreezeProcess                 ; CB92 20 15 C1                  ..
+.if wheels_size
+	jsr UnblockProcess
+	jsr UnfreezeProcess
 .else
 	lda TimersCMDs,x
 	and #(SET_BLOCKED | SET_FROZEN) ^ $ff
@@ -329,8 +329,8 @@ _DoCheckDelays:
 	bpl @1
 @3:	rts
 
+.if !wheels_size
 _DoExecDelay:
-.if !wheels
 	inc r0L
 	bne @1
 	inc r0H
