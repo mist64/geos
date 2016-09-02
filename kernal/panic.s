@@ -89,24 +89,6 @@ StackPtr:
 
 	.byte 0, 0, 0 ; PADDING
 
-.elseif wheels
-_Panic:
-	sec                                     ; CEF0 38                       8
-	pla                                     ; CEF1 68                       h
-	sbc     #$02                            ; CEF2 E9 02                    ..
-	tay                                     ; CEF4 A8                       .
-	pla                                     ; CEF5 68                       h
-	sbc     #$00                            ; CEF6 E9 00                    ..
-	ldx     #$00                            ; CEF8 A2 00                    ..
-	jsr     @1                           ; CEFA 20 0F CF                  ..
-	tya                                     ; CEFD 98                       .
-	jsr     @1                           ; CEFE 20 0F CF                  ..
-	lda     #$CF                            ; CF01 A9 CF                    ..
-	sta     r0H                             ; CF03 85 03                    ..
-	lda     #$30                            ; CF05 A9 30                    .0
-	sta     r0L                           ; CF07 85 02                    ..
-	jsr     DoDlgBox                        ; CF09 20 56 C2                  V.
-	jmp     EnterDeskTop                    ; CF0C 4C 2C C2                 L,.
 .else
 ;---------------------------------------------------------------
 ; Panic                                                   $C2C2
@@ -115,17 +97,34 @@ _Panic:
 ; Return:    does not return
 ;---------------------------------------------------------------
 _Panic:
+.if wheels
+	sec                                     ; CEF0 38                       8
+	pla                                     ; CEF1 68                       h
+	sbc     #$02                            ; CEF2 E9 02                    ..
+	tay                                     ; CEF4 A8                       .
+	pla                                     ; CEF5 68                       h
+	sbc     #$00                            ; CEF6 E9 00                    ..
+.else
 	PopW r0
 	SubVW 2, r0
 	lda r0H
+.endif
+.endif
+
 	ldx #0
 	jsr @1
+.if wheels
+	tya                                     ; CEFD 98                       .
+.else
 	lda r0L
+.endif
 	jsr @1
 	LoadW r0, _PanicDB_DT
 	jsr DoDlgBox
-.endif
 
+.if wheels
+	jmp     EnterDeskTop                    ; CF0C 4C 2C C2                 L,.
+.endif
 @1:	pha
 	lsr
 	lsr
