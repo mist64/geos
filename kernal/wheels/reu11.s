@@ -112,13 +112,13 @@ L50B9:	jsr PurgeTurbo
 	sei
 	ldy #3
 L50C6:	lda BASICspace,y
-	sta LF1FB_3,y
+	sta SaveBASICspace,y
 	dey
 	bpl L50C6
 	lda #0
 	sta STATUS
 	lda curDevice
-	sta LF1FB_6
+	sta SaveDevice
 	cmp #8
 	bcc L5105
 	cmp #12
@@ -144,7 +144,7 @@ L5105:	ldx #$FF
 	lda #$00
 	sta $D016
 	jsr LFF84
-	ldy #$00
+	ldy #0
 	tya
 L5114:	sta r0L,y
 	sta $0200,y
@@ -164,8 +164,8 @@ L5114:	sta r0L,y
 	jsr L8B42
 	jsr L8B45
 	jsr L8B48
-	LoadW nmivec, $8b4b
-	lda #$06
+	LoadW nmivec, NMIHandler
+	lda #6
 	sta LF1FB_2
 	lda cia2base+13
 	lda #$FF
@@ -181,8 +181,8 @@ L5114:	sta r0L,y
 	sta CPU_DDR
 	lda #$E7
 	sta CPU_DATA
-	sta $D07B
-	lda LF1FB_6
+	sta scpu_turbo
+	lda SaveDevice
 	sta curDevice
 	cli
 	jmp LE39D
@@ -193,43 +193,44 @@ L8B45:	jmp (LE398)
 
 L8B48:	jmp (LE39B)
 
+NMIHandler:
 	pha
 	tya
 	pha
 	cld
 	lda cia2base+13
 	dec LF1FB_2
-	bne L51F7
+	bne @5
 	lda #$7F
 	sta cia2base+13
 	LoadW nmivec, $fe47
 	ldy #3
-L51B8:	lda LF1FB_3,y
+@1:	lda SaveBASICspace,y
 	sta BASICspace,y
 	dey
-	bpl L51B8
+	bpl @1
 	lda LF1FB_5
 	sta currentMode
 	MoveB LF1FB_4, $2D
 	iny
-L51CC:	lda LF1FB,y
-	beq L51DD
+@2:	lda LF1FB,y
+	beq @3
 	sta (curScrLine),y
 	lda $0286
 	sta ($F3),y
 	iny
 	cpy #$28
-	bcc L51CC
-L51DD:	tya
-	beq L51ED
+	bcc @2
+@3:	tya
+	beq @4
 	LoadB curPos, 40
 	LoadB kbdQuePos, 1
 	LoadB kbdQue, CR
-L51ED:	lda $F0D9
+@4:	lda $F0D9
 	cmp #$50
-	beq L51F7
+	beq @5
 	jsr LE4B7
-L51F7:	pla
+@5:	pla
 	tay
 	pla
 	rti
@@ -237,15 +238,12 @@ LF1FB:
 	.res 40, 0
 LF1FB_2:
 	.byte 0
-LF1FB_3:
-	.byte 0
-	.byte 0
-	.byte 0
-	.byte 0
+SaveBASICspace:
+	.byte 0, 0, 0, 0
 LF1FB_4:
 	.byte 0
 LF1FB_5:
 	.byte 0
-LF1FB_6:
+SaveDevice:
 	.byte 0
 code2_end:
