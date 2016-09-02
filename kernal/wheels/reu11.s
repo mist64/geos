@@ -8,7 +8,7 @@
 
 .segment "reu11"
 
-L9D83 = $9D83
+.import RstrKernal
 LC304 = $C304
 LE395 = $E395
 LE398 = $E398
@@ -51,7 +51,7 @@ L5044:	jsr i_MoveData
 L5050:
 	.org SPRITE_PICS
 code2_start:
-	jsr L9D83
+	jsr RstrKernal
 	ldy #$27
 L5055:	lda $0400,y
 	cmp #$5B

@@ -13,8 +13,8 @@ L9033 = $9033
 L903F = $903F
 L9063 = $9063
 L906C = $906C
-L9D80 = $9D80
-L9D83 = $9D83
+.import GetNewKernal
+.import RstrKernal
 
 L5704 = L7F0A - PRINTBASE + L50FA
 L5708 = L7F0E - PRINTBASE + L50FA
@@ -185,9 +185,9 @@ L792F:	lda #$80
 L7945:	ldx #$45
 	.byte $2C
 L7948:	ldx #$49
-	jsr L9D83
+	jsr RstrKernal
 	txa
-	jmp L9D80
+	jmp GetNewKernal
 
 L7951:	bit L7F32
 	bvc L7963

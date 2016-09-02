@@ -14,8 +14,8 @@ L4003 = $4003
 L9050 = $9050
 L9053 = $9053
 L9063 = $9063
-L9D80 = $9D80
-L9D83 = $9D83
+.import GetNewKernal
+.import RstrKernal
 LC313 = $C313
 .import LCFD9
 .import TempCurDrive
@@ -680,13 +680,13 @@ L7D13:	brk
 L7D14:	brk
 L7D15:	brk
 L7D16:	brk
-L7D17:	jsr L9D83
+L7D17:	jsr RstrKernal
 	lda #$45
-	jsr L9D80
+	jsr GetNewKernal
 	jsr L5018
-	jsr L9D83
+	jsr RstrKernal
 	lda #$4A
-	jmp L9D80
+	jmp GetNewKernal
 
 L7D2A:	jsr L7C00
 	jsr FindFile

@@ -10,8 +10,8 @@
 L903F = $903F
 L9050 = $9050
 L9063 = $9063
-L9D80 = $9D80
-L9D83 = $9D83
+.import GetNewKernal
+.import RstrKernal
 
 L5087 = L793F - PRINTBASE + L5048
 L5721 = L7FD9 - PRINTBASE + L5048
@@ -68,27 +68,27 @@ code2_start:
 	lda #$00
 	sta L7B8F
 	sta L79A8
-	jsr L9D83
+	jsr RstrKernal
 	lda #$45
-	jsr L9D80
+	jsr GetNewKernal
 	jsr L79C9
 	txa
 	bne L7929
 	bit L793F
 	bmi L7929
-	jsr L9D83
+	jsr RstrKernal
 	jsr L7940
 	lda #$45
-	jsr L9D80
+	jsr GetNewKernal
 	jsr L7BC7
 L7929:	txa
 	pha
 	jsr L7B52
 	jsr OpenDisk
-	jsr L9D83
+	jsr RstrKernal
 	jsr L79B0
 	lda #$48
-	jsr L9D80
+	jsr GetNewKernal
 	pla
 	tax
 	rts
@@ -107,7 +107,7 @@ L7946:	and #$F0
 	cmp #$30
 	beq L7945
 	lda #$40
-	jsr L9D80
+	jsr GetNewKernal
 	jsr L500F
 	lda r2L
 	beq L79A0
@@ -138,11 +138,11 @@ L797A:	lda L79A8
 	lda r3L
 	sta L79A9
 	sty L79AA
-	jmp L9D83
+	jmp RstrKernal
 
 L79A0:	lda #$00
 	sta L79A8
-	jmp L9D83
+	jmp RstrKernal
 
 L79A8:	brk
 L79A9:	brk
@@ -156,10 +156,10 @@ L79B5:	rts
 L79B6:	lda L79A8
 	beq L79B5
 	lda #$40
-	jsr L9D80
+	jsr GetNewKernal
 	ldy L79AA
 	jsr L501B
-	jmp L9D83
+	jmp RstrKernal
 
 L79C9:	lda #$01
 	sta L7B8F
