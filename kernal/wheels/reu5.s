@@ -316,11 +316,11 @@ L522C:	.byte "R"
 	lda $9FE1
 	sta L5270
 	jsr i_ColorRectangle
-	.byte $08,$04,$18,$0A
+	.byte 8, 4, 24, 10
 L5270:	.byte $B3
 	jsr i_FrameRectangle
-	.byte $22,$6E
-	.word $0042,$00FE
+	.byte 34, 110
+	.word 66, 254
 	.byte $FF
 	rts
 
