@@ -6,6 +6,16 @@
 .include "c64.inc"
 .include "jumptab.inc"
 
+.import KbdNextKey
+L4400 = $4400
+L9033 = $9033
+L903C = $903C
+L903F = $903F
+L9063 = $9063
+L906C = $906C
+L9D80 = $9D80
+L9D83 = $9D83
+
 	ldx #$05
 	lda dirEntryBuf
 	and #$BF
@@ -128,8 +138,8 @@ L50DA:	clc
 L50F7:	ldx #$05
 L50F9:	rts
 
-L50FA:	jsr L7945
-	jsr L7951
+L50FA:	jsr $7945
+	jsr $7951
 	lda $8414
 	sta r1H
 	lda $8413
@@ -138,7 +148,7 @@ L50FA:	jsr L7945
 	jsr L903C
 	bne L5126
 	inc $7F01
-	jsr L7C56
+	jsr $7C56
 	lda $7F23
 	cmp #$01
 	bne L5129
@@ -150,12 +160,12 @@ L5126:	lda #$00
 	.byte $2C
 L5129:	lda #$80
 	sta $7EF8
-	jsr L79BC
+	jsr $79BC
 	txa
 	pha
-	jsr L7B76
-	jsr L7964
-	jsr L7948
+	jsr $7B76
+	jsr $7964
+	jsr $7948
 	pla
 	tax
 	rts
@@ -168,7 +178,7 @@ L5129:	lda #$80
 
 	bit $7F32
 	bvc L515D
-	jsr L797A
+	jsr $797A
 	lda DBoxDescH
 	sta $79BB
 	lda DBoxDescL
@@ -181,7 +191,7 @@ L515D:	rts
 	sta DBoxDescH
 	lda $79BA
 	sta DBoxDescL
-	jsr L7977
+	jsr $7977
 L5170:	rts
 
 	ldy #$91
@@ -225,28 +235,28 @@ L5170:	rts
 	sta $7EFD
 	bit $7F31
 	bpl L51C5
-	jsr L79EE
+	jsr $79EE
 	bne L51E7
 L51C5:	bit $7F33
 	bpl L51CD
-	jmp L7AFC
+	jmp $7AFC
 
-L51CD:	jsr L7C69
+L51CD:	jsr $7C69
 	bit $7EF8
 	bpl L51DD
 	bvc L51DD
-	jsr L7C87
+	jsr $7C87
 	clv
 	bvc L51E0
-L51DD:	jsr L7D9C
+L51DD:	jsr $7D9C
 L51E0:	txa
 	pha
-	jsr L7C6C
+	jsr $7C6C
 	pla
 	tax
 L51E7:	rts
 
-	jsr L7B79
+	jsr $7B79
 	beq L51EE
 L51ED:	rts
 
@@ -261,7 +271,7 @@ L51EE:	ldx $7F30
 	sta $7AFA
 	lda $82AC
 	sta $7AFB
-	jsr L7AB4
+	jsr $7AB4
 	bit $7F33
 	bmi L523E
 	bit $7F31
@@ -287,9 +297,9 @@ L522B:	lda $7F2D
 L523B:	ldx #$FF
 	rts
 
-L523E:	jsr L7A6E
+L523E:	jsr $7A6E
 	bne L523B
-L5243:	jsr L7B67
+L5243:	jsr $7B67
 	txa
 	bne L5267
 	jsr CalcBlksFree
@@ -375,7 +385,7 @@ L52F1:	rts
 	brk
 	brk
 	brk
-	jsr L7B76
+	jsr $7B76
 	bne L532A
 	lda $7EFA
 	sta r1L
@@ -390,19 +400,19 @@ L530F:	sta diskBlkBuf,y
 	inx
 	cpx #$1E
 	bcc L530F
-	jsr L7BFB
+	jsr $7BFB
 	bne L532A
 	jsr L903F
 	bne L532A
-	jsr L7B79
+	jsr $7B79
 	bne L532A
-	jmp L7B49
+	jmp $7B49
 
 L532A:	rts
 
 	bit $7EF8
 	bpl L5343
-	jsr L7C59
+	jsr $7C59
 	lda $7F22
 	sta r1H
 	lda $7F21
@@ -411,7 +421,7 @@ L532A:	rts
 	beq L5343
 	rts
 
-L5343:	jsr L7B67
+L5343:	jsr $7B67
 	txa
 	bne L5360
 L5349:	lda $7F0E,x
@@ -443,7 +453,7 @@ L536D:	jmp GetFreeDirBlk
 	rts
 
 L537D:	stx $7EFE
-L5380:	jsr L7C08
+L5380:	jsr $7C08
 	bne L53C7
 	ldx $7EFE
 	lda $7F09,x
@@ -507,7 +517,7 @@ L53FF:	ldx #$0C
 L540D:	ldx #$00
 	rts
 
-	jsr L7BFB
+	jsr $7BFB
 	beq L5416
 	rts
 
@@ -564,7 +574,7 @@ L5474:	lda #$00
 	sta r3L
 	jmp DoRAMOp
 
-	jsr L7B76
+	jsr $7B76
 	bne L54A8
 	lda #$10
 	sta $7F02
@@ -576,7 +586,7 @@ L5474:	lda #$00
 	sta r1H
 	lda $7F0F
 	sta r1L
-	jsr L7C4D
+	jsr $7C4D
 	jsr GetBlock
 	beq L54A9
 L54A8:	rts
@@ -591,22 +601,22 @@ L54B4:	ldy $7F04
 	lda fileHeader,y
 	sta r1L
 	beq L54E5
-L54C3:	jsr L7C16
+L54C3:	jsr $7C16
 	txa
 	bne L54A8
 	lda $7F02
 	sta $7F03
 	cmp #$44
 	bcc L54E5
-	jsr L7D1F
+	jsr $7D1F
 	txa
 	bne L54A8
-	jsr L7B76
+	jsr $7B76
 	bne L5518
-	jsr L7E7B
+	jsr $7E7B
 	lda r1L
 	bne L54C3
-L54E5:	jsr L7BFB
+L54E5:	jsr $7BFB
 	bne L5518
 	inc $7F04
 	inc $7F04
@@ -614,20 +624,20 @@ L54E5:	jsr L7BFB
 	lda $7F02
 	cmp #$10
 	beq L5500
-	jsr L7D1F
+	jsr $7D1F
 	txa
 	beq L5505
 	rts
 
-L5500:	jsr L7B79
+L5500:	jsr $7B79
 	bne L5518
-L5505:	jsr L7C4D
+L5505:	jsr $7C4D
 	lda $7F10
 	sta r1H
 	lda $7F0F
 	sta r1L
 	jsr PutBlock
-	jmp L7B31
+	jmp $7B31
 
 L5518:	rts
 
@@ -639,20 +649,20 @@ L5518:	rts
 	.addr fileHeader
 	.addr L4400
 	.word $0100
-	jsr L79EE
+	jsr $79EE
 	bne L5545
 	jsr i_MoveData
 	.addr L4400
 	.addr fileHeader
 	.word $0100
-L553A:	jsr L7B79
+L553A:	jsr $7B79
 	bne L5545
-	jsr L7E5B
+	jsr $7E5B
 	txa
 	beq L5546
 L5545:	rts
 
-L5546:	jsr L7E14
+L5546:	jsr $7E14
 	jsr InitForIO
 	lda #$10
 	sta $7F02
@@ -677,7 +687,7 @@ L556D:	ldy $7F08
 	inx
 	inx
 	stx $7F05
-L5581:	jsr L7EAF
+L5581:	jsr $7EAF
 	bne L5593
 	lda $7F02
 	cmp #$43
@@ -687,7 +697,7 @@ L558D:	jsr DoneWithIO
 
 L5593:	jmp DoneWithIO
 
-	jsr L7B76
+	jsr $7B76
 	bne L560D
 	lda $7F10
 	sta r1H
@@ -698,7 +708,7 @@ L5593:	jmp DoneWithIO
 	sta $7F03
 	lda #$00
 	sta $7F08
-L55B2:	jsr L7C16
+L55B2:	jsr $7C16
 	txa
 	bne L560D
 L55B8:	lda $7F02
@@ -707,20 +717,20 @@ L55B8:	lda $7F02
 	bmi L55CE
 	bit $7F31
 	bmi L55CE
-	jsr L79EE
+	jsr $79EE
 	beq L55CE
 	rts
 
-L55CE:	jsr L7B79
+L55CE:	jsr $7B79
 	bne L560D
-	jsr L7E5B
+	jsr $7E5B
 	txa
 	bne L560D
-	jsr L7E14
+	jsr $7E14
 	jsr InitForIO
 	lda #$10
 	sta $7F02
-	jsr L7EAF
+	jsr $7EAF
 	bne L560A
 	jsr DoneWithIO
 	jsr PutDirHead
@@ -729,13 +739,13 @@ L55CE:	jsr L7B79
 	lda $7F03
 	cmp #$44
 	bcc L5607
-	jsr L7B76
+	jsr $7B76
 	bne L560D
-	jsr L7E7B
+	jsr $7E7B
 	lda r1L
 	bne L55B2
 	beq L55B8
-L5607:	jmp L7B31
+L5607:	jmp $7B31
 
 L560A:	jmp DoneWithIO
 

@@ -6,6 +6,18 @@
 .include "c64.inc"
 .include "jumptab.inc"
 
+L4000 = $4000
+L4003 = $4003
+L903C = $903C
+L9050 = $9050
+L9053 = $9053
+L9063 = $9063
+L9D80 = $9D80
+L9D83 = $9D83
+LC313 = $C313
+LCFD9 = $CFD9
+.import TempCurDrive
+
 	jmp L5021
 
 	lda #$00
@@ -164,11 +176,11 @@ L512B:	brk
 	inc $8484
 	dey
 	dey
-L5137:	jmp L7909
+L5137:	jmp $7909
 
-	jmp L79C9
+	jmp $79C9
 
-	jmp L79BC
+	jmp $79BC
 
 	sei
 	cld
@@ -192,17 +204,17 @@ L5168:	jsr NewDisk
 	bne L5177
 	jsr GetDirHead
 	bne L5177
-	jsr L7D2A
+	jsr $7D2A
 	beq L518A
 L5177:	lda #$00
 	sta r4L
-	jsr L79C9
+	jsr $79C9
 	lda $886B
 	bpl L518A
-	jsr L7C9E
+	jsr $7C9E
 	bcc L5177
 	bcs L518F
-L518A:	jsr L7B11
+L518A:	jsr $7B11
 	bcc L5177
 L518F:	ldx #$FF
 	stx $88C5
@@ -273,7 +285,7 @@ L5219:	lda $8486,y
 	beq L5229
 	eor $7A38
 	bmi L5229
-	jsr L7AA9
+	jsr $7AA9
 	bcc L5229
 	rts
 
@@ -285,9 +297,9 @@ L5229:	inc $7A39
 	eor #$80
 	sta $7A38
 	bmi L5248
-	jsr L7A97
+	jsr $7A97
 	bcs L5247
-	jsr L7B57
+	jsr $7B57
 	bcc L5214
 L5247:	rts
 
@@ -295,7 +307,7 @@ L5248:	bit $7C68
 	bmi L5247
 	bit $7A37
 	bmi L5247
-	jsr L7A3A
+	jsr $7A3A
 	lda #$08
 	sta $7A39
 L525A:	jsr SetDevice
@@ -309,7 +321,7 @@ L5262:	inc $7A39
 	brk
 	brk
 	brk
-	jsr L7A85
+	jsr $7A85
 	lda #$08
 	sta r1L
 	lda #$04
@@ -370,7 +382,7 @@ L52E0:	tya
 	bne L5346
 	jsr GetDirHead
 	bne L5346
-	jsr L7D2A
+	jsr $7D2A
 	bne L5300
 	lda curDrive
 	sta $886B
@@ -395,7 +407,7 @@ L5315:	lda $905D
 	sta $905D
 	jsr GetDirHead
 	bne L533B
-	jsr L7D2A
+	jsr $7D2A
 	bne L533B
 	pla
 	pla
@@ -434,7 +446,7 @@ L5346:	clc
 	sta r1H
 	lda $8002
 	sta r1L
-L5376:	jsr L795E
+L5376:	jsr $795E
 	txa
 	bne L538C
 	lda #$00
@@ -463,9 +475,9 @@ L539F:	sta $7D13
 	lda TempCurDrive
 	jsr SetDevice
 	bne L53B5
-	jsr L7BD8
+	jsr $7BD8
 	bcc L53B5
-	jsr L7BA4
+	jsr $7BA4
 	bcc L53B5
 	rts
 
@@ -473,9 +485,9 @@ L53B5:	lda #$08
 	sta $7BA3
 L53BA:	jsr SetDevice
 	bne L53C9
-	jsr L7BD8
+	jsr $7BD8
 	bcc L53C9
-	jsr L7BA4
+	jsr $7BA4
 	bcs L53D9
 L53C9:	inc $7BA3
 	lda $7BA3
@@ -500,7 +512,7 @@ L53D9:	rts
 	and #$F0
 	cmp #$10
 	bne L540C
-L53FD:	jsr L7CB7
+L53FD:	jsr $7CB7
 	bcc L5403
 L5402:	rts
 
@@ -508,7 +520,7 @@ L5403:	lda $88C6
 	and #$F0
 	cmp #$10
 	bne L5402
-L540C:	jmp L7CEC
+L540C:	jmp $7CEC
 
 	lda $7D13
 	bpl L541F
@@ -571,7 +583,7 @@ L5478:	stx $7C65
 
 
 	.byte $00
-	jsr L7C00
+	jsr $7C00
 	jmp PutString
 
 	.byte $00,$00,$00,$00
@@ -587,10 +599,10 @@ L5478:	stx $7C65
 	.byte $85,$CF,$7C,$C3,$80,$13,$45,$7C
 	.byte $01,$11,$48
 	brk
-	jsr L7B11
+	jsr $7B11
 	php
 	ldx $7D14
-	jsr L7D17
+	jsr $7D17
 	lda $7D16
 	sta r1H
 	lda $7D15
@@ -600,9 +612,9 @@ L5478:	stx $7C65
 	rts
 
 	ldx $8869
-	jsr L7D17
+	jsr $7D17
 	jsr L9050
-	jsr L7D2A
+	jsr $7D2A
 	bne L550E
 	lda curDrive
 	bit $7C68
@@ -614,7 +626,7 @@ L5507:	ora #$80
 	rts
 
 L550E:	ldx $7D14
-	jsr L7D17
+	jsr $7D17
 	lda $7D16
 	sta r1H
 	lda $7D15
@@ -624,7 +636,7 @@ L550E:	ldx $7D14
 	rts
 
 	jsr L9050
-	jsr L7D2A
+	jsr $7D2A
 	bne L553B
 	lda curDrive
 	bit $7C68
@@ -654,7 +666,7 @@ L553B:	lda $7D16
 	lda #$4A
 	jmp L9D80
 
-	jsr L7C00
+	jsr $7C00
 	jsr FindFile
 	txa
 	bne L5591

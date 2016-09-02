@@ -6,12 +6,12 @@
 .include "c64.inc"
 .include "jumptab.inc"
 
-L903C
-L903F
-L9050
-L9063
-L9D80
-L9D83
+L903C = $903C
+L903F = $903F
+L9050 = $9050
+L9063 = $9063
+L9D80 = $9D80
+L9D83 = $9D83
 
 	lda #$00
 	.byte $2c
@@ -29,7 +29,7 @@ L5018:	.byte $89
 L501B:	and ($57,x)
 	.byte $20
 L501E:	.byte $63
-	bcc $4FC6
+	.byte $90, $A5
 L5021:	asl z8d
 	.byte $23
 	.byte $57
