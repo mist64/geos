@@ -202,10 +202,7 @@ L8B48:	jmp (LE39B)
 	bne L51F7
 	lda #$7F
 	sta cia2base+13
-	lda #$FE
-	sta $0319
-	lda #$47
-	sta nmivec
+	LoadW nmivec, $fe47
 	ldy #3
 L51B8:	lda LF1FB_3,y
 	sta BASICspace,y
