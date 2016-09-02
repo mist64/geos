@@ -28,19 +28,13 @@ _DevNumChange:
 	sta L505D
 	jsr PurgeTurbo
 	jsr InitForIO
-	lda #$50
-	sta z8c
-	lda #$56
-	sta z8b
+	LoadW z8b, L5056
 	ldy #$08
 	lda $88C6
 	bmi L503E
 	cmp #$01
 	beq L5039
-	lda #$50
-	sta z8c
-	lda #$5E
-	sta z8b
+	LoadW z8b, L505E
 	ldy #$04
 L5039:	jsr L5062
 	bne L5053
@@ -55,12 +49,12 @@ L503E:	ldy L5061
 	sty curDevice
 L5053:	jmp DoneWithIO
 
-	.byte "M-W"
+L5056:	.byte "M-W"
 	.byte $77
 	.word $0200
 L505C:	plp
 L505D:	pha
-	eor mouseOn,x
+L505E:	eor mouseOn,x
 	.byte $3E
 L5061:	php
 L5062:	sty L5097
