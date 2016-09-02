@@ -94,7 +94,7 @@ L506E:	sta BASICspace,y
 	sta r2L
 	sta r2H
 	jsr ReadFile
-	MoveW r7, LF1FB+$2D
+	MoveW r7, LF1FB_4
 	pla
 	sta r0L
 	pla
@@ -110,18 +110,18 @@ L50B9:	jsr PurgeTurbo
 	lda #$37
 	sta CPU_DATA
 	sei
-	ldy #$03
+	ldy #3
 L50C6:	lda BASICspace,y
-	sta LF1FB+$29,y
+	sta LF1FB_3,y
 	dey
 	bpl L50C6
-	lda #$00
+	lda #0
 	sta STATUS
 	lda curDevice
-	sta LF1FB+$2F
-	cmp #$08
+	sta LF1FB_6
+	cmp #8
 	bcc L5105
-	cmp #$0C
+	cmp #12
 	bcs L5105
 	jsr LFFB1
 	lda STATUS
@@ -151,8 +151,7 @@ L5114:	sta r0L,y
 	sta $0300,y
 	iny
 	bne L5114
-	lda #$03
-	sta $B3
+	LoadB $b3, 3
 	lda #$3C
 	sta tapeBuffVec
 	lda #$A0
@@ -179,7 +178,7 @@ L5114:	sta r0L,y
 	lda #$4B
 	sta nmivec
 	lda #$06
-	sta LF1FB+$28
+	sta LF1FB_2
 	lda $DD0D
 	lda #$FF
 	sta $DD04
@@ -195,7 +194,7 @@ L5114:	sta r0L,y
 	lda #$E7
 	sta CPU_DATA
 	sta $D07B
-	lda LF1FB+$2F
+	lda LF1FB_6
 	sta curDevice
 	cli
 	jmp LE39D
@@ -211,7 +210,7 @@ L8B48:	jmp (LE39B)
 	pha
 	cld
 	lda $DD0D
-	dec LF1FB+$28
+	dec LF1FB_2
 	bne L51F7
 	lda #$7F
 	sta $DD0D
@@ -220,13 +219,13 @@ L8B48:	jmp (LE39B)
 	lda #$47
 	sta nmivec
 	ldy #3
-L51B8:	lda LF1FB+$29,y
+L51B8:	lda LF1FB_3,y
 	sta BASICspace,y
 	dey
 	bpl L51B8
-	lda LF1FB+$2E
+	lda LF1FB_5
 	sta currentMode
-	MoveB LF1FB+$2D, $2D
+	MoveB LF1FB_4, $2D
 	iny
 L51CC:	lda LF1FB,y
 	beq L51DD
@@ -249,6 +248,19 @@ L51F7:	pla
 	tay
 	pla
 	rti
-LF1FB: 
-	.res 48, 0
+LF1FB:
+	.res 40, 0
+LF1FB_2:
+	.byte 0
+LF1FB_3:
+	.byte 0
+	.byte 0
+	.byte 0
+	.byte 0
+LF1FB_4:
+	.byte 0
+LF1FB_5:
+	.byte 0
+LF1FB_6:
+	.byte 0
 code2_end:
