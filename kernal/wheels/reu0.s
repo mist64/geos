@@ -68,30 +68,28 @@ L5109:	.byte $59,$17,$35,$1F,$2F,$3D,$FF,$FF
 	.byte $FF,$69,$15,$1F,$33,$35,$1B,$FF
 	.byte $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
 	.byte $FF,$FF,$51,$6F,$A5,$9D,$9B,$99
-	.byte $9B,$7D,$FF,$61,$11,$23,$35,$1B
+	.byte $9B,$7D
+L5109_end1:
+	.byte $FF,$61,$11,$23,$35,$1B
 	.byte $8B,$BF,$FF,$53,$6D,$63,$8B,$BF
+L5109_end2:
 	.byte $FF
+
 	jsr L51A7
-	lda r11H
-	pha
-	lda r11L
-	pha
+	PushW r11
 	jsr L5194
 	jsr L518B
-	lda #$20
+	lda #' '
 	jsr PutChar
 	jsr L518E
-	pla
-	sta r11L
-	pla
-	sta r11H
+	PopW r11
 	clc
 	lda r1H
 	adc #$0A
 	sta r1H
 	jsr L5197
 	jsr L5191
-L516C:	ldx #$38
+L516C:	ldx #L5109_end2 - L5109
 L516E:	lda L5109,x
 	asl a
 	eor #$FF
@@ -101,7 +99,7 @@ L516E:	lda L5109,x
 	rts
 
 	jsr L51A7
-	ldy #$2A
+	ldy #L5109_end1 - L5109
 L5180:	lda L5109,y
 	sta (r0L),y
 	dey
@@ -125,7 +123,7 @@ L5197:	lda #$33
 	sta r0H
 	jmp PutString
 
-L51A7:	ldx #$38
+L51A7:	ldx #L5109_end2 - L5109
 L51A9:	lda L5109,x
 	eor #$FF
 	lsr a
