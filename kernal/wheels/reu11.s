@@ -52,13 +52,13 @@ L5050:
 	.org SPRITE_PICS
 code2_start:
 	jsr RstrKernal
-	ldy #$27
+	ldy #40 - 1
 L5055:	lda $0400,y
-	cmp #$5B
+	cmp #'['
 	bcs L5062
-	cmp #$41
+	cmp #'A'
 	bcc L5062
-	sbc #$40
+	sbc #'@'
 L5062:	sta $8BAB,y
 	dey
 	bpl L5055
