@@ -157,10 +157,7 @@ L5114:	sta r0L,y
 	LoadB BASICMemBot, >$0800
 	LoadB scrAddrHi, >$0400
 	LoadB CPU_DATA, KRNL_IO_IN
-	lda #$8A
-	sta $A001
-	lda #$F8
-	sta SCREEN_BASE
+	LoadW $a000, $8af8
 	jmp LFCF8
 
 	lda #$37
