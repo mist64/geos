@@ -46,9 +46,6 @@
 .import dlgBoxCallerSP
 .import dlgBoxCallerPC
 .import defIconTab
-.if wheels
-.import KbdDBncTab
-.endif
 
 .global Dialog_2
 .global DlgBoxPrep
