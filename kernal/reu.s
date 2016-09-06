@@ -8,6 +8,7 @@
 .include "geosmac.inc"
 .include "config.inc"
 .include "kernal.inc"
+.include "c64.inc"
 
 ; syscalls
 .global _DoRAMOp
@@ -31,17 +32,22 @@ _SwapRAM:
 _FetchRAM:
 	ldy #$91
 _DoRAMOp:
-	ldx #$0D
+
+	ldx #DEV_NOT_FOUND
 	lda r3L
 	cmp ramExpSize
 	bcs L9F09 ; beyond end of REU
+
 	php
 	sei
 	PushB CPU_DATA
+
+ASSERT_NOT_BELOW_IO
 	LoadB CPU_DATA, IO_IN
-	PushB $D030
-	LoadB $D030, 0
-	ldx #$04
+
+	PushB clkreg
+	LoadB clkreg, 0
+	ldx #4
 L9ED2:	lda r0L-1,x
 	sta EXP_BASE+1,x
 	dex
@@ -53,16 +59,17 @@ L9ED2:	lda r0L-1,x
 	stx EXP_BASE+10
 	sty EXP_BASE+1
 	ldx EXP_BASE+1
-	PopB $D030
+	PopB clkreg
 	PopB CPU_DATA
+ASSERT_NOT_BELOW_IO
 	plp
 	txa
-	and #$60
-	cmp #$60
+	and #%01100000
+	cmp #%01100000
 	beq L9F07
-	ldx #$00
-	.byte $2C
-L9F07:	ldx #$25
+	ldx #0
+	.byte $2c
+L9F07:	ldx #WR_VER_ERR
 L9F09:	rts
 .endif
 
@@ -81,13 +88,17 @@ _SwapRAM:
 _FetchRAM:
 	ldy #$91
 _DoRAMOp:
+
 	ldx #DEV_NOT_FOUND
 	lda r3L
 	cmp ramExpSize
 	bcs @2
+
 	ldx CPU_DATA
 ASSERT_NOT_BELOW_IO
+
 	LoadB CPU_DATA, IO_IN
+
 	MoveW r0, EXP_BASE+2
 	MoveW r1, EXP_BASE+4
 	MoveB r3L, EXP_BASE+6
