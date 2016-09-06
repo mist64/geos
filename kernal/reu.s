@@ -19,23 +19,24 @@
 
 .segment "reu"
 
+.if (REUPresent)
 _VerifyRAM:
 	ldy #$93
-.if wheels_size_and_speed
+.if wheels_size
 	.byte $2c
 .else
 	bne _DoRAMOp
 .endif
 _StashRAM:
 	ldy #$90
-.if wheels_size_and_speed
+.if wheels_size
 	.byte $2c
 .else
 	bne _DoRAMOp
 .endif
 _SwapRAM:
 	ldy #$92
-.if wheels_size_and_speed
+.if wheels_size
 	.byte $2c
 .else
 	bne _DoRAMOp
@@ -79,16 +80,10 @@ ASSERT_NOT_BELOW_IO
 	ldx #0
 	.byte $2c
 @2:	ldx #WR_VER_ERR
-@3:	rts
-.endif
-
-.if !wheels
-
-.if (REUPresent)
+.else
 	ldx CPU_DATA
 ASSERT_NOT_BELOW_IO
 	LoadB CPU_DATA, IO_IN
-
 	MoveW r0, EXP_BASE+2
 	MoveW r1, EXP_BASE+4
 	MoveB r3L, EXP_BASE+6
@@ -103,8 +98,9 @@ ASSERT_NOT_BELOW_IO
 	stx CPU_DATA
 ASSERT_NOT_BELOW_IO
 	ldx #0
-@3:	rts
 .endif
+@3:	rts
+.endif ; REUPresent
 
 .if (useRamExp)
 RamExpSetStat:
@@ -334,5 +330,3 @@ RamExWr_1:
 	bpl RamExWr_0
 	jmp RamExRd_End
 .endif
-
-.endif ; wheels
