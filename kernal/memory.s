@@ -173,7 +173,7 @@ _i_MoveData:
 	jsr _MoveData
 .if wheels_size
 .import DoInlineReturn7
-        jmp     DoInlineReturn7                           ; CE16 4C 1F C8                 L..
+	jmp DoInlineReturn7
 .else
 	php
 	lda #7

@@ -20,59 +20,50 @@
 
 .if wheels
 _VerifyRAM:
-	ldy     #$93
-        .byte   $2C
+	ldy #$93
+	.byte $2C
 _StashRAM:
-	ldy     #$90
-        .byte   $2C
+	ldy #$90
+	.byte $2C
 _SwapRAM:
-	ldy     #$92
-        .byte   $2C
+	ldy #$92
+	.byte $2C
 _FetchRAM:
-	ldy     #$91
+	ldy #$91
 _DoRAMOp:
-	ldx     #$0D
-        lda     r3L
-        cmp     ramExpSize
-        bcs     L9F09 ; beyond end of REU
-        php
-        sei
-        lda     $01
-        pha
-        lda     #$35
-        sta     $01
-        lda     $D030
-        pha
-        lda     #$00
-        sta     $D030
-        ldx     #$04
-L9ED2:  lda     $01,x
-        sta     EXP_BASE+1,x
-        dex
-        bne     L9ED2
-        lda     r2H
-        sta     EXP_BASE+8
-        lda     r2L
-        sta     EXP_BASE+7
-        lda     r3L
-        sta     EXP_BASE+6
-        stx     EXP_BASE+9
-        stx     EXP_BASE+10
-        sty     EXP_BASE+1
-        ldx     EXP_BASE+1
-        pla
-        sta     $D030
-        pla
-        sta     $01
-        plp
-        txa
-        and     #$60
-        cmp     #$60
-        beq     L9F07
-        ldx     #$00
-        .byte   $2C
-L9F07:  ldx     #$25
-L9F09:  rts
+	ldx #$0D
+	lda r3L
+	cmp ramExpSize
+	bcs L9F09 ; beyond end of REU
+	php
+	sei
+	PushB CPU_DATA
+	LoadB CPU_DATA, IO_IN
+	PushB $D030
+	LoadB $D030, 0
+	ldx #$04
+L9ED2:	lda r0L-1,x
+	sta EXP_BASE+1,x
+	dex
+	bne L9ED2
+	MoveW r2, EXP_BASE+7
+	lda r3L
+	sta EXP_BASE+6
+	stx EXP_BASE+9
+	stx EXP_BASE+10
+	sty EXP_BASE+1
+	ldx EXP_BASE+1
+	PopB $D030
+	PopB CPU_DATA
+	plp
+	txa
+	and #$60
+	cmp #$60
+	beq L9F07
+	ldx #$00
+	.byte $2C
+L9F07:	ldx #$25
+L9F09:	rts
 .endif
 
 .if !wheels
