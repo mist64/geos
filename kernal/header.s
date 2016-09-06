@@ -70,7 +70,7 @@ c128Flag:
 
 dateCopy:
 .if wheels
-	.byte $63,$01,$01
+	.byte 99,1,1
 .elseif cbmfiles
 	; The cbmfiles version was created by dumping
 	; KERNAL from memory after it had been running,
