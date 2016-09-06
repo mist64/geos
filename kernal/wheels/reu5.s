@@ -960,7 +960,7 @@ L57B3:	jsr LCFD9
 	jsr L4000
 	jmp LCFD9
 
-	jsr LCFD9
+L57BC:	jsr LCFD9
 	jsr L4003
 	jmp LCFD9
 
@@ -1008,11 +1008,11 @@ L580A:	txa
 	sta L57B2
 	lda RecoverVector
 	sta L57B1
-	lda #$57
+	lda #>L57BC
 	sta $84B2
-	lda #$BC
+	lda #<L57BC
 	sta RecoverVector
-	lda #5
+	lda #FILE_NOT_FOUND
 	sta extKrnlIn
 	pla
 	tax

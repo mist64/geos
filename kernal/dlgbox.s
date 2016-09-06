@@ -896,9 +896,9 @@ DBDoGETFILES:
 .import extKrnlIn
 .import AEB87
 	lda extKrnlIn
-	cmp #5
+	cmp #FILE_NOT_FOUND
 	beq @B
-	PushB r10L
+	PushB r10L ; r10: source string
 	sta r5L
 	PushB r10H
 	sta r5H
