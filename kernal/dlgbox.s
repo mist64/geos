@@ -620,13 +620,18 @@ ShortcutKeysEnd:
 
 .if wheels_size
 DBIcDISK:
-.if wheels ; XXX disk swapping + REU? ATTN: *requires* wheels_size!!!
+.if wheels_dialog_chdir ; "Disk" button can change directory
+; Maurice says: If your application includes a dialogue box
+; with the "DISK" icon, that's all you really need to let the
+; user select any partition or subdirectory on a CMD device or
+; a subdirectory on a native ramdisk.
+; ATTN: *requires* wheels_size!!!
 .import GetNewKernal
 .import RstrKernal
 	lda #$40 + 5
 	jsr GetNewKernal
 	jsr ChDiskDirectory
-	jsr RstrKernal ; REU swap, preserving r registers and x, y
+	jsr RstrKernal
 .endif
 	lda #DISK
 	.byte $2c
@@ -893,11 +898,9 @@ DBDoGETFILES:
 	lda extKrnlIn
 	cmp #5
 	beq @B
-	lda r10L
-	pha
+	PushB r10L
 	sta r5L
-	lda r10H
-	pha
+	PushB r10H
 	sta r5H
 	ora r5L
 	beq @A
@@ -908,7 +911,7 @@ DBDoGETFILES:
 @A:	lda #$40 + 5
 	jsr GetNewKernal
 	jsr GetFEntries
-	jsr RstrKernal ; REU swap, preserving r registers and x, y
+	jsr RstrKernal
 	PopW r10
 	bra @C
 @B:	jsr GetFEntries
@@ -1001,7 +1004,6 @@ DBGFArrowPic:
 	.byte %10000000,%00000001,%11111111,%11111111,%10000001,%10000001,%10000011,%11000001
 	.byte %10000000,%00000001,%11111111,%11111111;%10000001,%10000001,%10000001,%10000001
 	;     %11111111,%11111111,%11111111,%11111111,%11111111,%11111111,%11111111,%11111111
-	;     %10111111 %10111111 %10111111 %10111111 %10111111 %10111111 %10111111 %10111111
 	.byte 4, %10000001 ; repeat 4
 	.byte 8, %11111111 ; repeat 8
 

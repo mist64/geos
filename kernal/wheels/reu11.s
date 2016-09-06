@@ -9,6 +9,9 @@
 .segment "reu11"
 
 .import RstrKernal
+.import sFirstPage
+.import ramExpType
+
 LE4B7 = $E4B7
 LFF84 = $FF84
 LFF93 = $FF93
@@ -27,11 +30,11 @@ KToBasic:
 	PopB CPU_DATA
 	txa
 	bmi @1
-	lda $9FED
-	cmp #$04
+	lda ramExpType
+	cmp #4
 	bne @1
-	lda $9FD6
-	; ???
+	lda sFirstPage
+	; ??? probably 65816 code, ramExpType == 4 -> SuperCPU?
 	.byte $8F,$7C,$D2,$01,$AD,$D7,$9F,$8F
 	.byte $7D,$D2,$01,$AD,$D8,$9F,$8F,$7E
 	.byte $D2,$01,$AD,$D9,$9F,$8F,$7F,$D2

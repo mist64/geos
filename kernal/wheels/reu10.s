@@ -19,6 +19,7 @@ L9063 = $9063
 LC313 = $C313
 .import LCFD9
 .import TempCurDrive
+.import sysDBColor
 
 L5018 = $5018
 L5195 = $5195
@@ -348,7 +349,7 @@ L7A3A:	jsr L7A85
 	sta r2L
 	lda #$0C
 	sta r2H
-	lda $9FE1
+	lda sysDBColor
 	sta r4H
 	jsr LC313
 	lda $84B2

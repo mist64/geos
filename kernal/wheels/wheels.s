@@ -18,6 +18,8 @@
 .global dbFieldWidth
 .global extKrnlIn
 .global fftIndicator
+.global ramExpType
+.global sysDBColor
 
 .segment "wheels1"
 
@@ -454,7 +456,16 @@ _GetFile:
 
 ; ----------------------------------------------------------------------------
 	.res 200, 0
-	.byte $00,$01,$00,$00,$00,$00,$00,$00
+	.byte $00,$01,$00,$00
+.global sFirstPage
+sFirstPage:
+	.byte 0
+sFirstBank:
+	.byte 0
+sLastPage:
+	.byte 0
+sLastBank:
+	.byte 0
 
 .global sysScrnColors
 .global sysMob0Clr
@@ -482,13 +493,13 @@ menuColor:
 backColor:
 	.byte $c3
 
-backSysPattern:
+backSysPattern: ; 8 byte system pattern
 	.byte $52, $95, $2d, $52, $8a, $6d, $94, $a2
 ramExpType:
 	.byte $01
 relayDelay:
 	.word $0800
-modKeyCopy:
+modKeyCopy: ; SHIFT, CMDR, CTRL key indicator
 	.byte $00
 extKrnlIn:
 	.byte $00
@@ -499,11 +510,11 @@ fftIndicator:
 
 .segment "wheels_lokernal2"
 
-IntRoutine:
+IntRoutine: ; 128 irq and nmi routine
 	.byte $68, $8d, $00, $ff
-IrqRoutine:
+IrqRoutine: ; 64 irq routine
 	.byte $68, $a8, $68, $aa, $68
-nmiDefault:
+nmiDefault: ; 64 nmi routine
 	.byte $40
 
 .endif

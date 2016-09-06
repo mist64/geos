@@ -7,6 +7,8 @@
 .include "jumptab.inc"
 .include "diskdrv.inc"
 
+.import sysDBColor
+
 .segment "reu2"
 
 L4000 = $4000
@@ -258,7 +260,7 @@ L51F9:	.byte $12,$13,$08,$A1,$53,$0B,$A6,$0F
 L5226:	.byte $F2
 L5227:	.byte $52,$00
 
-	lda $9FE1
+	lda sysDBColor
 	sta L5236
 	jsr i_ColorRectangle
 	.byte 7, 5, 26, 7

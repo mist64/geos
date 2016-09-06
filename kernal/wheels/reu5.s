@@ -27,6 +27,10 @@ LFFB4 = $FFB4
 .import DBGFTableIndex
 .import DBGFilesFound
 .import DBGFNameTable
+.import dbFieldWidth
+.import fftIndicator
+.import extKrnlIn
+.import sysDBColor
 
 .segment "reu5"
 
@@ -313,7 +317,7 @@ L522C:	.byte "R"
 
 
 	.byte $1B,$00
-	lda $9FE1
+	lda sysDBColor
 	sta L5270
 	jsr i_ColorRectangle
 	.byte 8, 4, 24, 10
@@ -404,7 +408,7 @@ L5317:	lda #$50
 	sta sysDBData
 	jmp RstrFrmDialogue
 
-L5322:	lda $9FE1
+L5322:	lda sysDBColor
 	sta L532F
 	jsr i_ColorRectangle
 	.byte 8, 4, 24, 15
@@ -1008,8 +1012,8 @@ L580A:	txa
 	sta $84B2
 	lda #$BC
 	sta RecoverVector
-	lda #$05
-	sta $9FF1
+	lda #5
+	sta extKrnlIn
 	pla
 	tax
 	lda L585A,x
@@ -1027,8 +1031,8 @@ L580A:	txa
 	sta $84B2
 	lda L57B1
 	sta RecoverVector
-	lda #$00
-	sta $9FF1
+	lda #0
+	sta extKrnlIn
 	rts
 
 L585A:	.byte $E2,$A1
@@ -1203,7 +1207,7 @@ _GetFEntries:
 	sta r5L
 	lda r7L
 	eor #$80
-	sta $9FF3
+	sta fftIndicator
 	bmi L5ADB
 	lda $885A
 	sta r5H
@@ -1213,7 +1217,7 @@ _GetFEntries:
 	and #$7F
 	.byte $2C
 L5ADB:	lda #$11
-	sta $9FF2
+	sta dbFieldWidth
 	lda #$00
 	sta DBGFilesFound
 	sta DBGFTableIndex
@@ -1227,7 +1231,7 @@ L5AE8:	jsr L5B58
 L5AF8:	jsr L5B51
 	bcs L5B32
 	lda r6L
-	adc $9FF2
+	adc dbFieldWidth
 	sta r6L
 	bcc L5B08
 	inc r6H
@@ -1251,10 +1255,10 @@ L5B23:	lda #$83
 L5B32:	lda DBGFTableIndex
 	jsr L5B62
 	jsr StashRAM
-L5B3B:	bit $9FF3
+L5B3B:	bit fftIndicator
 	bpl L5B46
 	lda #$00
-	sta $9FF3
+	sta fftIndicator
 	rts
 
 L5B46:	lda r5H
@@ -1281,12 +1285,12 @@ L5B62:	sta r1L
 	pha
 	lda #$05
 	sta r0L
-	lda $9FF2
+	lda dbFieldWidth
 	sta r2L
 	ldx #$06
 	ldy #$02
 	jsr BBMult
-	lda $9FF2
+	lda dbFieldWidth
 	sta r0L
 	ldx #$04
 	ldy #$02
