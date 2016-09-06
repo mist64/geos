@@ -243,7 +243,7 @@ DrwDlgSpd1:
 	jsr CalcDialogCoords
 	MoveW r4, rightMargin
 	jsr Rectangle
-.if !wheels ; ???
+.if !wheels_size_and_speed ; redundant
 	clc
 	jsr CalcDialogCoords
 .endif
@@ -251,7 +251,7 @@ DrwDlgSpd1:
 	jsr FrameRectangle
 	lda #0
 	sta defIconTab
-.if !wheels ; ???
+.if !wheels_size_and_speed ; single 0 = no icons
 	sta defIconTab+1
 	sta defIconTab+2
 .endif
