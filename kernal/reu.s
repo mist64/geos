@@ -19,39 +19,48 @@
 
 .segment "reu"
 
-.if wheels
 _VerifyRAM:
 	ldy #$93
-	.byte $2C
+.if wheels_size_and_speed
+	.byte $2c
+.else
+	bne _DoRAMOp
+.endif
 _StashRAM:
 	ldy #$90
-	.byte $2C
+.if wheels_size_and_speed
+	.byte $2c
+.else
+	bne _DoRAMOp
+.endif
 _SwapRAM:
 	ldy #$92
-	.byte $2C
+.if wheels_size_and_speed
+	.byte $2c
+.else
+	bne _DoRAMOp
+.endif
 _FetchRAM:
 	ldy #$91
 _DoRAMOp:
-
 	ldx #DEV_NOT_FOUND
 	lda r3L
 	cmp ramExpSize
-	bcs L9F09 ; beyond end of REU
-
+	bcs @3 ; beyond end of REU
 	php
 	sei
 	PushB CPU_DATA
-
+.if wheels
 ASSERT_NOT_BELOW_IO
 	LoadB CPU_DATA, IO_IN
 
 	PushB clkreg
 	LoadB clkreg, 0
 	ldx #4
-L9ED2:	lda r0L-1,x
+@1:	lda r0L-1,x
 	sta EXP_BASE+1,x
 	dex
-	bne L9ED2
+	bne @1
 	MoveW r2, EXP_BASE+7
 	lda r3L
 	sta EXP_BASE+6
@@ -66,37 +75,18 @@ ASSERT_NOT_BELOW_IO
 	txa
 	and #%01100000
 	cmp #%01100000
-	beq L9F07
+	beq @2
 	ldx #0
 	.byte $2c
-L9F07:	ldx #WR_VER_ERR
-L9F09:	rts
+@2:	ldx #WR_VER_ERR
+@3:	rts
 .endif
 
 .if !wheels
 
 .if (REUPresent)
-_VerifyRAM:
-	ldy #$93
-	bne _DoRAMOp
-_StashRAM:
-	ldy #$90
-	bne _DoRAMOp
-_SwapRAM:
-	ldy #$92
-	bne _DoRAMOp
-_FetchRAM:
-	ldy #$91
-_DoRAMOp:
-
-	ldx #DEV_NOT_FOUND
-	lda r3L
-	cmp ramExpSize
-	bcs @2
-
 	ldx CPU_DATA
 ASSERT_NOT_BELOW_IO
-
 	LoadB CPU_DATA, IO_IN
 
 	MoveW r0, EXP_BASE+2
@@ -113,7 +103,7 @@ ASSERT_NOT_BELOW_IO
 	stx CPU_DATA
 ASSERT_NOT_BELOW_IO
 	ldx #0
-@2:	rts
+@3:	rts
 .endif
 
 .if (useRamExp)
