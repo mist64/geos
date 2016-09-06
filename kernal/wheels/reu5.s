@@ -916,35 +916,35 @@ L5762:	lda L57B0
 	sta DBoxDescH
 	lda L57AF
 	sta DBoxDescL
-	ldy #$91
-	.byte $2C
-L576F:	ldy #$90
+	ldy #$91 ; fetch
+	.byte $2c
+L576F:	ldy #$90 ; stash
 	tya
 	pha
-	lda #$85
+	lda #>dlgBoxRamBuf
 	sta r0H
-	lda #$1F
+	lda #<dlgBoxRamBuf
 	sta r0L
-	lda #$B9
+	lda #>$B900
 	sta r1H
-	lda #$00
+	lda #<$B900
 	sta r1L
-	lda #$01
+	lda #>$017A
 	sta r2H
-	lda #$7A
+	lda #<$017A
 	sta r2L
-	lda #$00
+	lda #0 ; REU bank 0
 	sta r3L
 	jsr DoRAMOp
 	pla
 	tay
-	lda #$88
+	lda #>$880C
 	sta r0H
-	lda #$0C
+	lda #<$880C
 	sta r0L
-	lda #$BA
+	lda #>$BA7A
 	sta r1H
-	lda #$7A
+	lda #<$BA7A
 	sta r1L
 	lda #$00
 	sta r2H
@@ -952,10 +952,11 @@ L576F:	ldy #$90
 	sta r2L
 	jmp DoRAMOp
 
-L57AF:	brk
-L57B0:	brk
-L57B1:	brk
-L57B2:	brk
+L57AF:	.byte 0
+L57B0:	.byte 0
+L57B1:	.byte 0
+L57B2:	.byte 0
+
 L57B3:	jsr LCFD9
 	jsr L4000
 	jmp LCFD9
@@ -966,39 +967,35 @@ L57BC:	jsr LCFD9
 
 _ChSubdir:
 	jsr L5174
-	beq L57CD
-	ldx #$00
+	beq @1
+	ldx #0
 	rts
-
-L57CD:	jsr L57FD
-L57D0:	ldx #$01
+@1:	jsr @6
+@2:	ldx #1
 	jsr L580A
 	lda r0L
 	cmp #$50
-	beq L57D0
+	beq @2
 	cmp #$55
-	bne L57E2
+	bne @3
 	jmp _ChPartition
-
-L57E2:	cmp #$05
-	beq L57E7
-L57E6:	rts
-
-L57E7:	lda L518C
-	beq L57E6
+@3:	cmp #$05
+	beq @5
+@4:	rts
+@5:	lda L518C
+	beq @4
 	lda #$51
 	sta r6H
 	lda #$8C
 	sta r6L
 	jsr FindFile
 	jsr _DownDirectory
-	clv
-	bvc L57D0
-L57FD:	lda curType
+	bra @2
+@6:	lda curType
 	and #$70
-	beq L5806
+	beq @7
 	lda #$12
-L5806:	sta L5949
+@7:	sta L5949
 	rts
 
 L580A:	txa
@@ -1012,7 +1009,7 @@ L580A:	txa
 	sta $84B2
 	lda #<L57BC
 	sta RecoverVector
-	lda #FILE_NOT_FOUND
+	lda #5
 	sta extKrnlIn
 	pla
 	tax
@@ -1038,8 +1035,7 @@ L580A:	txa
 L585A:	.byte $E2,$A1
 L585C:	.byte "TX"
 L585E:	.byte $97,$91
-L5860:	.byte $AB
-	.byte ","
+L5860:	.byte $AB,","
 L5862:	.byte "QY"
 
 _DownDirectory:

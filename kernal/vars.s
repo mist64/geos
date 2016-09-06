@@ -99,8 +99,8 @@ KbdQueFlag:     .byte 0
 KbdQueue:       .res 16, 0
 KbdNextKey:     .byte 0
 .if wheels ; used for something else; original contents moved
-.global AEB87
-AEB87:		.res 28, 0
+.global TmpFilename
+TmpFilename:    .res 28, 0
 .else
 KbdDBncTab:     .res 8, 0
 KbdDMltTab:     .res 20, 0

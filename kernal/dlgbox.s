@@ -894,17 +894,17 @@ DBDoGETFILES:
 	PopB r7L
 .if wheels ; xxx
 .import extKrnlIn
-.import AEB87
+.import TmpFilename
 	lda extKrnlIn
-	cmp #FILE_NOT_FOUND
+	cmp #5
 	beq @B
 	PushB r10L ; r10: source string
 	sta r5L
 	PushB r10H
 	sta r5H
 	ora r5L
-	beq @A
-	LoadW r10, AEB87
+	beq @A ; null ptr
+	LoadW r10, TmpFilename
 	ldx #r5
 	ldy #r10
 	jsr CopyString
