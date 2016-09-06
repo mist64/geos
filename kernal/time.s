@@ -88,12 +88,18 @@ DateUpdate:
 	bne @2
 	sty month
 	inc year
+; The implementation disagrees with the documentation,
+; which says years are 1900-based: This code implies
+; that "2000" is stored as 0, which is the "Excel" way
+; of storing dates. With a cutoff year of 1980, numbers
+; 80-99 would be 1980-1999, and 0-79 would be 2000-2079.
+; It is unknown what the cutoff year should be.
 	lda year
 	cmp #100
-.if wheels ; BUG: neither path is correct for Y2K :(
-	bcc @2
+.if wheels
+	bcc @2 ; new years with an illegal new year? store "0".
 .else
-	bne @2
+	bne @2 ; 1999->2000: store "0" as year
 .endif
 	dey
 	sty year ; year 0
@@ -102,8 +108,11 @@ DateUpdate:
 CheckMonth:
 	ldy month
 	lda daysTab-1, y
-; BUG: 1900 is not a leap year, otherwise
-; BUG: this is correct for 1901-2099
+; This code is correct for the years 1901-2099.
+; This is another reason why the year probably should
+; not be considered 1900-based, since this logic is
+; incorrect for 1900, but it would be correct for any
+; cutoff year.
 	cpy #2
 	bne @2
 	tay
