@@ -58,7 +58,7 @@
 
 .segment "files1"
 
-.if !wheels
+.if !wheels_external_readwrite_file ; this has moved to the nerkernal"
 Add2:
 	AddVW 2, r6
 return:

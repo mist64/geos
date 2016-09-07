@@ -27,10 +27,12 @@ wheels   = 1
 
 	wheels_dlgbox_features = 1
 
-	wheels_screensaver = 1
-
 	; support for chdir in dialogs
 	wheels_dialog_chdir = 1
+
+	wheels_screensaver = 1
+
+	wheels_external_readwrite_file = 1
 
 	wheels_bad_ideas = 1
 .else
@@ -40,8 +42,10 @@ wheels   = 1
 	wheels_fixes = 0
 	wheels_button_shortcuts = 0
 	wheels_enhanced_list_scrolling = 0
-	wheels_screensaver = 0
+	wheels_dlgbox_features = 1
 	wheels_dialog_chdir = 0
+	wheels_screensaver = 0
+	wheels_external_readwrite_file = 0
 	wheels_bad_ideas = 0
 .endif
 

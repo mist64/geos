@@ -15,14 +15,8 @@ OReadFile:
 	rts
 
 L5007:	jsr InitForIO
-	lda r0H
-	pha
-	lda r0L
-	pha
-	lda #$80
-	sta r4H
-	lda #$00
-	sta r4L
+	PushW r0
+	LoadW r4, $8000
 	lda #$02
 	sta r5L
 	lda r1H
