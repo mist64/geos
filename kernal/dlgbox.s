@@ -1071,22 +1071,22 @@ DBGFDoArrow:
 .if wheels_enhanced_list_scrolling
 .import dbFieldWidth
 	; which icon inside the top/bot/up/down image was the mouse on?
-        lda     mouseXPos+1
-        lsr
-        lda     mouseXPos
-        ror
-        lsr
-        lsr ; / 16
-        sec
-        sbc     DBGFArrowX
-        lsr
-        tay
-        cpy     #4
-        bcc     @1
-        rts
-@1:	lda     DoArrowTabL,y
-        ldx     DoArrowTabH,y
-        jmp     CallRoutine
+	lda mouseXPos+1
+	lsr
+	lda mouseXPos
+	ror
+	lsr
+	lsr ; / 16
+	sec
+	sbc DBGFArrowX
+	lsr
+	tay
+	cpy #4
+	bcc @1
+	rts
+@1:	lda DoArrowTabL,y
+	ldx DoArrowTabH,y
+	jmp CallRoutine
 
 .define DoArrowTab DBGFDoArrowTop, DBGFDoArrowBottom, DBGFDoArrowUp, DBGFDoArrowDown
 
@@ -1096,78 +1096,73 @@ DoArrowTabH:
 	.hibytes DoArrowTab
 
 DBGFDoArrowTop:
-        lda     $885B
-        bne     @1
-        rts
-@1:	lda     #0
-        beq     DBGFDoArrowFuncCommon
+	lda $885B
+	bne @1
+	rts
+@1:	lda #0
+	beq DBGFDoArrowFuncCommon
 
 DBGFDoArrowBottom:
-        ldx     DBGFilesFound
-        dex
-        stx     r0L
-        lda     #$00
-        sta     r0H
-        sta     r1H
-        lda     #5
-        sta     r1L
-        ldx     #r0
-        ldy     #r1
-        jsr     Ddiv
-        jsr     BBMult
-        lda     r0L
-        bra     DBGFDoArrowFuncCommon
+	ldx DBGFilesFound
+	dex
+	stx r0L
+	lda #$00
+	sta r0H
+	sta r1H
+	lda #5
+	sta r1L
+	ldx #r0
+	ldy #r1
+	jsr Ddiv
+	jsr BBMult
+	lda r0L
+	bra DBGFDoArrowFuncCommon
 
 DBGFDoArrowDown:
-        lda     $885B
-        clc
-        adc     #5
-        cmp     DBGFilesFound
-        bcc     DBGFDoArrowFuncCommon
-        rts
+	lda $885B
+	clc
+	adc #5
+	cmp DBGFilesFound
+	bcc DBGFDoArrowFuncCommon
+	rts
 
-; --------------------------------------------
 DBGFDoArrowUp:
-        lda     $885B
-        bne     LF78E
-        rts
-; ---------------------------------------------
-LF78E:  sec
-        sbc     #5
+	lda $885B
+	bne @1
+	rts
+@1:	sec
+	sbc #5
 DBGFDoArrowFuncCommon:
-	sta     $885C
-        sta     $885B
-        jsr     LF7A3
-        jsr     FetchRAM
-        jsr     DBGFilesHelp2
-        jmp     DBGFilesHelp5
-; ---------------------------------------------
-LF7A3:  sta     r1L
-        lda     #5
-        sta     r0L
-        lda     dbFieldWidth
-        sta     r2L
-        ldx     #r2
-        ldy     #r0
-        jsr     BBMult
-        lda     dbFieldWidth
-        sta     r0L
-        ldx     #r1L                            
-        ldy     #$02
-        jsr     BBMult
-        clc
-        lda     r1L
-        adc     #$80
-        sta     r1L
-        lda     r1H
-        adc     #$E0
-        sta     r1H
-        lda     #$83
-        sta     r0H
-        lda     #$00
-        sta     r0L
-        sta     r3L
-        rts
+	sta $885C
+	sta $885B
+	jsr LF7A3
+	jsr FetchRAM
+	jsr DBGFilesHelp2
+	jmp DBGFilesHelp5
+
+LF7A3:	sta r1L
+	lda #5
+	sta r0L
+	lda dbFieldWidth
+	sta r2L
+	ldx #r2
+	ldy #r0
+	jsr BBMult
+	lda dbFieldWidth
+	sta r0L
+	ldx #r1L
+	ldy #$02
+	jsr BBMult
+	clc
+	lda r1L
+	adc #$80
+	sta r1L
+	lda r1H
+	adc #$E0
+	sta r1H
+	LoadW r0, fileTrScTab
+	sta r3L
+	rts
 .else
 	jsr DBGFilesHelp6
 	LoadB r0H, 0
