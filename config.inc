@@ -25,7 +25,7 @@ wheels   = 1
 	; "Open" etc.
 	wheels_button_shortcuts = 1
 
-	wheels_enhanced_list_scrolling = 1
+	wheels_dlgbox_features = 1
 
 	wheels_screensaver = 1
 

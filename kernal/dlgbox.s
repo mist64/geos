@@ -10,7 +10,7 @@
 .include "kernal.inc"
 .include "jumptab.inc"
 .include "c64.inc"
-.if wheels
+.if wheels_dlgbox_features
 .include "jumptab_wheels.inc"
 .endif
 
@@ -867,14 +867,14 @@ DBDoGETFILES:
 	ror
 	lsr
 	lsr
-.if wheels_enhanced_list_scrolling ; ???
+.if wheels_dlgbox_features ; ???
 	addv 4
 .else
 	addv 7
 .endif
 	pha
 	lda r2H
-.if wheels_enhanced_list_scrolling ; ???
+.if wheels_dlgbox_features ; ???
 	subv 12
 .else
 	subv 14
@@ -892,7 +892,7 @@ DBDoGETFILES:
 	jsr HorizontalLine
 	PopW r10
 	PopB r7L
-.if wheels_enhanced_list_scrolling ; ???
+.if wheels_dlgbox_features ; ???
 .import extKrnlIn
 .import TmpFilename
 	lda extKrnlIn
@@ -940,13 +940,13 @@ DBDoGETFILES:
 	LoadW r5, DBGFilesArrowsIcons
 	jsr DBIconsHelp2
 @1:
-.if wheels_enhanced_list_scrolling ; ???
+.if wheels_dlgbox_features ; ???
 	lda #0
 	jsr SetupRAMOpCall
 	jsr FetchRAM
 .endif
 	LoadW otherPressVec, DBGFPressVector
-.if !wheels_enhanced_list_scrolling ; ???
+.if !wheels_dlgbox_features ; ???
 	jsr DBGFilesHelp1
 .endif
 	jsr DBGFilesHelp5
@@ -954,7 +954,7 @@ DBDoGETFILES:
 @2:	PopB r1L
 	rts
 
-.if !wheels_enhanced_list_scrolling ; xxx
+.if !wheels_dlgbox_features ; xxx
 DBGFilesHelp1:
 	PushB DBGFilesFound
 @1:	pla
@@ -982,7 +982,7 @@ DBGFilesArrowsIcons:
 	.word DBGFArrowPic
 DBGFArrowX:
 	.word 0
-.if wheels_enhanced_list_scrolling
+.if wheels_dlgbox_features
 	.byte 8, 8
 .else
 	.byte 3, 12
@@ -990,7 +990,7 @@ DBGFArrowX:
 	.word DBGFDoArrow
 
 DBGFArrowPic:
-.if wheels_enhanced_list_scrolling
+.if wheels_dlgbox_features
 	.byte 10, %11111111 ; repeat 10
 	.byte $80+2 ; 2 data bytes
         .byte                     %10000000, %00000001
@@ -1068,7 +1068,7 @@ DBGFPressVector:
 @2:	rts
 
 DBGFDoArrow:
-.if wheels_enhanced_list_scrolling
+.if wheels_dlgbox_features
 .import dbFieldWidth
 	; which icon inside the top/bot/up/down image was the mouse on?
 	lda mouseXPos+1
@@ -1200,7 +1200,7 @@ SetupRAMOpCall:
 .endif
 
 DBGFilesHelp2:
-.if wheels
+.if wheels_dlgbox_features
 	lda DBGFTableIndex+1
 	sec
 	sbc DBGFTableIndex
@@ -1224,7 +1224,7 @@ DBGFilesHelp3:
 
 DBGFilesHelp4:
 	sta r0L
-.if wheels
+.if wheels_dlgbox_features
 	MoveB dbFieldWidth, r1L
 .else
 	LoadB r1L, 17
@@ -1252,7 +1252,7 @@ DBGFilesHelp4:
 	rts
 
 DBGFilesHelp5:
-.if wheels
+.if wheels_dlgbox_features
 	PushW rightMargin
 	PushB currentMode
 	LoadB currentMode, $40
@@ -1366,7 +1366,7 @@ DBGFilesHelp8:
 	jsr DBGFilesHelp7
 	AddB r0L, r2L
 	clc
-.if wheels ; xxx
+.if wheels_dlgbox_features
 	adc #13
 .else
 	adc #14
