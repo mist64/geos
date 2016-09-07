@@ -1069,7 +1069,6 @@ DBGFPressVector:
 
 DBGFDoArrow:
 .if wheels_enhanced_list_scrolling
-L885B = $885B
 .import dbFieldWidth
 	; which icon inside the top/bot/up/down image was the mouse on?
 	lda mouseXPos+1
@@ -1206,9 +1205,9 @@ DBGFilesHelp2:
         sbc     L885B                           ; F7DD ED 5B 88                 .[.
         ldx     #$02                            ; F7E0 A2 02                    ..
         jsr     DBGFilesHelp4                           ; F7E2 20 F4 F7                  ..
-        lda     $885A                           ; F7E5 AD 5A 88                 .Z.
+        lda     L8859+1                           ; F7E5 AD 5A 88                 .Z.
         sta     r5H                             ; F7E8 85 0D                    ..
-        lda     $8859                           ; F7EA AD 59 88                 .Y.
+        lda     L8859                           ; F7EA AD 59 88                 .Y.
         sta     r5L                             ; F7ED 85 0C                    ..
         ldy     #r5L                            ; F7EF A0 0C                    ..
         jmp     CopyString                      ; F7F1 4C 65 C2                 Le.
