@@ -892,7 +892,7 @@ DBDoGETFILES:
 	jsr HorizontalLine
 	PopW r10
 	PopB r7L
-.if wheels ; xxx
+.if wheels_enhanced_list_scrolling ; ???
 .import extKrnlIn
 .import TmpFilename
 	lda extKrnlIn
@@ -940,13 +940,13 @@ DBDoGETFILES:
 	LoadW r5, DBGFilesArrowsIcons
 	jsr DBIconsHelp2
 @1:
-.if wheels ; xxx
+.if wheels_enhanced_list_scrolling ; ???
 	lda #0
 	jsr SetupRAMOpCall
 	jsr FetchRAM
 .endif
 	LoadW otherPressVec, DBGFPressVector
-.if !wheels ; xxx
+.if !wheels_enhanced_list_scrolling ; ???
 	jsr DBGFilesHelp1
 .endif
 	jsr DBGFilesHelp5
@@ -954,7 +954,7 @@ DBDoGETFILES:
 @2:	PopB r1L
 	rts
 
-.if !wheels ; xxx
+.if !wheels_enhanced_list_scrolling ; xxx
 DBGFilesHelp1:
 	PushB DBGFilesFound
 @1:	pla
@@ -1062,7 +1062,7 @@ DBGFPressVector:
 	ldy dblDBData
 	dey
 	jmp DoKeyboardShortcut
-@X:	lda #30
+@X:	lda #CLICK_COUNT
 	sta dblClickCount
 .endif
 @2:	rts
@@ -1237,8 +1237,8 @@ DBGFilesHelp4:
 	pla
 	tax
 	lda r1L
-.if wheels
-	sta 0,x
+.if wheels_size_and_speed
+	sta zpage,x
 	.assert <fileTrScTab = 0, error, "fileTrScTab must be page-aligned!"
 	lda #>fileTrScTab
 .else
