@@ -1150,15 +1150,15 @@ LF7A3:	sta r1L
 	jsr BBMult
 	lda dbFieldWidth
 	sta r0L
-	ldx #r1L
-	ldy #$02
+	ldx #r1
+	ldy #r0
 	jsr BBMult
 	clc
 	lda r1L
-	adc #$80
+	adc #<$E080
 	sta r1L
 	lda r1H
-	adc #$E0
+	adc #>$E080
 	sta r1H
 	LoadW r0, fileTrScTab
 	sta r3L
