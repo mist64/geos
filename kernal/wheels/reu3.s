@@ -16,13 +16,9 @@ OReadFile:
 
 L5007:	jsr InitForIO
 	PushW r0
-	LoadW r4, $8000
-	lda #$02
-	sta r5L
-	lda r1H
-	sta $8303
-	lda r1L
-	sta $8302
+	LoadW r4, diskBlkBuf
+	LoadB r5L, 2
+	MoveW r1, fileTrScTab+2
 L5026:	jsr ReadBlock
 	txa
 	bne L509B
