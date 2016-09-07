@@ -942,7 +942,7 @@ DBDoGETFILES:
 @1:
 .if wheels ; xxx
 	lda #0
-	jsr LF7A3
+	jsr SetupRAMOpCall
 	jsr FetchRAM
 .endif
 	LoadW otherPressVec, DBGFPressVector
@@ -1135,33 +1135,34 @@ DBGFDoArrowUp:
 DBGFDoArrowFuncCommon:
 	sta $885C
 	sta $885B
-	jsr LF7A3
+	jsr SetupRAMOpCall
 	jsr FetchRAM
 	jsr DBGFilesHelp2
 	jmp DBGFilesHelp5
 
-LF7A3:	sta r1L
+SetupRAMOpCall:
+	sta r1L
 	lda #5
 	sta r0L
 	lda dbFieldWidth
 	sta r2L
 	ldx #r2
-	ldy #r0
-	jsr BBMult
+	ldy #r0L
+	jsr BBMult ; r2 = 5 * dbFieldWidth (count)
 	lda dbFieldWidth
 	sta r0L
 	ldx #r1
-	ldy #r0
-	jsr BBMult
+	ldy #r0L
+	jsr BBMult ; r1 = arg * dbFieldWidth (REU offset)
 	clc
 	lda r1L
 	adc #<$E080
 	sta r1L
 	lda r1H
-	adc #>$E080
+	adc #>$E080 ; REU address
 	sta r1H
-	LoadW r0, fileTrScTab
-	sta r3L
+	LoadW r0, fileTrScTab ; CBM address
+	sta r3L ; REU bank 0
 	rts
 .else
 	jsr DBGFilesHelp6
