@@ -1069,6 +1069,7 @@ DBGFPressVector:
 
 DBGFDoArrow:
 .if wheels_enhanced_list_scrolling
+L885B = $885B
 .import dbFieldWidth
 	; which icon inside the top/bot/up/down image was the mouse on?
 	lda mouseXPos+1
@@ -1096,7 +1097,7 @@ DoArrowTabH:
 	.hibytes DoArrowTab
 
 DBGFDoArrowTop:
-	lda $885B
+	lda L885B
 	bne @1
 	rts
 @1:	lda #0
@@ -1119,7 +1120,7 @@ DBGFDoArrowBottom:
 	bra DBGFDoArrowFuncCommon
 
 DBGFDoArrowDown:
-	lda $885B
+	lda L885B
 	clc
 	adc #5
 	cmp DBGFilesFound
@@ -1127,14 +1128,14 @@ DBGFDoArrowDown:
 	rts
 
 DBGFDoArrowUp:
-	lda $885B
+	lda L885B
 	bne @1
 	rts
 @1:	sec
 	sbc #5
 DBGFDoArrowFuncCommon:
-	sta $885C
-	sta $885B
+	sta L885B+1
+	sta L885B
 	jsr SetupRAMOpCall
 	jsr FetchRAM
 	jsr DBGFilesHelp2
@@ -1200,9 +1201,9 @@ SetupRAMOpCall:
 
 DBGFilesHelp2:
 .if wheels
-	lda     $885C                           ; F7D9 AD 5C 88                 .\.
+	lda     L885B+1                           ; F7D9 AD 5C 88                 .\.
         sec                                     ; F7DC 38                       8
-        sbc     $885B                           ; F7DD ED 5B 88                 .[.
+        sbc     L885B                           ; F7DD ED 5B 88                 .[.
         ldx     #$02                            ; F7E0 A2 02                    ..
         jsr     DBGFilesHelp4                           ; F7E2 20 F4 F7                  ..
         lda     $885A                           ; F7E5 AD 5A 88                 .Z.
