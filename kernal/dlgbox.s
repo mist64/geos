@@ -1096,7 +1096,7 @@ DoArrowTabH:
 	.hibytes DoArrowTab
 
 DBGFDoArrowTop:
-	lda L885B
+	lda DBGFTableIndex
 	bne @1
 	rts
 @1:	lda #0
@@ -1106,7 +1106,7 @@ DBGFDoArrowBottom:
 	ldx DBGFilesFound
 	dex
 	stx r0L
-	lda #$00
+	lda #0
 	sta r0H
 	sta r1H
 	lda #5
@@ -1119,7 +1119,7 @@ DBGFDoArrowBottom:
 	bra DBGFDoArrowFuncCommon
 
 DBGFDoArrowDown:
-	lda L885B
+	lda DBGFTableIndex
 	clc
 	adc #5
 	cmp DBGFilesFound
@@ -1127,14 +1127,14 @@ DBGFDoArrowDown:
 	rts
 
 DBGFDoArrowUp:
-	lda L885B
+	lda DBGFTableIndex
 	bne @1
 	rts
 @1:	sec
 	sbc #5
 DBGFDoArrowFuncCommon:
-	sta L885B+1
-	sta L885B
+	sta DBGFTableIndex+1
+	sta DBGFTableIndex
 	jsr SetupRAMOpCall
 	jsr FetchRAM
 	jsr DBGFilesHelp2
@@ -1165,6 +1165,7 @@ SetupRAMOpCall:
 	sta r3L ; REU bank 0
 	rts
 .else
+; DBGFDoArrow:
 	jsr DBGFilesHelp6
 	LoadB r0H, 0
 	lda DBGFArrowX
@@ -1200,17 +1201,14 @@ SetupRAMOpCall:
 
 DBGFilesHelp2:
 .if wheels
-	lda     L885B+1                           ; F7D9 AD 5C 88                 .\.
-        sec                                     ; F7DC 38                       8
-        sbc     L885B                           ; F7DD ED 5B 88                 .[.
-        ldx     #$02                            ; F7E0 A2 02                    ..
-        jsr     DBGFilesHelp4                           ; F7E2 20 F4 F7                  ..
-        lda     L8859+1                           ; F7E5 AD 5A 88                 .Z.
-        sta     r5H                             ; F7E8 85 0D                    ..
-        lda     L8859                           ; F7EA AD 59 88                 .Y.
-        sta     r5L                             ; F7ED 85 0C                    ..
-        ldy     #r5L                            ; F7EF A0 0C                    ..
-        jmp     CopyString                      ; F7F1 4C 65 C2                 Le.
+	lda DBGFTableIndex+1
+	sec
+	sbc DBGFTableIndex
+	ldx #r0
+	jsr DBGFilesHelp4
+	MoveW DBGFNameTable, r5
+	ldy #r5
+	jmp CopyString
 .else
 	lda DBGFileSelected
 	jsr DBGFilesHelp3
@@ -1255,9 +1253,9 @@ DBGFilesHelp4:
 
 DBGFilesHelp5:
 .if wheels
-        PushW rightMargin
-        PushB currentMode
-        LoadB currentMode, $40
+	PushW rightMargin
+	PushB currentMode
+	LoadB currentMode, $40
 	lda #0
 	jsr DBGFilesHelp8
 	clc
