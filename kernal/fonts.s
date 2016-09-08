@@ -421,7 +421,7 @@ Font_3:
 	sta r10L
 @2:
 .if wheels
-LDEFA = $DEFA
+L8888 = $8888
 	lda currentMode
 	and #$10
 	bne LE041
@@ -430,22 +430,22 @@ LDEFA = $DEFA
 LE041:	lda r10H
 	lsr a
 	bcs LE05E
-	ldx $8887
+	ldx FontTVar2
 	bne LE04E
-	dec $8888
+	dec L8888
 LE04E:	dex
-	stx $8887
+	stx FontTVar2
 	ldx r11L
 	bne LE058
 	dec r11H
 LE058:	dex
 	stx r11L
-	jsr LDEFA
+	jsr Font_2
 LE05E:	lda $38
-	cmp $8888
+	cmp L8888
 	bne LE06A
 	lda $37
-	cmp $8887
+	cmp FontTVar2
 LE06A:	bcc @6
 .else
 	bbrf ITALIC_BIT, currentMode, clc_rts
