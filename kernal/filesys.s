@@ -140,60 +140,41 @@ _ReadFile:
 	jmp DoneWithIO
 
 .if wheels
-L50A4:	lda r10L
-	pha
-	lda r9H
-	pha
-	lda r9L
-	pha
-	lda r3H
-	pha
-	lda r3L
-	pha
-	lda r2H
-	pha
-	lda r2L
-	pha
-	lda r1H
-	pha
-	lda r1L
-	pha
-	lda r0H
-	pha
-	lda r0L
-	pha
-	ldx #$00
+L50A4:	PushB r10L
+	PushW r9
+	PushW r3
+	PushW r2
+	PushW r1
+	PushW r0
+	ldx #0
 	sty r10L
-	lda r7H
-	sta r9H
-	lda r7L
-	sta r9L
-L50D1:	lda r9H
+	MoveW r7, r9
+@1:	lda r9H
 	cmp #$50
-	bne L50DB
+	bne @2
 	lda r9L
 	cmp #$00
-L50DB:	bcc L50E9
+@2:	bcc @4
 	lda r9H
 	cmp #$51
-	bne L50E7
+	bne @3
 	lda r9L
 	cmp #$C2
-L50E7:	bcc L5102
-L50E9:	ldy #$00
+@3:	bcc @6
+@4:	ldy #$00
 	lda $8002,x
-	sta (r9L),y
+	sta (r9),y
 	clc
 	lda #$01
 	adc r9L
 	sta r9L
-	bcc L50FB
+	bcc @5
 	inc r9H
-L50FB:	inx
+@5:	inx
 	cpx r10L
-	bcc L50D1
-	bcs L512D
-L5102:	jsr L514F
+	bcc @1
+	bcs @8
+@6:	jsr @9
 	clc
 	lda r9L
 	adc r2L
@@ -204,20 +185,20 @@ L5102:	jsr L514F
 	clc
 	lda r0L
 	adc r2L
-	bcs L512D
+	bcs @8
 	tax
 	dex
 	dex
 	cpx r10L
-	bcs L512D
+	bcs @8
 	ldy #$00
-L5122:	lda $8002,x
-	sta (r9L),y
+@7:	lda $8002,x
+	sta (r9),y
 	iny
 	inx
 	cpx r10L
-	bcc L5122
-L512D:	pla
+	bcc @7
+@8:	pla
 	sta r0L
 	pla
 	sta r0H
@@ -241,7 +222,7 @@ L512D:	pla
 	sta r10L
 	rts
 
-L514F:	sec
+@9:	sec
 	lda r9L
 	sbc #$00
 	sta r1L
@@ -270,10 +251,10 @@ L514F:	sec
 	sta r3H
 	lda r3H
 	cmp #$01
-	bne L518A
+	bne @A
 	lda r3L
 	cmp #$C2
-L518A:	bcc L51A6
+@A:	bcc @B
 	sec
 	lda r3L
 	sbc #$C2
@@ -288,18 +269,18 @@ L518A:	bcc L51A6
 	lda r2H
 	sbc r3H
 	sta r2H
-L51A6:	clc
+@B:	clc
 	lda #$27
 	adc r1L
 	sta r1L
 	lda #$06
 	adc r1H
 	sta r1H
-	lda $88C3
+	lda ramExpSize
 	sta r3L
-	inc $88C3
+	inc ramExpSize
 	jsr StashRAM
-	dec $88C3
+	dec ramExpSize
 	rts
 .endif
 
@@ -427,7 +408,7 @@ L5086:	PushW r9
 	cmp #$5F
 @3:	bcc @6
 @4:	ldy #$00
-	lda (r9L),y
+	lda (r9),y
 	sta diskBlkBuf,x
 	clc
 	lda #1
@@ -455,7 +436,7 @@ L5086:	PushW r9
 	cmp #$5F
 @9:	bcc @7
 	ldy #$00
-@A:	lda (r9L),y
+@A:	lda (r9),y
 	sta diskBlkBuf,x
 	iny
 	inx
@@ -505,11 +486,11 @@ L5086:	PushW r9
 	lda #$0D
 	adc r1H
 	sta r1H
-	lda $88C3
+	lda ramExpSize
 	sta r3L
-	inc $88C3
+	inc ramExpSize
 	jsr FetchRAM
-	dec $88C3
+	dec ramExpSize
 	rts
 
 .endif
@@ -672,7 +653,7 @@ LD624:  clc                                     ; D624 18                       
         adc     #$00                            ; D62D 69 00                    i.
         sta     $03                             ; D62F 85 03                    ..
         ldy     #$00                            ; D631 A0 00                    ..
-LD633:  lda     (r0L),y                       ; D633 B1 02                    ..
+LD633:  lda     (r0),y                       ; D633 B1 02                    ..
         cmp     #$A0                            ; D635 C9 A0                    ..
         beq     LD640                           ; D637 F0 07                    ..
         sta     ($0E),y                         ; D639 91 0E                    ..

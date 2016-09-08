@@ -113,11 +113,11 @@ L5061:	lda $9073
 	cmp #$03
 	bne L5089
 	dec r2H
-L5089:	lda $88C3
+L5089:	lda ramExpSize
 	sta r3L
-	inc $88C3
+	inc ramExpSize
 	jsr FetchRAM
-	dec $88C3
+	dec ramExpSize
 	ldy curDrive
 	lda $904E
 	sta $8486,y

@@ -160,11 +160,11 @@ L50B9:	sty DTOP_CHAIN
 	ldx #$00
 L5102:	rts
 
-L5103:	lda $88C3
+L5103:	lda ramExpSize
 	sta r3L
-	inc $88C3
+	inc ramExpSize
 	jsr DoRAMOp
-	dec $88C3
+	dec ramExpSize
 	rts
 
 L5112:	ldy #$00

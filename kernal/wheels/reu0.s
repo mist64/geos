@@ -188,7 +188,7 @@ L520F:	ldx #$06
 L5212:	sec
 	lda r6L
 	beq L522C
-	cmp $88C3
+	cmp ramExpSize
 	bcs L522C
 	pha
 	lsr a
@@ -207,7 +207,7 @@ L522D:	.byte $80, $40, $20, $10, $08, $04, 02, $01
 
 _GetRAMInfo:
 	jsr _GetRAMBam
-	ldx $88C3
+	ldx ramExpSize
 	dex
 	stx r2L
 	lda #$00
