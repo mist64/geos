@@ -343,14 +343,6 @@ clc_rts:
 	rts
 
 Font_tab2:
-.if wheels
-LDFD7:  .byte   $B4,$30,$31,$32,$33,$34,$35,$36 ; DFD7 B4 30 31 32 33 34 35 36  .0123456
-        .byte   $07,$06,$05,$04,$03,$02,$01,$00 ; DFDF 07 06 05 04 03 02 01 00  ........
-        .byte   $B4,$3A,$3F,$44,$49,$4E,$53,$58 ; DFE7 B4 3A 3F 44 49 4E 53 58  .:?DINSX
-        .byte   $2D,$28,$23,$1E,$19,$14,$0F,$0A ; DFEF 2D 28 23 1E 19 14 0F 0A  -(#.....
-        .byte   $00,$00,$00,$00,$00,$00,$00,$00 ; DFF7 00 00 00 00 00 00 00 00  ........
-        .byte   $00                             ; DFFF 00                       .
-.else
 	.byte <(noop-base)
 	.byte <(b7-base)
 	.byte <(b6-base)
@@ -383,6 +375,9 @@ LDFD7:  .byte   $B4,$30,$31,$32,$33,$34,$35,$36 ; DFD7 B4 30 31 32 33 34 35 36  
 	.byte <(e5-base)
 	.byte <(e6-base)
 	.byte <(e7-base)
+
+.if wheels
+	.res 9, 0
 .endif
 
 .if wheels ; xxx moved, but unchanged
