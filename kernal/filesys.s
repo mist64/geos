@@ -198,28 +198,12 @@ L50A4:	PushB r10L
 	inx
 	cpx r10L
 	bcc @7
-@8:	pla
-	sta r0L
-	pla
-	sta r0H
-	pla
-	sta r1L
-	pla
-	sta r1H
-	pla
-	sta r2L
-	pla
-	sta r2H
-	pla
-	sta r3L
-	pla
-	sta r3H
-	pla
-	sta r9L
-	pla
-	sta r9H
-	pla
-	sta r10L
+@8:	PopW r0
+	PopW r1
+	PopW r2
+	PopW r3
+	PopW r9
+	PopB r10L
 	rts
 
 @9:	sec
@@ -441,26 +425,11 @@ L5086:	PushW r9
 	iny
 	inx
 	bne @A
-@B:	pla
-	sta r0L
-	pla
-	sta r0H
-	pla
-	sta r1L
-	pla
-	sta r1H
-	pla
-	sta r2L
-	pla
-	sta r2H
-	pla
-	sta r3L
-	pla
-	sta r3H
-	pla
-	sta r9L
-	pla
-	sta r9H
+@B:	PopW r0
+	PopW r1
+	PopW r2
+	PopW r3
+	PopW r9
 	rts
 
 @C:	sec
