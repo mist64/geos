@@ -424,29 +424,23 @@ Font_3:
 L8888 = $8888
 	lda currentMode
 	and #$10
-	bne LE041
+	bne @LE041
 	clc
 	rts
-LE041:	lda r10H
+@LE041:	lda r10H
 	lsr a
-	bcs LE05E
+	bcs @5
 	ldx FontTVar2
-	bne LE04E
+	bne @LE04E
 	dec L8888
-LE04E:	dex
+@LE04E:	dex
 	stx FontTVar2
 	ldx r11L
-	bne LE058
+	bne @LE058
 	dec r11H
-LE058:	dex
+@LE058:	dex
 	stx r11L
 	jsr Font_2
-LE05E:	lda rightMargin+1
-	cmp L8888
-	bne LE06A
-	lda rightMargin
-	cmp FontTVar2
-LE06A:	bcc @6
 .else
 	bbrf ITALIC_BIT, currentMode, clc_rts
 	lda r10H
@@ -463,9 +457,9 @@ LE06A:	bcc @6
 @4:	dex
 	stx r11L
 	jsr Font_2
+.endif
 @5:	CmpW rightMargin, FontTVar2
 	bcc @6
-.endif
 	CmpW leftMargin, r11
 	rts
 @6:	sec
