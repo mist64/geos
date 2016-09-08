@@ -422,31 +422,31 @@ Font_3:
 @2:
 .if wheels
 LDEFA = $DEFA
-	lda     $2E                             ; E039 A5 2E                    ..
-        and     #$10                            ; E03B 29 10                    ).
-        bne     LE041                           ; E03D D0 02                    ..
-        clc                                     ; E03F 18                       .
-        rts                                     ; E040 60                       `
-LE041:  lda     $17                             ; E041 A5 17                    ..
-        lsr     a                               ; E043 4A                       J
-        bcs     LE05E                           ; E044 B0 18                    ..
-        ldx     $8887                           ; E046 AE 87 88                 ...
-        bne     LE04E                           ; E049 D0 03                    ..
-        dec     $8888                           ; E04B CE 88 88                 ...
-LE04E:  dex                                     ; E04E CA                       .
-        stx     $8887                           ; E04F 8E 87 88                 ...
-        ldx     $18                             ; E052 A6 18                    ..
-        bne     LE058                           ; E054 D0 02                    ..
-        dec     $19                             ; E056 C6 19                    ..
-LE058:  dex                                     ; E058 CA                       .
-        stx     $18                             ; E059 86 18                    ..
-        jsr     LDEFA                           ; E05B 20 FA DE                  ..
-LE05E:  lda     $38                             ; E05E A5 38                    .8
-        cmp     $8888                           ; E060 CD 88 88                 ...
-        bne     LE06A                           ; E063 D0 05                    ..
-        lda     $37                             ; E065 A5 37                    .7
-        cmp     $8887                           ; E067 CD 87 88                 ...
-LE06A:  bcc     @6                           ; E06A 90 0B                    ..
+	lda currentMode
+	and #$10
+	bne LE041
+	clc
+	rts
+LE041:	lda r10H
+	lsr a
+	bcs LE05E
+	ldx $8887
+	bne LE04E
+	dec $8888
+LE04E:	dex
+	stx $8887
+	ldx r11L
+	bne LE058
+	dec r11H
+LE058:	dex
+	stx r11L
+	jsr LDEFA
+LE05E:	lda $38
+	cmp $8888
+	bne LE06A
+	lda $37
+	cmp $8887
+LE06A:	bcc @6
 .else
 	bbrf ITALIC_BIT, currentMode, clc_rts
 	lda r10H
