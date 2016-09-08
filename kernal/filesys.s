@@ -521,10 +521,6 @@ _FollowChain:
 @6:	PopB r3H
 	plp
 	rts
-
-; --------------------------------------------
-LD5CA:	LoadW r4, diskBlkBuf
-	rts
 .else
 	php
 	sei
@@ -554,107 +550,109 @@ LD5CA:	LoadW r4, diskBlkBuf
 	rts
 .endif
 
+.if wheels ; common code
+LD5CA:	LoadW r4, diskBlkBuf
+	rts
+.endif
+
 _FindFTypes:
 .if wheels
 .import fftIndicator
-	bit     fftIndicator                           ; D5D3 2C F3 9F                 ,..
-        bmi     LD5FD                           ; D5D6 30 25                    0%
-        lda     $0F                             ; D5D8 A5 0F                    ..
-        sta     r1H                             ; D5DA 85 05                    ..
-        lda     $0E                             ; D5DC A5 0E                    ..
-        sta     r1L                             ; D5DE 85 04                    ..
-        lda     #$00                            ; D5E0 A9 00                    ..
-        sta     $03                             ; D5E2 85 03                    ..
-        lda     $11                             ; D5E4 A5 11                    ..
-        asl                               ; D5E6 0A                       .
-        rol     $03                             ; D5E7 26 03                    &.
-        asl                               ; D5E9 0A                       .
-        rol     $03                             ; D5EA 26 03                    &.
-        asl                               ; D5EC 0A                       .
-        rol     $03                             ; D5ED 26 03                    &.
-        asl                               ; D5EF 0A                       .
-        rol     $03                             ; D5F0 26 03                    &.
-        adc     $11                             ; D5F2 65 11                    e.
-        sta     r0L                           ; D5F4 85 02                    ..
-        bcc     LD5FA                           ; D5F6 90 02                    ..
-        inc     $03                             ; D5F8 E6 03                    ..
-LD5FA:	jsr     ClearRam                        ; D5FA 20 78 C1                  x.
-LD5FD:	jsr     Get1stDirEntry                           ; D5FD 20 30 90                  0.
-        txa                                     ; D600 8A                       .
-        bne     LD661                           ; D601 D0 5E                    .^
-LD603:	ldy     #$00                            ; D603 A0 00                    ..
-        lda     ($0C),y                         ; D605 B1 0C                    ..
-        beq     LD658                           ; D607 F0 4F                    .O
-        ldy     #$16                            ; D609 A0 16                    ..
-        lda     $10                             ; D60B A5 10                    ..
-        cmp     #$64                            ; D60D C9 64                    .d
-        beq     LD624                           ; D60F F0 13                    ..
-        cmp     #$65                            ; D611 C9 65                    .e
-        bne     LD61B                           ; D613 D0 06                    ..
-        lda     ($0C),y                         ; D615 B1 0C                    ..
-        beq     LD658                           ; D617 F0 3F                    .?
-        bne     LD624                           ; D619 D0 09                    ..
-LD61B:	cmp     ($0C),y                         ; D61B D1 0C                    ..
-        bne     LD658                           ; D61D D0 39                    .9
-        jsr     GetHeaderFileName                           ; D61F 20 95 D7                  ..
-        bne     LD658                           ; D622 D0 34                    .4
-LD624:	clc                                     ; D624 18                       .
-        lda     $0C                             ; D625 A5 0C                    ..
-        adc     #$03                            ; D627 69 03                    i.
-        sta     r0L                           ; D629 85 02                    ..
-        lda     $0D                             ; D62B A5 0D                    ..
-        adc     #$00                            ; D62D 69 00                    i.
-        sta     $03                             ; D62F 85 03                    ..
-        ldy     #$00                            ; D631 A0 00                    ..
-LD633:	lda     (r0),y                       ; D633 B1 02                    ..
-        cmp     #$A0                            ; D635 C9 A0                    ..
-        beq     LD640                           ; D637 F0 07                    ..
-        sta     ($0E),y                         ; D639 91 0E                    ..
-        iny                                     ; D63B C8                       .
-        cpy     #$10                            ; D63C C0 10                    ..
-        bne     LD633                           ; D63E D0 F3                    ..
-LD640:	lda     #$00                            ; D640 A9 00                    ..
-        sta     ($0E),y                         ; D642 91 0E                    ..
-        bit     fftIndicator                           ; D644 2C F3 9F                 ,..
-        bmi     LD663                           ; D647 30 1A                    0.
-        clc                                     ; D649 18                       .
-        lda     #$11                            ; D64A A9 11                    ..
-        adc     $0E                             ; D64C 65 0E                    e.
-        sta     $0E                             ; D64E 85 0E                    ..
-        bcc     LD654                           ; D650 90 02                    ..
-        inc     $0F                             ; D652 E6 0F                    ..
-LD654:	dec     $11                             ; D654 C6 11                    ..
-        beq     LD661                           ; D656 F0 09                    ..
-LD658:	jsr     GetNxtDirEntry                           ; D658 20 33 90                  3.
-        txa                                     ; D65B 8A                       .
-        bne     LD661                           ; D65C D0 03                    ..
-        tya                                     ; D65E 98                       .
-        beq     LD603                           ; D65F F0 A2                    ..
-LD661:	sec                                     ; D661 38                       8
-        rts                                     ; D662 60                       `
+	bit fftIndicator
+	bmi LD5FD
+	lda $0F
+	sta r1H
+	lda $0E
+	sta r1L
+	lda #$00
+	sta $03
+	lda $11
+	asl
+	rol $03
+	asl
+	rol $03
+	asl
+	rol $03
+	asl
+	rol $03
+	adc $11
+	sta r0L
+	bcc LD5FA
+	inc $03
+LD5FA:	jsr ClearRam
+LD5FD:	jsr Get1stDirEntry
+	txa
+	bne LD661
+LD603:	ldy #$00
+	lda ($0C),y
+	beq LD658
+	ldy #$16
+	lda $10
+	cmp #$64
+	beq LD624
+	cmp #$65
+	bne LD61B
+	lda ($0C),y
+	beq LD658
+	bne LD624
+LD61B:	cmp ($0C),y
+	bne LD658
+	jsr GetHeaderFileName
+	bne LD658
+LD624:	clc
+	lda $0C
+	adc #$03
+	sta r0L
+	lda $0D
+	adc #$00
+	sta $03
+	ldy #$00
+LD633:	lda (r0),y
+	cmp #$A0
+	beq LD640
+	sta ($0E),y
+	iny
+	cpy #$10
+	bne LD633
+LD640:	lda #$00
+	sta ($0E),y
+	bit fftIndicator
+	bmi LD663
+	clc
+	lda #$11
+	adc $0E
+	sta $0E
+	bcc LD654
+	inc $0F
+LD654:	dec $11
+	beq LD661
+LD658:	jsr GetNxtDirEntry
+	txa
+	bne LD661
+	tya
+	beq LD603
+LD661:	sec
+	rts
 
-; ----------------------------------------------------------------------------
-LD663:	lda     $0D                             ; D663 A5 0D                    ..
-        sta     LD685                           ; D665 8D 85 D6                 ...
-        lda     $0C                             ; D668 A5 0C                    ..
-        sta     LD684                           ; D66A 8D 84 D6                 ...
-        lda     #$D6                            ; D66D A9 D6                    ..
-        sta     $0D                             ; D66F 85 0D                    ..
-        lda     #$77                            ; D671 A9 77                    .w
-        sta     $0C                             ; D673 85 0C                    ..
-        clc                                     ; D675 18                       .
-        rts                                     ; D676 60                       `
+LD663:	lda $0D
+	sta LD685
+	lda $0C
+	sta LD684
+	lda #$D6
+	sta $0D
+	lda #$77
+	sta $0C
+	clc
+	rts
 
-; ----------------------------------------------------------------------------
-        lda     LD685                           ; D677 AD 85 D6                 ...
-        sta     $0D                             ; D67A 85 0D                    ..
-        lda     LD684                           ; D67C AD 84 D6                 ...
-        sta     $0C                             ; D67F 85 0C                    ..
-        jmp     LD658                           ; D681 4C 58 D6                 LX.
+	lda LD685
+	sta $0D
+	lda LD684
+	sta $0C
+	jmp LD658
 
-; ----------------------------------------------------------------------------
-LD684:	brk                                     ; D684 00                       .
-LD685:	brk                                     ; D685 00                       .
+LD684:	.byte 0
+LD685:	.byte 0
 
 .else
 .if (useRamExp)
