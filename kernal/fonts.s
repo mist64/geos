@@ -613,7 +613,7 @@ Font_9:
 ; central character printing, called from conio.s
 ; character - 32 in A
 FontPutChar:
-.if !wheels
+.if !wheels_size_and_speed
 	nop
 .endif
 	tay
@@ -842,12 +842,13 @@ FontGt4_2:
 	sta Z45+2,y
 	beq FontGt2_1
 
-.if wheels
-	.byte 0, 0, 0
-.else
+.if !wheels
 FontTVar1:
+.endif
 	.byte 0
+.if !wheels
 FontTVar2:
+.endif
 .if cbmfiles
 	; This should be initialized to 0, and will
 	; be changed at runtime.
@@ -857,5 +858,4 @@ FontTVar2:
 	.word $34
 .else
 	.word 0
-.endif
 .endif
