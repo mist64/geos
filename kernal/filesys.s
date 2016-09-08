@@ -404,78 +404,63 @@ DoWriteFile:
 .endif
 
 .if wheels
-L5086:	lda r9H
-	pha
-	lda r9L
-	pha
-	lda r3H
-	pha
-	lda r3L
-	pha
-	lda r2H
-	pha
-	lda r2L
-	pha
-	lda r1H
-	pha
-	lda r1L
-	pha
-	lda r0H
-	pha
-	lda r0L
-	pha
+L5086:	PushW r9
+	PushW r3
+	PushW r2
+	PushW r1
+	PushW r0
 	ldx #$02
 	lda r7H
 	sta r9H
 	lda r7L
 	sta r9L
-L50AE:	lda r9H
+@1:	lda r9H
 	cmp #$50
-	bne L50B8
+	bne @2
 	lda r9L
 	cmp #$00
-L50B8:	bcc L50C6
+@2:	bcc @4
 	lda r9H
 	cmp #$51
-	bne L50C4
+	bne @3
 	lda r9L
 	cmp #$5F
-L50C4:	bcc L50DD
-L50C6:	ldy #$00
+@3:	bcc @6
+@4:	ldy #$00
 	lda (r9L),y
 	sta diskBlkBuf,x
 	clc
-	lda #$01
+	lda #1
 	adc r9L
 	sta r9L
-	bcc L50D8
+	bcc @5
 	inc r9H
-L50D8:	inx
-	bne L50AE
-	beq L5107
-L50DD:	jsr L5126
+@5:	inx
+	bne @1
+	beq @B
+@6:	jsr @C
 	ldx r0L
-L50E2:	clc
+@7:	clc
 	lda #$01
 	adc r9L
 	sta r9L
-	bcc L50ED
+	bcc @8
 	inc r9H
-L50ED:	inx
-	beq L5107
+@8:	inx
+	beq @B
 	lda r9H
 	cmp #$51
-	bne L50FA
+	bne @9
 	lda r9L
 	cmp #$5F
-L50FA:	bcc L50E2
+@9:	bcc @7
 	ldy #$00
-L50FE:	lda (r9L),y
+@A:	lda (r9L),y
 	sta diskBlkBuf,x
 	iny
 	inx
-	bne L50FE
-L5107:	pla
+	bne @A
+@B:	pla
 	sta r0L
 	pla
 	sta r0H
@@ -497,7 +482,7 @@ L5107:	pla
 	sta r9H
 	rts
 
-L5126:	sec
+@C:	sec
 	lda r9L
 	sbc #$00
 	sta r1L
