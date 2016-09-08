@@ -39,7 +39,6 @@ KERNAL_SOURCES= \
 	kernal/wheels/reu0.s \
 	kernal/wheels/reu1.s \
 	kernal/wheels/reu2.s \
-	kernal/wheels/reu4.s \
 	kernal/wheels/reu5.s \
 	kernal/wheels/reu6.s \
 	kernal/wheels/reu7.s \
