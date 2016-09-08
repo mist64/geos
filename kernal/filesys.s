@@ -56,11 +56,10 @@
 .global _WriteFile
 .global _WriteRecord
 
+.segment "files1a"
 
 .if wheels_external_readwrite_file
-.segment "reu3"
 .else
-.segment "files1"
 Add2:
 	AddVW 2, r6
 return:
@@ -276,8 +275,9 @@ FlaggedPutBlock:
 @1:	jmp WriteBlock
 .endif
 
+.segment "files1b"
+
 .if wheels_external_readwrite_file
-.segment "reu4"
 OWriteFile:
 .else
 _WriteFile:
