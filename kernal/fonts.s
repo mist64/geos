@@ -441,10 +441,10 @@ LE04E:	dex
 LE058:	dex
 	stx r11L
 	jsr Font_2
-LE05E:	lda $38
+LE05E:	lda rightMargin+1
 	cmp L8888
 	bne LE06A
-	lda $37
+	lda rightMargin
 	cmp FontTVar2
 LE06A:	bcc @6
 .else
