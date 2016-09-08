@@ -494,8 +494,8 @@ _FollowChain:
 	PushB r3H
 	lda #0
 	sta WheelsTemp
-LD589:	jsr GetLink
-LD58C:	bnex LD5C3
+@1:	jsr GetLink
+@2:	bnex @5
 	ldy WheelsTemp
 	lda r1L
 	sta (r3),y
@@ -504,21 +504,21 @@ LD58C:	bnex LD5C3
 	sta (r3),y
 	iny
 	sty WheelsTemp
-	bne LD5A3
+	bne @3
 	inc r3H
-LD5A3:	lda r1L
-	beq LD5C5
+@3:	lda r1L
+	beq @6
 	lda diskBlkBuf
-	bne LD5AF
+	bne @4
 	jsr GetBlock
-LD5AF:	lda r3H
-	cmp #$80
-	bcs LD5C3
+@4:	lda r3H
+	cmp #>OS_VARS
+	bcs @5
 	MoveW diskBlkBuf, r1
-	bne LD589
-	beq LD58C
-LD5C3:	ldx #$0B
-LD5C5:	PopB r3H
+	bne @1
+	beq @2
+@5:	ldx #BFR_OVERFLOW
+@6:	PopB r3H
 	plp
 	rts
 
