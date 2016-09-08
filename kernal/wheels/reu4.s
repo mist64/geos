@@ -8,6 +8,8 @@
 
 .segment "reu4"
 
+.if 0
+
 OWriteFile:
 	jsr EnterTurbo
 	txa
@@ -27,6 +29,7 @@ L5007:	jsr InitForIO
 	pha
 	lda r7L
 	pha
+
 L501E:	ldy #$00
 	lda (r6L),y
 	beq L5076
@@ -49,14 +52,14 @@ L5037:	lda (r6L),y
 	ldy #$FE
 	lda #$30
 	sta CPU_DATA
+
 	lda r7H
 	cmp #$4F
 	bcc L5056
 	cmp #$52
 	bcs L5056
 	jsr L5086
-	clv
-	bvc L505F
+	bra L505F
 L5056:	dey
 	lda (r7L),y
 	sta $8002,y
@@ -64,9 +67,9 @@ L5056:	dey
 	bne L5056
 L505F:	lda #$36
 	sta CPU_DATA
+
 	jsr WriteBlock
-	txa
-	bne L5077
+	bnex L5077
 	clc
 	lda #$FE
 	adc r7L
@@ -74,7 +77,8 @@ L505F:	lda #$36
 	bcc L501E
 	inc r7H
 	bne L501E
-L5076:	tax
+L5076:
+	tax
 L5077:	pla
 	sta r7L
 	pla
@@ -208,3 +212,4 @@ L5126:	sec
 	dec $88C3
 	rts
 
+.endif

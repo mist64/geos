@@ -303,21 +303,34 @@ L51A6:	clc
 	rts
 .endif
 
-.if 0
+.if !wheels_external_readwrite_file
 FlaggedPutBlock:
 	lda verifyFlag
 	beq @1
 	jmp VerWriteBlock
 @1:	jmp WriteBlock
+.endif
 
+.if wheels_external_readwrite_file
+.segment "reu4"
+OWriteFile:
+.else
 _WriteFile:
+.endif
 	jsr EnterTurbo
+.if wheels
+	beqx @X
+	rts
+@X:
+.else
 	bnex @2
 	sta verifyFlag
+.endif
 	jsr InitForIO
 	LoadW r4, diskBlkBuf
 	PushW r6
 	PushW r7
+.if !wheels
 	jsr DoWriteFile
 	PopW r7
 	PopW r6
@@ -327,6 +340,7 @@ _WriteFile:
 @1:	jsr DoneWithIO
 @2:	rts
 
+.endif
 DoWriteFile:
 	ldy #0
 	lda (r6),y
@@ -336,7 +350,11 @@ DoWriteFile:
 	lda (r6),y
 	sta r1H
 	dey
+.if wheels
+	AddVW 2, r6
+.else
 	jsr Add2
+.endif
 	lda (r6),y
 	sta (r4),y
 	iny
@@ -344,22 +362,174 @@ DoWriteFile:
 	sta (r4),y
 	ldy #$fe
 	LoadB CPU_DATA, RAM_64K
+.if wheels
+	lda r7H
+	cmp #$4F
+	bcc @1
+	cmp #$52
+	bcs @1
+	jsr L5086
+	bra @Y
+.endif
 @1:	dey
 	lda (r7),y
 	sta diskBlkBuf+2,y
 	tya
 	bne @1
-	LoadB CPU_DATA, KRNL_IO_IN
+@Y:	LoadB CPU_DATA, KRNL_IO_IN
+.if wheels
+	jsr WriteBlock
+	bnex @3
+	clc
+	lda #$FE
+	adc r7L
+	sta r7L
+	bcc DoWriteFile
+	inc r7H
+	bne DoWriteFile
+.else
 	jsr FlaggedPutBlock
 	bnex @3
 	AddVW $fe, r7
 	bra DoWriteFile
+.endif
 @2:	tax
-@3:	rts
+@3:
+.if wheels
+	PopW r7
+	PopW r6
+	jmp DoneWithIO
+.else
+	rts
+.endif
 
-ASSERT_NOT_BELOW_IO
+.if wheels
+L5086:	lda r9H
+	pha
+	lda r9L
+	pha
+	lda r3H
+	pha
+	lda r3L
+	pha
+	lda r2H
+	pha
+	lda r2L
+	pha
+	lda r1H
+	pha
+	lda r1L
+	pha
+	lda r0H
+	pha
+	lda r0L
+	pha
+	ldx #$02
+	lda r7H
+	sta r9H
+	lda r7L
+	sta r9L
+L50AE:	lda r9H
+	cmp #$50
+	bne L50B8
+	lda r9L
+	cmp #$00
+L50B8:	bcc L50C6
+	lda r9H
+	cmp #$51
+	bne L50C4
+	lda r9L
+	cmp #$5F
+L50C4:	bcc L50DD
+L50C6:	ldy #$00
+	lda (r9L),y
+	sta diskBlkBuf,x
+	clc
+	lda #$01
+	adc r9L
+	sta r9L
+	bcc L50D8
+	inc r9H
+L50D8:	inx
+	bne L50AE
+	beq L5107
+L50DD:	jsr L5126
+	ldx r0L
+L50E2:	clc
+	lda #$01
+	adc r9L
+	sta r9L
+	bcc L50ED
+	inc r9H
+L50ED:	inx
+	beq L5107
+	lda r9H
+	cmp #$51
+	bne L50FA
+	lda r9L
+	cmp #$5F
+L50FA:	bcc L50E2
+	ldy #$00
+L50FE:	lda (r9L),y
+	sta diskBlkBuf,x
+	iny
+	inx
+	bne L50FE
+L5107:	pla
+	sta r0L
+	pla
+	sta r0H
+	pla
+	sta r1L
+	pla
+	sta r1H
+	pla
+	sta r2L
+	pla
+	sta r2H
+	pla
+	sta r3L
+	pla
+	sta r3H
+	pla
+	sta r9L
+	pla
+	sta r9H
+	rts
+
+L5126:	sec
+	lda r9L
+	sbc #$00
+	sta r1L
+	lda r9H
+	sbc #$50
+	sta r1H
+	stx r0L
+	lda #$80
+	sta r0H
+	dex
+	txa
+	eor #$FF
+	sta r2L
+	lda #$00
+	sta r2H
+	clc
+	lda #$7B
+	adc r1L
+	sta r1L
+	lda #$0D
+	adc r1H
+	sta r1H
+	lda $88C3
+	sta r3L
+	inc $88C3
+	jsr FetchRAM
+	dec $88C3
+	rts
 
 .endif
+
+ASSERT_NOT_BELOW_IO
 
 .segment "files2"
 
