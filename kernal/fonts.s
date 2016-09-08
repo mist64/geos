@@ -421,28 +421,13 @@ Font_3:
 	sta r10L
 @2:
 .if wheels
-L8888 = $8888
-	lda currentMode
-	and #$10
-	bne @LE041
+	bbsf ITALIC_BIT, currentMode, @X
 	clc
 	rts
-@LE041:	lda r10H
-	lsr a
-	bcs @5
-	ldx FontTVar2
-	bne @LE04E
-	dec L8888
-@LE04E:	dex
-	stx FontTVar2
-	ldx r11L
-	bne @LE058
-	dec r11H
-@LE058:	dex
-	stx r11L
-	jsr Font_2
+@X:
 .else
 	bbrf ITALIC_BIT, currentMode, clc_rts
+.endif
 	lda r10H
 	lsr
 	bcs @5
@@ -457,7 +442,6 @@ L8888 = $8888
 @4:	dex
 	stx r11L
 	jsr Font_2
-.endif
 @5:	CmpW rightMargin, FontTVar2
 	bcc @6
 	CmpW leftMargin, r11
