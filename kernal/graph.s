@@ -132,7 +132,7 @@ _InvertLine:
 	lda r3L
 	cmp r4L
 @2:	beq @7
-	jsr LC7A3
+	jsr LineHelp2
 	lda r8L
 	bit WheelsTemp
 	bmi @3
@@ -213,7 +213,7 @@ _HorizontalLine:
 	lsr r4L
 	lsr r4L
 	lda r8L
-	jsr HLineHelp
+	jsr HLineHelp1
 @2:	sta (r6),Y
 	sta (r5),Y
 	tya
@@ -230,7 +230,7 @@ _HorizontalLine:
 	ora r8H
 	bra @6
 @5:	lda r8H
-@6:	jsr HLineHelp
+@6:	jsr HLineHelp1
 HLinEnd1:
 	sta (r6),Y
 	sta (r5),Y
@@ -332,7 +332,7 @@ _RecoverLine:
 	.byte $2c
 ImprintLine:
 	lda #$38 ; sec
-	sta LC73C
+	sta @1
 	PushW r3
 	PushW r4
 	lda dispBufferOn
@@ -342,8 +342,8 @@ ImprintLine:
 	jsr PrepareXCoord
 	pla
 	sta dispBufferOn
-LC73C:	clc
-	bcc LC74F
+@1:	clc
+	bcc @2
 	lda r5L
 	ldy r6L
 	sta r6L
@@ -352,36 +352,37 @@ LC73C:	clc
 	ldy r6H
 	sta r6H
 	sty r5H
-LC74F:	ldy r3L
+@2:	ldy r3L
 	lda r3H
-	beq LC759
+	beq @3
 	inc r5H
 	inc r6H
-LC759:	CmpW r3, r4
-	beq LC783
-	jsr LC7A3
+@3:	CmpW r3, r4
+	beq @6
+	jsr LineHelp2
 	lda r8L
-	jsr LC792
-LC76D:	tya
+	jsr LineHelp1
+@4:	tya
 	clc
 	adc #8
 	tay
-	bcc LC778
+	bcc @5
 	inc r5H
 	inc r6H
-LC778:	dec r4L
-	beq LC78A
+@5:	dec r4L
+	beq @7
 	lda (r6),y
 	sta (r5),y
-	bra LC76D
-LC783:	lda r8L
+	bra @4
+@6:	lda r8L
 	ora r8H
-	bra LC78C
-LC78A:	lda r8H
-LC78C:	jsr LC792
+	bra @8
+@7:	lda r8H
+@8:	jsr LineHelp1
 	jmp LineEnd
 
-LC792:	sta r7L
+LineHelp1:
+	sta r7L
 	and (r5),y
 	sta r7H
 	lda r7L
@@ -391,7 +392,8 @@ LC792:	sta r7L
 	sta (r5),y
 	rts
 
-LC7A3:	SubW r3, r4
+LineHelp2:
+	SubW r3, r4
 	lsr r4H
 	ror r4L
 	lsr r4L
@@ -405,7 +407,6 @@ LC7A3:	SubW r3, r4
 	sta dispBufferOn
 	jsr PrepareXCoord
 	PopB dispBufferOn
-
 RLin0:
 	ldy r3L
 	lda r3H
