@@ -34,7 +34,7 @@
 .segment "keyboard1"
 
 _DoKeyboardScan:
-.if wheels
+.if wheels_screensaver
 .import ScreenSaver1
 	jsr     ScreenSaver1
 	bcs @5
@@ -88,11 +88,11 @@ _DoKeyboardScan:
 	bpl @2
 @5:	rts
 
-.if wheels
+.if wheels_screensaver
 .global KbdScanAll
 KbdScanAll:
-	lda     #$00                            ; FB71 A9 00                    ..
-        .byte   $2C                             ; FB73 2C                       ,
+	lda #$00
+	.byte $2c
 .endif
 KbdScanRow:
 	LoadB cia1base+0, $ff

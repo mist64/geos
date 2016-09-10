@@ -160,10 +160,6 @@ UNK_6:
 
 .segment "init4"
 
-.if wheels
-.global InitRamTab
-.endif
-
 InitRamTab:
 	.word currentMode
 	.byte 12
@@ -209,7 +205,7 @@ InitRamTab:
 	.byte 1
 	.byte 0                       ; IconDescVecH
 
-.if wheels ; ???
+.if wheels_dlgbox_dblclick
 	.word   dblDBData
 	.byte   1
 	.byte   OPEN

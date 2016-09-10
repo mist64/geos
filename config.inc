@@ -27,6 +27,8 @@ wheels   = 1
 
 	wheels_dlgbox_features = 1
 
+	wheels_dlgbox_dblclick = 1
+
 	; support for chdir in dialogs
 	wheels_dialog_chdir = 1
 
@@ -42,7 +44,8 @@ wheels   = 1
 	wheels_fixes = 0
 	wheels_button_shortcuts = 0
 	wheels_enhanced_list_scrolling = 0
-	wheels_dlgbox_features = 1
+	wheels_dlgbox_features = 0
+	wheels_dlgbox_dblclick = 0
 	wheels_dialog_chdir = 0
 	wheels_screensaver = 0
 	wheels_external_readwrite_file = 0

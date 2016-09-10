@@ -1056,7 +1056,7 @@ DBGFPressVector:
 @1:	sta DBGFileSelected
 	jsr DBGFilesHelp6
 	jsr DBGFilesHelp2
-.if wheels ; ???
+.if wheels_dlgbox_dblclick
 	lda dblClickCount
 	beq @X
 	ldy dblDBData
