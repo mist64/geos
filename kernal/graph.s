@@ -109,7 +109,7 @@ PrepareXCoord:
 	sta r4L
 	rts
 
-.if wheels
+.if wheels_size
 .import WheelsTemp
 _HorizontalLine:
 	sta r7L
@@ -327,7 +327,7 @@ ImprintLine:
 ; Destroyed: a, x, y, r5 - r8
 ;---------------------------------------------------------------
 _RecoverLine:
-.if wheels
+.if wheels_size
 	lda #$18 ; clc
 	.byte $2c
 ImprintLine:
