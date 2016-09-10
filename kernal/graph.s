@@ -133,7 +133,7 @@ _InvertLine:
 	cmp r4L
 @2:	beq @7
 	jsr LC7A3
-	lda $12
+	lda r8L
 	bit WheelsTemp
 	bmi @3
 	jsr LineCommon
@@ -158,10 +158,10 @@ _InvertLine:
 	bpl @4
 	lda (r5),y
 	bra @4
-@7:	lda $12
-	ora $13
+@7:	lda r8L
+	ora r8H
 	bra @9
-@8:	lda $13
+@8:	lda r8H
 @9:	bit WheelsTemp
 	bmi @A
 	jsr LineCommon
@@ -335,13 +335,13 @@ ImprintLine:
 	sta LC73C
 	PushW r3
 	PushW r4
-	lda $2F
+	lda dispBufferOn
 	pha
-	ora #$C0
-	sta $2F
+	ora #ST_WR_FORE | ST_WR_BACK
+	sta dispBufferOn
 	jsr PrepareXCoord
 	pla
-	sta $2F
+	sta dispBufferOn
 LC73C:	clc
 	bcc LC74F
 	lda r5L
@@ -357,14 +357,10 @@ LC74F:	ldy r3L
 	beq LC759
 	inc r5H
 	inc r6H
-LC759:	lda r3H
-	cmp r4H
-	bne LC763
-	lda r3L
-	cmp r4L
+LC759:	CmpW r3, r4
 LC763:	beq LC783
 	jsr LC7A3
-	lda $12
+	lda r8L
 	jsr LC792
 LC76D:	tya
 	clc
@@ -378,10 +374,10 @@ LC778:	dec r4L
 	lda (r6),y
 	sta (r5),y
 	bra LC76D
-LC783:	lda $12
-	ora $13
+LC783:	lda r8L
+	ora r8H
 	bra LC78C
-LC78A:	lda $13
+LC78A:	lda r8H
 LC78C:	jsr LC792
 	jmp LineEnd
 
