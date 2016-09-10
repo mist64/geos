@@ -76,11 +76,12 @@ _FirstInit:
 	jsr InitMachine
 	LoadW EnterDeskTop+1, _EnterDeskTop
 	LoadB maxMouseSpeed, iniMaxMouseSpeed
-.if wheels
+.if wheels_size_and_speed
+	.assert iniMouseAccel = iniMaxMouseSpeed, error, "iniMouseAccel != iniMaxMouseSpeed!"
 	sta mouseAccel
 .endif
 	LoadB minMouseSpeed, iniMinMouseSpeed
-.if !wheels
+.if !wheels_size_and_speed
 	LoadB mouseAccel, iniMouseAccel
 .endif
 
@@ -93,6 +94,22 @@ _FirstInit:
 .global _FirstInit2
 .global _FirstInit3
 	MoveB sysScrnColors, screencolors
+.else
+	LoadB screencolors, (DKGREY << 4)+LTGREY
+	sta @1
+	jsr i_FillRam
+	.word 1000
+	.word COLOR_MATRIX
+@1:	.byte (DKGREY << 4)+LTGREY
+	ldx CPU_DATA
+ASSERT_NOT_BELOW_IO
+	LoadB CPU_DATA, IO_IN
+	LoadB mob0clr, BLUE
+	sta mob1clr
+	LoadB extclr, BLACK
+	stx CPU_DATA
+ASSERT_NOT_BELOW_IO
+.endif
 	ldy #62
 @2:	lda #0
 	sta mousePicData,Y
@@ -103,6 +120,7 @@ _FirstInit:
 	sta mousePicData-1,x
 	dex
 	bne @3
+.if wheels
 _FirstInit2:
 	jsr DrawCheckeredScreen
 	lda screencolors
@@ -124,20 +142,6 @@ ASSERT_NOT_BELOW_IO
 ASSERT_NOT_BELOW_IO
         rts
 .else
-	LoadB screencolors, (DKGREY << 4)+LTGREY
-	sta @1
-	jsr i_FillRam
-	.word 1000
-	.word COLOR_MATRIX
-@1:	.byte (DKGREY << 4)+LTGREY
-	ldx CPU_DATA
-ASSERT_NOT_BELOW_IO
-	LoadB CPU_DATA, IO_IN
-	LoadB mob0clr, BLUE
-	sta mob1clr
-	LoadB extclr, BLACK
-	stx CPU_DATA
-ASSERT_NOT_BELOW_IO
 	ldy #62
 @2:	lda #0
 	sta mousePicData,Y
@@ -148,6 +152,7 @@ ASSERT_NOT_BELOW_IO
 	sta mousePicData-1,x
 	dex
 	bne @3
+
 	jmp UNK_6
 .endif
 
