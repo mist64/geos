@@ -358,7 +358,7 @@ LC74F:	ldy r3L
 	inc r5H
 	inc r6H
 LC759:	CmpW r3, r4
-LC763:	beq LC783
+	beq LC783
 	jsr LC7A3
 	lda r8L
 	jsr LC792
@@ -391,13 +391,7 @@ LC792:	sta r7L
 	sta (r5),y
 	rts
 
-LC7A3:	lda r4L
-	sec
-	sbc r3L
-	sta r4L
-	lda r4H
-	sbc r3H
-	sta r4H
+LC7A3:	SubW r3, r4
 	lsr r4H
 	ror r4L
 	lsr r4L
