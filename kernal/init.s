@@ -87,12 +87,6 @@ _FirstInit:
 
 .if wheels
 .import sysScrnColors
-.import sysMob0Clr
-.import sysExtClr
-.import DrawCheckeredScreen
-.import _i_ColorRectangle
-.global _FirstInit2
-.global _FirstInit3
 	MoveB sysScrnColors, screencolors
 .else
 	LoadB screencolors, (DKGREY << 4)+LTGREY
@@ -121,6 +115,11 @@ ASSERT_NOT_BELOW_IO
 	dex
 	bne @3
 .if wheels
+.import sysMob0Clr
+.import sysExtClr
+.import DrawCheckeredScreen
+.global _FirstInit2
+.global _FirstInit3
 _FirstInit2:
 	jsr DrawCheckeredScreen
 	lda screencolors
@@ -142,17 +141,6 @@ ASSERT_NOT_BELOW_IO
 ASSERT_NOT_BELOW_IO
         rts
 .else
-	ldy #62
-@2:	lda #0
-	sta mousePicData,Y
-	dey
-	bpl @2
-	ldx #24
-@3:	lda InitMsePic-1,x
-	sta mousePicData-1,x
-	dex
-	bne @3
-
 	jmp UNK_6
 .endif
 
