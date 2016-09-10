@@ -59,7 +59,7 @@ _DoIcons:
 	jsr Icons_1
 	jsr ResetMseRegion
 	lda mouseOn
-.if wheels
+.if wheels_size_and_speed
 	bmi @1
 .else
 	and #SET_MSE_ON
@@ -69,7 +69,7 @@ _DoIcons:
 	and #%10111111
 	sta mouseOn
 @1:
-.if !wheels
+.if !wheels_size_and_speed
 	lda mouseOn
 .endif
 	ora #SET_ICONSON
@@ -100,7 +100,7 @@ CalcIconDescTab:
 Icons_1:
 	LoadB r10L, NULL
 @1:
-.if !wheels
+.if !wheels_size_and_speed
 	lda r10L
 .endif
 	jsr CalcIconDescTab
@@ -176,7 +176,7 @@ ProcessClick:
 FindClkIcon:
 	LoadB r0L, NULL
 @1:
-.if !wheels
+.if !wheels_size_and_speed
 	lda r0L
 .endif
 	jsr CalcIconDescTab
@@ -244,7 +244,7 @@ CalcIconCoords:
 	ldx #r4
 	jsr DShiftLeft
 	ldx #r4
-.if wheels
+.if wheels_size_and_speed
 	jmp Ddec
 .else
 	jsr Ddec
