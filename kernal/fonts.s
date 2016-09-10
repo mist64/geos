@@ -377,7 +377,7 @@ Font_tab2:
 	.byte <(e7-base)
 
 .if wheels
-	.res 9, 0
+	.res 9, 0 ; XXX
 .endif
 
 .if wheels ; xxx moved, but unchanged
