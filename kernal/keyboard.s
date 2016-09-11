@@ -227,17 +227,16 @@ KbdDecodeTab2:
 	.byte "/", "Z", "G", "(", "B", "H", "U", "V"
 	.byte ")", "I", "J", "=", "M", "K", "O", "N"
 	.byte "?", "P", "L", "`", ":", "\", "]", ";"
-	.byte   $5E,$2A,$5B,$13,$1F,$27,$1F,$5F ; FE55 5E 2A 5B 13 1F 27 1F 5F  ^*[..'._
-	.byte   $21,$14,$1F,$22,$20,$1F,$51,$17 ; FE5D 21 14 1F 22 20 1F 51 17  !.." .Q.
+	.byte "^", "*", "[", KEY_CLEAR, KEY_INVALID, "'", KEY_INVALID, "_"
+	.byte "!", KEY_LARROW, KEY_INVALID, $22, " ", KEY_INVALID, "Q", KEY_RUN
 .else
 	.byte KEY_INSERT, CR, BACKSPACE, KEY_F8, KEY_F2, KEY_F4, KEY_F6, KEY_UP
-
-
 	.byte "#", "W", "A", "$", "Z", "S", "E", KEY_INVALID
 	.byte "%", "R", "D", "&", "C", "F", "T", "X"
 	.byte "'", "Y", "G", "(", "B", "H", "U", "V"
 	.byte ")", "I", "J", "0", "M", "K", "O", "N"
 	.byte "+", "P", "L", "-", ">", "[", "@", "<"
+
 	.byte KEY_BPS, "*", "]", KEY_CLEAR, KEY_INVALID, "=", "^", "?"
 	.byte "!", KEY_LARROW, KEY_INVALID, $22, " ", KEY_INVALID, "Q", KEY_RUN
 .endif
