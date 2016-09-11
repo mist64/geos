@@ -290,7 +290,7 @@ _GetNextChar:
 KbdScanHelp5:
 	LoadB cia1base+0, %11111101
 	lda cia1base+1
-.if wheels
+.if wheels_size_and_speed
 	and #%10000000
 	beq @1
 .else
@@ -300,7 +300,7 @@ KbdScanHelp5:
 .endif
 	LoadB cia1base+0, %10111111
 	lda cia1base+1
-.if wheels
+.if wheels_size_and_speed
 	and #%00010000
 	bne @2
 .else
@@ -308,11 +308,11 @@ KbdScanHelp5:
 	and #%00010000
 	beq @2
 .endif
-.if wheels
-@1:  lda     #$80                            ; FC7D A9 80                    ..
-        .byte   $2C                             ; FC7F 2C                       ,
-@2:  lda     #$00                            ; FC80 A9 00                    ..
-        sta     $05                             ; FC82 85 05                    ..
+.if wheels_size
+@1:	lda #$80
+	.byte $2c
+@2:	lda #$00
+	sta r1H
 .else
 @1:	smbf 7, r1H
 @2:
@@ -320,7 +320,7 @@ KbdScanHelp5:
 	LoadB cia1base+0, %01111111
 
 	lda cia1base+1
-.if wheels
+.if wheels_size_and_speed
 	and #%00100000
 	bne @3
 .else
@@ -334,7 +334,7 @@ KbdScanHelp5:
 	LoadB cia1base+0, %01111111
 .endif
 	lda cia1base+1
-.if wheels
+.if wheels_size_and_speed
 	and #%00000100
 	bne @4
 .else
@@ -346,8 +346,8 @@ KbdScanHelp5:
 @4:
 .if wheels
 .import modKeyCopy
-	lda     $05                             ; FCA3 A5 05                    ..
-        sta     modKeyCopy                           ; FCA5 8D F0 9F                 ...
+	lda r1H
+	sta modKeyCopy
 .endif
 	rts
 
