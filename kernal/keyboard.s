@@ -185,19 +185,39 @@ KbdScanHelp1:
 
 .segment "keyboard2"
 
-.if wheels
 KbdTab1:
+.if wheels
 	.byte $bb, $bb, $bb, $bb, $bb, $bb, $bb, $ba, $e0
+.else
+	.byte $db, $dd, $de, $ad, $af, $aa, $c0, $ba, $bb
+.endif
 KbdTab2:
+.if wheels
 	.byte $3c, $3c, $3c, $3c, $3c, $3c, $3c, $3e, $5e
+.else
+	.byte $7b, $7d, $7c, $5f, $5c, $7e, $60, $7b, $7d
+.endif
 KbdTestTab:
 	.byte $fe, $fd, $fb, $f7, $ef, $df, $bf, $7f
 KbdDecodeTab1:
-	.byte   $1D,$0D,$1E,$0E,$01,$03,$05,$11 ; FDE5 1D 0D 1E 0E 01 03 05 11  ........
-        .byte   $33,$77,$61,$34,$79,$73,$65,$1F ; FDED 33 77 61 34 79 73 65 1F  3wa4yse.
-        .byte   $35,$72,$64,$36,$63,$66,$74,$78 ; FDF5 35 72 64 36 63 66 74 78  5rd6cftx
-        .byte   $37,$7A,$67,$38,$62,$68,$75,$76 ; FDFD 37 7A 67 38 62 68 75 76  7zg8bhuv
-        .byte   $39,$69,$6A,$30,$6D,$6B,$6F,$6E ; FE05 39 69 6A 30 6D 6B 6F 6E  9ij0mkon
+	.byte KEY_DELETE, CR, KEY_RIGHT, KEY_F7, KEY_F1, KEY_F3, KEY_F5, KEY_DOWN
+	.byte "3", "w", "a", "4"
+.if wheels
+	.byte "y"
+.else
+	.byte "z"
+.endif
+	.byte "s", "e", KEY_INVALID
+	.byte "5", "r", "d", "6", "c", "f", "t", "x"
+	.byte "7"
+.if wheels
+	.byte "z"
+.else
+	.byte "y"
+.endif
+	.byte "g", "8", "b", "h", "u", "v"
+	.byte "9", "i", "j", "0", "m", "k", "o", "n"
+.if wheels
         .byte   $7E,$70,$6C,$27,$2E,$7C,$7D,$2C ; FE0D 7E 70 6C 27 2E 7C 7D 2C  ~pl'.|},
         .byte   $1F,$2B,$7B,$12,$1F,$23,$1F,$2D ; FE15 1F 2B 7B 12 1F 23 1F 2D  .+{..#.-
         .byte   $31,$14,$1F,$32,$20,$1F,$71,$16 ; FE1D 31 14 1F 32 20 1F 71 16  1..2 .q.
@@ -211,18 +231,7 @@ KbdDecodeTab2:
         .byte   $5E,$2A,$5B,$13,$1F,$27,$1F,$5F ; FE55 5E 2A 5B 13 1F 27 1F 5F  ^*[..'._
         .byte   $21,$14,$1F,$22,$20,$1F,$51,$17 ; FE5D 21 14 1F 22 20 1F 51 17  !.." .Q.
 .else
-KbdTab1:
-	.byte $db, $dd, $de, $ad, $af, $aa, $c0, $ba, $bb
-KbdTab2:
-	.byte $7b, $7d, $7c, $5f, $5c, $7e, $60, $7b, $7d
-KbdTestTab:
-	.byte $fe, $fd, $fb, $f7, $ef, $df, $bf, $7f
 KbdDecodeTab1:
-	.byte KEY_DELETE, CR, KEY_RIGHT, KEY_F7, KEY_F1, KEY_F3, KEY_F5, KEY_DOWN
-	.byte "3", "w", "a", "4", "z", "s", "e", KEY_INVALID
-	.byte "5", "r", "d", "6", "c", "f", "t", "x"
-	.byte "7", "y", "g", "8", "b", "h", "u", "v"
-	.byte "9", "i", "j", "0", "m", "k", "o", "n"
 	.byte "+", "p", "l", "-", ".", ":", "@", ","
 	.byte KEY_BPS, "*", ";", KEY_HOME, KEY_INVALID, "=", "^", "/"
 	.byte "1", KEY_LARROW, KEY_INVALID, "2", " ", KEY_INVALID, "q", KEY_STOP
