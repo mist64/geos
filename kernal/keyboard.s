@@ -200,25 +200,24 @@ KbdTab2:
 KbdTestTab:
 	.byte $fe, $fd, $fb, $f7, $ef, $df, $bf, $7f
 KbdDecodeTab1:
+.if wheels
 	.byte KEY_DELETE, CR, KEY_RIGHT, KEY_F7, KEY_F1, KEY_F3, KEY_F5, KEY_DOWN
-	.byte "3", "w", "a", "4"
-.if wheels
-	.byte "y"
-.else
-	.byte "z"
-.endif
-	.byte "s", "e", KEY_INVALID
+	.byte "3", "w", "a", "4", "y", "s", "e", KEY_INVALID
 	.byte "5", "r", "d", "6", "c", "f", "t", "x"
-	.byte "7"
-.if wheels
-	.byte "z"
-.else
-	.byte "y"
-.endif
-	.byte "g", "8", "b", "h", "u", "v"
+	.byte "7", "z", "g", "8", "b", "h", "u", "v"
 	.byte "9", "i", "j", "0", "m", "k", "o", "n"
+	.byte "~", "p", "l", "'", ".", "|", "}", ","
+.else
+	.byte KEY_DELETE, CR, KEY_RIGHT, KEY_F7, KEY_F1, KEY_F3, KEY_F5, KEY_DOWN
+	.byte "3", "w", "a", "4", "z", "s", "e", KEY_INVALID
+	.byte "5", "r", "d", "6", "c", "f", "t", "x"
+	.byte "7", "y", "g", "8", "b", "h", "u", "v"
+	.byte "9", "i", "j", "0", "m", "k", "o", "n"
+	.byte "+", "p", "l", "-", ".", ":", "@", ","
+.endif
+
+
 .if wheels
-        .byte   $7E,$70,$6C,$27,$2E,$7C,$7D,$2C ; FE0D 7E 70 6C 27 2E 7C 7D 2C  ~pl'.|},
         .byte   $1F,$2B,$7B,$12,$1F,$23,$1F,$2D ; FE15 1F 2B 7B 12 1F 23 1F 2D  .+{..#.-
         .byte   $31,$14,$1F,$32,$20,$1F,$71,$16 ; FE1D 31 14 1F 32 20 1F 71 16  1..2 .q.
 KbdDecodeTab2:
@@ -231,8 +230,9 @@ KbdDecodeTab2:
         .byte   $5E,$2A,$5B,$13,$1F,$27,$1F,$5F ; FE55 5E 2A 5B 13 1F 27 1F 5F  ^*[..'._
         .byte   $21,$14,$1F,$22,$20,$1F,$51,$17 ; FE5D 21 14 1F 22 20 1F 51 17  !.." .Q.
 .else
-KbdDecodeTab1:
-	.byte "+", "p", "l", "-", ".", ":", "@", ","
+
+
+
 	.byte KEY_BPS, "*", ";", KEY_HOME, KEY_INVALID, "=", "^", "/"
 	.byte "1", KEY_LARROW, KEY_INVALID, "2", " ", KEY_INVALID, "q", KEY_STOP
 KbdDecodeTab2:
