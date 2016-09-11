@@ -36,6 +36,8 @@ wheels   = 1
 
 	wheels_external_readwrite_file = 1
 
+	wheels_expose_mod_keys = 1
+
 	wheels_bad_ideas = 1
 
 	german_keyboard = 1
@@ -51,6 +53,7 @@ wheels   = 1
 	wheels_dialog_chdir = 0
 	wheels_screensaver = 0
 	wheels_external_readwrite_file = 0
+	wheels_expose_mod_keys = 0
 	wheels_bad_ideas = 0
 	german_keyboard = 0
 .endif

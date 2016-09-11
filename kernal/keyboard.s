@@ -344,7 +344,7 @@ KbdScanHelp5:
 .endif
 	smbf 5, r1H
 @4:
-.if wheels
+.if wheels_expose_mod_keys
 .import modKeyCopy
 	lda r1H
 	sta modKeyCopy
@@ -359,9 +359,9 @@ KbdScanHelp6:
 	cmp #'z'+1
 	bcs @1
 	pla
-.if wheels
-        and     #$DF                            ; FCB5 29 DF                    ).
-        rts                                     ; FCB7 60                       `
+.if wheels_size_and_speed
+	and #$DF
+	rts
 .else
 	subv $20
 	pha

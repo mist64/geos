@@ -475,13 +475,13 @@ sysScrnColors:
 sys80ScrnColors: ; Wheels 128 only
 	.byte $e0
 sysMob0Clr:
-	.byte $06
+	.byte 6
 sysExtClr:
-	.byte $00
+	.byte 0
 sysBorder:
-	.byte $00
+	.byte 0
 sys80Border: ; Wheels 128 only
-	.byte $00
+	.byte 0
 miscColor:
 	.byte $67
 sysDBColor:
@@ -496,17 +496,19 @@ backColor:
 backSysPattern: ; 8 byte system pattern
 	.byte $52, $95, $2d, $52, $8a, $6d, $94, $a2
 ramExpType:
-	.byte $01
+	.byte 1 ; 1 = REU, 4 = SuperCPU?
 relayDelay:
 	.word $0800
+.if wheels_expose_mod_keys
 modKeyCopy: ; SHIFT, CMDR, CTRL key indicator
-	.byte $00
+	.byte 0
+.endif
 extKrnlIn:
-	.byte $00
+	.byte 0
 dbFieldWidth:
-	.byte $00
+	.byte 0
 fftIndicator:
-	.byte $00
+	.byte 0
 
 .segment "wheels_lokernal2"
 
