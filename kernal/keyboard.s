@@ -207,6 +207,8 @@ KbdDecodeTab1:
 	.byte "7", "z", "g", "8", "b", "h", "u", "v"
 	.byte "9", "i", "j", "0", "m", "k", "o", "n"
 	.byte "~", "p", "l", "'", ".", "|", "}", ","
+	.byte KEY_INVALID, "+", "{", KEY_HOME, KEY_INVALID, "#", KEY_INVALID, "-"
+	.byte "1", KEY_LARROW, KEY_INVALID, "2", " ", KEY_INVALID, "q", KEY_STOP
 .else
 	.byte KEY_DELETE, CR, KEY_RIGHT, KEY_F7, KEY_F1, KEY_F3, KEY_F5, KEY_DOWN
 	.byte "3", "w", "a", "4", "z", "s", "e", KEY_INVALID
@@ -214,29 +216,23 @@ KbdDecodeTab1:
 	.byte "7", "y", "g", "8", "b", "h", "u", "v"
 	.byte "9", "i", "j", "0", "m", "k", "o", "n"
 	.byte "+", "p", "l", "-", ".", ":", "@", ","
-.endif
-
-
-.if wheels
-        .byte   $1F,$2B,$7B,$12,$1F,$23,$1F,$2D ; FE15 1F 2B 7B 12 1F 23 1F 2D  .+{..#.-
-        .byte   $31,$14,$1F,$32,$20,$1F,$71,$16 ; FE1D 31 14 1F 32 20 1F 71 16  1..2 .q.
-KbdDecodeTab2:
-	.byte   $1C,$0D,$08,$0F,$02,$04,$06,$10 ; FE25 1C 0D 08 0F 02 04 06 10  ........
-        .byte   $40,$57,$41,$24,$59,$53,$45,$1F ; FE2D 40 57 41 24 59 53 45 1F  @WA$YSE.
-        .byte   $25,$52,$44,$26,$43,$46,$54,$58 ; FE35 25 52 44 26 43 46 54 58  %RD&CFTX
-        .byte   $2F,$5A,$47,$28,$42,$48,$55,$56 ; FE3D 2F 5A 47 28 42 48 55 56  /ZG(BHUV
-        .byte   $29,$49,$4A,$3D,$4D,$4B,$4F,$4E ; FE45 29 49 4A 3D 4D 4B 4F 4E  )IJ=MKON
-        .byte   $3F,$50,$4C,$60,$3A,$5C,$5D,$3B ; FE4D 3F 50 4C 60 3A 5C 5D 3B  ?PL`:\];
-        .byte   $5E,$2A,$5B,$13,$1F,$27,$1F,$5F ; FE55 5E 2A 5B 13 1F 27 1F 5F  ^*[..'._
-        .byte   $21,$14,$1F,$22,$20,$1F,$51,$17 ; FE5D 21 14 1F 22 20 1F 51 17  !.." .Q.
-.else
-
-
-
 	.byte KEY_BPS, "*", ";", KEY_HOME, KEY_INVALID, "=", "^", "/"
 	.byte "1", KEY_LARROW, KEY_INVALID, "2", " ", KEY_INVALID, "q", KEY_STOP
+.endif
 KbdDecodeTab2:
+.if wheels
 	.byte KEY_INSERT, CR, BACKSPACE, KEY_F8, KEY_F2, KEY_F4, KEY_F6, KEY_UP
+	.byte "@", "W", "A", "$", "Y", "S", "E", KEY_INVALID
+	.byte "%", "R", "D", "&", "C", "F", "T", "X"
+	.byte "/", "Z", "G", "(", "B", "H", "U", "V"
+	.byte ")", "I", "J", "=", "M", "K", "O", "N"
+	.byte "?", "P", "L", "`", ":", "\", "]", ";"
+	.byte   $5E,$2A,$5B,$13,$1F,$27,$1F,$5F ; FE55 5E 2A 5B 13 1F 27 1F 5F  ^*[..'._
+	.byte   $21,$14,$1F,$22,$20,$1F,$51,$17 ; FE5D 21 14 1F 22 20 1F 51 17  !.." .Q.
+.else
+	.byte KEY_INSERT, CR, BACKSPACE, KEY_F8, KEY_F2, KEY_F4, KEY_F6, KEY_UP
+
+
 	.byte "#", "W", "A", "$", "Z", "S", "E", KEY_INVALID
 	.byte "%", "R", "D", "&", "C", "F", "T", "X"
 	.byte "'", "Y", "G", "(", "B", "H", "U", "V"
