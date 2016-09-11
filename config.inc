@@ -37,6 +37,8 @@ wheels   = 1
 	wheels_external_readwrite_file = 1
 
 	wheels_bad_ideas = 1
+
+	german_keyboard = 1
 .else
 	trap = 1
 	wheels_size = 0
@@ -50,6 +52,7 @@ wheels   = 1
 	wheels_screensaver = 0
 	wheels_external_readwrite_file = 0
 	wheels_bad_ideas = 0
+	german_keyboard = 0
 .endif
 
 ; general code generation/optimization control:
