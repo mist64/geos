@@ -17,7 +17,7 @@ L9063 = $9063
 .import GetNewKernal
 .import RstrKernal
 LC313 = $C313
-.import LCFD9
+.import Swap4000
 .import TempCurDrive
 .import sysDBColor
 .import DeskTopName
@@ -171,14 +171,14 @@ L5112:	ldy #$00
 	cmp #$20
 	bcs L5123
 	lda #$3F
-L5123:	sta (r2L),y
+L5123:	sta (r2),y
 	iny
 	.byte $C0
 L5127:	bpl L50B9
 	nop
 L512A:	.byte $A9
 L512B:	brk
-	sta (r2L),y
+	sta (r2),y
 	rts
 
 	asl $DC30,x
@@ -258,7 +258,7 @@ L797D:	lda r2H
 L798B:	sty r1L
 L798D:	lda $8001,y
 	dey
-	sta (r7L),y
+	sta (r7),y
 	bne L798D
 	lda r1L
 	clc
@@ -369,13 +369,13 @@ L7A3A:	jsr L7A85
 
 L7A83:	brk
 L7A84:	brk
-L7A85:	jsr LCFD9
+L7A85:	jsr Swap4000
 	jsr L4000
-	jmp LCFD9
+	jmp Swap4000
 
-	jsr LCFD9
+	jsr Swap4000
 	jsr L4003
-	jmp LCFD9
+	jmp Swap4000
 
 L7A97:	ldy #$08
 L7A99:	lda _driveType,y

@@ -316,7 +316,7 @@ L5244:	lda #$80
 	sta r5L
 L524C:	jsr L5436
 	ldy #$00
-	lda (r5L),y
+	lda (r5),y
 	and #$BF
 	cmp #$86
 	bne L525F
@@ -379,19 +379,19 @@ L52D4:	rts
 
 L52D5:	jsr L544B
 	ldy #$01
-	lda (r5L),y
+	lda (r5),y
 	sta r6L
 	iny
-	lda (r5L),y
+	lda (r5),y
 	sta r6H
 	jsr L9048
 	jsr PutDirHead
 	jsr L544B
 	ldy #$01
-	lda (r5L),y
+	lda (r5),y
 	sta r1L
 	iny
-	lda (r5L),y
+	lda (r5),y
 	sta r1H
 	jsr L9053
 	lda $8201
@@ -402,13 +402,13 @@ L52D5:	jsr L544B
 	jmp PutDirHead
 
 L530A:	ldy #$00
-	lda (r5L),y
+	lda (r5),y
 	beq L5320
 	and #$BF
 	cmp #$81
 	bcs L5322
 	lda #$00
-	sta (r5L),y
+	sta (r5),y
 	jsr L544B
 	jmp PutBlock
 
@@ -419,22 +419,22 @@ L5322:	and #$3F
 	cmp #$04
 	beq L533A
 	ldy #$13
-	lda (r5L),y
+	lda (r5),y
 	bne L5331
 L532E:	jmp L533D
 
 L5331:	ldy #$16
-	lda (r5L),y
+	lda (r5),y
 	beq L532E
 	jmp L5379
 
 L533A:	jmp L53E0
 
 L533D:	ldy #$01
-	lda (r5L),y
+	lda (r5),y
 	sta r1L
 	iny
-	lda (r5L),y
+	lda (r5),y
 	sta r1H
 L5348:	jsr InitForIO
 	lda r1H
@@ -459,21 +459,21 @@ L5353:	jsr L9048
 L5376:	jmp DoneWithIO
 
 L5379:	ldy #$13
-	lda (r5L),y
+	lda (r5),y
 	sta r6L
 	iny
-	lda (r5L),y
+	lda (r5),y
 	sta r6H
 	jsr L9048
 	jsr L53F1
 	ldy #$01
-	lda (r5L),y
+	lda (r5),y
 	sta r1L
 	iny
-	lda (r5L),y
+	lda (r5),y
 	sta r1H
 	ldy #$15
-	lda (r5L),y
+	lda (r5),y
 	cmp #$01
 	beq L53A0
 	jmp L5348
@@ -511,10 +511,10 @@ L53DE:	rts
 L53DF:	brk
 L53E0:	jsr L533D
 	ldy #$13
-	lda (r5L),y
+	lda (r5),y
 	sta r1L
 	iny
-	lda (r5L),y
+	lda (r5),y
 	sta r1H
 	jmp L5348
 

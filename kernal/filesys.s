@@ -1660,54 +1660,35 @@ _PointRecord:
 
 _DeleteRecord:
 .if wheels
-LDBE1:	jsr ReadyForUpdVLIR2
-	bnex return2
-	jsr GetVLIRChainTS
-	lda curRecord
-	sta r0L
-	jsr MoveBackVLIRTab
-	txa
-	bne return2
-	CmpB curRecord, usedRecords
-	bcc @1
-	dec curRecord
-@1:	ldx #0
-	lda r1L
-	beq return2
-	jsr $da25
-	bnex return2
-	lda fileSize
-	sec
-	sbc r2L
-	sta fileSize
-	bcs return2
-	dec fileSize+1
-return2:
-	rts
+	jsr ReadyForUpdVLIR2
 .else
 	ldx #INV_RECORD
 	lda curRecord
-	bmi @3
+	bmi return2
 	jsr ReadyForUpdVLIR
-	bnex @3
+.endif
+	bnex return2
 	jsr GetVLIRChainTS
 	MoveB curRecord, r0L
 	jsr MoveBackVLIRTab
-	bnex @3
+	bnex return2
 	CmpB curRecord, usedRecords
 	bcc @1
 	dec curRecord
 @1:	ldx #NULL
 	lda r1L
-	beq @3
+	beq return2
 	jsr FreeBlockChain
-	bnex @3
+	bnex return2
 	SubB r2L, fileSize
 	bcs @2
 	dec fileSize+1
-@2:	ldx #NULL
-@3:	rts
+@2:
+.if !wheels
+	ldx #NULL
 .endif
+return2:
+	rts
 
 _InsertRecord:
 .if wheels_size ; use common code

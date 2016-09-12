@@ -596,8 +596,8 @@ ScreenSaver1:
 
 .if wheels
 ; called from extended KERNAL
-.global LCFD9
-LCFD9:
+.global Swap4000
+Swap4000:
 	LoadW r0, $4000 ; CBM address
 	LoadW r1, $fe40 ; REU address
 	LoadW r2, $01c0 ; size

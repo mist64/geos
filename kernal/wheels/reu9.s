@@ -48,7 +48,7 @@ L5021:	sty $9D
 	dex
 	bpl L501F
 	ldy #$00
-L502A:	lda (r0L),y
+L502A:	lda (r0),y
 	beq L5036
 	sta L570B,y
 	iny
@@ -118,11 +118,11 @@ L50B9:	jsr ReadBuff
 	lda #$02
 	sta r5L
 L50C6:	ldy #$00
-	lda (r5L),y
+	lda (r5),y
 	beq L50DA
 	ldy #$03
-L50CE:	lda (r6L),y
-	cmp (r5L),y
+L50CE:	lda (r6),y
+	cmp (r5),y
 	bne L50DA
 	iny
 	cpy #$13
@@ -353,7 +353,7 @@ L7A98:	jsr L9033
 	tya
 	bne L7AAE
 	ldy #$03
-L7AA0:	lda (r5L),y
+L7AA0:	lda (r5),y
 	cmp L7F0E,y
 	bne L7A98
 	iny
@@ -547,10 +547,10 @@ L7C1F:	lda L7F02
 	bne L7C4A
 	inc L7F01
 	ldy #$01
-	lda (r4L),y
+	lda (r4),y
 	sta r1H
 	dey
-	lda (r4L),y
+	lda (r4),y
 	sta r1L
 	beq L7C48
 	lda L7F02
@@ -847,14 +847,14 @@ L7EAF:	lda L7F02
 	lda fileTrScTab,x
 	sta r1L
 	ldy #$00
-	lda (r4L),y
+	lda (r4),y
 	beq L7ED7
 	iny
 	lda $8303,x
-	sta (r4L),y
+	sta (r4),y
 	dey
 	lda $8302,x
-	sta (r4L),y
+	sta (r4),y
 L7ED7:	inx
 	inx
 	stx L7F08
@@ -863,7 +863,7 @@ L7ED7:	inx
 	txa
 	bne L7EF7
 	ldy #$00
-	lda (r4L),y
+	lda (r4),y
 	sta L7F07
 	beq L7EF5
 	lda L7F02
@@ -872,45 +872,44 @@ L7ED7:	inx
 L7EF5:	ldx #$00
 L7EF7:	rts
 
-L7EF8:	.byte $00
-L7EF9:	.byte $00
-L7EFA:	.byte $00
-L7EFB:	.byte $00
-L7EFC:	.byte $00
-L7EFD:	.byte $00
-L7EFE:	.byte $00
-L7EFF:	.byte $00
-L7F00:	.byte $00
-L7F01:	.byte $00
-L7F02:	.byte $00
-L7F03:	.byte $00
-L7F04:	.byte $00
-L7F05:	.byte $00,$00
-L7F07:	.byte $00
-L7F08:	.byte $00
-L7F09:	.byte $00
-L7F0A:	.byte $00
-L7F0B:	.byte $00
-L7F0C:	.byte $00
-L7F0D:	.byte $00
-L7F0E:	.byte $00
-L7F0F:	.byte $00
-L7F10:	.byte $00
-L7F11:	.byte $00,$00,$00,$00,$00,$00,$00
-	.byte $00,$00,$00,$00,$00,$00,$00,$00
-	.byte $00
-L7F21:	.byte $00
-L7F22:	.byte $00
-L7F23:	.byte $00,$00,$00,$00,$00,$00,$00
-L7F2A:	.byte $00
-L7F2B:	.byte $00
-L7F2C:	.byte $00
-L7F2D:	.byte $00
-L7F2E:	.byte $00
-L7F2F:	.byte $00
-L7F30:	.byte $00
-L7F31:	.byte $00
-L7F32:	.byte $00
-L7F33:	.byte $00
+L7EF8:	.byte 0
+L7EF9:	.byte 0
+L7EFA:	.byte 0
+L7EFB:	.byte 0
+L7EFC:	.byte 0
+L7EFD:	.byte 0
+L7EFE:	.byte 0
+L7EFF:	.byte 0
+L7F00:	.byte 0
+L7F01:	.byte 0
+L7F02:	.byte 0
+L7F03:	.byte 0
+L7F04:	.byte 0
+L7F05:	.byte 0
+	.byte 0
+L7F07:	.byte 0
+L7F08:	.byte 0
+L7F09:	.byte 0
+L7F0A:	.byte 0
+L7F0B:	.byte 0
+L7F0C:	.byte 0
+L7F0D:	.byte 0
+L7F0E:	.byte 0
+L7F0F:	.byte 0
+L7F10:	.byte 0
+L7F11:	.res 16, 0
+L7F21:	.byte 0
+L7F22:	.byte 0
+L7F23:	.byte 0, 0, 0, 0, 0, 0, 0
+L7F2A:	.byte 0
+L7F2B:	.byte 0
+L7F2C:	.byte 0
+L7F2D:	.byte 0
+L7F2E:	.byte 0
+L7F2F:	.byte 0
+L7F30:	.byte 0
+L7F31:	.byte 0
+L7F32:	.byte 0
+L7F33:	.byte 0
 
 code2_end:

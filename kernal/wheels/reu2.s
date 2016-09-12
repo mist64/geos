@@ -27,7 +27,7 @@ LFFAB = $FFAB
 LFFAE = $FFAE
 LFFB1 = $FFB1
 LFFB4 = $FFB4
-.import LCFD9
+.import Swap4000
 
 NSetGEOSDisk:
 	jmp _NSetGEOSDisk
@@ -44,13 +44,13 @@ L500F:	.byte $00,$00,$00,$00,$00,$00,$00,$00
 	.byte $00,$00,$00,$00,$00,$00,$00,$00
 	.byte $00
 
-L5020:	jsr LCFD9
+L5020:	jsr Swap4000
 	jsr L4000
-	jmp LCFD9
+	jmp Swap4000
 
-	jsr LCFD9
+	jsr Swap4000
 	jsr L4003
-	jmp LCFD9
+	jmp Swap4000
 
 _NSetGEOSDisk:
 	lda #$31
@@ -1234,7 +1234,7 @@ L5B01:	ldy #$06
 	jsr L5B7D
 	bne L5B5F
 	ldy #$00
-L5B15:	lda (r0L),y
+L5B15:	lda (r0),y
 	jsr LFFA8
 	iny
 	cpy #$20

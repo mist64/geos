@@ -187,7 +187,7 @@ L5156:	lda L5078
 	lda L5077
 	sta r6L
 	ldy #$00
-L5162:	lda (r6L),y
+L5162:	lda (r6),y
 	beq L5171
 	sta $8403,y
 	sta $8090,y

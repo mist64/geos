@@ -73,19 +73,19 @@ scr:	lda $0400,y
 	lda r7H
 	sbc #$00
 	sta r7H
-	lda (r7L),y
+	lda (r7),y
 	pha
 	iny
-	lda (r7L),y
+	lda (r7),y
 	pha
 	lda r7H
 	pha
 	lda r7L
 	pha
-	lda (r5L),y
+	lda (r5),y
 	sta r1L
 	iny
-	lda (r5L),y
+	lda (r5),y
 	sta r1H
 	lda #$FF
 	sta r2L
@@ -98,10 +98,10 @@ scr:	lda $0400,y
 	sta r0H
 	ldy #$01
 	pla
-	sta (r0L),y
+	sta (r0),y
 	dey
 	pla
-	sta (r0L),y
+	sta (r0),y
 @4:	jsr PurgeTurbo
 	jsr InitForIO
 	lda #$37

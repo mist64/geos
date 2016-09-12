@@ -903,40 +903,27 @@ L7FBA:	clc
 	sta r0L
 	rts
 
-L7FD4:	.byte $00
-L7FD5:	.byte $00
-L7FD6:	.byte $00
-L7FD7:	.byte $00
-L7FD8:	.byte $00
-L7FD9:	.byte $00
-L7FDA:	.byte $00
-L7FDB:	.byte $00
-L7FDC:	.byte $00
-L7FDD:	.byte $00
-L7FDE:	.byte $00
-L7FDF:	.byte $00
-L7FE0:	.byte $00
-L7FE1:	.byte $00
-L7FE2:	.byte $00
-L7FE3:	.byte $00
-L7FE4:	.byte $00
-L7FE5:	.byte $00
-L7FE6:	.byte $00
-L7FE7:	.byte $00
-L7FE8:	.byte $00
-L7FE9:	.byte $00
-L7FEA:	.byte $00
+L7FD4:	.byte 0
+L7FD5:	.byte 0
+L7FD6:	.byte 0
+L7FD7:	.byte 0
+L7FD8:	.byte 0
+L7FD9:	.byte 0
+L7FDA:	.byte 0
+L7FDB:	.byte 0
+L7FDC:	.byte 0
+L7FDD:	.byte 0
+L7FDE:	.byte 0
+L7FDF:	.byte 0
+L7FE0:	.byte 0
+L7FE1:	.byte 0
+L7FE2:	.byte 0
+L7FE3:	.byte 0
+L7FE4:	.byte 0
+L7FE5:	.byte 0
+L7FE6:	.byte 0
+L7FE7:	.byte 0
+L7FE8:	.byte 0
+L7FE9:	.byte 0
+L7FEA:	.byte 0
 code2_end:
-
-
-
-;	.byte $00,$00,$00,$00,$00
-;L5721:	.byte $00
-;L5722:	.byte $00
-;L5723:	.byte $00
-;L5724:	.byte $00
-;L5725:	.byte $00,$00
-;L5727:	.byte $00,$00
-;L5729:	.byte $00,$00,$00,$00
-;L572D:	.byte $00,$00,$00,$00,$00
-;L5732:	.byte $00

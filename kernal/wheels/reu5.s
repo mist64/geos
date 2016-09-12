@@ -22,7 +22,7 @@ LFFAB = $FFAB
 LFFAE = $FFAE
 LFFB1 = $FFB1
 LFFB4 = $FFB4
-.import LCFD9
+.import Swap4000
 .import DBGFileSelected
 .import DBGFTableIndex
 .import DBGFilesFound
@@ -443,7 +443,7 @@ L532F:	.byte $B3
 	sta r1L
 	ldy #$03
 	lda #$20
-L5371:	sta (r1L),y
+L5371:	sta (r1),y
 	dey
 	bpl L5371
 	lda L54BA
@@ -496,7 +496,7 @@ L53DC:	ldx #$FF
 L53F4:	ldx #$02
 	jsr GetPtrCurDkNm
 L53F9:	ldy #$00
-L53FB:	lda (r0L),y
+L53FB:	lda (r0),y
 	beq L5412
 	cmp #$A0
 	beq L5412
@@ -504,12 +504,12 @@ L53FB:	lda (r0L),y
 	cmp #$20
 	bcs L540B
 	lda #$3F
-L540B:	sta (r1L),y
+L540B:	sta (r1),y
 	iny
 	cpy #$10
 	bcc L53FB
 L5412:	lda #$00
-	sta (r1L),y
+	sta (r1),y
 	rts
 
 L5417:	stx L5463
@@ -576,7 +576,7 @@ L5491:	sty L54B7
 	jsr L52EA
 	bmi L54B1
 	ldy #$00
-L549B:	lda (r0L),y
+L549B:	lda (r0),y
 	jsr LFFA8
 	iny
 	cpy L54B7
@@ -652,7 +652,7 @@ L5552:	brk
 L5553:	brk
 L5554:	ldy #$00
 L5556:	lda L518C,y
-	sta (r6L),y
+	sta (r6),y
 	beq L5560
 	iny
 	bne L5556
@@ -705,7 +705,7 @@ L55B8:	cpx #$30
 	beq L55C4
 	pha
 	txa
-	sta (r1L),y
+	sta (r1),y
 	pla
 	iny
 	ldx #$30
@@ -721,12 +721,12 @@ L55CE:	cpx #$30
 	beq L55DC
 L55D6:	pha
 	txa
-	sta (r1L),y
+	sta (r1),y
 	pla
 	iny
 L55DC:	clc
 	adc #$30
-	sta (r1L),y
+	sta (r1),y
 	rts
 
 L55E2:	jsr L5576
@@ -957,13 +957,13 @@ L57B0:	.byte 0
 L57B1:	.byte 0
 L57B2:	.byte 0
 
-L57B3:	jsr LCFD9
+L57B3:	jsr Swap4000
 	jsr L4000
-	jmp LCFD9
+	jmp Swap4000
 
-L57BC:	jsr LCFD9
+L57BC:	jsr Swap4000
 	jsr L4003
-	jmp LCFD9
+	jmp Swap4000
 
 _ChSubdir:
 	jsr L5174
@@ -1080,13 +1080,13 @@ L589E:	ldx #$05
 	txa
 	bne L5910
 L58B6:	ldy #$00
-	lda (r5L),y
+	lda (r5),y
 	and #$BF
 	cmp #$86
 	bne L5907
 	ldy #$03
 	ldx #$00
-L58C4:	lda (r5L),y
+L58C4:	lda (r5),y
 	beq L58D5
 	cmp #$A0
 	beq L58D5

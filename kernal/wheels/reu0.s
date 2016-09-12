@@ -100,7 +100,7 @@ L516C:	ldx #L5109_end2 - L5109 - 1
 	jsr L51A7
 	ldy #L5109_end1 - L5109 - 1
 L5180:	lda L5109,y
-	sta (r0L),y
+	sta (r0),y
 	dey
 	bpl L5180
 	jmp L516C
@@ -363,8 +363,8 @@ L5340:	sty L5373
 	sta L5064,y
 	jsr L530B
 	ldy #$10
-L5363:	lda (r0L),y
-	sta (r1L),y
+L5363:	lda (r0),y
+	sta (r1),y
 	dey
 	bpl L5363
 	jsr _PutRAMBam
@@ -403,7 +403,7 @@ L53A1:	ldy L5373
 	jsr L530B
 	ldy #$00
 	tya
-	sta (r1L),y
+	sta (r1),y
 	jsr _PutRAMBam
 	ldx #$00
 	rts
