@@ -750,46 +750,44 @@ SetFHeadVector:
 
 _FindFile:
 .if wheels
-LD6A3:	sec
+	sec
 	lda r6L
 	sbc #3
 	sta r6L
-	bcs LD6AE
+	bcs @1
 	dec r6H
-LD6AE:	jsr Get1stDirEntry
+@1:	jsr Get1stDirEntry
 	txa
-	bne LD6E8
-LD6B4:	ldy #0
+	bne @8
+@2:	ldy #0
 	lda (r5),y
-	beq LD6D2
+	beq @5
 	ldy #3
-LD6BC:	lda (r6),y
-	beq LD6C7
+@3:	lda (r6),y
+	beq @4
 	cmp (r5),y
-	bne LD6D2
+	bne @5
 	iny
-	bne LD6BC
-LD6C7:	cpy #$13
-	beq LD6DE
+	bne @3
+@4:	cpy #$13
+	beq @6
 	lda (r5),y
 	iny
 	cmp #$A0
-	beq LD6C7
-LD6D2:	jsr GetNxtDirEntry
+	beq @4
+@5:	jsr GetNxtDirEntry
 	txa
-	bne LD6E8
+	bne @8
 	tya
-	beq LD6B4
+	beq @2
 	ldx #FILE_NOT_FOUND
 	rts
-
-; ----------------------------------------------------------------------------
-LD6DE:	ldy     #$1D                            ; D6DE A0 1D                    ..
-LD6E0:	lda     (r5),y                         ; D6E0 B1 0C                    ..
-        sta     dirEntryBuf,y                         ; D6E2 99 00 84                 ...
-        dey                                     ; D6E5 88                       .
-        bpl     LD6E0                           ; D6E6 10 F8                    ..
-LD6E8:	rts                                     ; D6E8 60                       `
+@6:	ldy #29
+@7:	lda (r5),y
+	sta dirEntryBuf,y
+	dey
+	bpl @7
+@8:	rts
 .else
 	php
 	sei
