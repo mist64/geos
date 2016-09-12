@@ -224,12 +224,8 @@ _MoveData:
 	PushB r2H
 
 .if wheels
-        lda     $03                             ; CE38 A5 03                    ..
-        cmp     $05                             ; CE3A C5 05                    ..
-        bne     @X                           ; CE3C D0 04                    ..
-        lda     r0L                           ; CE3E A5 02                    ..
-        cmp     $04                             ; CE40 C5 04                    ..
-@X:	bcc     @8                              ; CE42 90 2E                    ..
+	CmpW r0, r1
+	bcc @8
 .else
 	PushB r3L
 .if (REUPresent)

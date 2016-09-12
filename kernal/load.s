@@ -307,51 +307,44 @@ GetFile_rts:
 _LdDeskAcc:
 .if wheels
 .import LD8D3
-LD7C3:  jsr     GetFHdrInfo                     ; D7C3 20 29 C2                  ).
-        txa                                     ; D7C6 8A                       .
-        bne     LD818                           ; D7C7 D0 4F                    .O
-        lda     r7H                             ; D7C9 A5 11                    ..
-        sta     $03                             ; D7CB 85 03                    ..
-        sta     $05                             ; D7CD 85 05                    ..
-        sta     tmp1                           ; D7CF 8D 1A D8                 ...
-        lda     r7L                             ; D7D2 A5 10                    ..
-        sta     r0L                           ; D7D4 85 02                    ..
-        sta     $04                             ; D7D6 85 04                    ..
-        sta     tmp0                           ; D7D8 8D 19 D8                 ...
-        jsr     LD8D3                           ; D7DB 20 D3 D8                  ..
-        lda     $07                             ; D7DE A5 07                    ..
-        sta     tmp3                           ; D7E0 8D 1C D8                 ...
-        lda     $06                             ; D7E3 A5 06                    ..
-        sta     tmp2                           ; D7E5 8D 1B D8                 ...
-        lda     #$00                            ; D7E8 A9 00                    ..
-        sta     $08                             ; D7EA 85 08                    ..
-        jsr     StashRAM                        ; D7EC 20 C8 C2                  ..
-        ldy     #$01                            ; D7EF A0 01                    ..
-        jsr     ReadR9                           ; D7F1 20 8B D7                  ..
-        jsr     ReadFile                        ; D7F4 20 FF C1                  ..
-        txa                                     ; D7F7 8A                       .
-        bne     LD818                           ; D7F8 D0 1E                    ..
-        jsr     DlgBoxPrep                           ; D7FA 20 8E F2                  ..
-        jsr     UseSystemFont                   ; D7FD 20 4B C1                  K.
-        jsr     InitGEOEnv
-        pla                                     ; D803 68                       h
-        sta     $8850                           ; D804 8D 50 88                 .P.
-        pla                                     ; D807 68                       h
-        sta     $8851                           ; D808 8D 51 88                 .Q.
-        tsx                                     ; D80B BA                       .
-        stx     $8852                           ; D80C 8E 52 88                 .R.
-        ldx     $814C                           ; D80F AE 4C 81                 .L.
-        lda     $814B                           ; D812 AD 4B 81                 .K.
-        jmp     _MNLP                           ; D815 4C 64 C0                 Ld.
+LD7C3:	jsr GetFHdrInfo
+	bnex LD818
+	lda r7H
+	sta r0H
+	sta r1H
+	sta tmp1
+	lda r7L
+	sta r0L
+	sta r1L
+	sta tmp0
+	jsr LD8D3
+	lda r2H
+	sta tmp3
+	lda r2L
+	sta tmp2
+	lda #0
+	sta r3L
+	jsr StashRAM
+	ldy #1
+	jsr ReadR9
+	jsr ReadFile
+	txa
+	bne LD818
+	jsr DlgBoxPrep
+	jsr UseSystemFont
+	jsr InitGEOEnv
+	PopW $8850
+	tsx
+	stx $8852
+	ldx $814C
+	lda $814B
+	jmp _MNLP
+LD818:	rts
 
-; ----------------------------------------------------------------------------
-LD818:  rts                                     ; D818 60                       `
-
-; ----------------------------------------------------------------------------
-tmp0:  .byte 0
-tmp1:  .byte 0
-tmp2:  .byte 0
-tmp3:  .byte 0
+tmp0:	.byte 0
+tmp1:	.byte 0
+tmp2:	.byte 0
+tmp3:	.byte 0
 .else
 	MoveB r10L, A885D
 	jsr GetFHdrInfo
