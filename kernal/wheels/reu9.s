@@ -41,7 +41,7 @@ L5018:	and #$3F
 	sta L5704
 	ldx #$1D
 L501F:	.byte $BD
-	brk
+	.byte 0
 L5021:	sty $9D
 	php
 	.byte $57
@@ -243,8 +243,9 @@ L797A:	ldy #$90
 	sta r2L
 	jmp DoRAMOp
 
-L79BA:	brk
-L79BB:	brk
+L79BA:	.byte 0
+L79BB:	.byte 0
+
 L79BC:	lda #$00
 	sta L7EFD
 	bit L7F31
@@ -395,10 +396,11 @@ L7AF2:	lda #$00
 	sta L7F33
 L7AF7:	rts
 
-L7AF8:	brk
-L7AF9:	brk
-L7AFA:	brk
-L7AFB:	brk
+L7AF8:	.byte 0
+L7AF9:	.byte 0
+L7AFA:	.byte 0
+L7AFB:	.byte 0
+
 L7AFC:	jsr L7B76
 	bne L7B30
 	lda L7EFA

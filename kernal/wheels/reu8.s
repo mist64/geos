@@ -385,7 +385,8 @@ L7B8B:	ldx #$00
 L7B8D:	txa
 	rts
 
-L7B8F:	brk
+L7B8F:	.byte 0
+
 L7B90:	bit L7FEA
 	bvc L7B9B
 	ldx L7B8F
@@ -470,7 +471,8 @@ L7C3A:	jsr L7BB1
 	tax
 	rts
 
-L7C40:	brk
+L7C40:	.byte 0
+
 L7C41:	jsr L7B55
 	lda L7FE1
 	cmp #$04
@@ -849,8 +851,9 @@ L7F63:	ldy #$FF
 	txa
 	rts
 
-L7F67:	brk
-L7F68:	brk
+L7F67:	.byte 0
+L7F68:	.byte 0
+
 L7F69:	lda L7FD6
 	beq L7F7A
 	jsr L7FBA
