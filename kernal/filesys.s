@@ -853,9 +853,9 @@ LD702:	jsr LD74F
 	cpy $8489
 	beq LD749
 	sty $8489
-	lda LD759,y
+	lda SetDevDrivesTabL-8,y
 	sta LD75C
-	lda LD75D,y
+	lda SetDevDrivesTabH-8,y
 	sta LD75D
 	ldx #$06
 LD726:	lda r0L,x
@@ -886,22 +886,21 @@ LD74C:	ldx #DEV_NOT_FOUND
 ; ------------------------------
 LD74F:	lda curDevice
 LD751:	cmp #8
-	bcc LD758
+	bcc @1
 	cmp #12
 	rts
-
-; ------------------------------
-LD758:	sec
+@1:	sec
 LD759:	rts
 
 ; ------------------------------
-LD75A:	.byte   $00,$90
-LD75C:	.byte   $00
-LD75D:	.byte   $83,$80,$0D,$00,$00,$80,$00,$80
-	.byte   $83,$90
-; ----------------------------------------------
-	.byte   $9E
-	.byte   $AB
+LD75A:	.byte $00,$90
+LD75C:	.byte $00
+LD75D:	.byte $83
+	.byte $80,$0D,$00
+SetDevDrivesTabL:
+	.byte $00,$80,$00,$80
+SetDevDrivesTabH:
+LD765:	.byte $83,$90,$9E,$AB
 .else
 	nop
 	cmp curDevice
