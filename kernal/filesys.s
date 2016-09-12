@@ -1648,7 +1648,7 @@ _PointRecord:
 	sta curRecord
 	jsr GetVLIRChainTS
 .if wheels
-        tay                                     ; DBD6 A8                       .
+	tay
 .else
 	ldy r1L
 .endif
@@ -1660,40 +1660,32 @@ _PointRecord:
 
 _DeleteRecord:
 .if wheels
-LDBE1:	jsr     ReadyForUpdVLIR2                           ; DBE1 20 29 DC                  ).
-        txa                                     ; DBE4 8A                       .
-        bne     LDC1A                           ; DBE5 D0 33                    .3
-        jsr     GetVLIRChainTS                           ; DBE7 20 41 DD                  A.
-        lda     curRecord                           ; DBEA AD 96 84                 ...
-        sta     r0L                           ; DBED 85 02                    ..
-        jsr     MoveBackVLIRTab                           ; DBEF 20 EB DC                  ..
-        txa                                     ; DBF2 8A                       .
-        bne     LDC1A                           ; DBF3 D0 25                    .%
-        lda     curRecord                           ; DBF5 AD 96 84                 ...
-        cmp     $8497                           ; DBF8 CD 97 84                 ...
-        bcc     xLDC00                           ; DBFB 90 03                    ..
-        dec     curRecord                           ; DBFD CE 96 84                 ...
-xLDC00:	.byte   $A2                             ; DC00 A2                       .
-	brk                                     ; DC01 00                       .
-	.byte   $A5                             ; DC02 A5                       .
-	.byte   r1L                             ; DC03 04                       .
-	.byte   $F0                             ; DC04 F0                       .
-	.byte   $14                             ; DC05 14                       .
-	.byte   $20                             ; DC06 20                        
-	.byte   $25                             ; DC07 25                       %
-	.byte   $DA                             ; DC08 DA                       .
-	txa                                     ; DC09 8A                       .
-	.byte   $D0                             ; DC0A D0                       .
-	.byte   $0E                             ; DC0B 0E                       .
-	.byte   $AD                             ; DC0C AD                       .
-	.byte   $99                             ; DC0D 99                       .
-	.byte   $84                             ; DC0E 84                       .
-	sec                                     ; DC0F 38                       8
-        sbc     r2L                             ; DC10 E5 06                    ..
-        sta     $8499                           ; DC12 8D 99 84                 ...
-        bcs     LDC1A                           ; DC15 B0 03                    ..
-        dec     $849A                           ; DC17 CE 9A 84                 ...
-LDC1A:	rts                                     ; DC1A 60                       `
+LDBE1:	jsr ReadyForUpdVLIR2
+	bnex LDC1A
+	jsr GetVLIRChainTS
+	lda curRecord
+	sta r0L
+	jsr MoveBackVLIRTab
+	txa
+	bne LDC1A
+	lda curRecord
+	cmp $8497
+	bcc xLDC00
+	dec curRecord
+xLDC00:	ldx #0
+	lda r1L
+	beq LDC1A
+	jsr $da25
+	txa
+	.byte   $D0
+	.byte   $0E
+	lda $8499
+	sec
+	sbc r2L
+	sta $8499
+	bcs LDC1A
+	dec $849A
+LDC1A:	rts
 .else
 	ldx #INV_RECORD
 	lda curRecord
