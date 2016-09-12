@@ -181,16 +181,14 @@ _i_MoveData:
 .endif
 
 GetMDataDatas:
-.if wheels
+.if wheels_size
 L003D = $003D
-LCE26 = $CE26
-
-	ldy     #$00                            ; CE19 A0 00                    ..
-LCE1B:  iny                                     ; CE1B C8                       .
-        lda     (L003D),y                       ; CE1C B1 3D                    .=
-        sta     $01,y                           ; CE1E 99 01 00                 ...
-        cpy     #$05                            ; CE21 C0 05                    ..
-        bne     LCE1B                           ; CE23 D0 F6                    ..
+	ldy #0
+@1:	iny
+	lda (L003D),y
+	sta r0-1,y
+	cpy #5
+	bne @1
 .else
 	ldy #1
 	lda (returnAddress),Y
