@@ -1359,7 +1359,7 @@ DeleteVlirChains:
 	beq @2
 	txa
 	pha
-	jsr LDA25
+	jsr FreeBlockChain
 	pla
 	cpx #0
 	bne @3
@@ -1396,29 +1396,29 @@ DeleteVlirChains:
 
 FreeBlockChain:
 .if wheels
-LDA25:	php
+	php
 	sei
 	MoveW r1, r6
 	jsr LoadDiskBlkBuf
 	LoadW_ r2, 0
-LDA38:	jsr FreeBlock
-	beqx LDA42
+@1:	jsr FreeBlock
+	beqx @2
 	cpx #BAD_BAM
-	bne LDA5E
-LDA42:	inc r2L
-	bne LDA48
+	bne @4
+@2:	inc r2L
+	bne @3
 	inc r2H
-LDA48:	jsr GetLink
+@3:	jsr GetLink
 	txa
-	bne LDA5E
+	bne @4
 	lda diskBlkBuf+1
 	sta r6H
 	sta r1H
 	lda diskBlkBuf
 	sta r6L
 	sta r1L
-	bne LDA38
-LDA5E:	plp
+	bne @1
+@4:	plp
 	rts
 .else
 	MoveW r1, r6
@@ -1851,7 +1851,7 @@ LDC80:	lda     r2H                             ; DC80 A5 07                    .
         pha                                     ; DC88 48                       H
         lda     r7L                             ; DC89 A5 10                    ..
         pha                                     ; DC8B 48                       H
-        jsr     LDA25                           ; DC8C 20 25 DA                  %.
+        jsr     FreeBlockChain                           ; DC8C 20 25 DA                  %.
         lda     r2L                             ; DC8F A5 06                    ..
         sta     r0L                           ; DC91 85 02                    ..
         pla                                     ; DC93 68                       h
