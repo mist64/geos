@@ -1197,26 +1197,24 @@ _BldGDirEntry:
 	dey
 	bpl @1
 .if wheels
-	ldy #$01
+	ldy #1
 	lda (r9),y
 	sta r3H
 	dey
 	lda (r9),y
 	sta r3L
-@X:	lda (r3),y
-	beq LD963
+@2:	lda (r3),y
+	beq @3
 	sta dirEntryBuf+3,y
 	iny
 	cpy #16
-	bcc @X
-	bcs LD96D
-LD963:	lda #$a0
-LD965:	sta dirEntryBuf+3,y
+	bcc @2
+	bcs @5
+@3:	lda #$a0
+@4:	sta dirEntryBuf+3,y
 	iny
 	cpy #16
-	bcc LD965
-LD96D:
-
+	bcc @4
 .else
 	tay
 	lda (r9),y
@@ -1239,10 +1237,8 @@ LD96D:
 	lda r1H
 	bne @2
 	beq @3
-@5:
-
 .endif
-	ldy #O_GHCMDR_TYPE
+@5:	ldy #O_GHCMDR_TYPE
 	lda (r9),y
 	sta dirEntryBuf+OFF_CFILE_TYPE
 .if !wheels
