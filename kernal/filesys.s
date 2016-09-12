@@ -1197,45 +1197,26 @@ _BldGDirEntry:
 	dey
 	bpl @1
 .if wheels
-        ldy     #$01                            ; D94A A0 01                    ..
-        lda     (r9),y                         ; D94C B1 14                    ..
-        sta     r3H                             ; D94E 85 09                    ..
-        dey                                     ; D950 88                       .
-        lda     (r9),y                         ; D951 B1 14                    ..
-        sta     r3L                             ; D953 85 08                    ..
-@X:	lda     (r3),y                         ; D955 B1 08                    ..
-        beq     LD963                           ; D957 F0 0A                    ..
-        sta     dirEntryBuf+3,y                         ; D959 99 03 84                 ...
-        iny                                     ; D95C C8                       .
-        cpy     #$10                            ; D95D C0 10                    ..
-        bcc     @X                           ; D95F 90 F4                    ..
-        bcs     LD96D                           ; D961 B0 0A                    ..
-LD963:	lda     #$A0                            ; D963 A9 A0                    ..
-LD965:	sta     dirEntryBuf+3,y                         ; D965 99 03 84                 ...
-        iny                                     ; D968 C8                       .
-        cpy     #$10                            ; D969 C0 10                    ..
-        bcc     LD965                           ; D96B 90 F8                    ..
-LD96D:	ldy     #O_GHCMDR_TYPE                            ; D96D A0 44                    .D
-        lda     (r9),y                         ; D96F B1 14                    ..
-	sta dirEntryBuf+OFF_CFILE_TYPE
-	ldy #NULL
-	sty fileHeader
-	dey
-	sty fileHeader+1
-	MoveW fileTrScTab, dirEntryBuf+OFF_GHDR_PTR
-        jsr     Add2                           ; D989 20 34 D9                  4.
-	MoveW fileTrScTab+2, dirEntryBuf+OFF_DE_TR_SC
-        ldy     #O_GHSTR_TYPE                            ; D998 A0 46                    .F
-        lda     (r9),y                         ; D99A B1 14                    ..
-        sta     $8415                           ; D99C 8D 15 84                 ...
-        cmp     #VLIR
-        bne     @6                           ; D9A1 D0 03                    ..
-        jsr     Add2                           ; D9A3 20 34 D9                  4.
-@6:	ldy #O_GHGEOS_TYPE
+	ldy #$01
 	lda (r9),y
-	sta dirEntryBuf+OFF_GFILE_TYPE
-	MoveW r2, dirEntryBuf+OFF_SIZE
-	rts
+	sta r3H
+	dey
+	lda (r9),y
+	sta r3L
+@X:	lda (r3),y
+	beq LD963
+	sta dirEntryBuf+3,y
+	iny
+	cpy #16
+	bcc @X
+	bcs LD96D
+LD963:	lda #$a0
+LD965:	sta dirEntryBuf+3,y
+	iny
+	cpy #16
+	bcc LD965
+LD96D:
+
 .else
 	tay
 	lda (r9),y
@@ -1258,12 +1239,17 @@ LD96D:	ldy     #O_GHCMDR_TYPE                            ; D96D A0 44           
 	lda r1H
 	bne @2
 	beq @3
-@5:	ldy #O_GHCMDR_TYPE
+@5:
+
+.endif
+	ldy #O_GHCMDR_TYPE
 	lda (r9),y
 	sta dirEntryBuf+OFF_CFILE_TYPE
+.if !wheels
 	ldy #O_GHSTR_TYPE
 	lda (r9),y
 	sta dirEntryBuf+OFF_GSTRUC_TYPE
+.endif
 	ldy #NULL
 	sty fileHeader
 	dey
@@ -1271,7 +1257,14 @@ LD96D:	ldy     #O_GHCMDR_TYPE                            ; D96D A0 44           
 	MoveW fileTrScTab, dirEntryBuf+OFF_GHDR_PTR
 	jsr Add2
 	MoveW fileTrScTab+2, dirEntryBuf+OFF_DE_TR_SC
+.if wheels
+	ldy #O_GHSTR_TYPE
+	lda (r9),y
+	sta dirEntryBuf+OFF_GSTRUC_TYPE
+	cmp #VLIR
+.else
 	CmpBI dirEntryBuf+OFF_GSTRUC_TYPE, VLIR
+.endif
 	bne @6
 	jsr Add2
 @6:	ldy #O_GHGEOS_TYPE
@@ -1279,7 +1272,6 @@ LD96D:	ldy     #O_GHCMDR_TYPE                            ; D96D A0 44           
 	sta dirEntryBuf+OFF_GFILE_TYPE
 	MoveW r2, dirEntryBuf+OFF_SIZE
 	rts
-.endif
 
 _DeleteFile:
 	jsr FindNDelete
