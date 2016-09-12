@@ -490,7 +490,7 @@ _FollowChain:
 .import WheelsTemp
 	php
 	sei
-	jsr LD5CA
+	jsr LoadDiskBlkBuf
 	PushB r3H
 	lda #0
 	sta WheelsTemp
@@ -551,7 +551,8 @@ _FollowChain:
 .endif
 
 .if wheels ; common code
-LD5CA:	LoadW r4, diskBlkBuf
+LoadDiskBlkBuf:
+	LoadW r4, diskBlkBuf
 	rts
 .endif
 
@@ -1398,14 +1399,11 @@ FreeBlockChain:
 LDA25:	php
 	sei
 	MoveW r1, r6
-	jsr LD5CA
-	lda #0
-	sta r2L
-	sta r2H
+	jsr LoadDiskBlkBuf
+	LoadW_ r2, 0
 LDA38:	jsr FreeBlock
-	txa
-	beq LDA42
-	cpx #6
+	beqx LDA42
+	cpx #BAD_BAM
 	bne LDA5E
 LDA42:	inc r2L
 	bne LDA48
