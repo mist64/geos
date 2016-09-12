@@ -36,16 +36,16 @@ KERNAL_SOURCES= \
 	kernal/tobasic.s \
 	kernal/vars.s \
 	kernal/wheels/wheels.s \
-	kernal/wheels/reu0.s \
-	kernal/wheels/reu1.s \
-	kernal/wheels/reu2.s \
-	kernal/wheels/reu5.s \
-	kernal/wheels/reu6.s \
-	kernal/wheels/reu7.s \
-	kernal/wheels/reu8.s \
-	kernal/wheels/reu9.s \
-	kernal/wheels/reu10.s \
-	kernal/wheels/reu11.s \
+	kernal/wheels/ram.s \
+	kernal/wheels/devnum.s \
+	kernal/wheels/format.s \
+	kernal/wheels/partition.s \
+	kernal/wheels/directory.s \
+	kernal/wheels/validate.s \
+	kernal/wheels/copydisk.s \
+	kernal/wheels/copyfile.s \
+	kernal/wheels/load2.s \
+	kernal/wheels/tobasic2.s \
 	kernal/wheels/reux.s \
 
 DEPS= \
