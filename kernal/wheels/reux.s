@@ -8,13 +8,12 @@
 
 .segment "reux"
 
-	jmp L4027
-
-	jsr L4057
+L4000:	jmp L4027
+L4003:	jsr L4057
 L4006:	jsr FetchRAM
-	ldy #$00
-L400B:	lda (r0L),y
-	sta (r5L),y
+	ldy #0
+L400B:	lda (r0),y
+	sta (r5),y
 	iny
 	cpy #$D0
 	bcc L400B
@@ -27,9 +26,9 @@ L400B:	lda (r0L),y
 	jmp RstrColor
 
 L4027:	jsr L4057
-L402A:	ldy #$00
-L402C:	lda (r5L),y
-	sta (r0L),y
+L402A:	ldy #0
+L402C:	lda (r5),y
+	sta (r0),y
 	iny
 	cpy #$D0
 	bcc L402C
@@ -50,21 +49,12 @@ L402C:	lda (r5L),y
 	jsr L40A8
 	jmp StashRAM
 
-L4057:	lda #$A5
-	sta r5H
-	lda #$38
-	sta r5L
-	lda #$85
-	sta r0H
-	lda #$1F
-	sta r0L
-	lda #$BB
-	sta r1H
-	lda #$00
-	sta r1L
-	lda #$D0
+L4057:	LoadW r5, $a538
+	LoadW r0, $851f
+	LoadW r1, $bb00
+	lda #>$d000
 	sta r2L
-	lda #$00
+	lda #<$d000
 	sta r2H
 	sta r3L
 	lda #$0F
