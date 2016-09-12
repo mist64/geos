@@ -1661,31 +1661,29 @@ _PointRecord:
 _DeleteRecord:
 .if wheels
 LDBE1:	jsr ReadyForUpdVLIR2
-	bnex LDC1A
+	bnex return2
 	jsr GetVLIRChainTS
 	lda curRecord
 	sta r0L
 	jsr MoveBackVLIRTab
 	txa
-	bne LDC1A
-	lda curRecord
-	cmp $8497
-	bcc xLDC00
+	bne return2
+	CmpB curRecord, usedRecords
+	bcc @1
 	dec curRecord
-xLDC00:	ldx #0
+@1:	ldx #0
 	lda r1L
-	beq LDC1A
+	beq return2
 	jsr $da25
-	txa
-	.byte   $D0
-	.byte   $0E
-	lda $8499
+	bnex return2
+	lda fileSize
 	sec
 	sbc r2L
-	sta $8499
-	bcs LDC1A
-	dec $849A
-LDC1A:	rts
+	sta fileSize
+	bcs return2
+	dec fileSize+1
+return2:
+	rts
 .else
 	ldx #INV_RECORD
 	lda curRecord
@@ -1714,7 +1712,7 @@ LDC1A:	rts
 _InsertRecord:
 .if wheels_size ; use common code
 	jsr ReadyForUpdVLIR2
-	bnex LDC1A
+	bnex return2
 	lda curRecord
 	sta r0L
 	jmp MoveForwVLIRTab
@@ -1734,7 +1732,7 @@ _InsertRecord:
 ReadyForUpdVLIR2:
 	ldx #INV_RECORD
 	lda curRecord
-	bmi LDC1A
+	bmi return2
 	jmp ReadyForUpdVLIR
 .endif
 
