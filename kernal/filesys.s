@@ -982,7 +982,7 @@ _GetFHdrInfo:
 .endif
 	ldy #OFF_DE_TR_SC
 .if wheels
-        jsr     LD78B                           ; D784 20 8B D7                  ..
+	jsr ReadR9
 .else
 	lda (r9),y
 	sta r1L
@@ -994,11 +994,12 @@ _GetFHdrInfo:
 @1:	rts
 
 .if wheels
-LD78B:	lda     ($14),y                         ; D78B B1 14                    ..
-        sta     r1L                             ; D78D 85 04                    ..
-        iny                                     ; D78F C8                       .
-        lda     ($14),y                         ; D790 B1 14                    ..
-        sta     r1H                             ; D792 85 05                    ..
+.global ReadR9
+ReadR9:	lda (r9),y
+	sta r1L
+	iny
+	lda (r9),y
+	sta r1H
 	rts
 .endif
 
@@ -1205,10 +1206,10 @@ _BldGDirEntry:
 	bpl @1
 .if wheels
         ldy     #$01                            ; D94A A0 01                    ..
-        lda     ($14),y                         ; D94C B1 14                    ..
+        lda     (r9),y                         ; D94C B1 14                    ..
         sta     r3H                             ; D94E 85 09                    ..
         dey                                     ; D950 88                       .
-        lda     ($14),y                         ; D951 B1 14                    ..
+        lda     (r9),y                         ; D951 B1 14                    ..
         sta     r3L                             ; D953 85 08                    ..
 @X:	lda     (r3),y                         ; D955 B1 08                    ..
         beq     LD963                           ; D957 F0 0A                    ..
@@ -1223,7 +1224,7 @@ LD965:	sta     $8403,y                         ; D965 99 03 84                 .
         cpy     #$10                            ; D969 C0 10                    ..
         bcc     LD965                           ; D96B 90 F8                    ..
 LD96D:	ldy     #$44                            ; D96D A0 44                    .D
-        lda     ($14),y                         ; D96F B1 14                    ..
+        lda     (r9),y                         ; D96F B1 14                    ..
         sta     $8400                           ; D971 8D 00 84                 ...
         ldy     #$00                            ; D974 A0 00                    ..
         sty     fileHeader                           ; D976 8C 00 81                 ...
@@ -1239,13 +1240,13 @@ LD96D:	ldy     #$44                            ; D96D A0 44                    .
         lda     $8302                           ; D992 AD 02 83                 ...
         sta     $8401                           ; D995 8D 01 84                 ...
         ldy     #$46                            ; D998 A0 46                    .F
-        lda     ($14),y                         ; D99A B1 14                    ..
+        lda     (r9),y                         ; D99A B1 14                    ..
         sta     $8415                           ; D99C 8D 15 84                 ...
         cmp     #$01                            ; D99F C9 01                    ..
         bne     LD9A6                           ; D9A1 D0 03                    ..
         jsr     LD934                           ; D9A3 20 34 D9                  4.
 LD9A6:	ldy     #$45                            ; D9A6 A0 45                    .E
-        lda     ($14),y                         ; D9A8 B1 14                    ..
+        lda     (r9),y                         ; D9A8 B1 14                    ..
         sta     $8416                           ; D9AA 8D 16 84                 ...
         lda     r2H                             ; D9AD A5 07                    ..
         sta     $841D                           ; D9AF 8D 1D 84                 ...
@@ -1322,7 +1323,7 @@ _FreeFile:
 	bnex @3
 @1:	ldy #OFF_DE_TR_SC
 .if wheels
-        jsr     LD78B                           ; D9E3 20 8B D7                  ..
+	jsr ReadR9
         jsr     SetFHeadVector                           ; D9E6 20 9A D6                  ..
         jsr     GetBlock                        ; D9E9 20 E4 C1                  ..
         bne     @3                           ; D9EC D0 17                    ..

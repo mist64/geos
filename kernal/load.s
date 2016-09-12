@@ -267,9 +267,6 @@ _GetFile:
 	bne _LdFile
 @2:	jmp LdApplic
 
-.if wheels
-LD78B = $D78B
-.endif
 _LdFile:
 	jsr GetFHdrInfo
 	bnex GetFile_rts
@@ -277,9 +274,10 @@ _LdFile:
 	bne @1
 	ldy #OFF_DE_TR_SC
 .if wheels
-        jsr     LD78B                           ; D54B 20 8B D7                  ..
-        jsr     ReadBuff                           ; D54E 20 3C 90                  <.
-        bne     GetFile_rts                           ; D551 D0 28                    .(
+.import ReadR9
+	jsr ReadR9
+	jsr ReadBuff
+	bne GetFile_rts
 .else
 	lda (r9),y
 	sta r1L
@@ -308,7 +306,6 @@ GetFile_rts:
 
 _LdDeskAcc:
 .if wheels
-LC58F = $C58F
 LF28E = $F28E
 LD8D3 = $D8D3
 LD7C3:  jsr     GetFHdrInfo                     ; D7C3 20 29 C2                  ).
@@ -331,13 +328,13 @@ LD7C3:  jsr     GetFHdrInfo                     ; D7C3 20 29 C2                 
         sta     $08                             ; D7EA 85 08                    ..
         jsr     StashRAM                        ; D7EC 20 C8 C2                  ..
         ldy     #$01                            ; D7EF A0 01                    ..
-        jsr     LD78B                           ; D7F1 20 8B D7                  ..
+        jsr     ReadR9                           ; D7F1 20 8B D7                  ..
         jsr     ReadFile                        ; D7F4 20 FF C1                  ..
         txa                                     ; D7F7 8A                       .
         bne     LD818                           ; D7F8 D0 1E                    ..
-        jsr     LF28E                           ; D7FA 20 8E F2                  ..
+        jsr     DlgBoxPrep                           ; D7FA 20 8E F2                  ..
         jsr     UseSystemFont                   ; D7FD 20 4B C1                  K.
-        jsr     LC58F                           ; D800 20 8F C5                  ..
+        jsr     InitGEOEnv
         pla                                     ; D803 68                       h
         sta     $8850                           ; D804 8D 50 88                 .P.
         pla                                     ; D807 68                       h
