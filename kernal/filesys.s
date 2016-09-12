@@ -837,14 +837,14 @@ LD6E9:	tax
 	beq LD74C
 	cmp curDevice
 	beq LD702
-	jsr LD74F
+	jsr IsCurDeviceValid
 	bcs LD700
 	lda $8489
-	jsr LD751
+	jsr IsDeviceValid
 	bcs LD700
 	jsr ExitTurbo
 LD700:	stx curDevice
-LD702:	jsr LD74F
+LD702:	jsr IsCurDeviceValid
 	bcs LD749
 	tay
 	lda $8486,y
@@ -884,15 +884,15 @@ LD74C:	ldx #DEV_NOT_FOUND
 	rts
 
 ; ------------------------------
-LD74F:	lda curDevice
-LD751:	cmp #8
+IsCurDeviceValid:
+	lda curDevice
+IsDeviceValid:
+	cmp #8
 	bcc @1
 	cmp #12
 	rts
 @1:	sec
-LD759:	rts
-
-; ------------------------------
+	rts
 .else
 	nop
 	cmp curDevice
@@ -928,8 +928,7 @@ LD759:	rts
 
 PrepForFetch:
 	ldy #6
-@1:
-	lda r0,y
+@1:	lda r0,y
 	tax
 	lda SetDevTab,y
 	sta r0,y
