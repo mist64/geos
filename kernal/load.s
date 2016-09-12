@@ -313,16 +313,16 @@ LD7C3:  jsr     GetFHdrInfo                     ; D7C3 20 29 C2                 
         lda     r7H                             ; D7C9 A5 11                    ..
         sta     $03                             ; D7CB 85 03                    ..
         sta     $05                             ; D7CD 85 05                    ..
-        sta     LD81A                           ; D7CF 8D 1A D8                 ...
+        sta     tmp1                           ; D7CF 8D 1A D8                 ...
         lda     r7L                             ; D7D2 A5 10                    ..
         sta     r0L                           ; D7D4 85 02                    ..
         sta     $04                             ; D7D6 85 04                    ..
-        sta     LD819                           ; D7D8 8D 19 D8                 ...
+        sta     tmp0                           ; D7D8 8D 19 D8                 ...
         jsr     LD8D3                           ; D7DB 20 D3 D8                  ..
         lda     $07                             ; D7DE A5 07                    ..
-        sta     LD81C                           ; D7E0 8D 1C D8                 ...
+        sta     tmp3                           ; D7E0 8D 1C D8                 ...
         lda     $06                             ; D7E3 A5 06                    ..
-        sta     LD81B                           ; D7E5 8D 1B D8                 ...
+        sta     tmp2                           ; D7E5 8D 1B D8                 ...
         lda     #$00                            ; D7E8 A9 00                    ..
         sta     $08                             ; D7EA 85 08                    ..
         jsr     StashRAM                        ; D7EC 20 C8 C2                  ..
@@ -348,10 +348,10 @@ LD7C3:  jsr     GetFHdrInfo                     ; D7C3 20 29 C2                 
 LD818:  rts                                     ; D818 60                       `
 
 ; ----------------------------------------------------------------------------
-LD819:  .byte   $00                             ; D819 00                       .
-LD81A:  .byte   $00                             ; D81A 00                       .
-LD81B:  .byte   $00                             ; D81B 00                       .
-LD81C:  .byte   $00                             ; D81C 00                       .
+tmp0:  .byte 0
+tmp1:  .byte 0
+tmp2:  .byte 0
+tmp3:  .byte 0
 .else
 	MoveB r10L, A885D
 	jsr GetFHdrInfo
@@ -399,28 +399,28 @@ LDAcc1:
 
 _RstrAppl:
 .if wheels
-LD81D:  lda     LD81A                           ; D81D AD 1A D8                 ...
-        sta     $03                             ; D820 85 03                    ..
-        sta     $05                             ; D822 85 05                    ..
-        lda     LD819                           ; D824 AD 19 D8                 ...
-        sta     r0L                           ; D827 85 02                    ..
-        sta     $04                             ; D829 85 04                    ..
-        lda     LD81C                           ; D82B AD 1C D8                 ...
-        sta     $07                             ; D82E 85 07                    ..
-        lda     LD81B                           ; D830 AD 1B D8                 ...
-        sta     $06                             ; D833 85 06                    ..
-        lda     #$00                            ; D835 A9 00                    ..
-        sta     $08                             ; D837 85 08                    ..
-        jsr     FetchRAM                        ; D839 20 CB C2                  ..
-        jsr     Dialog_2
-        ldx     $8852                           ; D83F AE 52 88                 .R.
-        txs                                     ; D842 9A                       .
-        ldx     #$00                            ; D843 A2 00                    ..
-        lda     $8851                           ; D845 AD 51 88                 .Q.
-        pha                                     ; D848 48                       H
-        lda     $8850                           ; D849 AD 50 88                 .P.
-        pha                                     ; D84C 48                       H
-        rts                                     ; D84D 60                       `
+LD81D:	lda tmp1
+	sta r0H
+	sta r1H
+	lda tmp0
+	sta r0L
+	sta r1L
+	lda tmp3
+	sta r2H
+	lda tmp2
+	sta r2L
+	lda #$00
+	sta r3L
+	jsr FetchRAM
+	jsr Dialog_2
+	ldx $8852
+	txs
+	ldx #$00
+	lda $8851
+	pha
+	lda $8850
+	pha
+	rts
 .else
 .if (useRamExp)
 	jsr RamExpGetStat

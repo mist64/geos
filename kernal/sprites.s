@@ -99,7 +99,6 @@ ASSERT_NOT_BELOW_IO
 ; Destroyed: a, x
 ;---------------------------------------------------------------
 .if wheels_size
-LC359 = $C359
 _EnablSprite:
 	sec
 	bcs EnablSpriteCommon
