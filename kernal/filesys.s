@@ -585,7 +585,7 @@ LD5FD:	jsr Get1stDirEntry
 	txa
 	bne LD661
 LD603:	ldy #$00
-	lda ($0C),y
+	lda (r5),y
 	beq LD658
 	ldy #$16
 	lda r7L
@@ -593,18 +593,18 @@ LD603:	ldy #$00
 	beq LD624
 	cmp #$65
 	bne LD61B
-	lda ($0C),y
+	lda (r5),y
 	beq LD658
 	bne LD624
-LD61B:	cmp ($0C),y
+LD61B:	cmp (r5),y
 	bne LD658
 	jsr GetHeaderFileName
 	bne LD658
 LD624:	clc
-	lda $0C
+	lda r5L
 	adc #$03
 	sta r0L
-	lda $0D
+	lda r5H
 	adc #$00
 	sta r0H
 	ldy #$00
@@ -635,21 +635,18 @@ LD658:	jsr GetNxtDirEntry
 LD661:	sec
 	rts
 
-LD663:	lda $0D
+LD663:	lda r5H
 	sta LD685
-	lda $0C
+	lda r5L
 	sta LD684
-	lda #$D6
-	sta $0D
-	lda #$77
-	sta $0C
+	LoadW r5, $D677
 	clc
 	rts
 
 	lda LD685
-	sta $0D
+	sta r5H
 	lda LD684
-	sta $0C
+	sta r5L
 	jmp LD658
 
 LD684:	.byte 0
@@ -753,42 +750,42 @@ SetFHeadVector:
 
 _FindFile:
 .if wheels
-LD6A3:	sec                                     ; D6A3 38                       8
-        lda     r6L                             ; D6A4 A5 0E                    ..
-        sbc     #$03                            ; D6A6 E9 03                    ..
-        sta     r6L                             ; D6A8 85 0E                    ..
-        bcs     LD6AE                           ; D6AA B0 02                    ..
-        dec     r6H                             ; D6AC C6 0F                    ..
-LD6AE:	jsr     Get1stDirEntry                           ; D6AE 20 30 90                  0.
-        txa                                     ; D6B1 8A                       .
-        bne     LD6E8                           ; D6B2 D0 34                    .4
-LD6B4:	ldy     #$00                            ; D6B4 A0 00                    ..
-        lda     ($0C),y                         ; D6B6 B1 0C                    ..
-        beq     LD6D2                           ; D6B8 F0 18                    ..
-        ldy     #$03                            ; D6BA A0 03                    ..
-LD6BC:	lda     (r6),y                         ; D6BC B1 0E                    ..
-        beq     LD6C7                           ; D6BE F0 07                    ..
-        cmp     ($0C),y                         ; D6C0 D1 0C                    ..
-        bne     LD6D2                           ; D6C2 D0 0E                    ..
-        iny                                     ; D6C4 C8                       .
-        bne     LD6BC                           ; D6C5 D0 F5                    ..
-LD6C7:	cpy     #$13                            ; D6C7 C0 13                    ..
-        beq     LD6DE                           ; D6C9 F0 13                    ..
-        lda     ($0C),y                         ; D6CB B1 0C                    ..
-        iny                                     ; D6CD C8                       .
-        cmp     #$A0                            ; D6CE C9 A0                    ..
-        beq     LD6C7                           ; D6D0 F0 F5                    ..
-LD6D2:	jsr     GetNxtDirEntry                           ; D6D2 20 33 90                  3.
-        txa                                     ; D6D5 8A                       .
-        bne     LD6E8                           ; D6D6 D0 10                    ..
-        tya                                     ; D6D8 98                       .
-        beq     LD6B4                           ; D6D9 F0 D9                    ..
-        ldx     #$05                            ; D6DB A2 05                    ..
-        rts                                     ; D6DD 60                       `
+LD6A3:	sec
+	lda r6L
+	sbc #3
+	sta r6L
+	bcs LD6AE
+	dec r6H
+LD6AE:	jsr Get1stDirEntry
+	txa
+	bne LD6E8
+LD6B4:	ldy #0
+	lda (r5),y
+	beq LD6D2
+	ldy #3
+LD6BC:	lda (r6),y
+	beq LD6C7
+	cmp (r5),y
+	bne LD6D2
+	iny
+	bne LD6BC
+LD6C7:	cpy #$13
+	beq LD6DE
+	lda (r5),y
+	iny
+	cmp #$A0
+	beq LD6C7
+LD6D2:	jsr GetNxtDirEntry
+	txa
+	bne LD6E8
+	tya
+	beq LD6B4
+	ldx #FILE_NOT_FOUND
+	rts
 
 ; ----------------------------------------------------------------------------
 LD6DE:	ldy     #$1D                            ; D6DE A0 1D                    ..
-LD6E0:	lda     ($0C),y                         ; D6E0 B1 0C                    ..
+LD6E0:	lda     (r5),y                         ; D6E0 B1 0C                    ..
         sta     $8400,y                         ; D6E2 99 00 84                 ...
         dey                                     ; D6E5 88                       .
         bpl     LD6E0                           ; D6E6 10 F8                    ..
@@ -1159,7 +1156,7 @@ _SetGDirEntry:
 	jsr GetFreeDirBlk
 	bnex SGDCopyDate_rts
 .if wheels
-        sty     $0C                             ; D911 84 0C                    ..
+        sty r5L
 	.assert <diskBlkBuf = 0, error, "diskBlkBuf must be page-aligned!"
 .else
 	tya
