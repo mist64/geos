@@ -854,13 +854,13 @@ LD702:	jsr LD74F
 	beq LD749
 	sty $8489
 	lda SetDevDrivesTabL-8,y
-	sta LD75C
+	sta SetDevTab + 2
 	lda SetDevDrivesTabH-8,y
-	sta LD75D
+	sta SetDevTab + 3
 	ldx #$06
 LD726:	lda r0L,x
 	pha
-	lda LD75A,x
+	lda SetDevTab,x
 	sta r0L,x
 	dex
 	bpl LD726
@@ -893,10 +893,6 @@ LD751:	cmp #8
 LD759:	rts
 
 ; ------------------------------
-LD75A:	.byte $00,$90
-LD75C:	.byte $00
-LD75D:	.byte $83
-	.byte $80,$0D,$00
 .else
 	nop
 	cmp curDevice
@@ -942,10 +938,11 @@ PrepForFetch:
 	dey
 	bpl @1
 	rts
+.endif
 
 SetDevTab:
 	.word DISK_BASE
-.if cbmfiles
+.if cbmfiles || wheels
 	; This should be initialized to 0, and will
 	; be changed at runtime.
 	; The cbmfiles version was created by dumping
@@ -957,7 +954,6 @@ SetDevTab:
 .endif
 	.word DISK_DRV_LGH
 	.byte 0
-.endif
 
 .define SetDevDrivesTab REUDskDrvSPC+0*DISK_DRV_LGH, REUDskDrvSPC+1*DISK_DRV_LGH, REUDskDrvSPC+2*DISK_DRV_LGH, REUDskDrvSPC+3*DISK_DRV_LGH
 SetDevDrivesTabL:
