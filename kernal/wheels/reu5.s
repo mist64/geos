@@ -120,7 +120,7 @@ L5089:	lda ramExpSize
 	dec ramExpSize
 	ldy curDrive
 	lda $904E
-	sta $8486,y
+	sta _driveType,y
 	sta curType
 	pla
 	sta $9073

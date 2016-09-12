@@ -834,52 +834,51 @@ LD6E8:	rts                                     ; D6E8 60                       `
 _SetDevice:
 .if wheels
 	tax
-	beq LD74C
+	beq @7
 	cmp curDevice
-	beq LD702
+	beq @2
 	jsr IsCurDeviceValid
-	bcs LD700
-	lda $8489
+	bcs @1
+	lda curDrive
 	jsr IsDeviceValid
-	bcs LD700
+	bcs @1
 	jsr ExitTurbo
-LD700:	stx curDevice
-LD702:	jsr IsCurDeviceValid
-	bcs LD749
+@1:	stx curDevice
+@2:	jsr IsCurDeviceValid
+	bcs @6
 	tay
-	lda $8486,y
+	lda _driveType,y
 	sta curType
-	beq LD74C
-	cpy $8489
-	beq LD749
-	sty $8489
+	beq @7
+	cpy curDrive
+	beq @6
+	sty curDrive
 	lda SetDevDrivesTabL-8,y
 	sta SetDevTab + 2
 	lda SetDevDrivesTabH-8,y
 	sta SetDevTab + 3
 	ldx #6
-LD726:	lda r0,x
+@3:	lda r0,x
 	pha
 	lda SetDevTab,x
 	sta r0,x
 	dex
-	bpl LD726
+	bpl @3
 	lda curType
 	and #$0F
 	cmp #DRV_1581
-	bne LD73C
+	bne @4
 	dec r2H
-LD73C:	jsr FetchRAM
-	ldx #$00
-LD741:	pla
-	sta r0L,x
+@4:	jsr FetchRAM
+	ldx #0
+@5:	pla
+	sta r0,x
 	inx
-	cpx #$07
-	bne LD741
-LD749:	ldx #$00
+	cpx #7
+	bne @5
+@6:	ldx #0
 	rts
-
-LD74C:	ldx #DEV_NOT_FOUND
+@7:	ldx #DEV_NOT_FOUND
 	rts
 
 IsCurDeviceValid:

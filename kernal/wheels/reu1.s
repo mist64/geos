@@ -93,7 +93,7 @@ _SwapDrives:
 	lda curDrive
 	pha
 	ldx r5L
-	lda $8486,x
+	lda _driveType,x
 	sta L5168
 	beq L50B9
 	txa
@@ -102,10 +102,10 @@ _SwapDrives:
 	jsr _DevNumChange
 	ldx r5L
 	lda #0
-	sta $8486,x
+	sta _driveType,x
 	sta curType
 L50B9:	ldx r5H
-	lda $8486,x
+	lda _driveType,x
 	sta L5169
 	beq L50D6
 	txa
@@ -114,7 +114,7 @@ L50B9:	ldx r5H
 	jsr _DevNumChange
 	ldx r5H
 	lda #0
-	sta $8486,x
+	sta _driveType,x
 	sta curType
 L50D6:	ldx r5L
 	jsr L513F
@@ -126,7 +126,7 @@ L50D6:	ldx r5L
 	sta curDrive
 	ldx r5L
 	lda L5169
-	sta $8486,x
+	sta _driveType,x
 	ldx r5H
 	lda $88BF,x
 	pha
@@ -142,7 +142,7 @@ L50D6:	ldx r5L
 	pla
 	sta $88BF,y
 	lda L5168
-	sta $8486,x
+	sta _driveType,x
 	beq L5127
 	txa
 	jsr SetDevice

@@ -296,7 +296,7 @@ L79D8:	lda #$80
 	sta L7A38
 L79DD:	ldy #$08
 	sty L7A39
-L79E2:	lda $8486,y
+L79E2:	lda _driveType,y
 	beq L79F2
 	eor L7A38
 	bmi L79F2
@@ -378,7 +378,7 @@ L7A85:	jsr LCFD9
 	jmp LCFD9
 
 L7A97:	ldy #$08
-L7A99:	lda $8486,y
+L7A99:	lda _driveType,y
 	and #$F0
 	cmp #$30
 	beq L7AA9

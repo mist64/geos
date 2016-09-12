@@ -286,14 +286,14 @@ _RemoveDrive:
 	cmp #$02
 	bcc L52F3
 	ldy r4L
-	lda $8486,y
+	lda _driveType,y
 	beq L52F3
 	tya
 	jsr SetDevice
 	jsr PurgeTurbo
 	lda #$00
 	ldy curDrive
-	sta $8486,y
+	sta _driveType,y
 	sta $88BF,y
 	sta curType
 	sta curDrive
