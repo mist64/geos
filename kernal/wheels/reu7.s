@@ -492,7 +492,7 @@ L53A0:	lda #$81
 	jsr L53F1
 	ldy #$02
 	sty L53DF
-L53C0:	lda $8101,y
+L53C0:	lda fileHeader+1,y
 	sta r1H
 	lda fileHeader,y
 	sta r1L

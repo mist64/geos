@@ -613,7 +613,7 @@ L7CAF:	inc L7F01
 	sty L7F04
 	sty L7F05
 L7CBA:	ldy L7F04
-	lda $8101,y
+	lda fileHeader+1,y
 	sta r1H
 	lda fileHeader,y
 	sta r1L
@@ -698,7 +698,7 @@ L7D61:	lda fileHeader,x
 
 L7D73:	ldy L7F08
 	lda $8301,y
-	sta $8101,x
+	sta fileHeader+1,x
 	lda fileTrScTab,y
 	sta fileHeader,x
 	inx

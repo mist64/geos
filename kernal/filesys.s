@@ -1225,9 +1225,9 @@ LD96D:	ldy     #$44                            ; D96D A0 44                    .
         lda     ($14),y                         ; D96F B1 14                    ..
         sta     $8400                           ; D971 8D 00 84                 ...
         ldy     #$00                            ; D974 A0 00                    ..
-        sty     $8100                           ; D976 8C 00 81                 ...
+        sty     fileHeader                           ; D976 8C 00 81                 ...
         dey                                     ; D979 88                       .
-        sty     $8101                           ; D97A 8C 01 81                 ...
+        sty     fileHeader+1                           ; D97A 8C 01 81                 ...
         lda     $8301                           ; D97D AD 01 83                 ...
         sta     $8414                           ; D980 8D 14 84                 ...
         lda     $8300                           ; D983 AD 00 83                 ...
@@ -1350,23 +1350,23 @@ _FreeFile:
 
 DeleteVlirChains:
 .if wheels
-LDA07:	ldx     #2                            ; DA07 A2 02                    ..
-LDA09:	lda     $8101,x                         ; DA09 BD 01 81                 ...
-        sta     r1H                             ; DA0C 85 05                    ..
-        lda     $8100,x                         ; DA0E BD 00 81                 ...
-        sta     r1L                             ; DA11 85 04                    ..
-        beq     LDA20                           ; DA13 F0 0B                    ..
-        txa                                     ; DA15 8A                       .
-        pha                                     ; DA16 48                       H
-        jsr     LDA25                           ; DA17 20 25 DA                  %.
-        pla                                     ; DA1A 68                       h
-        cpx     #$00                            ; DA1B E0 00                    ..
-        bne     LDA24                           ; DA1D D0 05                    ..
-        tax                                     ; DA1F AA                       .
-LDA20:	inx                                     ; DA20 E8                       .
-        inx                                     ; DA21 E8                       .
-        bne     LDA09                           ; DA22 D0 E5                    ..
-LDA24:	rts                                     ; DA24 60                       `
+	ldx #2
+@1:	lda fileHeader+1,x
+	sta r1H
+	lda fileHeader,x
+	sta r1L
+	beq @2
+	txa
+	pha
+	jsr LDA25
+	pla
+	cpx #0
+	bne @3
+	tax
+@2:	inx
+	inx
+	bne @1
+@3:	rts
 .else
 	ldy #0
 @1:	lda diskBlkBuf,y
@@ -1395,36 +1395,33 @@ LDA24:	rts                                     ; DA24 60                       `
 
 FreeBlockChain:
 .if wheels
-LDA25:	php                                     ; DA25 08                       .
-        sei                                     ; DA26 78                       x
-        lda     r1H                             ; DA27 A5 05                    ..
-        sta     r6H                             ; DA29 85 0F                    ..
-        lda     r1L                             ; DA2B A5 04                    ..
-        sta     r6L                             ; DA2D 85 0E                    ..
-        jsr     LD5CA                           ; DA2F 20 CA D5                  ..
-        lda     #$00                            ; DA32 A9 00                    ..
-        sta     r2L                             ; DA34 85 06                    ..
-        sta     r2H                             ; DA36 85 07                    ..
-LDA38:	jsr     FreeBlock                       ; DA38 20 B9 C2                  ..
-        txa                                     ; DA3B 8A                       .
-        beq     LDA42                           ; DA3C F0 04                    ..
-        cpx     #$06                            ; DA3E E0 06                    ..
-        bne     LDA5E                           ; DA40 D0 1C                    ..
-LDA42:	inc     r2L                             ; DA42 E6 06                    ..
-        bne     LDA48                           ; DA44 D0 02                    ..
-        inc     r2H                             ; DA46 E6 07                    ..
-LDA48:	jsr     GetLink                           ; DA48 20 69 90                  i.
-        txa                                     ; DA4B 8A                       .
-        bne     LDA5E                           ; DA4C D0 10                    ..
-        lda     diskBlkBuf+1                           ; DA4E AD 01 80                 ...
-        sta     r6H                             ; DA51 85 0F                    ..
-        sta     r1H                             ; DA53 85 05                    ..
-        lda     diskBlkBuf                           ; DA55 AD 00 80                 ...
-        sta     r6L                             ; DA58 85 0E                    ..
-        sta     r1L                             ; DA5A 85 04                    ..
-        bne     LDA38                           ; DA5C D0 DA                    ..
-LDA5E:	plp                                     ; DA5E 28                       (
-        rts                                     ; DA5F 60                       `
+LDA25:	php
+	sei
+	MoveW r1, r6
+	jsr LD5CA
+	lda #0
+	sta r2L
+	sta r2H
+LDA38:	jsr FreeBlock
+	txa
+	beq LDA42
+	cpx #6
+	bne LDA5E
+LDA42:	inc r2L
+	bne LDA48
+	inc r2H
+LDA48:	jsr GetLink
+	txa
+	bne LDA5E
+	lda diskBlkBuf+1
+	sta r6H
+	sta r1H
+	lda diskBlkBuf
+	sta r6L
+	sta r1L
+	bne LDA38
+LDA5E:	plp
+	rts
 .else
 	MoveW r1, r6
 	LoadW_ r2, 0
