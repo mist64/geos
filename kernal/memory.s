@@ -182,10 +182,9 @@ _i_MoveData:
 
 GetMDataDatas:
 .if wheels_size
-L003D = $003D
 	ldy #0
 @1:	iny
-	lda (L003D),y
+	lda (returnAddress),y
 	sta r0-1,y
 	cpy #5
 	bne @1
