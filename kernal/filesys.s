@@ -769,7 +769,7 @@ _FindFile:
 	bne @5
 	iny
 	bne @3
-@4:	cpy #$13
+@4:	cpy #OFF_FNAME + $10
 	beq @6
 	lda (r5),y
 	iny
@@ -958,20 +958,20 @@ _GetFHdrInfo:
 	lda (r9),y
 	sta r1L
 .if wheels
-        sta     $8300                           ; D76F 8D 00 83                 ...
+	sta fileTrScTab
 .endif
 	iny
 	lda (r9),y
 	sta r1H
 .if wheels
-        sta     $8301                           ; D777 8D 01 83                 ...
+	sta fileTrScTab+1
 .else
 	MoveW r1, fileTrScTab
 .endif
 	jsr SetFHeadVector
 	jsr GetBlock
 .if wheels
-        bne     @1                           ; D780 D0 08                    ..
+	bne @1
 .else
 	bnex @1
 .endif
@@ -1075,10 +1075,7 @@ _SaveFile:
 .endif
 	sta fileHeader+O_GHINFO_TXT
 .if wheels
-        lda     $8413                           ; D89B AD 13 84                 ...
-        sta     r1L                             ; D89E 85 04                    ..
-        lda     $8414                           ; D8A0 AD 14 84                 ...
-        sta     r1H                             ; D8A3 85 05                    ..
+	MoveW_ dirEntryBuf+OFF_GHDR_PTR, r1
 .else
 	MoveW dirEntryBuf+OFF_GHDR_PTR, r1
 .endif
