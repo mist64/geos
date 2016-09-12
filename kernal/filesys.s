@@ -833,7 +833,7 @@ LD6E8:	rts                                     ; D6E8 60                       `
 
 _SetDevice:
 .if wheels
-LD6E9:	tax
+	tax
 	beq LD74C
 	cmp curDevice
 	beq LD702
@@ -857,16 +857,16 @@ LD702:	jsr IsCurDeviceValid
 	sta SetDevTab + 2
 	lda SetDevDrivesTabH-8,y
 	sta SetDevTab + 3
-	ldx #$06
-LD726:	lda r0L,x
+	ldx #6
+LD726:	lda r0,x
 	pha
 	lda SetDevTab,x
-	sta r0L,x
+	sta r0,x
 	dex
 	bpl LD726
 	lda curType
 	and #$0F
-	cmp #$03
+	cmp #DRV_1581
 	bne LD73C
 	dec r2H
 LD73C:	jsr FetchRAM
@@ -879,11 +879,9 @@ LD741:	pla
 LD749:	ldx #$00
 	rts
 
-; ------------------------------
 LD74C:	ldx #DEV_NOT_FOUND
 	rts
 
-; ------------------------------
 IsCurDeviceValid:
 	lda curDevice
 IsDeviceValid:
