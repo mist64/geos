@@ -1215,17 +1215,14 @@ LD965:	sta     dirEntryBuf+3,y                         ; D965 99 03 84          
         iny                                     ; D968 C8                       .
         cpy     #$10                            ; D969 C0 10                    ..
         bcc     LD965                           ; D96B 90 F8                    ..
-LD96D:	ldy     #$44                            ; D96D A0 44                    .D
+LD96D:	ldy     #O_GHCMDR_TYPE                            ; D96D A0 44                    .D
         lda     (r9),y                         ; D96F B1 14                    ..
-        sta     dirEntryBuf                           ; D971 8D 00 84                 ...
-        ldy     #$00                            ; D974 A0 00                    ..
-        sty     fileHeader                           ; D976 8C 00 81                 ...
-        dey                                     ; D979 88                       .
-        sty     fileHeader+1                           ; D97A 8C 01 81                 ...
-        lda     fileTrScTab+1                           ; D97D AD 01 83                 ...
-        sta     $8414                           ; D980 8D 14 84                 ...
-        lda     fileTrScTab+0                           ; D983 AD 00 83                 ...
-        sta     $8413                           ; D986 8D 13 84                 ...
+	sta dirEntryBuf+OFF_CFILE_TYPE
+	ldy #NULL
+	sty fileHeader
+	dey
+	sty fileHeader+1
+	MoveW fileTrScTab, dirEntryBuf+OFF_GHDR_PTR
         jsr     Add2                           ; D989 20 34 D9                  4.
 	MoveW fileTrScTab+2, dirEntryBuf+OFF_DE_TR_SC
         ldy     #O_GHSTR_TYPE                            ; D998 A0 46                    .F
