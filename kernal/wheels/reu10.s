@@ -20,22 +20,23 @@ LC313 = $C313
 .import LCFD9
 .import TempCurDrive
 .import sysDBColor
+.import DeskTopName
 
 L5018 = $5018
 L5195 = $5195
 
-NewDesktop              =       $5000
-	jmp L5021
-OEnterDesktop           =       $5003
+NewDesktop:
+	jmp __NewDesktop
+OEnterDesktop:
 	lda #$00
 	.byte $2c
-InstallDriver           =       $5006
+InstallDriver:
 	lda #$80
 	.byte $2c
-FindDesktop             =       $5009
+FindDesktop:
 	lda #$03
 	.byte $2c
-FindAFile               =       $500c
+FindAFile:
 	lda #$06
 	tax
 	bmi L5034
@@ -48,14 +49,9 @@ L5015:	.addr L5137
 	pla
 	jmp CallRoutine
 
-L5021:	lda #$C3
-	sta r1H
-	lda #$CF
-	sta r1L
-	lda #$00
-	sta r2H
-	lda #$09
-	sta r2L
+__NewDesktop:
+	LoadW r1, DeskTopName
+	LoadW r2, 9
 	jmp MoveData
 
 L5034:	lda $8416
