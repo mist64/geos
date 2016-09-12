@@ -1790,56 +1790,34 @@ ReaRec0:
 
 _WriteRecord:
 .if wheels
-LDC60:	PushW r2
-	jsr ReadyForUpdVLIR2
-	PopW r2
-	bnex LDC7F
-	jsr GetVLIRChainTS
-	bne LDC80
-	ldx #0
-	lda r2L
-	ora r2H
-	bne LDCB6
-LDC7F:	rts
-LDC80:	PushW r2
-	PushW r7
-	jsr FreeBlockChain
-	lda r2L
-	sta r0L
-	PopW r7
-	PopW r2
-	bnex LDC7F
-	lda $8499
-	sec
-	sbc r0L
-	sta $8499
-	bcs LDCB0
-	dec $849A
-LDCB0:	lda r2L
-	ora r2H
-	beq LDCB9
-LDCB6:	jmp WriteVLIRChain
-LDCB9:	ldy #$FF
-	sty r1H
-	iny
-	sty r1L
-	jmp PutVLIRChainTS
 .else
 	ldx #INV_RECORD
 	lda curRecord
 	bmi @5
+.endif
 	PushW r2
+.if wheels
+	jsr ReadyForUpdVLIR2
+.else
 	jsr ReadyForUpdVLIR
+.endif
 	PopW r2
 	bnex @5
 	jsr GetVLIRChainTS
+.if !wheels
 	lda r1L
+.endif
 	bne @1
 	ldx #0
 	lda r2L
 	ora r2H
+.if wheels
+	bne @3
+@5:	rts
+.else
 	beq @5
 	bne @3
+.endif
 @1:	PushW r2
 	PushW r7
 	jsr FreeBlockChain
@@ -1858,9 +1836,14 @@ LDCB9:	ldy #$FF
 	sty r1H
 	iny
 	sty r1L
+
+.if wheels
+	jmp PutVLIRChainTS
+.else
 	jsr PutVLIRChainTS
 @5:	rts
 .endif
+
 GetVLIRTab:
 	jsr SetVLIRTable
 	bnex @1
