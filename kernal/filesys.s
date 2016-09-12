@@ -1205,13 +1205,13 @@ _BldGDirEntry:
 	sta r3L
 @2:	lda (r3),y
 	beq @3
-	sta dirEntryBuf+3,y
+	sta dirEntryBuf+OFF_FNAME,y
 	iny
 	cpy #16
 	bcc @2
 	bcs @5
 @3:	lda #$a0
-@4:	sta dirEntryBuf+3,y
+@4:	sta dirEntryBuf+OFF_FNAME,y
 	iny
 	cpy #16
 	bcc @4
@@ -1295,9 +1295,9 @@ _FreeFile:
 @1:	ldy #OFF_DE_TR_SC
 .if wheels
 	jsr ReadR9
-        jsr     SetFHeadVector                           ; D9E6 20 9A D6                  ..
-        jsr     GetBlock                        ; D9E9 20 E4 C1                  ..
-        bne     @3                           ; D9EC D0 17                    ..
+	jsr SetFHeadVector
+	jsr GetBlock
+	bne @3
 .else
 	lda (r9),y
 	sta r1L
@@ -1790,64 +1790,40 @@ ReaRec0:
 
 _WriteRecord:
 .if wheels
-LDC60:	lda     r2H                             ; DC60 A5 07                    ..
-        pha                                     ; DC62 48                       H
-        lda     r2L                             ; DC63 A5 06                    ..
-        pha                                     ; DC65 48                       H
-        jsr     ReadyForUpdVLIR2                           ; DC66 20 29 DC                  ).
-        pla                                     ; DC69 68                       h
-        sta     r2L                             ; DC6A 85 06                    ..
-        pla                                     ; DC6C 68                       h
-        sta     r2H                             ; DC6D 85 07                    ..
-        txa                                     ; DC6F 8A                       .
-        bne     LDC7F                           ; DC70 D0 0D                    ..
-        jsr     GetVLIRChainTS                           ; DC72 20 41 DD                  A.
-        bne     LDC80                           ; DC75 D0 09                    ..
-        ldx     #$00                            ; DC77 A2 00                    ..
-        lda     r2L                             ; DC79 A5 06                    ..
-        ora     r2H                             ; DC7B 05 07                    ..
-        bne     LDCB6                           ; DC7D D0 37                    .7
-LDC7F:	rts                                     ; DC7F 60                       `
-
-; ----------------------------------------------------------------------------
-LDC80:	lda     r2H                             ; DC80 A5 07                    ..
-        pha                                     ; DC82 48                       H
-        lda     r2L                             ; DC83 A5 06                    ..
-        pha                                     ; DC85 48                       H
-        lda     r7H                             ; DC86 A5 11                    ..
-        pha                                     ; DC88 48                       H
-        lda     r7L                             ; DC89 A5 10                    ..
-        pha                                     ; DC8B 48                       H
-        jsr     FreeBlockChain                           ; DC8C 20 25 DA                  %.
-        lda     r2L                             ; DC8F A5 06                    ..
-        sta     r0L                           ; DC91 85 02                    ..
-        pla                                     ; DC93 68                       h
-        sta     r7L                             ; DC94 85 10                    ..
-        pla                                     ; DC96 68                       h
-        sta     r7H                             ; DC97 85 11                    ..
-        pla                                     ; DC99 68                       h
-        sta     r2L                             ; DC9A 85 06                    ..
-        pla                                     ; DC9C 68                       h
-        sta     r2H                             ; DC9D 85 07                    ..
-        txa                                     ; DC9F 8A                       .
-        bne     LDC7F                           ; DCA0 D0 DD                    ..
-        lda     $8499                           ; DCA2 AD 99 84                 ...
-        sec                                     ; DCA5 38                       8
-        sbc     r0L                           ; DCA6 E5 02                    ..
-        sta     $8499                           ; DCA8 8D 99 84                 ...
-        bcs     LDCB0                           ; DCAB B0 03                    ..
-        dec     $849A                           ; DCAD CE 9A 84                 ...
-LDCB0:	lda     r2L                             ; DCB0 A5 06                    ..
-        ora     r2H                             ; DCB2 05 07                    ..
-        beq     LDCB9                           ; DCB4 F0 03                    ..
-LDCB6:	jmp     WriteVLIRChain                           ; DCB6 4C 61 DD                 La.
-
-; ----------------------------------------------------------------------------
-LDCB9:	ldy     #$FF                            ; DCB9 A0 FF                    ..
-        sty     r1H                             ; DCBB 84 05                    ..
-        iny                                     ; DCBD C8                       .
-        sty     r1L                             ; DCBE 84 04                    ..
-        jmp     PutVLIRChainTS                           ; DCC0 4C 51 DD                 LQ.
+LDC60:	PushW r2
+	jsr ReadyForUpdVLIR2
+	PopW r2
+	bnex LDC7F
+	jsr GetVLIRChainTS
+	bne LDC80
+	ldx #0
+	lda r2L
+	ora r2H
+	bne LDCB6
+LDC7F:	rts
+LDC80:	PushW r2
+	PushW r7
+	jsr FreeBlockChain
+	lda r2L
+	sta r0L
+	PopW r7
+	PopW r2
+	bnex LDC7F
+	lda $8499
+	sec
+	sbc r0L
+	sta $8499
+	bcs LDCB0
+	dec $849A
+LDCB0:	lda r2L
+	ora r2H
+	beq LDCB9
+LDCB6:	jmp WriteVLIRChain
+LDCB9:	ldy #$FF
+	sty r1H
+	iny
+	sty r1L
+	jmp PutVLIRChainTS
 .else
 	ldx #INV_RECORD
 	lda curRecord
