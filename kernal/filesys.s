@@ -213,7 +213,7 @@ L50A4:	PushB r10L
 	sta r1H
 	txa
 	clc
-	adc #$02
+	adc #2
 	sta r0L
 	lda #$80
 	sta r0H
@@ -373,7 +373,7 @@ L5086:	PushW r9
 	PushW r2
 	PushW r1
 	PushW r0
-	ldx #$02
+	ldx #2
 	lda r7H
 	sta r9H
 	lda r7L
@@ -565,20 +565,20 @@ _FindFTypes:
 	lda r6L
 	sta r1L
 	lda #$00
-	sta $03
-	lda $11
+	sta r0H
+	lda r7H
 	asl
-	rol $03
+	rol r0H
 	asl
-	rol $03
+	rol r0H
 	asl
-	rol $03
+	rol r0H
 	asl
-	rol $03
-	adc $11
+	rol r0H
+	adc r7H
 	sta r0L
 	bcc LD5FA
-	inc $03
+	inc r0H
 LD5FA:	jsr ClearRam
 LD5FD:	jsr Get1stDirEntry
 	txa
@@ -587,7 +587,7 @@ LD603:	ldy #$00
 	lda ($0C),y
 	beq LD658
 	ldy #$16
-	lda $10
+	lda r7L
 	cmp #$64
 	beq LD624
 	cmp #$65
@@ -605,7 +605,7 @@ LD624:	clc
 	sta r0L
 	lda $0D
 	adc #$00
-	sta $03
+	sta r0H
 	ldy #$00
 LD633:	lda (r0),y
 	cmp #$A0
@@ -624,7 +624,7 @@ LD640:	lda #$00
 	sta r6L
 	bcc LD654
 	inc r6H
-LD654:	dec $11
+LD654:	dec r7H
 	beq LD661
 LD658:	jsr GetNxtDirEntry
 	txa
@@ -833,75 +833,75 @@ LD6E8:	rts                                     ; D6E8 60                       `
 
 _SetDevice:
 .if wheels
-LD6E9:	tax                                     ; D6E9 AA                       .
-        beq     LD74C                           ; D6EA F0 60                    .`
-        cmp     $BA                             ; D6EC C5 BA                    ..
-        beq     LD702                           ; D6EE F0 12                    ..
-        jsr     LD74F                           ; D6F0 20 4F D7                  O.
-        bcs     LD700                           ; D6F3 B0 0B                    ..
-        lda     $8489                           ; D6F5 AD 89 84                 ...
-        jsr     LD751                           ; D6F8 20 51 D7                  Q.
-        bcs     LD700                           ; D6FB B0 03                    ..
-        jsr     ExitTurbo                       ; D6FD 20 32 C2                  2.
-LD700:	stx     $BA                             ; D700 86 BA                    ..
-LD702:	jsr     LD74F                           ; D702 20 4F D7                  O.
-        bcs     LD749                           ; D705 B0 42                    .B
-        tay                                     ; D707 A8                       .
-        lda     $8486,y                         ; D708 B9 86 84                 ...
-        sta     curType                           ; D70B 8D C6 88                 ...
-        beq     LD74C                           ; D70E F0 3C                    .<
-        cpy     $8489                           ; D710 CC 89 84                 ...
-        beq     LD749                           ; D713 F0 34                    .4
-        sty     $8489                           ; D715 8C 89 84                 ...
-        lda     LD759,y                         ; D718 B9 59 D7                 .Y.
-        sta     LD75C                           ; D71B 8D 5C D7                 .\.
-        lda     LD75D,y                         ; D71E B9 5D D7                 .].
-        sta     LD75D                           ; D721 8D 5D D7                 .].
-        ldx     #$06                            ; D724 A2 06                    ..
-LD726:	lda     r0L,x                         ; D726 B5 02                    ..
-        pha                                     ; D728 48                       H
-        lda     LD75A,x                         ; D729 BD 5A D7                 .Z.
-        sta     r0L,x                         ; D72C 95 02                    ..
-        dex                                     ; D72E CA                       .
-        bpl     LD726                           ; D72F 10 F5                    ..
-        lda     curType                           ; D731 AD C6 88                 ...
-        and     #$0F                            ; D734 29 0F                    ).
-        cmp     #$03                            ; D736 C9 03                    ..
-        bne     LD73C                           ; D738 D0 02                    ..
-        dec     r2H                             ; D73A C6 07                    ..
-LD73C:	jsr     FetchRAM                        ; D73C 20 CB C2                  ..
-        ldx     #$00                            ; D73F A2 00                    ..
-LD741:	pla                                     ; D741 68                       h
-        sta     r0L,x                         ; D742 95 02                    ..
-        inx                                     ; D744 E8                       .
-        cpx     #$07                            ; D745 E0 07                    ..
-        bne     LD741                           ; D747 D0 F8                    ..
-LD749:	ldx     #$00                            ; D749 A2 00                    ..
-        rts                                     ; D74B 60                       `
+LD6E9:	tax
+	beq LD74C
+	cmp curDevice
+	beq LD702
+	jsr LD74F
+	bcs LD700
+	lda $8489
+	jsr LD751
+	bcs LD700
+	jsr ExitTurbo
+LD700:	stx curDevice
+LD702:	jsr LD74F
+	bcs LD749
+	tay
+	lda $8486,y
+	sta curType
+	beq LD74C
+	cpy $8489
+	beq LD749
+	sty $8489
+	lda LD759,y
+	sta LD75C
+	lda LD75D,y
+	sta LD75D
+	ldx #$06
+LD726:	lda r0L,x
+	pha
+	lda LD75A,x
+	sta r0L,x
+	dex
+	bpl LD726
+	lda curType
+	and #$0F
+	cmp #$03
+	bne LD73C
+	dec r2H
+LD73C:	jsr FetchRAM
+	ldx #$00
+LD741:	pla
+	sta r0L,x
+	inx
+	cpx #$07
+	bne LD741
+LD749:	ldx #$00
+	rts
 
-; ----------------------------------------------------------------------------
-LD74C:	ldx     #$0D                            ; D74C A2 0D                    ..
-        rts                                     ; D74E 60                       `
+; ------------------------------
+LD74C:	ldx #DEV_NOT_FOUND
+	rts
 
-; ----------------------------------------------------------------------------
-LD74F:	lda     $BA                             ; D74F A5 BA                    ..
-LD751:	cmp     #$08                            ; D751 C9 08                    ..
-        bcc     LD758                           ; D753 90 03                    ..
-        cmp     #$0C                            ; D755 C9 0C                    ..
-        rts                                     ; D757 60                       `
+; ------------------------------
+LD74F:	lda curDevice
+LD751:	cmp #8
+	bcc LD758
+	cmp #12
+	rts
 
-; ----------------------------------------------------------------------------
-LD758:	sec                                     ; D758 38                       8
-LD759:	rts                                     ; D759 60                       `
+; ------------------------------
+LD758:	sec
+LD759:	rts
 
-; ----------------------------------------------------------------------------
-LD75A:	.byte   $00,$90                         ; D75A 00 90                    ..
-LD75C:	.byte   $00                             ; D75C 00                       .
-LD75D:	.byte   $83,$80,$0D,$00,$00,$80,$00,$80 ; D75D 83 80 0D 00 00 80 00 80  ........
-        .byte   $83,$90                         ; D765 83 90                    ..
-; ----------------------------------------------------------------------------
-        .byte   $9E                             ; D767 9E                       .
-        .byte   $AB                             ; D768 AB                       .
+; ------------------------------
+LD75A:	.byte   $00,$90
+LD75C:	.byte   $00
+LD75D:	.byte   $83,$80,$0D,$00,$00,$80,$00,$80
+	.byte   $83,$90
+; ----------------------------------------------
+	.byte   $9E
+	.byte   $AB
 .else
 	nop
 	cmp curDevice
@@ -1201,7 +1201,7 @@ SGDCopyDate_rts:
 
 .if wheels
 LD934:	clc
-        lda     #$02
+        lda     #2
         adc     r6L
         sta     r6L
         bcc     LD93F
@@ -1363,7 +1363,7 @@ _FreeFile:
 
 DeleteVlirChains:
 .if wheels
-LDA07:	ldx     #$02                            ; DA07 A2 02                    ..
+LDA07:	ldx     #2                            ; DA07 A2 02                    ..
 LDA09:	lda     $8101,x                         ; DA09 BD 01 81                 ...
         sta     r1H                             ; DA0C 85 05                    ..
         lda     $8100,x                         ; DA0E BD 00 81                 ...
@@ -1506,7 +1506,7 @@ LDA95:	ldy     #$00                            ; DA95 A0 00                    .
         txa                                     ; DAA5 8A                       .
         bne     LDAB8                           ; DAA6 D0 10                    ..
         clc                                     ; DAA8 18                       .
-        lda     #$02                            ; DAA9 A9 02                    ..
+        lda     #2                            ; DAA9 A9 02                    ..
         adc     r3L                             ; DAAB 65 08                    e.
         sta     r3L                             ; DAAD 85 08                    ..
         bcc     LDA95                           ; DAAF 90 E4                    ..
@@ -1865,17 +1865,17 @@ LDC80:	lda     r2H                             ; DC80 A5 07                    .
         pha                                     ; DC82 48                       H
         lda     r2L                             ; DC83 A5 06                    ..
         pha                                     ; DC85 48                       H
-        lda     $11                             ; DC86 A5 11                    ..
+        lda     r7H                             ; DC86 A5 11                    ..
         pha                                     ; DC88 48                       H
-        lda     $10                             ; DC89 A5 10                    ..
+        lda     r7L                             ; DC89 A5 10                    ..
         pha                                     ; DC8B 48                       H
         jsr     LDA25                           ; DC8C 20 25 DA                  %.
         lda     r2L                             ; DC8F A5 06                    ..
         sta     r0L                           ; DC91 85 02                    ..
         pla                                     ; DC93 68                       h
-        sta     $10                             ; DC94 85 10                    ..
+        sta     r7L                             ; DC94 85 10                    ..
         pla                                     ; DC96 68                       h
-        sta     $11                             ; DC97 85 11                    ..
+        sta     r7H                             ; DC97 85 11                    ..
         pla                                     ; DC99 68                       h
         sta     r2L                             ; DC9A 85 06                    ..
         pla                                     ; DC9C 68                       h
