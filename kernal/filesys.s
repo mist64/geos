@@ -1789,8 +1789,7 @@ ReaRec0:
 @1:	rts
 
 _WriteRecord:
-.if wheels
-.else
+.if !wheels
 	ldx #INV_RECORD
 	lda curRecord
 	bmi @5
@@ -1836,7 +1835,6 @@ _WriteRecord:
 	sty r1H
 	iny
 	sty r1L
-
 .if wheels
 	jmp PutVLIRChainTS
 .else
