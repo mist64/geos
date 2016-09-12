@@ -639,11 +639,11 @@ LD663:	lda r5H
 	sta LD685
 	lda r5L
 	sta LD684
-	LoadW r5, $D677
+	LoadW r5, LD677
 	clc
 	rts
 
-	lda LD685
+LD677:	lda LD685
 	sta r5H
 	lda LD684
 	sta r5L
