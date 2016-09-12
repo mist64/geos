@@ -560,9 +560,9 @@ _FindFTypes:
 .import fftIndicator
 	bit fftIndicator
 	bmi LD5FD
-	lda $0F
+	lda r6H
 	sta r1H
-	lda $0E
+	lda r6L
 	sta r1L
 	lda #$00
 	sta $03
@@ -610,20 +610,20 @@ LD624:	clc
 LD633:	lda (r0),y
 	cmp #$A0
 	beq LD640
-	sta ($0E),y
+	sta (r6),y
 	iny
 	cpy #$10
 	bne LD633
 LD640:	lda #$00
-	sta ($0E),y
+	sta (r6),y
 	bit fftIndicator
 	bmi LD663
 	clc
 	lda #$11
-	adc $0E
-	sta $0E
+	adc r6L
+	sta r6L
 	bcc LD654
-	inc $0F
+	inc r6H
 LD654:	dec $11
 	beq LD661
 LD658:	jsr GetNxtDirEntry
@@ -753,11 +753,11 @@ SetFHeadVector:
 _FindFile:
 .if wheels
 LD6A3:	sec                                     ; D6A3 38                       8
-        lda     $0E                             ; D6A4 A5 0E                    ..
+        lda     r6L                             ; D6A4 A5 0E                    ..
         sbc     #$03                            ; D6A6 E9 03                    ..
-        sta     $0E                             ; D6A8 85 0E                    ..
+        sta     r6L                             ; D6A8 85 0E                    ..
         bcs     LD6AE                           ; D6AA B0 02                    ..
-        dec     $0F                             ; D6AC C6 0F                    ..
+        dec     r6H                             ; D6AC C6 0F                    ..
 LD6AE:	jsr     Get1stDirEntry                           ; D6AE 20 30 90                  0.
         txa                                     ; D6B1 8A                       .
         bne     LD6E8                           ; D6B2 D0 34                    .4
@@ -765,7 +765,7 @@ LD6B4:	ldy     #$00                            ; D6B4 A0 00                    .
         lda     ($0C),y                         ; D6B6 B1 0C                    ..
         beq     LD6D2                           ; D6B8 F0 18                    ..
         ldy     #$03                            ; D6BA A0 03                    ..
-LD6BC:	lda     ($0E),y                         ; D6BC B1 0E                    ..
+LD6BC:	lda     (r6),y                         ; D6BC B1 0E                    ..
         beq     LD6C7                           ; D6BE F0 07                    ..
         cmp     ($0C),y                         ; D6C0 D1 0C                    ..
         bne     LD6D2                           ; D6C2 D0 0E                    ..
@@ -1200,13 +1200,13 @@ SGDCopyDate_rts:
 	rts
 
 .if wheels
-LD934:	clc                                     ; D934 18                       .
-        lda     #$02                            ; D935 A9 02                    ..
-        adc     $0E                             ; D937 65 0E                    e.
-        sta     $0E                             ; D939 85 0E                    ..
-        bcc     LD93F                           ; D93B 90 02                    ..
-        inc     $0F                             ; D93D E6 0F                    ..
-LD93F:	rts                                     ; D93F 60                       `
+LD934:	clc
+        lda     #$02
+        adc     r6L
+        sta     r6L
+        bcc     LD93F
+        inc     r6H
+LD93F:	rts
 .endif
 
 _BldGDirEntry:
@@ -1411,9 +1411,9 @@ FreeBlockChain:
 LDA25:	php                                     ; DA25 08                       .
         sei                                     ; DA26 78                       x
         lda     r1H                             ; DA27 A5 05                    ..
-        sta     $0F                             ; DA29 85 0F                    ..
+        sta     r6H                             ; DA29 85 0F                    ..
         lda     r1L                             ; DA2B A5 04                    ..
-        sta     $0E                             ; DA2D 85 0E                    ..
+        sta     r6L                             ; DA2D 85 0E                    ..
         jsr     LD5CA                           ; DA2F 20 CA D5                  ..
         lda     #$00                            ; DA32 A9 00                    ..
         sta     r2L                             ; DA34 85 06                    ..
@@ -1430,10 +1430,10 @@ LDA48:	jsr     GetLink                           ; DA48 20 69 90                
         txa                                     ; DA4B 8A                       .
         bne     LDA5E                           ; DA4C D0 10                    ..
         lda     diskBlkBuf+1                           ; DA4E AD 01 80                 ...
-        sta     $0F                             ; DA51 85 0F                    ..
+        sta     r6H                             ; DA51 85 0F                    ..
         sta     r1H                             ; DA53 85 05                    ..
         lda     diskBlkBuf                           ; DA55 AD 00 80                 ...
-        sta     $0E                             ; DA58 85 0E                    ..
+        sta     r6L                             ; DA58 85 0E                    ..
         sta     r1L                             ; DA5A 85 04                    ..
         bne     LDA38                           ; DA5C D0 DA                    ..
 LDA5E:	plp                                     ; DA5E 28                       (
@@ -1498,10 +1498,10 @@ _FastDelFile:
 LDA95:	ldy     #$00                            ; DA95 A0 00                    ..
         lda     (r3),y                         ; DA97 B1 08                    ..
         beq     LDAB5                           ; DA99 F0 1A                    ..
-        sta     $0E                             ; DA9B 85 0E                    ..
+        sta     r6L                             ; DA9B 85 0E                    ..
         iny                                     ; DA9D C8                       .
         lda     (r3),y                         ; DA9E B1 08                    ..
-        sta     $0F                             ; DAA0 85 0F                    ..
+        sta     r6H                             ; DAA0 85 0F                    ..
         jsr     FreeBlock                       ; DAA2 20 B9 C2                  ..
         txa                                     ; DAA5 8A                       .
         bne     LDAB8                           ; DAA6 D0 10                    ..

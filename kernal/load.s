@@ -50,6 +50,9 @@
 .global _LdDeskAcc
 .global _RstrAppl
 .global _StartAppl
+.if wheels
+.global DeskTopName
+.endif
 
 .segment "load1"
 
