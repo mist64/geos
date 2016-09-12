@@ -403,7 +403,7 @@ __ToBASIC:
 	jmp KToBasic
 
 
-	.byte 0, 0, 0, 0, 0, 0, 0 ; ???
+	.res 7, 0 ; ???
 
 ; GetFile
 .global _GetFile
