@@ -897,10 +897,6 @@ LD75A:	.byte $00,$90
 LD75C:	.byte $00
 LD75D:	.byte $83
 	.byte $80,$0D,$00
-SetDevDrivesTabL:
-	.byte $00,$80,$00,$80
-SetDevDrivesTabH:
-LD765:	.byte $83,$90,$9E,$AB
 .else
 	nop
 	cmp curDevice
@@ -961,13 +957,13 @@ SetDevTab:
 .endif
 	.word DISK_DRV_LGH
 	.byte 0
+.endif
 
 .define SetDevDrivesTab REUDskDrvSPC+0*DISK_DRV_LGH, REUDskDrvSPC+1*DISK_DRV_LGH, REUDskDrvSPC+2*DISK_DRV_LGH, REUDskDrvSPC+3*DISK_DRV_LGH
 SetDevDrivesTabL:
 	.lobytes SetDevDrivesTab
 SetDevDrivesTabH:
 	.hibytes SetDevDrivesTab
-.endif
 
 _GetFHdrInfo:
 	ldy #OFF_GHDR_PTR
