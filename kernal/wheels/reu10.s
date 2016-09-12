@@ -177,7 +177,7 @@ L5123:	sta (r2),y
 L5127:	bpl L50B9
 	nop
 L512A:	.byte $A9
-L512B:	brk
+L512B:	.byte 0
 	sta (r2),y
 	rts
 
@@ -333,9 +333,11 @@ L7A2B:	inc L7A39
 	cmp #$0C
 	bcc L7A23
 	bcs L79D8
-L7A37:	brk
-L7A38:	brk
-L7A39:	brk
+
+L7A37:	.byte 0
+L7A38:	.byte 0
+L7A39:	.byte 0
+
 L7A3A:	jsr L7A85
 	lda #$08
 	sta r1L
@@ -367,8 +369,9 @@ L7A3A:	jsr L7A85
 	sta RecoverVector
 	rts
 
-L7A83:	brk
-L7A84:	brk
+L7A83:	.byte 0
+L7A84:	.byte 0
+
 L7A85:	jsr Swap4000
 	jsr L4000
 	jmp Swap4000
@@ -513,7 +516,8 @@ L7B92:	inc L7BA3
 	clc
 L7BA2:	rts
 
-L7BA3:	brk
+L7BA3:	.byte 0
+
 L7BA4:	lda $905D
 	sta L7D16
 	lda $905C
@@ -601,19 +605,15 @@ L7C41:	stx L7C65
 	jsr L7C00
 	jmp PutString
 
-L7C65:	brk
-L7C66:	brk
-L7C67:	brk
-L7C68:	brk
-	.byte "DESKTOP"
-	.byte $00
-	.byte "Insert a disk with "
+L7C65:	.byte 0
+L7C66:	.byte 0
+L7C67:	.byte 0
+L7C68:	.byte 0
 
+	.byte "DESKTOP", 0
+	.byte "Insert a disk with ", 0
+	.byte "Dashboard 64", 0
 
-	.byte $00
-	.byte "Dashboard 64"
-
-	.byte $00
 L7C92:	.byte $85,$CF
 L7C94:	.byte $7C,$C3,$80,$13,$45,$7C,$01,$11
 	.byte $48,$00
@@ -673,10 +673,11 @@ L7D04:	lda L7D16
 	clc
 	rts
 
-L7D13:	brk
-L7D14:	brk
-L7D15:	brk
-L7D16:	brk
+L7D13:	.byte 0
+L7D14:	.byte 0
+L7D15:	.byte 0
+L7D16:	.byte 0
+
 L7D17:	jsr RstrKernal
 	lda #$45
 	jsr GetNewKernal

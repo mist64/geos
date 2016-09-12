@@ -93,7 +93,8 @@ L7929:	txa
 	tax
 	rts
 
-L793F:	brk
+L793F:	.byte 0
+
 L7940:	lda L7FDE
 	bpl L7946
 L7945:	rts
@@ -144,11 +145,13 @@ L79A0:	lda #$00
 	sta L79A8
 	jmp RstrKernal
 
-L79A8:	brk
-L79A9:	brk
-L79AA:	brk
+L79A8:	.byte 0
+L79A9:	.byte 0
+L79AA:	.byte 0
+
 	.byte "DC98"
-	.byte $00
+	.byte 0
+
 L79B0:	bit L793F
 	bpl L79B6
 L79B5:	rts

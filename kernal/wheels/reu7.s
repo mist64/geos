@@ -93,8 +93,9 @@ L508B:	lda L5098
 	sta r1H
 	jmp L9053
 
-L5098:	brk
-L5099:	brk
+L5098:	.byte 0
+L5099:	.byte 0
+
 L509A:	lda curDrive
 	jsr SetDevice
 	beq L50A3
@@ -508,7 +509,8 @@ L53D2:	ldy L53DF
 	ldx #$00
 L53DE:	rts
 
-L53DF:	brk
+L53DF:	.byte 0
+
 L53E0:	jsr L533D
 	ldy #$13
 	lda (r5),y
@@ -554,7 +556,8 @@ L542F:	lda #$00
 	sta L5435
 	rts
 
-L5435:	brk
+L5435:	.byte 0
+
 L5436:	lda r1H
 	sta L5469
 	lda r1L
@@ -579,10 +582,11 @@ L544B:	lda L5469
 	sta r4L
 	rts
 
-L5468:	brk
-L5469:	brk
-L546A:	brk
-L546B:	brk
+L5468:	.byte 0
+L5469:	.byte 0
+L546A:	.byte 0
+L546B:	.byte 0
+
 L546C:	lda #$01
 	sta r6L
 	lda #$00
@@ -635,8 +639,8 @@ L54C0:	inc r6L
 	ldx #$00
 L54CB:	rts
 
-L54CC:	brk
-L54CD:	brk
-L54CE:	brk
-L54CF:	brk
-L54D0:	brk
+L54CC:	.byte 0
+L54CD:	.byte 0
+L54CE:	.byte 0
+L54CF:	.byte 0
+L54D0:	.byte 0

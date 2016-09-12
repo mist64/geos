@@ -74,8 +74,9 @@ L5065:	lda dirEntryBuf,x
 L5074:	ldx #$0D
 L5076:	rts
 
-L5077:	brk
-L5078:	brk
+L5077:	.byte 0
+L5078:	.byte 0
+
 L5079:	lda #$00
 	jsr GetFreeDirBlk
 	txa
@@ -87,9 +88,10 @@ L5079:	lda #$00
 	sta L5091
 L508E:	rts
 
-L508F:	brk
-L5090:	brk
-L5091:	brk
+L508F:	.byte 0
+L5090:	.byte 0
+L5091:	.byte 0
+
 L5092:	lda #$01
 	sta r6L
 	lda #$40
@@ -122,10 +124,11 @@ L50AA:	inc r6H
 	jsr L9048
 L50D2:	rts
 
-L50D3:	brk
-L50D4:	brk
-L50D5:	brk
-L50D6:	brk
+L50D3:	.byte 0
+L50D4:	.byte 0
+L50D5:	.byte 0
+L50D6:	.byte 0
+
 L50D7:	jsr i_MoveData
 	.addr curDirHead
 	.addr diskBlkBuf
@@ -151,8 +154,9 @@ L50D7:	jsr i_MoveData
 	sta r1L
 	jmp L903F
 
-L511A:	brk
-L511B:	brk
+L511A:	.byte 0
+L511B:	.byte 0
+
 L511C:	jsr L5156
 	ldy #$1A
 L5121:	ldx $8004,y

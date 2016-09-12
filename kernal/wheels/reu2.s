@@ -194,10 +194,11 @@ L514A:	lda #$88
 	sta r3L
 	rts
 
-L5167:	brk
-L5168:	brk
-L5169:	brk
-L516A:	brk
+L5167:	.byte 0
+L5168:	.byte 0
+L5169:	.byte 0
+L516A:	.byte 0
+
 L516B:	lda curType
 	cmp #$02
 	bne L5175
@@ -428,19 +429,13 @@ L53D1:	.byte $1C
 L53D2:	.byte $54,$0B,$08,$18
 L53D6:	.byte $ED
 L53D7:	.byte $53,$01,$13,$20
-	brk
-	.byte $18
-	.byte "Please Wait..."
+	.byte 0
 
-	.byte $1B,$00,$18
-	.byte "Operation completed"
+	.byte $18, "Please Wait...", $1B, 0
 
+	.byte $18, "Operation completed", $1B, 0
+	.byte $18, "Disk error encountered", $1B, 0
 
-	.byte $1B,$00,$18
-	.byte "Disk error encountered"
-
-
-	.byte $1B,$00
 	jsr L5445
 	txa
 	sta L5430
@@ -451,7 +446,7 @@ L53D7:	.byte $53,$01,$13,$20
 	sta L53D6
 L542F:	rts
 
-L5430:	brk
+L5430:	.byte 0
 
 _FormatDisk:
 	stx L571C
@@ -500,7 +495,8 @@ L5483:	cmp #$01
 L548A:	ldx #$0D
 	rts
 
-L548D:	brk
+L548D:	.byte 0
+
 L548E:	jsr L9050
 	txa
 	bne L5498
@@ -814,7 +810,8 @@ L5701:	jsr L5738
 	bne L56FA
 L5719:	jmp L5522
 
-L571C:	brk
+L571C:	.byte 0
+
 L571D:	jsr InitForIO
 	lda #$57
 	sta z8c
@@ -1388,8 +1385,9 @@ _EraseDisk:
 	sta L53D6
 L5C75:	rts
 
-L5C76:	brk
-L5C77:	brk
+L5C76:	.byte 0
+L5C77:	.byte 0
+
 L5C78:	lda curType
 	and #$0F
 	cmp #$04
@@ -1539,7 +1537,8 @@ L5D91:	sta L5DAD
 	sta r6H
 	jmp L5D2D
 
-L5DAD:	brk
+L5DAD:	.byte 0
+
 L5DAE:	jsr ExitTurbo
 	jsr EnterTurbo
 	jsr ReadBuff

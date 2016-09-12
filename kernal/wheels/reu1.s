@@ -87,7 +87,7 @@ L5091:	jsr LFFAE
 	ldx #$0D
 	rts
 
-L5097:	brk
+L5097:	.byte 0
 
 _SwapDrives:
 	lda curDrive

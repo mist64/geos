@@ -191,7 +191,8 @@ L512F:	cmp #$32
 	beq L512C
 L5133:	rts
 
-L5134:	brk
+L5134:	.byte 0
+
 L5135:	ldx #$16
 	.byte $2C
 L5138:	ldx #$10
@@ -648,8 +649,9 @@ L5539:	jsr LFFAE
 	sec
 	rts
 
-L5552:	brk
-L5553:	brk
+L5552:	.byte 0
+L5553:	.byte 0
+
 L5554:	ldy #$00
 L5556:	lda L518C,y
 	sta (r6),y
@@ -674,7 +676,8 @@ L5576:	jsr LFFA5
 	ora L5583
 	rts
 
-L5583:	brk
+L5583:	.byte 0
+
 L5584:	jsr L55E2
 	lda L51AA
 	beq L55A4
@@ -864,7 +867,8 @@ L56F1:	ldx #$00
 L56F4:	ldx #$0D
 	rts
 
-L56F7:	brk
+L56F7:	.byte 0
+
 L56F8:	lda curDrive
 	sta L573E
 	jsr L517C
@@ -893,7 +897,7 @@ L5730:	lda #$0D
 	jsr DoneWithIO
 	jmp EnterTurbo
 
-L573E:	brk
+L573E:	.byte 0
 
 _ChDiskDirectory:
 	jsr L515C
@@ -1131,8 +1135,9 @@ L5910:	lda #$51
 	sec
 	rts
 
-L591A:	brk
-L591B:	brk
+L591A:	.byte 0
+L591B:	.byte 0
+
 	jsr _UpDirectory
 	txa
 	beq L5929
