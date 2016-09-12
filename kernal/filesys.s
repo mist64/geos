@@ -1465,7 +1465,7 @@ _FastDelFile:
 	PushW r3
 	jsr FindNDelete
 	PopW r3
-.if wheels
+.if wheels_size_and_speed ; inlined
 	bnex LDAB8
 	PushW r3
 	jsr GetDirHead
@@ -1688,7 +1688,7 @@ _PointRecord:
 
 _DeleteRecord:
 .if wheels
-LDBE1:	jsr     LDC29                           ; DBE1 20 29 DC                  ).
+LDBE1:	jsr     ReadyForUpdVLIR2                           ; DBE1 20 29 DC                  ).
         txa                                     ; DBE4 8A                       .
         bne     LDC1A                           ; DBE5 D0 33                    .3
         jsr     GetVLIRChainTS                           ; DBE7 20 41 DD                  A.
@@ -1748,18 +1748,12 @@ LDC1A:	rts                                     ; DC1A 60                       `
 .endif
 
 _InsertRecord:
-.if wheels
-LDC1B:	jsr     LDC29                           ; DC1B 20 29 DC                  ).
-        txa                                     ; DC1E 8A                       .
-        bne     LDC1A                           ; DC1F D0 F9                    ..
-        lda     curRecord                           ; DC21 AD 96 84                 ...
-        sta     r0L                           ; DC24 85 02                    ..
-        jmp     MoveForwVLIRTab                           ; DC26 4C 10 DD                 L..
-
-LDC29:	ldx     #$08                            ; DC29 A2 08                    ..
-        lda     curRecord                           ; DC2B AD 96 84                 ...
-        bmi     LDC1A                           ; DC2E 30 EA                    0.
-LDC30:	jmp     ReadyForUpdVLIR
+.if wheels_size ; use common code
+	jsr ReadyForUpdVLIR2
+	bnex LDC1A
+	lda curRecord
+	sta r0L
+	jmp MoveForwVLIRTab
 .else
 	ldx #INV_RECORD
 	lda curRecord
@@ -1770,6 +1764,14 @@ LDC30:	jmp     ReadyForUpdVLIR
 	sta r0L
 	jsr MoveForwVLIRTab
 @1:	rts
+.endif
+
+.if wheels ; reused code
+ReadyForUpdVLIR2:
+	ldx #INV_RECORD
+	lda curRecord
+	bmi LDC1A
+	jmp ReadyForUpdVLIR
 .endif
 
 _AppendRecord:
@@ -1820,7 +1822,7 @@ LDC60:	lda     r2H                             ; DC60 A5 07                    .
         pha                                     ; DC62 48                       H
         lda     r2L                             ; DC63 A5 06                    ..
         pha                                     ; DC65 48                       H
-        jsr     LDC29                           ; DC66 20 29 DC                  ).
+        jsr     ReadyForUpdVLIR2                           ; DC66 20 29 DC                  ).
         pla                                     ; DC69 68                       h
         sta     r2L                             ; DC6A 85 06                    ..
         pla                                     ; DC6C 68                       h
