@@ -306,8 +306,7 @@ GetFile_rts:
 
 _LdDeskAcc:
 .if wheels
-LF28E = $F28E
-LD8D3 = $D8D3
+.import LD8D3
 LD7C3:  jsr     GetFHdrInfo                     ; D7C3 20 29 C2                  ).
         txa                                     ; D7C6 8A                       .
         bne     LD818                           ; D7C7 D0 4F                    .O
