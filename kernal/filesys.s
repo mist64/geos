@@ -1180,14 +1180,14 @@ SGDCopyDate:
 SGDCopyDate_rts:
 	rts
 
-.if wheels
-LD934:	clc
+.if wheels ; moved and optimized
+Add2:	clc
         lda     #2
         adc     r6L
         sta     r6L
-        bcc     LD93F
+        bcc     @1
         inc     r6H
-LD93F:	rts
+@1:	rts
 .endif
 
 _BldGDirEntry:
@@ -1226,7 +1226,7 @@ LD96D:	ldy     #$44                            ; D96D A0 44                    .
         sta     $8414                           ; D980 8D 14 84                 ...
         lda     $8300                           ; D983 AD 00 83                 ...
         sta     $8413                           ; D986 8D 13 84                 ...
-        jsr     LD934                           ; D989 20 34 D9                  4.
+        jsr     Add2                           ; D989 20 34 D9                  4.
         lda     $8303                           ; D98C AD 03 83                 ...
         sta     dirEntryBuf+2                           ; D98F 8D 02 84                 ...
         lda     $8302                           ; D992 AD 02 83                 ...
@@ -1236,15 +1236,12 @@ LD96D:	ldy     #$44                            ; D96D A0 44                    .
         sta     $8415                           ; D99C 8D 15 84                 ...
         cmp     #$01                            ; D99F C9 01                    ..
         bne     LD9A6                           ; D9A1 D0 03                    ..
-        jsr     LD934                           ; D9A3 20 34 D9                  4.
-LD9A6:	ldy     #$45                            ; D9A6 A0 45                    .E
-        lda     (r9),y                         ; D9A8 B1 14                    ..
-        sta     $8416                           ; D9AA 8D 16 84                 ...
-        lda     r2H                             ; D9AD A5 07                    ..
-        sta     $841D                           ; D9AF 8D 1D 84                 ...
-        lda     r2L                             ; D9B2 A5 06                    ..
-        sta     $841C                           ; D9B4 8D 1C 84                 ...
-        rts                                     ; D9B7 60                       `
+        jsr     Add2                           ; D9A3 20 34 D9                  4.
+LD9A6:	ldy #O_GHGEOS_TYPE
+	lda (r9),y
+	sta dirEntryBuf+OFF_GFILE_TYPE
+	MoveW r2, dirEntryBuf+OFF_SIZE
+	rts
 .else
 	tay
 	lda (r9),y
