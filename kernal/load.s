@@ -149,7 +149,7 @@ _StartAppl:
 	ldx #$FF
 	txs
 	jsr UNK_5
-	jsr InitMachine
+	jsr _InitMachine
 	jsr _UseSystemFont
 	jsr UNK_4
 	ldx r7H
