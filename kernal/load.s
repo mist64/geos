@@ -129,33 +129,25 @@ EDT6:
 .endif
 
 _StartAppl:
+	sei
+	cld
+	ldx #$FF
+	txs
+	jsr UNK_5
 .if wheels
 .import _FirstInit3
-	sei
-	cld
-	ldx #$FF
-	txs
-	jsr UNK_5
 	jsr InitMachine
 	jsr _FirstInit3
-	jsr _UseSystemFont
-	jsr UNK_4
-	ldx r7H
-	lda r7L
-	jmp _MNLP
 .else
-	sei
-	cld
-	ldx #$FF
-	txs
-	jsr UNK_5
 	jsr _InitMachine
+.endif
 	jsr _UseSystemFont
 	jsr UNK_4
 	ldx r7H
 	lda r7L
 	jmp _MNLP
 
+.if !wheels
 .if (!useRamExp)
 _EnterDT_DB:
 	.byte DEF_DB_POS | 1
