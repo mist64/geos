@@ -13,6 +13,7 @@ for file in tmp reu0 reu1 reu2 reu3 reu4 reu5 reu6 reu7 reu8 reu9 reu10 reu11 re
 		echo $file
 		hexdump -C $file.bin > /tmp/$file.txt
 		hexdump -C reference/$reference/$file.bin > /tmp/reference_$file.txt
-		diff --suppress-common-lines -y /tmp/reference_$file.txt /tmp/$file.txt | head -n 10
+		diff --suppress-common-lines -y /tmp/reference_$file.txt /tmp/$file.txt
+		#diff --suppress-common-lines -y /tmp/reference_$file.txt /tmp/$file.txt | head -n 10
 	fi
 done

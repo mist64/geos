@@ -1750,7 +1750,7 @@ ReaRec0:
 	lda curRecord
 	bmi @1
 	jsr GetVLIRChainTS
-.ifndef wheels
+.if !wheels
 	lda r1L
 .endif
 	tax
