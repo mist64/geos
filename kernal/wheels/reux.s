@@ -8,7 +8,10 @@
 
 .segment "reux"
 
+.if wheels
+
 L4000:	jmp L4027
+
 L4003:	jsr L4057
 L4006:	jsr FetchRAM
 	ldy #0
@@ -50,7 +53,7 @@ L402C:	lda (r5),y
 	jmp StashRAM
 
 L4057:	LoadW r5, $a538
-	LoadW r0, $851f
+	LoadW r0, dlgBoxRamBuf
 	LoadW r1, $bb00
 	lda #>$d000
 	sta r2L
@@ -126,3 +129,5 @@ L40A8:	lda #$01
 	.byte $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
 	.byte $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
 	.byte $FF,$FF,$FF,$FF,$FF,$FF,$FF
+
+.endif

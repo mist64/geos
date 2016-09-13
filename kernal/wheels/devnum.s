@@ -8,6 +8,8 @@
 
 .segment "reu1"
 
+.if wheels
+
 LFFA8 = $FFA8
 LFF93 = $FF93
 LFFB1 = $FFB1
@@ -185,3 +187,5 @@ DriverOffsetsH:
 
 L5168:	.byte 0
 L5169:	.byte 0
+
+.endif

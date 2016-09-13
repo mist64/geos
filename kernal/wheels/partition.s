@@ -34,6 +34,8 @@ LFFB4 = $FFB4
 
 .segment "reu5"
 
+.if wheels
+
 ChgParType:
 	jmp _ChgParType
 ChPartition:
@@ -1315,3 +1317,4 @@ L5B62:	sta r1L
 	sta r7H
 	rts
 
+.endif

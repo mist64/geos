@@ -40,7 +40,7 @@
 .if wheels
 .global _InitMachine
 .else
-.global InitMachine
+.global _InitMachine
 .endif
 .global _FirstInit
 
@@ -49,7 +49,7 @@
 .if wheels
 _InitMachine:
 .else
-InitMachine:
+_InitMachine:
 .endif
 	jsr _DoFirstInitIO
 InitGEOEnv:
@@ -73,7 +73,7 @@ InitGEOEnv:
 _FirstInit:
 	sei
 	cld
-	jsr InitMachine
+	jsr _InitMachine
 	LoadW EnterDeskTop+1, _EnterDeskTop
 	LoadB maxMouseSpeed, iniMaxMouseSpeed
 .if wheels_size_and_speed

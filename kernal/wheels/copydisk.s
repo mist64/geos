@@ -13,6 +13,7 @@ L9063 = $9063
 .import GetNewKernal
 .import RstrKernal
 
+.if wheels
 L5087 = L793F - PRINTBASE + L5048
 L5721 = L7FD9 - PRINTBASE + L5048
 L5722 = L7FDA - PRINTBASE + L5048
@@ -23,8 +24,11 @@ L5727 = L7FDF - PRINTBASE + L5048
 L5729 = L7FE1 - PRINTBASE + L5048
 L572D = L7FE5 - PRINTBASE + L5048
 L5732 = L7FEA - PRINTBASE + L5048
+.endif
 
 .segment "reu8"
+
+.if wheels
 
 CopyDisk:
 	lda #$00
@@ -933,3 +937,5 @@ L7FE8:	.byte 0
 L7FE9:	.byte 0
 L7FEA:	.byte 0
 code2_end:
+
+.endif

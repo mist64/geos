@@ -14,6 +14,8 @@ L9053 = $9053
 
 .segment "reu7"
 
+.if wheels
+
 ValDisk:
 	lda #$00
 	sta L54CF
@@ -644,3 +646,5 @@ L54CD:	.byte 0
 L54CE:	.byte 0
 L54CF:	.byte 0
 L54D0:	.byte 0
+
+.endif

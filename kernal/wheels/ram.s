@@ -8,6 +8,8 @@
 
 .segment "reu0"
 
+.if wheels
+
 GetRAMBam:
 	jmp _GetRAMBam
 PutRAMBam:
@@ -408,3 +410,4 @@ L53A1:	ldy L5373
 	ldx #$00
 	rts
 
+.endif

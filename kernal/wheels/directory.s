@@ -12,6 +12,8 @@ L9048 = $9048
 
 .segment "reu6"
 
+.if wheels
+
 MakeDirectory:
 	jmp _MakeDirectory
 MakeSysDir:
@@ -270,3 +272,4 @@ L51FF:	lda L520B,y
 
 L520B:	.byte "GEOS format V1.1"
 
+.endif

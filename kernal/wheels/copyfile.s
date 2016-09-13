@@ -16,12 +16,16 @@ L906C = $906C
 .import GetNewKernal
 .import RstrKernal
 
+.if wheels
 L5704 = L7F0A - PRINTBASE + L50FA
 L5708 = L7F0E - PRINTBASE + L50FA
 L570B = L7F11 - PRINTBASE + L50FA
 L5726 = L7F2C - PRINTBASE + L50FA
+.endif
 
 .segment "reu9"
+
+.if wheels
 
 CopyFile:
 	ldx #$05
@@ -915,3 +919,5 @@ L7F32:	.byte 0
 L7F33:	.byte 0
 
 code2_end:
+
+.endif

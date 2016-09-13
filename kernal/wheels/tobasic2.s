@@ -8,6 +8,8 @@
 
 .segment "reu11"
 
+.if wheels
+
 .import RstrKernal
 .import sFirstPage
 .import ramExpType
@@ -242,3 +244,5 @@ LF1FB_5:
 SaveDevice:
 	.byte 0
 code2_end:
+
+.endif

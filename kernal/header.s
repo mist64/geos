@@ -26,7 +26,7 @@ BootGEOS:
 	nop
 	nop
 .else
-	jmp BootGEOS
+	jmp _BootGEOS
 .endif
 ResetHandle:
 .if wheels
@@ -81,7 +81,7 @@ dateCopy:
 .endif
 
 .if !wheels
-BootGEOS:
+_BootGEOS:
 	bbsf 5, sysFlgCopy, @1
 	jsr KERNALSETMSG
 	lda #version-bootName

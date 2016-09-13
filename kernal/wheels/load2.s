@@ -9,6 +9,8 @@
 
 .segment "reu10"
 
+.if wheels
+
 L4000 = $4000
 L4003 = $4003
 L9050 = $9050
@@ -713,3 +715,5 @@ L7D58:	ldx #$00
 L7D5A:	rts
 
 code2_end:
+
+.endif

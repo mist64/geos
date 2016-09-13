@@ -31,7 +31,7 @@
 ; init.s
 .import InitGEOEnv
 .if !wheels ; it's a syscall on Wheels
-.import InitMachine
+.import _InitMachine
 .endif
 
 ; main.s
@@ -71,7 +71,7 @@ _EnterDeskTop:
 	stx firstBoot
 	txs
 	jsr ClrScr
-	jsr InitMachine
+	jsr _InitMachine
 .if (useRamExp)
 	MoveW DeskTopStart, r0
 	MoveB DeskTopLgh, r2H

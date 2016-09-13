@@ -11,6 +11,8 @@
 
 .segment "reu2"
 
+.if wheels
+
 L4000 = $4000
 L4003 = $4003
 L903F = $903F
@@ -1556,3 +1558,4 @@ L5DB9:	lda #$00
 	stx diskBlkBuf
 	jmp PutBlock
 
+.endif

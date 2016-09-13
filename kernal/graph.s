@@ -213,7 +213,7 @@ _HorizontalLine:
 	lsr r4L
 	lsr r4L
 	lda r8L
-	jsr HLineHelp1
+	jsr HLineHelp
 @2:	sta (r6),Y
 	sta (r5),Y
 	tya
@@ -230,7 +230,7 @@ _HorizontalLine:
 	ora r8H
 	bra @6
 @5:	lda r8H
-@6:	jsr HLineHelp1
+@6:	jsr HLineHelp
 HLinEnd1:
 	sta (r6),Y
 	sta (r5),Y

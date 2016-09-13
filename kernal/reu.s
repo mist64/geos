@@ -48,10 +48,10 @@ _DoRAMOp:
 	lda r3L
 	cmp ramExpSize
 	bcs @3 ; beyond end of REU
+.if wheels
 	php
 	sei
 	PushB CPU_DATA
-.if wheels
 ASSERT_NOT_BELOW_IO
 	LoadB CPU_DATA, IO_IN
 

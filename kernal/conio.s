@@ -124,9 +124,9 @@ DoTAB:
 	sta r11L
 	bcc @1
 	inc r11H
-.else
-@1:	rts
+@1:
 .endif
+	rts
 
 DoLF:
 	lda r1H
