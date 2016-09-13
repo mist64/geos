@@ -4,9 +4,12 @@
 ; which variant to build
 cbmfiles = 0 ; the cbmfiles.com variant
 gateway  = 0 ; the gateWay 2.51 variant
-wheels   = 0
+;wheels   = 0
 ; if all of these are 0, the BSW variant will be built
 
+.ifndef wheels
+wheels = 0
+.endif
 
 .if wheels
 	; BSW traps to counter tampering

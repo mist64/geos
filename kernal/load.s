@@ -158,7 +158,6 @@ _EnterDT_DB:
 	.byte OK, DBI_X_2, DBI_Y_2
 	.byte NULL
 .endif
-
 .endif
 
 .if wheels

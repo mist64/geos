@@ -1,6 +1,2 @@
-*.o
-*.bin
-*.prg
-*.d64
 desktop.cvt
-kernal.map
+build
