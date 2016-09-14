@@ -1,3 +1,6 @@
+
+TARGET ?= bsw
+
 AS=ca65
 LD=ld65
 
@@ -61,14 +64,12 @@ DEPS= \
 
 KERNAL_OBJS=$(KERNAL_SOURCES:.s=.o)
 
-BSW_BUILD_DIR=build/bsw
-WHEELS_BUILD_DIR=build/wheels
+BUILD_DIR=build/$(TARGET)
 
-BSW_OBJS = $(addprefix $(BSW_BUILD_DIR)/, $(KERNAL_OBJS))
-WHEELS_OBJS = $(addprefix $(WHEELS_BUILD_DIR)/, $(KERNAL_OBJS))
+OBJS = $(addprefix $(BUILD_DIR)/, $(KERNAL_OBJS))
 
 ALL_BINS= \
-	kernal.bin \
+	$(BUILD_DIR)/kernal/kernal.bin \
 
 #	drv1541.bin \
 #	drv1571.bin \
@@ -81,8 +82,11 @@ ALL_BINS= \
 #	pcanalog.bin
 
 
-
 all: geos.d64
+
+all_targets:
+	$(MAKE) TARGET=bsw all
+	$(MAKE) TARGET=wheels all
 
 clean:
 	rm -rf build
@@ -139,20 +143,13 @@ build/bin/koalapad.bin: input/koalapad.o input/koalapad.cfg $(DEPS)
 build/bin/pcanalog.bin: input/pcanalog.o input/pcanalog.cfg $(DEPS)
 	$(LD) -C input/pcanalog.cfg input/pcanalog.o -o $@
 
-$(WHEELS_BUILD_DIR)/%.o: ASFLAGS += -D wheels=1
-
-$(WHEELS_BUILD_DIR)/%.o $(BSW_BUILD_DIR)/%.o: %.s
+$(BUILD_DIR)/%.o $(BSW_BUILD_DIR)/%.o: %.s
 	@mkdir -p `dirname $@`
-	$(AS) $(ASFLAGS) $< -o $@
+	$(AS) -D $(TARGET)=1 $(ASFLAGS) $< -o $@
 
-$(BSW_BUILD_DIR)/kernal/kernal.bin: $(BSW_OBJS) kernal/kernal_bsw.cfg
-	@mkdir -p `dirname $@`
-	$(LD) -C kernal/kernal_bsw.cfg $(BSW_OBJS) -o $@ -m $(BSW_BUILD_DIR)/kernal/kernal.map
-
-$(WHEELS_BUILD_DIR)/kernal/kernal.bin: $(WHEELS_OBJS) kernal/kernal_wheels.cfg
-	@mkdir -p `dirname $@`
-	$(LD) -C kernal/kernal_wheels.cfg $(WHEELS_OBJS) -o $@ -m $(WHEELS_BUILD_DIR)/kernal/kernal.map
-
+$(BUILD_DIR)/kernal/kernal.bin: $(OBJS) kernal/kernal_$(TARGET).cfg
+	@mkdir -p $$(dirname $@)
+	$(LD) -C kernal/kernal_$(TARGET).cfg $(OBJS) -o $@ -m $(BUILD_DIR)/kernal/kernal.map
 
 # a must!
 love:	
