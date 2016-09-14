@@ -151,7 +151,7 @@ $(BSW_BUILD_DIR)/kernal/kernal.bin: $(BSW_OBJS) kernal/kernal_bsw.cfg
 
 $(WHEELS_BUILD_DIR)/kernal/kernal.bin: $(WHEELS_OBJS) kernal/kernal_wheels.cfg
 	@mkdir -p `dirname $@`
-	$(LD) -C kernal/kernal_wheels.cfg $(WHEELS_OBJS) -o $@ -m $(BSW_BUILD_DIR)/kernal/kernal.map
+	$(LD) -C kernal/kernal_wheels.cfg $(WHEELS_OBJS) -o $@ -m $(WHEELS_BUILD_DIR)/kernal/kernal.map
 
 
 # a must!
