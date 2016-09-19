@@ -42,7 +42,7 @@
 .import DeskAccPC
 .import TempCurDrive
 
-.if (useRamExp)
+.ifdef useRamExp
 ; reu.s
 .import RamExpRead
 .import RamExpWrite
@@ -87,7 +87,7 @@ _EnterDeskTop:
 	txs
 	jsr ClrScr
 	jsr _InitMachine
-.if (useRamExp)
+.ifdef useRamExp
 	MoveW DeskTopStart, r0
 	MoveB DeskTopLgh, r2H
 	LoadW r1, 1
@@ -353,7 +353,7 @@ tmp3:	.byte 0
 	MoveB r10L, A885D
 	jsr GetFHdrInfo
 	bnex LDAcc1
-.if (useRamExp)
+.ifdef useRamExp
 	PushW r1
 	jsr RamExpGetStat
 	MoveW fileHeader+O_GHST_ADDR, diskBlkBuf+DACC_ST_ADDR
@@ -419,7 +419,7 @@ LD81D:	lda tmp1
 	pha
 	rts
 .else
-.if (useRamExp)
+.ifdef useRamExp
 	jsr RamExpGetStat
 	MoveW diskBlkBuf+DACC_ST_ADDR, r0
 	MoveB diskBlkBuf+DACC_LGH, r2H
@@ -463,7 +463,7 @@ _LdApplic:
 @1:	rts
 
 .ifndef wheels
-.if (!useRamExp)
+.ifndef useRamExp
 SwapFileName:
 	.byte $1b,"Swap File", NULL
 .endif
@@ -472,7 +472,7 @@ SwapFileName:
 .segment "load5"
 
 .ifndef wheels
-.if (!useRamExp)
+.ifndef useRamExp
 SaveSwapFile:
 	LoadB fileHeader+O_GHGEOS_TYPE, TEMPORARY
 	LoadW fileHeader, SwapFileName

@@ -38,7 +38,7 @@ _IRQHandler:
 	pha
 	tya
 	pha
-.if (use2MHz)
+.ifdef use2MHz
 	LoadB clkreg, 0
 .endif
 	PushW CallRLo
@@ -84,7 +84,7 @@ ASSERT_NOT_BELOW_IO
 	sta grirq
 	PopB CPU_DATA
 ASSERT_NOT_BELOW_IO
-.if (use2MHz)
+.ifdef use2MHz
 	lda #>IRQ2Handler
 	sta $ffff
 	lda #<IRQ2Handler
@@ -105,7 +105,7 @@ ASSERT_NOT_BELOW_IO
 	lda tempIRQAcc
 _NMIHandler:
 	rti
-.if (use2MHz)
+.ifdef use2MHz
 IRQ2Handler:
 	pha
 	txa

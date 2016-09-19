@@ -30,7 +30,7 @@
 
 .segment "ramexp1"
 
-.if (usePlus60K)
+.ifdef usePlus60K
 DetectPlus60K:
 ASSERT_NOT_BELOW_IO
 	LoadB CPU_DATA, IO_IN
@@ -67,7 +67,7 @@ Plus60KTest:
 Plus60KTestEnd:
 .endif
 
-.if (useRamCart64 | useRamCart128)
+.if .defined(useRamCart64) || .defined(useRamCart128)
 DetectRamCart:
 ASSERT_NOT_BELOW_IO
 	LoadB CPU_DATA, IO_IN
@@ -96,7 +96,7 @@ ASSERT_NOT_BELOW_IO
 	rts
 .endif
 
-.if (useRamExp)
+.ifdef useRamExp
 ExpFaultDB:
 	.byte DEF_DB_POS | 1
 	.byte DBTXTSTR, TXT_LN_X, TXT_LN_1_Y
@@ -110,10 +110,10 @@ ExpFaultStr:
 	.byte BOLDON
 	.byte "This version of GEOS works", 0
 ExpFaultStr2:
-.if (useRamCart64 | useRamCart128)
+.if .defined(useRamCart64) || .defined(useRamCart128)
 	.byte "only with a RamCart expansion.", 0
 .endif
-.if (usePlus60K)
+.ifdef usePlus60K
 	.byte "only with a +60K expansion.", 0
 .endif
 
@@ -121,7 +121,7 @@ BVChainTab:
 
 .endif
 
-.if (useRamExp)
+.ifdef useRamExp
 LoadDeskTop:
 	LoadB a0L, 0
 	LoadB BVChainTab, 1	;1 - first free
@@ -194,7 +194,7 @@ BVLast_1:
 
 .segment "ramexp2"
 
-.if (useRamExp)
+.ifdef useRamExp
 RamExpSetStat:
 	LoadW r1, 0
 	LoadB r0H, >diskBlkBuf
@@ -221,7 +221,7 @@ DeskTopLgh:
 	.byte 0
 .endif
 
-.if (usePlus60K)
+.ifdef usePlus60K
 ; r0   c64 address
 ; r1   exp page number (byte/word - RamCart 64/128)
 ; r2H  # of bytes (in pages)
@@ -334,7 +334,7 @@ ASSERT_NOT_BELOW_IO
 RamExpWrHlpEnd:
 .endif
 
-.if (useRamCart64)
+.ifdef useRamCart64
 RamExpRead:
 	PushB CPU_DATA
 ASSERT_NOT_BELOW_IO
@@ -383,7 +383,7 @@ RamExWr_1:
 	jmp RamExRd_End
 .endif
 
-.if (useRamCart128)
+.ifdef useRamCart128
 RamExpRead:
 	PushB CPU_DATA
 ASSERT_NOT_BELOW_IO

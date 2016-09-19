@@ -508,7 +508,7 @@ LEFE4:  ldx menuNumber
 	lda menuOptionTab,x
 	jmp (r0)
 .else
-.if (oldMenu_5)
+.ifndef newMenu_5
 	bvs Menu_51
 	MoveB selectionFlash, r0L
 	LoadB r0H, NULL

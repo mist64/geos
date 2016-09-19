@@ -179,7 +179,7 @@ DrawDlgBox:
 	ldy #0
 	lda (DBoxDesc),y
 	and #%00011111
-.if (speedupDlgBox)
+.ifdef speedupDlgBox
 	bne DrwDlgSpd0
 	jmp @1
 DrwDlgSpd0:
@@ -269,7 +269,7 @@ Dialog_1:
 	jmp RcvrMnu0
 
 CalcDialogCoords:
-.if (speedupDlgBox)
+.ifdef speedupDlgBox
 	LoadB r1H, 0
 .else
 	lda #0

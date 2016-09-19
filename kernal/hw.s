@@ -71,7 +71,7 @@ ASSERT_NOT_BELOW_IO
 	LoadW r0, VIC_IniTbl
 	ldy #VIC_IniTbl_end - VIC_IniTbl
 	jsr SetVICRegs
-.if .defined(wheels) || removeToBASIC
+.if .defined(wheels) || .defined(removeToBASIC)
 	ldx #32
 @3:	lda KERNALVecTab-1,x
 	sta irqvec-1,x
@@ -86,7 +86,7 @@ ASSERT_NOT_BELOW_IO
 
 .segment "hw2"
 
-.if !.defined(wheels) && (!removeToBASIC)
+.if !.defined(wheels) && (!.defined(removeToBASIC))
 Init_KRNLVec:
 	ldx #32
 @1:	lda KERNALVecTab-1,x

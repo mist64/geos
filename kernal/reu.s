@@ -19,7 +19,7 @@
 
 .segment "reu"
 
-.if (REUPresent)
+.ifdef REUPresent
 _VerifyRAM:
 	ldy #$93
 .ifdef wheels_size

@@ -27,7 +27,7 @@
 .segment "tobasic1"
 
 .ifndef wheels
-.if !removeToBASIC
+.ifndef removeToBASIC
 ToBASICBuf:
 	.res 40, 0
 IntTimer:
@@ -126,7 +126,7 @@ execBASIC:
 
 .ifndef wheels
 _ToBASIC:
-.if (removeToBASIC)
+.ifdef removeToBASIC
 	sei
 	jsr PurgeTurbo
 	LoadB CPU_DATA, KRNL_BAS_IO_IN

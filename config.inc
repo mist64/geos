@@ -81,27 +81,39 @@
 .endif
 
 .ifdef custom
+	; make use of all reusable Wheels optimizations and fixes
 	wheels_size = 1
 	wheels_size_and_speed = 1
 	wheels_fixes = 1
+
+	; replace BASIC reboot code with trivial version (+380 bytes)
+	removeToBASIC = 1
+
+	; for 2MHz-on-border on C128 in 64 mode
+	use2MHz = 1
+
+	; only VLIR and SEQ supported
+	;onlyVLIR = 1
+
+	; RAM expansions configuration
+	; (only one may be defined, if all are undefined, then REU is utililzed)
+	; for +60K expansion users
+	;usePlus60K = 1
+	; for Ram Cart 64K
+	;useRamCart64 = 1
+	; for Ram Cart 128K
+	;useRamCart128 = 1
+
+	; GEOS2000
+	; makes drawing dialog boxes much faster, might cause visual mess
+	; takes more bytes
+	;speedupDlgBox = 1
+
+	; GEOS2000
+	; bug - when 0 no blinking in menu
+	;newMenu_5 = 1
+
 .endif
-
-; general code generation/optimization control:
-onlyVLIR        =       0               ; only VLIR and SEQ supported
-removeToBASIC   =       0               ; shorter code if you don't use BASIC rebooter
-
-
-; RAM expansions configuration
-; (only one value may be '1', if all are 0 then REU is utililzed)
-usePlus60K      =       0               ; for +60K expansion users
-; XXX these are untested and probably broken XXX
-useRamCart64    =       0               ; for Ram Cart 64K
-useRamCart128   =       0               ; for Ram Cart 128K
-
-
-; runtime speedup
-use2MHz                 =       0               ; for 2MHz-on-border on C128 in 64 mode
-
 
 ; Feel (almost) free to change values below:
 iniMaxMouseSpeed        = $7f                           ; range from $00-$7f
@@ -110,12 +122,6 @@ iniMouseAccel           = $7f                           ;
 
 currentInterleave       = 8                             ; 8 for 1541, 6 for 1571
 SelectFlashDelay        = 10                            ; 10 in 1/50 s
-
-; makes drawing dialog boxes much faster, might cause visual mess
-; takes more bytes
-speedupDlgBox           = 0
-
-oldMenu_5               = 1                             ; bug - when 0 no blinking in menu
 
 ; if both menu separator patterns are null, then kernal menu code
 ; will be a bit optimized for speed and space
@@ -131,9 +137,8 @@ REUOsVarBackup  =    $7900                      ; base for OS_VARS_LGH bytes for
 REUDskDrvSPC    =    $8300                      ; base for 4*DISK_DRV_LGH disk drivers
 
 ; do not change two values below - it's automatic
-useRamExp       =       usePlus60K | useRamCart64 | useRamCart128
-.if (useRamExp)
-REUPresent = 0
+.if .defined(usePlus60K) || .defined(useRamCart64) || .defined(useRamCart128)
+useRamExp = 1
 .else
 REUPresent = 1
 .endif

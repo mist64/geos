@@ -27,7 +27,7 @@
 .global SerialHiCompare
 .endif
 
-.if (useRamExp)
+.ifdef useRamExp
 ; reu.s
 .import RamExpRead
 .import RamExpGetStat
@@ -664,7 +664,7 @@ LD684:	.byte 0
 LD685:	.byte 0
 
 .else
-.if (useRamExp)
+.ifdef useRamExp
 	CmpWI r7, ($0100+SYSTEM)
 	bne FFTypesStart
 	CmpWI r6, $8b80
@@ -1320,7 +1320,7 @@ _FreeFile:
 	bnex @3
 	ldy #OFF_GSTRUC_TYPE
 	lda (r9),y
-.if (onlyVLIR)
+.ifdef onlyVLIR
 	beq @2
 .else
 	cmp #VLIR
@@ -1526,7 +1526,7 @@ _RenameFile:
 @4:	rts
 
 _OpenRecordFile:
-.if (useRamExp)
+.ifdef useRamExp
 	lda DeskTopOpen
 	bmi OpRFile1
 	LoadW r6, DeskTopName
@@ -1551,7 +1551,7 @@ OpRFile1:
 	bne ClearRecordTableTS
 	ldy #OFF_GSTRUC_TYPE
 	lda (r5),y
-.if (onlyVLIR)
+.ifdef onlyVLIR
 	beq ClearRecordTableTS
 .else
 	cmp #VLIR
@@ -1624,7 +1624,7 @@ _UpdateRecordFile:
 	sta fileWritten
 @1:	rts
 
-.if (useRamExp)
+.ifdef useRamExp
 _NextRecord:
 	lda curRecord
 	addv 1
@@ -1740,7 +1740,7 @@ _AppendRecord:
 @1:	rts
 
 _ReadRecord:
-.if (useRamExp)
+.ifdef useRamExp
 	ldx DeskTopOpen
 	beq ReaRec0
 	jsr RamExpGetStat

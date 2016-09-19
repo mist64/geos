@@ -228,7 +228,7 @@ _MoveData:
 	bcc @8
 .else
 	PushB r3L
-.if (REUPresent)
+.ifdef REUPresent
 	lda sysRAMFlg
 	bpl @1
 	PushB r1H

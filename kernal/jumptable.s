@@ -497,7 +497,7 @@ Panic:
 .endif
 BitOtherClip:
 	jmp _BitOtherClip
-.if (REUPresent)
+.ifdef REUPresent
 StashRAM:
 	jmp _StashRAM
 FetchRAM:

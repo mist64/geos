@@ -27,13 +27,13 @@
 ; used by header.s
 .global _ResetHandle
 
-.if (usePlus60K)
+.ifdef usePlus60K
 .import DetectPlus60K
 .endif
-.if (useRamCart64 | useRamCart128)
+.if .defined(useRamCart64) || .defined(useRamCart128)
 .import DetectRamCart
 .endif
-.if (useRamExp)
+.ifdef useRamExp
 .import LoadDeskTop
 .endif
 
@@ -143,10 +143,10 @@ OrigResetHandle:
 	ldx #$ff
 	jsr _DoFirstInitIO
 	jsr InitGEOEnv
-.if (usePlus60K)
+.ifdef usePlus60K
 	jsr DetectPlus60K
 .endif
-.if (useRamCart64 | useRamCart128)
+.if .defined(useRamCart64) || .defined(useRamCart128)
 	jsr DetectRamCart
 .endif
 	jsr GetDirHead
@@ -161,7 +161,7 @@ OrigResetHandle:
 	bne @2
 	inc NUMDRV
 @2:	LoadW EnterDeskTop+1, _EnterDeskTop
-.if (useRamExp)
+.ifdef useRamExp
 	jsr LoadDeskTop
 .endif
 	jmp EnterDeskTop
