@@ -97,6 +97,7 @@ The build system supports the following variants:
 * `cbmfiles`: The [cbmfiles.com](http://www.cbmfiles.com/) version. It starts out with a different date, and has some variables in the kernel pre-filled.
 * `gateway`: The patched KERNEL shipped by gateWay 2.51. It contains a slightly modified BSW font, has the `Panic` code replaced with code to swap the disk driver on a RESTORE press, and it loads `GATEWAY` instead of `DESK TOP` as the shell.
 * `wheels`: The Wheels 64 variant. It is heavily patched, optimized for size and speed, and contains additional features. It requires a RAM extension. The current version compiles into the same binary, but won't actually run because of missing boot code. More work is needed here.
+* `custom`: See below.
 
 You can build a specific variant like this:
 
@@ -106,15 +107,16 @@ All output will be put into `build/<variant>`.
 
 ## Customization
 
-If you want to customize your KERNAL, you can do so by flipping switches in `config.inc`, which contains lots of compile time options. Some them have not been tested recently and may not work.
+The KERNAL variant `custom` is meant for your experimentation. Inside the `.ifdef custom` section in `config.inc`, you can toggle several compile time options:
 
-The following options can be enabled:
-
-* `removeToBASIC = 1`: Don't include the ToBASIC code required for deskTop to launch non-GEOS applications. Turn this off if the KERNAL code overflows RAM, e.g. when enabling RAM expansion support.
+* `removeToBASIC = 1`: Don't include the ToBASIC code required for deskTop to launch non-GEOS applications, in order to save RAM for code.
+* `use2MHz = 1`: Switch a C128 in C64 mode to 2 MHz outside of the visible screen.
 * `usePlus60K = 1`: Enable support for the +60K RAM expansion.
 * `useRamCart64 = 1`, `useRamCart128 = 1`: Enable support for the [Ram Cart](https://github.com/ytmytm/c64-ramcart128) expansion. 
 
 With RAM expansion support, GEOS will use the extra RAM for caching deskTop and for holding the swap area when running desk accessories. GEOS will show an error at startup and reset the system if support for a particular memory expansion is enabled but it is not available.
+
+Note that the changing settings and adding code may cause certain memory areas to overflow. In this case, you can try moving segments between the `LOKERNAL` and `KERNAL` areas. The file `kernal.map` in the build output will give you an idea about the sizes of segments. The `custom` variant starts out with about 550 bytes of usable memory in the `KERNAL` area.
 
 ## Source Tree
 

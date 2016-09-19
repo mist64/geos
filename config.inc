@@ -86,7 +86,7 @@
 	wheels_size_and_speed = 1
 	wheels_fixes = 1
 
-	; replace BASIC reboot code with trivial version (+380 bytes)
+	; replace BASIC reboot code with trivial version (+200 bytes)
 	removeToBASIC = 1
 
 	; for 2MHz-on-border on C128 in 64 mode
@@ -112,7 +112,6 @@
 	; GEOS2000
 	; bug - when 0 no blinking in menu
 	;newMenu_5 = 1
-
 .endif
 
 ; Feel (almost) free to change values below:
