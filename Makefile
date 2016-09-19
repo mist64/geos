@@ -4,7 +4,7 @@ VARIANT ?= bsw
 AS=ca65
 LD=ld65
 
-ASFLAGS=-I inc -I .
+ASFLAGS=--forget-inc-paths -I inc -I .
 
 KERNAL_SOURCES= \
 	kernal/bitmask.s \
