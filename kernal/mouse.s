@@ -201,7 +201,7 @@ CheckMsePos:
 @A:	smbf OFFMENU_BIT, faultData
 @B:	rts
 
-.ifdef wheels_size_and_speed ; this got moved :(
+.ifdef wheels ; this got moved :(
 .import ScreenDimensions
 ResetMseRegion:
 	ldy #5
@@ -287,7 +287,7 @@ DoMouseFault:
 
 .segment "mouse3"
 
-.ifndef wheels_size_and_speed ; this got moved :(
+.ifndef wheels
 ResetMseRegion:
 	lda #NULL
 	sta mouseLeft

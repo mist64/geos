@@ -1670,7 +1670,7 @@ _PointRecord:
 	rts
 
 _DeleteRecord:
-.ifdef wheels
+.ifdef wheels_size
 	jsr ReadyForUpdVLIR2
 .else
 	ldx #INV_RECORD
@@ -1720,7 +1720,7 @@ _InsertRecord:
 @1:	rts
 .endif
 
-.ifdef wheels ; reused code
+.ifdef wheels_size ; reused code
 ReadyForUpdVLIR2:
 	ldx #INV_RECORD
 	lda curRecord
@@ -1777,7 +1777,7 @@ _WriteRecord:
 	bmi @5
 .endif
 	PushW r2
-.ifdef wheels
+.ifdef wheels_size
 	jsr ReadyForUpdVLIR2
 .else
 	jsr ReadyForUpdVLIR

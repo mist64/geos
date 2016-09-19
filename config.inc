@@ -80,6 +80,12 @@
 	; throughout the code
 .endif
 
+.ifdef custom
+	wheels_size = 1
+	wheels_size_and_speed = 1
+	wheels_fixes = 1
+.endif
+
 ; general code generation/optimization control:
 onlyVLIR        =       0               ; only VLIR and SEQ supported
 removeToBASIC   =       0               ; shorter code if you don't use BASIC rebooter

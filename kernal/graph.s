@@ -893,7 +893,7 @@ _SetPattern:
 	asl
 	asl
 	asl
-.ifdef wheels_size_and_speed
+.ifdef wheels
 	.assert <PatternTab = 0, error, "PatternTab must be page-aligned!"
 .else
 	adc #<PatternTab

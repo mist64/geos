@@ -591,7 +591,9 @@ ConvToCards: ; $C31F
 	jmp _ConvToCards
 
 	.byte 0, 0, 0 ; ???
+.endif
 
+.ifdef wheels_size
 .global WheelsTemp
 WheelsTemp: ; xxx
 	.byte 0

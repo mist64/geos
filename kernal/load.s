@@ -173,7 +173,7 @@ _EnterDT_DB:
 	.byte NULL
 .endif
 
-.ifdef wheels
+.ifdef wheels_size
 .global IncR0JmpInd
 .global JmpR0Ind
 .import IncR0
@@ -478,8 +478,7 @@ SaveSwapFile:
 	LoadW fileHeader, SwapFileName
 	LoadW r9, fileHeader
 	LoadB r10L, NULL
-.endif
-.endif
-
 
 .assert * = _SaveFile, error, "Code must run into _SaveFile"
+.endif
+.endif
