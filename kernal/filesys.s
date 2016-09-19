@@ -116,11 +116,12 @@ _ReadFile:
 	bne @7
 @3:	sty r1L
 	LoadB CPU_DATA, RAM_64K
-.ifdef wheels
+.ifdef wheels_external_readwrite_file
+	; special case RAM area occupied by this code
 	lda r7H
-	cmp #$4F
+	cmp #>$4F00
 	bcc @4
-	cmp #$52
+	cmp #>$5200
 	bcs @4
 	jsr L50A4
 	bra @Y
@@ -148,7 +149,7 @@ _ReadFile:
 @7:	PopW r0
 	jmp DoneWithIO
 
-.ifdef wheels
+.ifdef wheels_external_readwrite_file
 L50A4:	PushB r10L
 	PushW r9
 	PushW r3
@@ -159,22 +160,22 @@ L50A4:	PushB r10L
 	sty r10L
 	MoveW r7, r9
 @1:	lda r9H
-	cmp #$50
+	cmp #>$5000
 	bne @2
 	lda r9L
-	cmp #$00
+	cmp #<$5000
 @2:	bcc @4
 	lda r9H
-	cmp #$51
+	cmp #>$51C2
 	bne @3
 	lda r9L
-	cmp #$C2
+	cmp #<$51C2
 @3:	bcc @6
-@4:	ldy #$00
+@4:	ldy #0
 	lda diskBlkBuf+2,x
 	sta (r9),y
 	clc
-	lda #$01
+	lda #1
 	adc r9L
 	sta r9L
 	bcc @5
@@ -200,7 +201,7 @@ L50A4:	PushB r10L
 	dex
 	cpx r10L
 	bcs @8
-	ldy #$00
+	ldy #0
 @7:	lda diskBlkBuf+2,x
 	sta (r9),y
 	iny
@@ -214,13 +215,12 @@ L50A4:	PushB r10L
 	PopW r9
 	PopB r10L
 	rts
-
 @9:	sec
 	lda r9L
-	sbc #$00
+	sbc #<$5000
 	sta r1L
 	lda r9H
-	sbc #$50
+	sbc #>$5000
 	sta r1H
 	txa
 	clc
@@ -337,11 +337,12 @@ DoWriteFile:
 	sta (r4),y
 	ldy #$fe
 	LoadB CPU_DATA, RAM_64K
-.ifdef wheels
+.ifdef wheels_external_readwrite_file
+; special case RAM area occupied by this code
 	lda r7H
-	cmp #$4F
+	cmp #>$4F00
 	bcc @1
-	cmp #$52
+	cmp #>$5200
 	bcs @1
 	jsr L5086
 	bra @Y
@@ -378,7 +379,7 @@ DoWriteFile:
 	rts
 .endif
 
-.ifdef wheels
+.ifdef wheels_external_readwrite_file
 L5086:	PushW r9
 	PushW r3
 	PushW r2
@@ -390,10 +391,10 @@ L5086:	PushW r9
 	lda r7L
 	sta r9L
 @1:	lda r9H
-	cmp #$50
+	cmp #>$5000
 	bne @2
 	lda r9L
-	cmp #$00
+	cmp #<$5000
 @2:	bcc @4
 	lda r9H
 	cmp #$51
@@ -441,7 +442,6 @@ L5086:	PushW r9
 	PopW r3
 	PopW r9
 	rts
-
 @C:	sec
 	lda r9L
 	sbc #$00
@@ -471,7 +471,6 @@ L5086:	PushW r9
 	jsr FetchRAM
 	dec ramExpSize
 	rts
-
 .endif
 
 ASSERT_NOT_BELOW_IO

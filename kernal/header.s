@@ -21,7 +21,7 @@
 .assert * = $C000, error, "Header not at $C000"
 
 BootGEOS:
-.ifdef wheels
+.ifdef wheels_remove_BootGEOS
 	rts
 	nop
 	nop
@@ -80,7 +80,7 @@ dateCopy:
 	.byte 88,4,20
 .endif
 
-.ifndef wheels
+.ifndef wheels_remove_BootGEOS
 _BootGEOS:
 	bbsf 5, sysFlgCopy, @1
 	jsr KERNALSETMSG

@@ -45,6 +45,9 @@
 	; optimizations that benefit both size and speed
 	wheels_size_and_speed = 1
 
+	; remove "BootGEOS" ($C000) code to save some size
+	wheels_remove_BootGEOS = 1
+
 	; fixes for bugs in the BSW version
 	wheels_fixes = 1
 
@@ -84,6 +87,7 @@
 	; make use of all reusable Wheels optimizations and fixes
 	wheels_size = 1
 	wheels_size_and_speed = 1
+	wheels_remove_BootGEOS = 1
 	wheels_fixes = 1
 
 	; replace BASIC reboot code with trivial version (+200 bytes)

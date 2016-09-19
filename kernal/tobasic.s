@@ -150,7 +150,7 @@ _ToBASIC:
 @3:	sta BASICspace,Y
 	iny
 	bne @3
-	SubVW $0002,r7
+	SubVW 2,r7
 	lda (r7),Y
 	pha
 	iny
