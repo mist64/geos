@@ -1,6 +1,8 @@
 ; GEOS macros
 ; reassembled for 6502TASM/MMS by Maciej 'YTM/Alliance' Witkowiak
 
+.include "config.inc"
+
 .macro LoadB dest, value
 	lda #value
 	sta dest
@@ -202,7 +204,7 @@
 .endmacro
 
 .macro smbf_ bitN, dest
-lda dest
+	lda dest
 	ora #1 << bitN
 	sta dest
 .endmacro
@@ -298,7 +300,7 @@ lda dest
 
 .macro bnex addr
 	txa
-		bne addr
+	bne addr
 .endmacro
 
 .macro beqx addr
@@ -306,7 +308,69 @@ lda dest
 	beq addr
 .endmacro
 
+.macro IncW addr
+	.local @j
+	inc addr
+	bne @j
+	inc addr+1
+	@j:
+.endmacro
+
+
 .macro ASSERT_NOT_BELOW_IO
 	.assert * < $D000 || * >= $E000, error, "This code can't run below the C64 I/O area."
 .endmacro
 
+.ifdef bsw128
+.macro START_IO
+.endmacro
+.macro END_IO
+.endmacro
+.macro START_IO_X
+.endmacro
+.macro END_IO_X
+.endmacro
+.macro START_IO_Y
+.endmacro
+.macro END_IO_Y
+.endmacro
+.macro START_IO_128
+	PushB config
+	LoadB config, CIOIN
+.endmacro
+.macro END_IO_128
+	PopB config
+.endmacro
+.else
+.macro START_IO
+	PushB CPU_DATA
+ASSERT_NOT_BELOW_IO
+	LoadB CPU_DATA, IO_IN
+.endmacro
+.macro END_IO
+	PopB CPU_DATA
+ASSERT_NOT_BELOW_IO
+.endmacro
+.macro START_IO_X
+	ldx CPU_DATA
+ASSERT_NOT_BELOW_IO
+	LoadB CPU_DATA, IO_IN
+.endmacro
+.macro END_IO_X
+	stx CPU_DATA
+ASSERT_NOT_BELOW_IO
+.endmacro
+.macro START_IO_Y
+	ldy CPU_DATA
+ASSERT_NOT_BELOW_IO
+	LoadB CPU_DATA, IO_IN
+.endmacro
+.macro END_IO_Y
+	sty CPU_DATA
+ASSERT_NOT_BELOW_IO
+.endmacro
+.macro START_IO_128
+.endmacro
+.macro END_IO_128
+.endmacro
+.endif

@@ -4,7 +4,6 @@
 .include "config.inc"
 .include "kernal.inc"
 .include "c64.inc"
-.include "jumptab.inc"
 
 .segment "tobasicb"
 
@@ -13,6 +12,13 @@
 .import RstrKernal
 .import sFirstPage
 .import ramExpType
+
+.import InitForIO
+.import PurgeTurbo
+.import ReadFile
+.import i_MoveData
+.import DEFOptimize
+.import MouseOff
 
 LE4B7 = $E4B7
 LFF84 = $FF84
@@ -26,10 +32,9 @@ KToBasic:
 	MoveW r0, scr+1 - SPRITE_PICS + L5050
 	jsr MouseOff
 	jsr DEFOptimize
-	PushB CPU_DATA
-	LoadB CPU_DATA, IO_IN
+	START_IO
 	ldx $D0BC
-	PopB CPU_DATA
+	END_IO
 	txa
 	bmi @1
 	lda ramExpType
@@ -80,10 +85,7 @@ scr:	lda $0400,y
 	iny
 	lda (r7),y
 	pha
-	lda r7H
-	pha
-	lda r7L
-	pha
+	PushW r7
 	lda (r5),y
 	sta r1L
 	iny
@@ -94,10 +96,7 @@ scr:	lda $0400,y
 	sta r2H
 	jsr ReadFile
 	MoveW r7, LF1FB_4
-	pla
-	sta r0L
-	pla
-	sta r0H
+	PopW r0
 	ldy #$01
 	pla
 	sta (r0),y

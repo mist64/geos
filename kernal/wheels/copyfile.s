@@ -4,7 +4,6 @@
 .include "config.inc"
 .include "kernal.inc"
 .include "c64.inc"
-.include "jumptab.inc"
 .include "diskdrv.inc"
 
 .import KbdNextKey
@@ -15,6 +14,26 @@ L9063 = $9063
 L906C = $906C
 .import GetNewKernal
 .import RstrKernal
+
+.import WriteBlock
+.import BlkAlloc
+.import BBMult
+.import GetBlock
+.import DoneWithIO
+.import ReadBlock
+.import InitForIO
+.import NewDisk
+.import SetDevice
+.import GetFreeDirBlk
+.import PutBlock
+.import PutDirHead
+.import CalcBlksFree
+.import FindFile
+.import DeleteFile
+.import OpenDisk
+.import DoRAMOp
+.import GetDirHead
+.import i_MoveData
 
 .ifdef wheels
 L5704 = L7F0A - PRINTBASE + L50FA
@@ -91,8 +110,7 @@ L5042:	jsr i_MoveData
 	lda #$00
 	sta r6L
 	jsr L50A7
-	txa
-	bne L509C
+	bnex L509C
 	lda r1L
 	sta $7EFA
 	lda r1H
@@ -113,8 +131,7 @@ L50A7:	ldx curDirHead
 L50AF:	stx r1L
 	sty r1H
 	sta $7EF9
-	txa
-	beq L50F7
+	beqx L50F7
 L50B9:	jsr ReadBuff
 	bne L50F9
 	lda #$80
@@ -138,7 +155,7 @@ L50DA:	clc
 	adc #$20
 	sta r5L
 	bcc L50C6
-	lda $8001
+	lda diskBlkBuf+1
 	sta r1H
 	lda diskBlkBuf
 	sta r1L
@@ -265,8 +282,7 @@ L79D3:	jsr L7C69
 	bpl L79E3
 	bvc L79E3
 	jsr L7C87
-	clv
-	bvc L79E6
+	bra L79E6
 L79E3:	jsr L7D9C
 L79E6:	txa
 	pha
@@ -281,11 +297,9 @@ L79F3:	rts
 
 L79F4:	ldx L7F30
 	jsr L5018
-	txa
-	bne L79F3
+	bnex L79F3
 	jsr OpenDisk
-	txa
-	bne L79F3
+	bnex L79F3
 	lda $82AB
 	sta L7AFA
 	lda $82AC
@@ -300,8 +314,7 @@ L79F4:	ldx L7F30
 	lda L7F2C
 	sta r0L
 	jsr DeleteFile
-	txa
-	beq L7A49
+	beqx L7A49
 	cpx #$05
 	beq L7A49
 	rts
@@ -311,16 +324,14 @@ L7A31:	lda L7F2D
 	lda L7F2C
 	sta r6L
 	jsr FindFile
-	txa
-	bne L7A49
+	bnex L7A49
 L7A41:	ldx #$FF
 	rts
 
 L7A44:	jsr L7A6E
 	bne L7A41
 L7A49:	jsr L7B67
-	txa
-	bne L7A6D
+	bnex L7A6D
 	jsr CalcBlksFree
 	lda r4L
 	sta L7EFF
@@ -341,8 +352,7 @@ L7A6E:	lda L7F2D
 	lda L7F2C
 	sta r6L
 	jsr FindFile
-	txa
-	bne L7AAE
+	bnex L7AAE
 	lda r1L
 	cmp L7EFA
 	bne L7AB1
@@ -442,8 +452,7 @@ L7B31:	bit L7EF8
 	rts
 
 L7B49:	jsr L7B67
-	txa
-	bne L7B66
+	bnex L7B66
 L7B4F:	lda L7F0E,x
 	sta diskBlkBuf,y
 	iny
@@ -497,8 +506,7 @@ L7BAB:	ldx L7F30
 	sta L7EFF
 	ldx L7F0B
 L7BC2:	jsr L5018
-	txa
-	beq L7BCF
+	beqx L7BCF
 	bit L7F32
 	bvs L7B86
 L7BCD:	txa
@@ -517,8 +525,7 @@ L7BCF:	ldx L7F0C
 L7BEC:	stx $905C
 	sty $905D
 	jsr NewDisk
-	txa
-	bne L7BCD
+	bnex L7BCD
 	jmp GetDirHead
 
 L7BFB:	lda KbdNextKey
@@ -549,8 +556,7 @@ L7C1F:	lda L7F02
 	sta r4L
 	jsr ReadBlock
 	inc L7F02
-	txa
-	bne L7C4A
+	bnex L7C4A
 	inc L7F01
 	ldy #$01
 	lda (r4),y
@@ -625,15 +631,13 @@ L7CBA:	ldy L7F04
 	sta r1L
 	beq L7CEB
 L7CC9:	jsr L7C16
-	txa
-	bne L7CAE
+	bnex L7CAE
 	lda L7F02
 	sta L7F03
 	cmp #$44
 	bcc L7CEB
 	jsr L7D1F
-	txa
-	bne L7CAE
+	bnex L7CAE
 	jsr L7B76
 	bne L7D1E
 	jsr L7E7B
@@ -648,8 +652,7 @@ L7CEB:	jsr L7BFB
 	cmp #$10
 	beq L7D06
 	jsr L7D1F
-	txa
-	beq L7D0B
+	beqx L7D0B
 	rts
 
 L7D06:	jsr L7B79
@@ -681,8 +684,7 @@ L7D1F:	bit L7EFD
 L7D40:	jsr L7B79
 	bne L7D4B
 	jsr L7E5B
-	txa
-	beq L7D4C
+	beqx L7D4C
 L7D4B:	rts
 
 L7D4C:	jsr L7E14
@@ -732,8 +734,7 @@ L7D9C:	jsr L7B76
 	lda #$00
 	sta L7F08
 L7DB8:	jsr L7C16
-	txa
-	bne L7E13
+	bnex L7E13
 L7DBE:	lda L7F02
 	sta L7F03
 	bit L7EFD
@@ -747,8 +748,7 @@ L7DBE:	lda L7F02
 L7DD4:	jsr L7B79
 	bne L7E13
 	jsr L7E5B
-	txa
-	bne L7E13
+	bnex L7E13
 	jsr L7E14
 	jsr InitForIO
 	lda #$10
@@ -757,8 +757,7 @@ L7DD4:	jsr L7B79
 	bne L7E10
 	jsr DoneWithIO
 	jsr PutDirHead
-	txa
-	bne L7E13
+	bnex L7E13
 	lda L7F03
 	cmp #$44
 	bcc L7E0D
@@ -782,8 +781,7 @@ L7E14:	bit L7EFD
 	sta L7F10
 	lda fileTrScTab
 	sta L7F0F
-	clv
-	bvc L7E50
+	bra L7E50
 L7E2D:	lda $8301
 	sta L7F22
 	lda fileTrScTab
@@ -866,8 +864,7 @@ L7ED7:	inx
 	stx L7F08
 	jsr WriteBlock
 	inc L7F02
-	txa
-	bne L7EF7
+	bnex L7EF7
 	ldy #$00
 	lda (r4),y
 	sta L7F07

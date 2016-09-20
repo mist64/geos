@@ -4,7 +4,6 @@
 .include "config.inc"
 .include "kernal.inc"
 .include "c64.inc"
-.include "jumptab.inc"
 .include "diskdrv.inc"
 
 L903F = $903F
@@ -12,6 +11,22 @@ L9050 = $9050
 L9063 = $9063
 .import GetNewKernal
 .import RstrKernal
+
+.import FetchRAM
+.import WriteBlock
+.import StashRAM
+.import BMult
+.import ReadBlock
+.import DoneWithIO
+.import InitForIO
+.import DoRAMOp
+.import NewDisk
+.import FindBAMBit
+.import GetDirHead
+.import EnterTurbo
+.import SetDevice
+.import OpenDisk
+.import i_MoveData
 
 .ifdef wheels
 L5087 = L793F - PRINTBASE + L5048
@@ -76,8 +91,7 @@ code2_start:
 	lda #$45
 	jsr GetNewKernal
 	jsr L79C9
-	txa
-	bne L7929
+	bnex L7929
 	bit L793F
 	bmi L7929
 	jsr RstrKernal
@@ -138,8 +152,7 @@ L797A:	lda L79A8
 	ldy #$00
 	sty r3L
 	jsr L5018
-	txa
-	bne L79A0
+	bnex L79A0
 	lda r3L
 	sta L79A9
 	sty L79AA
@@ -183,8 +196,7 @@ L79C9:	lda #$01
 	lda L7FEA
 	and #$BF
 	sta L7FEA
-	clv
-	bvc L7A09
+	bra L7A09
 L79F1:	jsr L7B90
 	beq L79F7
 L79F6:	rts
@@ -199,11 +211,9 @@ L79F7:	lda curType
 L7A09:	jsr EnterTurbo
 	ldx L7FDC
 	jsr L5018
-	txa
-	bne L7A63
+	bnex L7A63
 	jsr L9050
-	txa
-	bne L7A63
+	bnex L7A63
 	lda $8203
 	sta L7FE6
 	lda curType
@@ -309,18 +319,15 @@ L7AE1:	jsr L7B52
 	lda L7FDF
 	jsr L7B38
 	sty L7FE8
-	clc
-	adc #$02
+	add #$02
 	sta L7FE7
 	lda L7FE0
 	jsr L7B38
 	sty L7FE9
-	clc
-	adc #$02
+	add #$02
 	sta r1H
 	jsr ReadBuff
-	txa
-	bne L7B37
+	bnex L7B37
 L7B0B:	ldy L7FE9
 	lda diskBlkBuf,y
 	cmp #$FF
@@ -330,8 +337,7 @@ L7B0B:	ldy L7FE9
 	bne L7B23
 	inc r1H
 	jsr ReadBuff
-	txa
-	bne L7B37
+	bnex L7B37
 L7B23:	lda r1H
 	cmp L7FE7
 	bcc L7B0B
@@ -346,8 +352,7 @@ L7B37:	rts
 
 L7B38:	ldx #$00
 	stx r1H
-	clc
-	adc #$01
+	add #$01
 	asl a
 	rol r1H
 	asl a
@@ -448,8 +453,7 @@ L7BE8:	lda #$23
 L7BFF:	stx L7FD6
 	jsr L7B52
 	jsr GetDirHead
-	txa
-	bne L7C33
+	bnex L7C33
 L7C0B:	jsr L7B52
 	bne L7C33
 	jsr L7D02
@@ -566,8 +570,7 @@ L7CEB:	sta diskBlkBuf,y
 L7CF4:	sta diskBlkBuf,y
 	pha
 	tya
-	clc
-	adc #$03
+	add #$03
 	tay
 	pla
 	dex
@@ -656,8 +659,7 @@ L7DB6:	lda L7FD7
 	sta r4L
 	jsr ReadBlock
 	inc L7FD7
-	txa
-	bne L7DF3
+	bnex L7DF3
 	inx
 	stx L7C40
 	ldy L7FD8

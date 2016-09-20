@@ -4,8 +4,25 @@
 .include "config.inc"
 .include "kernal.inc"
 .include "c64.inc"
-.include "jumptab.inc"
 .include "diskdrv.inc"
+
+.import FreeBlock
+.import PutBlock
+.import EnterTurbo
+.import DoneWithIO
+.import InitForIO
+.import PurgeTurbo
+.import GetDirHead
+.import ExitTurbo
+.import CopyFString
+.import BitmapUp
+.import i_FrameRectangle
+.import i_ColorRectangle
+.import DoDlgBox
+.import StashRAM
+.import FetchRAM
+.import PutDirHead
+.import SetNextFree
 
 .import sysDBColor
 
@@ -16,7 +33,6 @@
 L4000 = $4000
 L4003 = $4003
 L903F = $903F
-L9048 = $9048
 L9050 = $9050
 L9063 = $9063
 L9066 = $9066
@@ -58,8 +74,7 @@ _NSetGEOSDisk:
 	lda #$31
 	sta L50C9
 	jsr GetBorder
-	txa
-	bne L5068
+	bnex L5068
 	bit isGEOS
 	bmi L5068
 	lda curType
@@ -99,15 +114,13 @@ L5086:	lda #$29
 	lda #$13
 	sta r3H
 L508E:	jsr SetNextFree
-	txa
-	bne L5068
+	bnex L5068
 	lda r3H
 	sta r1H
 	lda r3L
 	sta r1L
 	jsr L5CB4
-	txa
-	bne L5068
+	bnex L5068
 L50A2:	lda r1H
 	sta $82AC
 	lda r1L
@@ -280,8 +293,7 @@ L5246:	sta L52FD,y
 	dey
 	bpl L5246
 	lda curDrive
-	clc
-	adc #$39
+	add #$39
 	sta L52EE
 	lda #$53
 	sta L5227
@@ -333,8 +345,7 @@ L52AD:	pha
 	sta L52FD,y
 	pla
 	iny
-L52B4:	clc
-	adc #$30
+L52B4:	add #$30
 	sta L52FD,y
 	rts
 
@@ -500,8 +511,7 @@ L548A:	ldx #$0D
 L548D:	.byte 0
 
 L548E:	jsr L9050
-	txa
-	bne L5498
+	bnex L5498
 	jsr _NSetGEOSDisk
 	txa
 L5498:	pha
@@ -534,8 +544,7 @@ L54C1:	cmp #$3A
 	bcs L54C1
 L54CA:	cmp #$30
 	bcs L54D3
-	clc
-	adc #$03
+	add #$03
 	bcc L54CA
 L54D3:	rts
 
@@ -573,8 +582,7 @@ L5508:	jsr L549F
 
 L5513:	jsr L549F
 	jsr L5775
-	clv
-	bvc L5522
+	bra L5522
 L551C:	jsr L549F
 	jsr L5786
 L5522:	jsr GetDirHead
@@ -710,11 +718,9 @@ L5632:	jsr L553B
 
 L563A:	jsr L549F
 	jsr L5976
-	txa
-	bne L564C
+	bnex L564C
 L5643:	jsr L5653
-	txa
-	bne L564C
+	bnex L564C
 	jmp L5522
 
 L564C:	pha
@@ -791,8 +797,7 @@ L56E4:	jsr L549F
 	bne L5701
 	jsr L571D
 	jsr L57FB
-	txa
-	beq L5719
+	beqx L5719
 L56FA:	pha
 	jsr EnterTurbo
 	pla
@@ -800,16 +805,13 @@ L56FA:	pha
 	rts
 
 L5701:	jsr L5738
-	txa
-	bne L56FA
+	bnex L56FA
 	jsr InitForIO
 	jsr L585B
 	jsr DoneWithIO
-	txa
-	bne L56FA
+	bnex L56FA
 	jsr L5775
-	txa
-	bne L56FA
+	bnex L56FA
 L5719:	jmp L5522
 
 L571C:	.byte 0
@@ -905,8 +907,7 @@ L57DC:	jsr L553B
 L57E2:	jsr L549F
 	jsr PurgeTurbo
 	jsr L57FB
-	txa
-	bne L57FA
+	bnex L57FA
 	jsr GetDirHead
 	jsr L5CD9
 	jsr PutDirHead
@@ -973,14 +974,11 @@ L5875:	jsr EnterTurbo
 	sta L594A
 	sta $9062
 	jsr L5962
-	txa
-	bne L5895
+	bnex L5895
 	jsr L589C
-	txa
-	bne L5895
+	bnex L5895
 	jsr L58B6
-	txa
-	bne L5895
+	bnex L5895
 	jmp L548E
 
 L5895:	pha
@@ -995,8 +993,7 @@ L589C:	jsr L56DA
 	lda #$18
 	sta r1H
 L58A7:	jsr L903F
-	txa
-	bne L58B5
+	bnex L58B5
 	inc r1H
 	lda r1H
 	cmp #$1C
@@ -1073,8 +1070,7 @@ L5962:	lda #$46
 	lda #$44
 	sta L54B3
 	jsr L5976
-	txa
-	bne L5975
+	bnex L5975
 	jmp L5AE9
 
 L5975:	rts
@@ -1259,8 +1255,7 @@ L5B3F:	bcs L5B4F
 	sta r0L
 	bcc L5B4C
 	inc r0H
-L5B4C:	clv
-	bvc L5B01
+L5B4C:	bra L5B01
 L5B4F:	lda #$5B
 	sta z8c
 	lda #$68
@@ -1422,7 +1417,7 @@ L5CA9:	lda r1H
 	sta r6H
 	lda r1L
 	sta r6L
-	jsr L9048
+	jsr AllocateBlock
 L5CB4:	jsr ReadBuff
 	stx $8002
 	stx $8022
@@ -1434,14 +1429,14 @@ L5CB4:	jsr ReadBuff
 	stx $80E2
 	stx diskBlkBuf
 	dex
-	stx $8001
+	stx diskBlkBuf+1
 	jmp PutBlock
 
 L5CD9:	lda #$01
 	sta r6L
 	lda #$00
 	sta r6H
-	jmp L9048
+	jmp AllocateBlock
 
 L5CE4:	jsr GetDirHead
 	lda #$01
@@ -1475,7 +1470,7 @@ L5D09:	jsr GetDirHead
 	jsr L5D2D
 	jmp PutDirHead
 
-L5D2D:	jsr L9048
+L5D2D:	jsr AllocateBlock
 	dec r6H
 	bpl L5D2D
 	rts
@@ -1548,12 +1543,11 @@ L5DAE:	jsr ExitTurbo
 L5DB9:	lda #$00
 	sta $8002,y
 	tya
-	clc
-	adc #$20
+	add #$20
 	tay
 	bcc L5DB9
 	ldx #$FF
-	stx $8001
+	stx diskBlkBuf+1
 	inx
 	stx diskBlkBuf
 	jmp PutBlock

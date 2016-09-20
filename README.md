@@ -57,11 +57,11 @@ The [cc65](https://github.com/cc65/cc65) compiler suite allows writing GEOS appl
 
 ## Source
 
-This is the reverse engineered source code of the KERNAL (plus disk and input drivers) of the English version of GEOS 2.0 for Commodore 64.
+This is the reverse engineered source code of the KERNAL (plus disk and input drivers) of the English version of GEOS 2.0 for Commodore 64 and Commodore 128.
 
-The source has been heavily reorganized and modularized, nevertheless, a standard compile will generate binaries that are identical with the GEOS 2.0 distribution binaries.
+The source has been heavily reorganized and modularized, nevertheless, a standard compile will generate binaries that are identical with the GEOS 64 2.0 and GEOS 128 2.0 distribution binaries.
 
-Optionally, the following features that were not part of the original GEOS 2.0 can be enabled:
+Optionally, the following features that were not part of the original GEOS 2.0 can be enabled for GEOS64:
 
 * gateWay 2.51 KERNAL patches
 * +60K RAM support
@@ -78,7 +78,7 @@ Without pucrunch/c1541, you can still build an uncompressed KERNAL binary image.
 
 ## Building
 
-Run `make` to build the original "BSW" "GEOS. This will create the following files in directory `build/bsw`:
+Run `make` to build the original "BSW" GEOS for C64. This will create the following files in directory `build/bsw`:
 
 * raw KERNAL components: `kernal.bin`, `lokernal.bin`, `init.bin`
 * disk drive drivers: `drv1541.bin`, `drv1571.bin`, `drv1581.bin`
@@ -97,6 +97,7 @@ The build system supports the following variants:
 * `cbmfiles`: The [cbmfiles.com](http://www.cbmfiles.com/) version. It starts out with a different date, and has some variables in the kernel pre-filled.
 * `gateway`: The patched KERNEL shipped by gateWay 2.51. It contains a slightly modified BSW font, has the `Panic` code replaced with code to swap the disk driver on a RESTORE press, and it loads `GATEWAY` instead of `DESK TOP` as the shell.
 * `wheels`: The Wheels 64 variant. It is heavily patched, optimized for size and speed, and contains additional features. It requires a RAM extension. The current version compiles into the same binary, but won't actually run because of missing boot code. More work is needed here.
+* `bsw128`: Berkeley Softworks GEOS 128 2.0 variant, i.e. GEOS for C128 with 128 KB RAM and VDC 640px width support. This needs some more work to actually boot.
 * `custom`: See below.
 
 You can build a specific variant like this:

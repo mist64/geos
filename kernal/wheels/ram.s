@@ -4,7 +4,11 @@
 .include "config.inc"
 .include "kernal.inc"
 .include "c64.inc"
-.include "jumptab.inc"
+
+.import PurgeTurbo
+.import SetDevice
+.import PutString
+.import PutChar
 
 .segment "ram"
 
@@ -116,8 +120,7 @@ L5191:	lda #$22
 L5194:	lda #$2B
 	.byte $2C
 L5197:	lda #$33
-	clc
-	adc #$09
+	add #$09
 	sta r0L
 	lda #$51
 	adc #$00
@@ -354,8 +357,7 @@ L5335:	lda L506C,y
 L5340:	sty L5373
 	jsr _GetRAMBam
 	jsr _RamBlkAlloc
-	txa
-	bne L5372
+	bnex L5372
 	ldy L5373
 	lda r3L
 	sta L506C,y

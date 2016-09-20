@@ -8,11 +8,16 @@
 .include "geossym.inc"
 .include "geosmac.inc"
 .include "kernal.inc"
-.include "jumptab.inc"
 .include "c64.inc"
 .ifdef wheels
 .include "jumptab_wheels.inc"
 .endif
+
+.import FetchRAM
+.import SwapRAM
+.import DoInlineReturn
+.import i_Rectangle
+.import SetPattern
 
 .global modKeyCopy
 .global dbFieldWidth
@@ -33,14 +38,11 @@ _DEFOptimize:
 _DoOptimize:
 	php
 	sei
-	PushB CPU_DATA
-ASSERT_NOT_BELOW_IO
-	LoadB CPU_DATA, $35
+	START_IO
 	sta scpu_hwreg_enable
 	sta scpu_base,y
 	sta scpu_hwreg_disable
-	PopB CPU_DATA
-ASSERT_NOT_BELOW_IO
+	END_IO
 	plp
 	rts
 .endif
@@ -83,8 +85,8 @@ _ReadXYPot:
 ; rectangle in card space, i.e. convert it into a
 ; color matrix rectangle for
 ; * ColorRectangle_W
-; * SaveColorRectangle
-; * RestoreColorRectangle
+; * SaveColor
+; * RstrColor
 ;
 ; in:  r2L: y1
 ;      r2H: y2
@@ -136,7 +138,7 @@ _ConvToCards:
 .segment "wheels3"
 
 .ifdef wheels
-.global _SaveColorRectangle, _RestoreColorRectangle
+.global _SaveColor, _RstrColor
 .import WheelsTemp
 ; Saves a rectangle into or restores it from a linear buffer
 ; in:  r0:  buffer address
@@ -144,10 +146,10 @@ _ConvToCards:
 ;      r1H: y
 ;      r2L: width
 ;      r2H: height
-_RestoreColorRectangle:
+_RstrColor:
 	lda #0
 	.byte $2c
-_SaveColorRectangle:
+_SaveColor:
 	lda #$80
 	sta WheelsTemp
 	jsr GetColorMatrixOffset
@@ -527,28 +529,22 @@ nmiDefault: ; 64 nmi routine
 .import KbdScanAll
 .global RunScreensaver
 RunScreensaver:
-	ldx CPU_DATA
-ASSERT_NOT_BELOW_IO
-	LoadB CPU_DATA, IO_IN
+	START_IO_X
 	PushB extclr
 	LoadB extclr, 0 ; black border
 	PushB grcntrl1
 	and #$6F
 	sta grcntrl1 ; turn off screen
-	stx CPU_DATA
-ASSERT_NOT_BELOW_IO
+	END_IO_X
 	cli
 @1:	lda saverStatus ; wait for IRQ to disable screen saver
 	lsr
 	bcs @1
 	sei
-	ldx CPU_DATA
-ASSERT_NOT_BELOW_IO
-	LoadB CPU_DATA, IO_IN
+	START_IO_X
 	PopB grcntrl1
 	PopB extclr
-	stx CPU_DATA
-ASSERT_NOT_BELOW_IO
+	END_IO_X
 	rts
 
 .global ScreenSaver1

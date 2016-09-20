@@ -4,7 +4,11 @@
 .include "config.inc"
 .include "kernal.inc"
 .include "c64.inc"
-.include "jumptab.inc"
+
+.import SaveColor
+.import StashRAM
+.import RstrColor
+.import FetchRAM
 
 .segment "reux"
 
@@ -39,16 +43,10 @@ L402C:	lda (r5),y
 	jsr L408F
 	dec r3H
 	bne L402A
-	lda r1H
-	pha
-	lda r1L
-	pha
+	PushW r1
 	jsr L407E
 	jsr SaveColor
-	pla
-	sta r1L
-	pla
-	sta r1H
+	PopW r1
 	jsr L40A8
 	jmp StashRAM
 

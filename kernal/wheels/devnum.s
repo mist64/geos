@@ -4,7 +4,13 @@
 .include "config.inc"
 .include "kernal.inc"
 .include "c64.inc"
-.include "jumptab.inc"
+
+.import SwapRAM
+.import EnterTurbo
+.import SetDevice
+.import DoneWithIO
+.import InitForIO
+.import PurgeTurbo
 
 .segment "devnum"
 
@@ -92,8 +98,7 @@ L5091:	jsr LFFAE
 L5097:	.byte 0
 
 _SwapDrives:
-	lda curDrive
-	pha
+	PushB curDrive
 	ldx r5L
 	lda _driveType,x
 	sta L5168

@@ -125,33 +125,35 @@ OUTLINEON               =       26
 PLAINTEXT               =       27
 
 ; keyboard
-KEY_F1                  =       1
-KEY_F2                  =       2
-KEY_F3                  =       3
-KEY_F4                  =       4
-KEY_F5                  =       5
-KEY_F6                  =       6
-KEY_NOSCRL              =       7
-KEY_ENTER               =       11
-KEY_F7                  =       14
-KEY_F8                  =       15
-KEY_UP                  =       16
-KEY_DOWN                =       17
-KEY_HOME                =       18
-KEY_CLEAR               =       19
-KEY_LARROW              =       20
-KEY_UPARROR             =       21
-KEY_STOP                =       22
-KEY_RUN                 =       23
-KEY_BPS                 =       24
-KEY_HELP                =       25
-KEY_ALT                 =       26
-KEY_ESC                 =       27
-KEY_INSERT              =       28
-KEY_DELETE              =       29
-KEY_RIGHT               =       30
-KEY_INVALID             =       31
-KEY_LEFT                =       BACKSPACE
+KEY_F1			=	1
+KEY_F2			=	2
+KEY_F3			=	3
+KEY_F4			=	4
+KEY_F5			=	5
+KEY_F6			=	6
+KEY_NOSCRL		=	7
+KEY_TAB			=	9
+KEY_LF			=	10
+KEY_ENTER		=	11
+KEY_F7			=	14
+KEY_F8			=	15
+KEY_UP			=	16
+KEY_DOWN		=	17
+KEY_HOME		=	18
+KEY_CLEAR		=	19
+KEY_LARROW		=	20
+KEY_UPARROR		=	21
+KEY_STOP		=	22
+KEY_RUN 		=	23
+KEY_BPS 		=	24
+KEY_HELP		=	25
+KEY_ALT 		=	26
+KEY_ESC 		=	27
+KEY_INSERT		=	28
+KEY_DELETE		=	29
+KEY_RIGHT		=	30
+KEY_INVALID		=	31
+KEY_LEFT		=	BACKSPACE
 
 ; DialogBox
 ; icons
@@ -230,7 +232,7 @@ STRUCT_MISMAT           =       10
 BFR_OVERFLOW            =       11
 CANCEL_ERR              =       12
 DEV_NOT_FOUND           =       13
-INCOMPATIBLE            =       14
+INCOMPATIBLE            =       14 ; GEOS128
 HDR_NOT_THERE           =       $20
 NO_SYNC                 =       $21
 DBLK_NOT_THERE          =       $22
@@ -408,11 +410,6 @@ ST_LD_DATA              =       $80
 ST_PR_DATA              =       $40
 ST_WR_PR                =       $40
 
-; ???
-ADD1_W                  =       $2000
-DOUBLE_B                =       $80
-DOUBLE_W                =       $8000
-
 CLR_SAVE                =       %01000000
 CONSTRAINED             =       %01000000
 UN_CONSTRAINED          =       %00000000
@@ -424,3 +421,16 @@ FUTURE3                 =       9
 FUTURE4                 =       10
 USELAST                 =       127
 SHORTCUT                =       128
+
+; C128 640 support
+ADD1_W                  =       $2000
+ADD1_B                  =       $20
+DOUBLE_W                =       $8000
+DOUBLE_B                =       $80
+
+; C128 bsw128
+
+ARROW = 0 ; pass this to SetMsePic
+
+GR_40 = 0   ; use these two to test
+GR_80 = $80 ; graphMode

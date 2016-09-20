@@ -164,7 +164,7 @@ DoRAMOp                 =       $c2d4
 
 ;only in GEOS 128
 TempHideMouse           =       $c2d7
-SetMousePicture         =       $c2da
+SetMsePic		=       $c2da
 SetNewMode              =       $c2dd
 NormalizeX              =       $c2e0
 MoveBData               =       $c2e3

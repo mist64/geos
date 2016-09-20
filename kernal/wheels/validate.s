@@ -4,11 +4,24 @@
 .include "config.inc"
 .include "kernal.inc"
 .include "c64.inc"
-.include "jumptab.inc"
 .include "diskdrv.inc"
 
-L9048 = $9048
-L904B = $904B
+.import FreeBlock
+.import PutBlock
+.import GetBlock
+.import OpenDisk
+.import WriteBlock
+.import FetchRAM
+.import EnterTurbo
+.import InitForIO
+.import DoneWithIO
+.import StashRAM
+.import ReadBlock
+.import SetDevice
+.import PutDirHead
+.import CallRoutine
+.import GetDirHead
+
 L9050 = $9050
 L9053 = $9053
 
@@ -50,30 +63,24 @@ L5035:	rts
 L5039:	.byte $3E,$51,$51,$51,$50
 	jsr L507E
 	jsr L509A
-	txa
-	beq L5048
+	beqx L5048
 	rts
 
 L5048:	jsr L549C
-	txa
-	bne L5074
+	bnex L5074
 	lda #$01
 	sta r6L
 	lda #$21
 	sta r6H
 	jsr L547A
-	txa
-	bne L5074
+	bnex L5074
 	jsr PutDirHead
-	txa
-	bne L5074
+	bnex L5074
 	jsr L9050
 	jsr L5228
-	txa
-	bne L5074
+	bnex L5074
 	jsr PutDirHead
-	txa
-	bne L5074
+	bnex L5074
 	jmp L508B
 
 L5074:	pha
@@ -171,20 +178,17 @@ L5105:	jsr L50E6
 
 	jsr L5158
 	jsr L54A1
-	txa
-	bne L5151
+	bnex L5151
 	lda #$28
 	sta r6L
 	lda #$02
 	sta r6H
 	jsr L547A
 	jsr L5228
-	txa
-	bne L5151
+	bnex L5151
 	jsr L546C
 	jsr PutDirHead
-	txa
-	bne L5151
+	bnex L5151
 	jmp OpenDisk
 
 L5151:	pha
@@ -246,8 +250,7 @@ L51B8:	jsr L50EE
 
 	jsr L515E
 	jsr L548B
-	txa
-	bne L51F4
+	bnex L51F4
 	lda #$12
 	sta r6L
 	lda #$00
@@ -261,12 +264,10 @@ L51B8:	jsr L50EE
 	sta r6H
 	jsr L547A
 L51E2:	jsr L5228
-	txa
-	bne L51F4
+	bnex L51F4
 	jsr L546C
 	jsr PutDirHead
-	txa
-	bne L51F4
+	bnex L51F4
 	jmp OpenDisk
 
 L51F4:	pha
@@ -277,20 +278,17 @@ L51F4:	pha
 
 	jsr L5164
 	jsr L5492
-	txa
-	bne L5221
+	bnex L5221
 	lda #$12
 	sta r6L
 	lda #$00
 	sta r6H
 	jsr L547A
 	jsr L5228
-	txa
-	bne L5221
+	bnex L5221
 	jsr L546C
 	jsr PutDirHead
-	txa
-	bne L5221
+	bnex L5221
 	jmp OpenDisk
 
 L5221:	pha
@@ -303,14 +301,13 @@ L5228:	lda $8201
 	sta r6H
 	lda curDirHead
 	sta r6L
-L5232:	jsr L9048
+L5232:	jsr AllocateBlock
 	lda r6H
 	sta r1H
 	lda r6L
 	sta r1L
 	jsr ReadBuff
-	txa
-	beq L5244
+	beqx L5244
 	rts
 
 L5244:	lda #$80
@@ -327,15 +324,14 @@ L524C:	jsr L5436
 	jmp L5228
 
 L525F:	jsr L530A
-	txa
-	bne L52A0
+	bnex L52A0
 L5265:	jsr L544B
 	clc
 	lda r5L
 	adc #$20
 	sta r5L
 	bcc L524C
-	lda $8001
+	lda diskBlkBuf+1
 	sta r6H
 	lda diskBlkBuf
 	sta r6L
@@ -343,8 +339,7 @@ L5265:	jsr L544B
 	bit L5435
 	bmi L528D
 	jsr L53FF
-	txa
-	bne L52D4
+	bnex L52D4
 	bit L5435
 	bmi L524C
 L528D:	lda #$00
@@ -376,8 +371,7 @@ L52A3:	lda $8225
 	lda $8222
 	sta r1L
 	jsr L9053
-	txa
-	beq L52A1
+	beqx L52A1
 L52D4:	rts
 
 L52D5:	jsr L544B
@@ -387,7 +381,7 @@ L52D5:	jsr L544B
 	iny
 	lda (r5),y
 	sta r6H
-	jsr L9048
+	jsr AllocateBlock
 	jsr PutDirHead
 	jsr L544B
 	ldy #$01
@@ -401,7 +395,7 @@ L52D5:	jsr L544B
 	sta r6H
 	lda curDirHead
 	sta r6L
-	jsr L9048
+	jsr AllocateBlock
 	jmp PutDirHead
 
 L530A:	ldy #$00
@@ -444,13 +438,13 @@ L5348:	jsr InitForIO
 	sta r6H
 	lda r1L
 	sta r6L
-L5353:	jsr L9048
+L5353:	jsr AllocateBlock
 	jsr L53F1
 	lda #$54
 	sta r4H
 	lda #$CD
 	sta r4L
-	jsr L904B
+	jsr ReadLink
 	bne L5376
 	lda L54CE
 	sta r1H
@@ -467,7 +461,7 @@ L5379:	ldy #$13
 	iny
 	lda (r5),y
 	sta r6H
-	jsr L9048
+	jsr AllocateBlock
 	jsr L53F1
 	ldy #$01
 	lda (r5),y
@@ -491,7 +485,7 @@ L53A0:	lda #$81
 	sta r6H
 	lda r1L
 	sta r6L
-	jsr L9048
+	jsr AllocateBlock
 	jsr L53F1
 	ldy #$02
 	sty L53DF
@@ -501,8 +495,7 @@ L53C0:	lda fileHeader+1,y
 	sta r1L
 	beq L53D2
 	jsr L5348
-	txa
-	bne L53DE
+	bnex L53DE
 L53D2:	ldy L53DF
 	iny
 	iny
@@ -522,8 +515,7 @@ L53E0:	jsr L533D
 	sta r1H
 	jmp L5348
 
-L53F1:	txa
-	beq L53FE
+L53F1:	beqx L53FE
 	inc L54CF
 	bne L53FC
 	inc L54D0
@@ -537,18 +529,16 @@ L53FF:	lda $82AC
 	sta r6L
 	sta r1L
 	beq L542D
-	jsr L9048
+	jsr AllocateBlock
 	cpx #$06
 	beq L542D
-	txa
-	bne L542F
+	bnex L542F
 	jsr ReadBuff
 	lda #$80
 	sta r5H
 	lda #$02
 	sta r5L
-	txa
-	bne L542F
+	bnex L542F
 	lda #$FF
 	sta L5435
 	rts
@@ -593,13 +583,12 @@ L546C:	lda #$01
 	sta r6L
 	lda #$00
 	sta r6H
-	jsr L9048
+	jsr AllocateBlock
 	ldx #$00
 	rts
 
-L547A:	jsr L9048
-	txa
-	beq L5484
+L547A:	jsr AllocateBlock
+	beqx L5484
 	cpx #$06
 	bne L548A
 L5484:	dec r6H
@@ -626,8 +615,7 @@ L54A3:	stx L54CC
 L54AA:	lda #$00
 	sta r6H
 L54AE:	jsr FreeBlock
-	txa
-	beq L54BC
+	beqx L54BC
 	cpx #$02
 	beq L54C0
 	cpx #$06

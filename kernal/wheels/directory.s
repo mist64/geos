@@ -4,11 +4,18 @@
 .include "config.inc"
 .include "kernal.inc"
 .include "c64.inc"
-.include "jumptab.inc"
 .include "diskdrv.inc"
 
+.import SetNextFree
+.import i_MoveData
+.import FindBAMBit
+.import GetFreeDirBlk
+.import PutBlock
+.import PutDirHead
+.import FindFile
+.import OpenDisk
+
 L903F = $903F
-L9048 = $9048
 
 .segment "directory"
 
@@ -25,8 +32,7 @@ _MakeDirectory:
 	cmp #$04
 	bne L5074
 	jsr OpenDisk
-	txa
-	bne L5076
+	bnex L5076
 	lda r1H
 	sta L511B
 	lda r1L
@@ -36,33 +42,26 @@ _MakeDirectory:
 	lda r6L
 	sta L5077
 	jsr FindFile
-	txa
-	bne L5032
+	bnex L5032
 	ldx #$05
 	rts
 
 L5032:	jsr L5092
-	txa
-	bne L5076
+	bnex L5076
 	jsr L5079
-	txa
-	bne L5076
+	bnex L5076
 	jsr PutDirHead
-	txa
-	bne L5076
+	bnex L5076
 	jsr L50D7
-	txa
-	bne L5076
+	bnex L5076
 	jsr L513C
-	txa
-	bne L5076
+	bnex L5076
 	lda L5090
 	sta r1L
 	lda L5091
 	sta r1H
 	jsr ReadBuff
-	txa
-	bne L5076
+	bnex L5076
 	ldy L508F
 	ldx #$00
 L5065:	lda dirEntryBuf,x
@@ -81,8 +80,7 @@ L5078:	.byte 0
 
 L5079:	lda #$00
 	jsr GetFreeDirBlk
-	txa
-	bne L508E
+	bnex L508E
 	sty L508F
 	lda r1L
 	sta L5090
@@ -119,11 +117,10 @@ L50AA:	inc r6H
 	dec r6H
 	lda r6H
 	sta L50D4
-	jsr L9048
-	txa
-	bne L50D2
+	jsr AllocateBlock
+	bnex L50D2
 	inc r6H
-	jsr L9048
+	jsr AllocateBlock
 L50D2:	rts
 
 L50D3:	.byte 0
@@ -136,7 +133,7 @@ L50D7:	jsr i_MoveData
 	.addr diskBlkBuf
 	.word $0100
 	lda L50D6
-	sta $8001
+	sta diskBlkBuf+1
 	lda L50D5
 	sta diskBlkBuf
 	lda L511B
@@ -185,7 +182,7 @@ L5149:	sta diskBlkBuf,y
 	iny
 	bne L5149
 	dey
-	sty $8001
+	sty diskBlkBuf+1
 	jmp L903F
 
 L5156:	lda L5078
@@ -243,8 +240,7 @@ _MakeSysDir:
 L51CF:	rts
 
 L51D0:	jsr GetBorder
-	txa
-	bne L51CF
+	bnex L51CF
 	bit isGEOS
 	bmi L51CF
 	lda #$01
@@ -252,8 +248,7 @@ L51D0:	jsr GetBorder
 	lda #$FE
 	sta r3H
 	jsr SetNextFree
-	txa
-	bne L51CF
+	bnex L51CF
 	lda r3H
 	sta r1H
 	sta $82AC
@@ -261,8 +256,7 @@ L51D0:	jsr GetBorder
 	sta r1L
 	sta $82AB
 	jsr L5146
-	txa
-	bne L51CF
+	bnex L51CF
 	ldy #$0F
 L51FF:	lda L520B,y
 	sta $82AD,y

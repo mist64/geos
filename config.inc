@@ -1,6 +1,9 @@
 ; GEOS System build configuration
 ; by Maciej Witkowiak
 
+.ifndef config_inc
+config_inc = 1
+
 ;------------------------
 ; which variant to build
 ;------------------------
@@ -11,14 +14,24 @@
 ;------------------------
 .ifdef bsw
 	; BSW traps to counter tampering
-	trap = 1
+	traps = 1
+.endif
+
+;------------------------
+; the Berkeley Softworks GEOS 128 2.0 variant
+;------------------------
+.ifdef bsw128
+	; BSW traps to counter tampering
+	traps = 1
+	trap2_alternate_location = 1
 .endif
 
 ;------------------------
 ; the cbmfiles.com variant of GEOS 64 2.0
 ;------------------------
 .ifdef cbmfiles
-	trap = 1
+	; BSW traps to counter tampering
+	traps = 1
 
 	; additionally, there are ".ifdef cbmfiles" checks
 	; throughout the code
@@ -28,7 +41,7 @@
 ; the gateWay 2.51 variant
 ;------------------------
 .ifdef gateway
-	trap = 1
+	traps = 1
 	gateway_font = 1
 
 	; additionally, there are ".ifdef gateway" checks
@@ -148,6 +161,11 @@ useRamExp = 1
 REUPresent = 1
 .endif
 
+.ifdef traps
+	trap1 = 1
+	trap2 = 1
+.endif
+
 .if .defined(drv1541)
 DRV_TYPE = 1 ; DRV_1541
 .elseif .defined(drv1571)
@@ -156,4 +174,6 @@ DRV_TYPE = 2; DRV_1571
 DRV_TYPE = 3; DRV_1581
 .else
 .error "Unknown drive type!"
+.endif
+
 .endif

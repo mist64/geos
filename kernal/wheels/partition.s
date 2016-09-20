@@ -4,11 +4,10 @@
 .include "config.inc"
 .include "kernal.inc"
 .include "c64.inc"
-.include "jumptab.inc"
+.include "diskdrv.inc"
 
 L4000 = $4000
 L4003 = $4003
-L9030 = $9030
 L9033 = $9033
 L9050 = $9050
 L9053 = $9053
@@ -31,6 +30,32 @@ LFFB4 = $FFB4
 .import fftIndicator
 .import extKrnlIn
 .import sysDBColor
+
+.import BBMult
+.import CallRoutine
+.import CopyString
+.import GetDirHead
+.import FindFile
+.import DoRAMOp
+.import SetDevice
+.import EnterTurbo
+.import GetPtrCurDkNm
+.import PutString
+.import OpenDisk
+.import RstrFrmDialogue
+.import DoneWithIO
+.import InitForIO
+.import ExitTurbo
+.import i_FrameRectangle
+.import i_ColorRectangle
+.import DoDlgBox
+.import StashRAM
+.import FetchRAM
+.import PurgeTurbo
+
+
+.global ChDiskDirectory
+.global GetFEntries
 
 .segment "partition"
 
@@ -96,8 +121,7 @@ L5057:	cmp L50C9,x
 	dex
 	bpl L5057
 	bmi L50B8
-L5061:	lda $9073
-	pha
+L5061:	PushB $9073
 	lda #$90
 	sta r0H
 	lda #$00
@@ -124,8 +148,7 @@ L5089:	lda ramExpSize
 	lda $904E
 	sta _driveType,y
 	sta curType
-	pla
-	sta $9073
+	PopB $9073
 	.byte $B9
 	.byte $C7
 L50A9:	bvc L5030
@@ -179,8 +202,7 @@ L510A:	lda #$01
 	bit L5134
 	bpl L5126
 	jsr L9050
-	txa
-	bne L5133
+	bnex L5133
 	lda #$00
 	sta r2L
 	jmp L9066
@@ -425,8 +447,7 @@ L532F:	.byte $B3
 	jsr L5322
 	jsr OpenDisk
 	lda curDrive
-	clc
-	adc #$39
+	add #$39
 	sta L53C8
 	lda #$53
 	sta r1H
@@ -729,8 +750,7 @@ L55D6:	pha
 	sta (r1),y
 	pla
 	iny
-L55DC:	clc
-	adc #$30
+L55DC:	add #$30
 	sta (r1),y
 	rts
 
@@ -915,8 +935,7 @@ L5747:	jsr L576F
 	jsr L5174
 	bne L575F
 	jsr _ChSubdir
-	clv
-	bvc L5762
+	bra L5762
 L575F:	jsr _ChPartition
 L5762:	lda L57B0
 	sta DBoxDescH
@@ -927,35 +946,17 @@ L5762:	lda L57B0
 L576F:	ldy #$90 ; stash
 	tya
 	pha
-	lda #>dlgBoxRamBuf
-	sta r0H
-	lda #<dlgBoxRamBuf
-	sta r0L
-	lda #>$B900
-	sta r1H
-	lda #<$B900
-	sta r1L
-	lda #>$017A
-	sta r2H
-	lda #<$017A
-	sta r2L
+	LoadW r0, dlgBoxRamBuf
+	LoadW r1, $B900
+	LoadW r2, $017A
 	lda #0 ; REU bank 0
 	sta r3L
 	jsr DoRAMOp
 	pla
 	tay
-	lda #>$880C
-	sta r0H
-	lda #<$880C
-	sta r0L
-	lda #>$BA7A
-	sta r1H
-	lda #<$BA7A
-	sta r1L
-	lda #$00
-	sta r2H
-	lda #$51
-	sta r2L
+	LoadW r0, $880C
+	LoadW r1, $BA7A
+	LoadW r2, $0051
 	jmp DoRAMOp
 
 L57AF:	.byte 0
@@ -1053,8 +1054,7 @@ _DownDirectory:
 	sta r1H
 	lda $8401
 	sta r1L
-	clv
-	bvc L588F
+	bra L588F
 _UpDirectory:
 	jsr GetDirHead
 	lda $8223
@@ -1080,11 +1080,9 @@ L589E:	ldx #$05
 	lda curDrive
 	jsr SetDevice
 	jsr OpenDisk
-	txa
-	bne L5910
-	jsr L9030
-	txa
-	bne L5910
+	bnex L5910
+	jsr Get1stDirEntry
+	bnex L5910
 L58B6:	ldy #$00
 	lda (r5),y
 	and #$BF
@@ -1126,8 +1124,7 @@ L58D5:	lda #$00
 	lda L591A
 	sta r5L
 L5907:	jsr L9033
-	txa
-	bne L5910
+	bnex L5910
 	tya
 	beq L58B6
 L5910:	lda #$51
@@ -1141,13 +1138,11 @@ L591A:	.byte 0
 L591B:	.byte 0
 
 	jsr _UpDirectory
-	txa
-	beq L5929
+	beqx L5929
 L5922:	rts
 
 	jsr _TopDirectory
-	txa
-	bne L5922
+	bnex L5922
 L5929:	jmp L5317
 
 	.byte $00,$20,$97,$40,$00,$FF,$00,$13
@@ -1282,10 +1277,7 @@ L5B5B:	sta fileTrScTab,x
 	rts
 
 L5B62:	sta r1L
-	lda r7H
-	pha
-	lda r7L
-	pha
+	PushW r7
 	lda #$05
 	sta r0L
 	lda dbFieldWidth
@@ -1311,10 +1303,7 @@ L5B62:	sta r1L
 	sta r0L
 	lda #$00
 	sta r3L
-	pla
-	sta r7L
-	pla
-	sta r7H
+	PopW r7
 	rts
 
 .endif

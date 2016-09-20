@@ -4,7 +4,6 @@
 .include "config.inc"
 .include "kernal.inc"
 .include "c64.inc"
-.include "jumptab.inc"
 .include "diskdrv.inc"
 
 .segment "loadb"
@@ -23,6 +22,28 @@ LC313 = $C313
 .import TempCurDrive
 .import sysDBColor
 .import DeskTopName
+
+.import FindFile
+.import PutString
+.import i_PutString
+.import CmpString
+.import DoDlgBox
+.import OpenDisk
+.import DoneWithIO
+.import ReadBlock
+.import InitForIO
+.import GetDirHead
+.import NewDisk
+.import SetDevice
+.import DoRAMOp
+.import CopyFString
+.import GetFHdrInfo
+.import MoveData
+.import CallRoutine
+.import i_MoveData
+
+.global LoadDiskBlkBuf
+.global OEnterDesktop
 
 L5018 = $5018
 L5195 = $5195
@@ -77,8 +98,7 @@ L5042:	lda $8402
 	lda #$7A
 	sta r2L
 	jsr L5195
-	txa
-	bne L5041
+	bnex L5041
 	lda #$88
 	sta r2H
 	lda #$CB
@@ -90,8 +110,7 @@ L506D:	lda #$84
 	lda #$00
 	sta r9L
 	jsr GetFHdrInfo
-	txa
-	bne L5041
+	bnex L5041
 	ldx curDrive
 	lda L5127,x
 	sta r0L
@@ -132,8 +151,7 @@ L50B9:	sty DTOP_CHAIN
 	lda #$40
 	sta r2L
 	jsr L5195
-	txa
-	bne L5102
+	bnex L5102
 	ldy #$90
 	lda #$79
 	sta r0H
@@ -246,7 +264,7 @@ L7969:	jsr ReadBlock
 	ldy #$FE
 	lda diskBlkBuf
 	bne L797D
-	ldy $8001
+	ldy diskBlkBuf+1
 	beq L79AB
 	dey
 	beq L79AB
@@ -258,7 +276,7 @@ L797D:	lda r2H
 	ldx #$0B
 	bne L79B9
 L798B:	sty r1L
-L798D:	lda $8001,y
+L798D:	lda diskBlkBuf+1,y
 	dey
 	sta (r7),y
 	bne L798D
@@ -274,7 +292,7 @@ L79A0:	lda r2L
 	sta r2L
 	bcs L79AB
 	dec r2H
-L79AB:	lda $8001
+L79AB:	lda diskBlkBuf+1
 	sta r1H
 	lda diskBlkBuf
 	sta r1L
@@ -398,8 +416,7 @@ L7AA9:	tya
 	jsr SetDevice
 	bne L7B0F
 	jsr NewDisk
-	txa
-	bne L7B0F
+	bnex L7B0F
 	jsr GetDirHead
 	bne L7B0F
 	jsr L7D2A
@@ -418,10 +435,7 @@ L7AC9:	lda curType
 	bne L7ADE
 	cmp $905D
 	beq L7B0F
-L7ADE:	lda $905D
-	pha
-	lda $905C
-	pha
+L7ADE:	PushW $905C
 	lda #$01
 	sta $905C
 	sta $905D
@@ -437,10 +451,7 @@ L7ADE:	lda $905D
 	sec
 	rts
 
-L7B04:	pla
-	sta $905C
-	pla
-	sta $905D
+L7B04:	PopW $905C
 	jsr GetDirHead
 L7B0F:	clc
 	rts
@@ -456,25 +467,19 @@ L7B11:	sec
 	sta r1H
 	lda $8401
 	sta r1L
-	lda $8146
+	lda fileHeader+O_GHSTR_TYPE
 	cmp #$01
 	bne L7B3F
 	jsr ReadBuff
-	txa
-	bne L7B55
-	lda $8003
+	bnex L7B55
+	lda diskBlkBuf+3
 	sta r1H
-	lda $8002
+	lda diskBlkBuf+2
 	sta r1L
 L7B3F:	jsr L795E
-	txa
-	bne L7B55
-	lda #$00
-	sta r0L
-	lda $814C
-	sta r7H
-	lda $814B
-	sta r7L
+	bnex L7B55
+	LoadB r0L, 0
+	MoveW fileHeader+O_GHST_VEC, r7
 	sec
 	rts
 
@@ -690,23 +695,18 @@ L7D17:	jsr RstrKernal
 
 L7D2A:	jsr L7C00
 	jsr FindFile
-	txa
-	bne L7D5A
-	lda #$84
-	sta r9H
-	lda #$00
-	sta r9L
+	bnex L7D5A
+	LoadW r9, dirEntryBuf
 	jsr GetFHdrInfo
-	txa
-	bne L7D5A
+	bnex L7D5A
 	ldx L7C65
 	dex
 	beq L7D5A
-	lda $815A
-	cmp #$35
+	lda fileHeader+O_GHFNAME+13
+	cmp #'5'
 	bcs L7D58
-	lda $815C
-	cmp #$30
+	lda fileHeader+O_GHFNAME+15
+	cmp #'0'
 	bne L7D58
 	ldx #$05
 	rts
