@@ -244,7 +244,7 @@ CheckClickPos:
 	ldx otherPressVec+1
 	jmp CallRoutine
 
-.ifndef wheels
+.ifndef wheels_size
 	rts ; ???
 .endif
 

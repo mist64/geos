@@ -1042,7 +1042,6 @@ GetHeaderFileName:
 
 .ifdef trap
 SerialHiCompare:
-.ifndef wheels
 .ifdef cbmfiles
 	; This should be initialized to 0, and will
 	; be changed at runtime.
@@ -1052,7 +1051,6 @@ SerialHiCompare:
 	.byte $58
 .else
 	.byte 0
-.endif
 .endif
 .endif
 

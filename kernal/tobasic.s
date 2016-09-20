@@ -112,15 +112,17 @@ execBASIC:
 	pla
 	rti
 
- ; ???
+.ifndef remove_dead_bytes
+; ???
 .if .defined(cbmfiles) || .defined(gateway)
 	.byte $ff
 .else
 	.byte $40
 .endif
+.endif ; remove_dead_bytes
 
-.endif
-.endif
+.endif ; wheels
+.endif ; removeToBASIC
 
 .segment "tobasic2"
 

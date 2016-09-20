@@ -90,6 +90,8 @@
 	wheels_remove_BootGEOS = 1
 	wheels_fixes = 1
 
+	remove_dead_bytes = 1
+
 	; replace BASIC reboot code with trivial version (+200 bytes)
 	removeToBASIC = 1
 

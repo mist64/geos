@@ -22,7 +22,9 @@ SerialNumber:
 	; This matches the serial in the cbmfiles.com GEOS64.D64
 	.word $58B5
 
+.ifndef remove_dead_bytes
 	.byte $FF ; ???
+.endif
 .endif
 
 .segment "serial2"
@@ -42,6 +44,6 @@ GetSerialNumber2:
 	sta r0H
 	rts
 
-.ifndef wheels
+.ifndef wheels_size
 	.byte 1, $60 ; ???
 .endif

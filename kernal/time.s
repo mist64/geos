@@ -179,9 +179,11 @@ pingTab:
 	.byte $0f
 pingTabEnd:
 
+.ifndef remove_dead_bytes
 ; ???
 .ifdef wheels
 	.word 0
 .else
 	.word $0f00
+.endif
 .endif
