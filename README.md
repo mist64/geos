@@ -105,6 +105,15 @@ You can build a specific variant like this:
 
 All output will be put into `build/<variant>`.
 
+## Drivers
+
+By default, the KERNAL image will contain the Commodore 1541 disk driver (`drv1541`) and the joystick input driver (`joydrv`). You can specify different drivers to be included like this:
+
+    make DRIVE=<drive> INPUT=<input>
+
+Supported drives are `drv1541`, `drv1571` and `drv1581`. Supported input devices are `amigamse`, `joydrv`, `koalapad`, `lightpen`, `mse1531` and `pcanalog`.
+
+
 ## Customization
 
 The KERNAL variant `custom` is meant for your experimentation. Inside the `.ifdef custom` section in `config.inc`, you can toggle several compile time options:

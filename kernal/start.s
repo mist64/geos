@@ -56,7 +56,6 @@
 ; everything work.
 ;
 ; TODO: * REU detection seems to be currently missing.
-;       * This is hardcoded to a 1541 drive.
 ;       * It would be best to put the original GEOS 2.0 code
 ;         here.
 ;
@@ -131,7 +130,7 @@ ASSERT_NOT_BELOW_IO
 	sta NUMDRV
 	ldy $BA
 	sty curDrive
-	lda #DRV_1541
+	lda #DRV_TYPE ; see config.inc
 	sta curType
 	sta _driveType,y
 

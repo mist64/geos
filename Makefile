@@ -1,5 +1,7 @@
 
 VARIANT ?= bsw
+DRIVE ?= drv1541
+INPUT ?= joydrv
 
 AS=ca65
 LD=ld65
@@ -126,12 +128,12 @@ $(BUILD_DIR)/kernal_compressed.prg: $(BUILD_DIR)/kernal_combined.prg
 	pucrunch -f -c64 -x0x5000 $< $@ 2> /dev/null
 
 $(BUILD_DIR)/kernal_combined.prg: $(ALL_BINS)
-	@echo Creating $@
+	@echo Creating $@ from kernal.bin $(DRIVE).bin $(INPUT).bin
 	@printf "\x00\x50" > $(BUILD_DIR)/tmp.bin
 	@dd if=$(BUILD_DIR)/kernal/kernal.bin bs=1 count=16384 >> $(BUILD_DIR)/tmp.bin 2> /dev/null
-	@cat $(BUILD_DIR)/drv/drv1541.bin /dev/zero | dd bs=1 count=3456 >> $(BUILD_DIR)/tmp.bin 2> /dev/null
+	@cat $(BUILD_DIR)/drv/$(DRIVE).bin /dev/zero | dd bs=1 count=3456 >> $(BUILD_DIR)/tmp.bin 2> /dev/null
 	@cat $(BUILD_DIR)/kernal/kernal.bin /dev/zero | dd bs=1 count=24832 skip=19840 >> $(BUILD_DIR)/tmp.bin 2> /dev/null
-	@cat $(BUILD_DIR)/input/joydrv.bin >> $(BUILD_DIR)/tmp.bin 2> /dev/null
+	@cat $(BUILD_DIR)/input/$(INPUT).bin >> $(BUILD_DIR)/tmp.bin 2> /dev/null
 	@mv $(BUILD_DIR)/tmp.bin $(BUILD_DIR)/kernal_combined.prg
 
 $(BUILD_DIR)/drv/drv1541.bin: $(BUILD_DIR)/drv/drv1541.o drv/drv1541.cfg $(DEPS)
@@ -163,7 +165,7 @@ $(BUILD_DIR)/input/pcanalog.bin: $(BUILD_DIR)/input/pcanalog.o input/pcanalog.cf
 
 $(BUILD_DIR)/%.o: %.s
 	@mkdir -p `dirname $@`
-	$(AS) -D $(VARIANT)=1 $(ASFLAGS) $< -o $@
+	$(AS) -D $(VARIANT)=1 -D $(DRIVE)=1 -D $(INPUT)=1 $(ASFLAGS) $< -o $@
 
 $(BUILD_DIR)/kernal/kernal.bin: $(PREFIXED_KERNAL_OBJS) kernal/kernal_$(VARIANT).cfg
 	@mkdir -p $$(dirname $@)
