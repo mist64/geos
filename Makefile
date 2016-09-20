@@ -1,12 +1,17 @@
 
-VARIANT ?= bsw
-DRIVE ?= drv1541
-INPUT ?= joydrv
+VARIANT     ?= bsw
+DRIVE       ?= drv1541
+INPUT       ?= joydrv
 
-AS=ca65
-LD=ld65
+AS           = ca65
+LD           = ld65
+C1541        = c1541
+PUCRUNCH     = pucrunch
+D64_TEMPLATE = GEOS64.D64
+D64_RESULT   = geos.d64
+DESKTOP_CVT  = desktop.cvt
 
-ASFLAGS=-I inc -I .
+ASFLAGS      = -I inc -I .
 
 KERNAL_SOURCES= \
 	kernal/bitmask.s \
@@ -66,6 +71,7 @@ DRIVER_SOURCES= \
 	input/pcanalog.bin
 
 DEPS= \
+	config.inc \
 	inc/c64.inc \
 	inc/const.inc \
 	inc/diskdrv.inc \
@@ -97,7 +103,7 @@ ALL_BINS= \
 	$(BUILD_DIR)/input/pcanalog.bin
 
 
-all: $(BUILD_DIR)/geos.d64
+all: $(BUILD_DIR)/$(D64_RESULT)
 
 regress:
 	@echo "********** Building variant 'bsw'"
@@ -110,22 +116,22 @@ regress:
 clean:
 	rm -rf build
 
-$(BUILD_DIR)/geos.d64: $(BUILD_DIR)/kernal_compressed.prg
-	@if [ -e GEOS64.D64 ]; then \
-		cp GEOS64.D64 $@; \
-		echo delete geos geoboot | c1541 $@ >/dev/null; \
-		echo write $< geos | c1541 $@ >/dev/null; \
-		echo \*\*\* Created $@ based on GEOS64.D64.; \
+$(BUILD_DIR)/$(D64_RESULT): $(BUILD_DIR)/kernal_compressed.prg
+	@if [ -e $(D64_TEMPLATE) ]; then \
+		cp $(D64_TEMPLATE) $@; \
+		echo delete geos geoboot | $(C1541) $@ >/dev/null; \
+		echo write $< geos | $(C1541) $@ >/dev/null; \
+		echo \*\*\* Created $@ based on $(D64_TEMPLATE).; \
 	else \
-		echo format geos,00 d64 $@ | c1541 >/dev/null; \
-		echo write $< geos | c1541 $@ >/dev/null; \
-		if [ -e desktop.cvt ]; then echo geoswrite desktop.cvt | c1541 $@; fi >/dev/null; \
+		echo format geos,00 d64 $@ | $(C1541) >/dev/null; \
+		echo write $< geos | $(C1541) $@ >/dev/null; \
+		if [ -e $(DESKTOP_CVT) ]; then echo geoswrite $(DESKTOP_CVT) | $(C1541) $@; fi >/dev/null; \
 		echo \*\*\* Created fresh $@.; \
 	fi;
 
 $(BUILD_DIR)/kernal_compressed.prg: $(BUILD_DIR)/kernal_combined.prg
 	@echo Creating $@
-	pucrunch -f -c64 -x0x5000 $< $@ 2> /dev/null
+	$(PUCRUNCH) -f -c64 -x0x5000 $< $@ 2> /dev/null
 
 $(BUILD_DIR)/kernal_combined.prg: $(ALL_BINS)
 	@echo Creating $@ from kernal.bin $(DRIVE).bin $(INPUT).bin
