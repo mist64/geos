@@ -10,7 +10,7 @@
 .include "jumptab.inc"
 .include "c64.inc"
 
-.segment "lightpen"
+.segment "inputdrv"
 
 MouseInit:
 	jmp _MouseInit
