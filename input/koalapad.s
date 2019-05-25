@@ -5,7 +5,7 @@
 
 ; TODO: reassemble
 
-.segment "koalapad"
+.segment "inputdrv"
 
 .byte $4c, $90, $fe, $4c, $9a, $fe, $4c, $9b, $fe, $00, $08, $08, $00, $00, $00, $00
 .byte $a9, $00, $85, $3b, $a9, $08, $85, $3a, $85, $3c, $60, $24, $30, $30, $03, $4c

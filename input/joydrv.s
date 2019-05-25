@@ -9,7 +9,7 @@
 .include "jumptab.inc"
 .include "c64.inc"
 
-.segment "joydrv"
+.segment "inputdrv"
 
 MouseInit:
 	jmp _MouseInit

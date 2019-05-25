@@ -8,7 +8,7 @@
 .include "geosmac.inc"
 .include "c64.inc"
 
-.segment "mse1351"
+.segment "inputdrv"
 
 MouseInit:
 	jmp _MouseInit
