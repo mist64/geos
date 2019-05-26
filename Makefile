@@ -13,8 +13,10 @@ DESKTOP_CVT  = desktop.cvt
 
 ifeq ($(VARIANT),bsw128)
 D64_TEMPLATE = GEOS128.D64
+DESKTOP_CVT  = desktop.cvt
 else
 D64_TEMPLATE = GEOS64.D64
+DESKTOP_CVT  = 128 desktop.cvt
 endif
 
 ASFLAGS      = -I inc -I .
@@ -305,9 +307,9 @@ $(BUILD_DIR)/$(D64_RESULT): $(BUILD_DIR)/kernal_compressed.prg
 		echo write $< geos128 | $(C1541) $@ ;\
 		echo \*\*\* Created $@ based on $(D64_TEMPLATE).; \
 	else \
-		echo format geos,00 d64 $@ | $(C1541) >/dev/null; \
-		echo write $< geos128 | $(C1541) $@ >/dev/null; \
-		if [ -e $(DESKTOP_CVT) ]; then echo geoswrite $(DESKTOP_CVT) | $(C1541) $@; fi >/dev/null; \
+		echo format geos,00 d64 $@ | $(C1541); \
+		echo write $< geos128 | $(C1541) $@; \
+		if [ -e "$(DESKTOP_CVT)" ]; then echo geoswrite "$(DESKTOP_CVT)" | $(C1541) $@; fi; \
 		echo \*\*\* Created fresh $@.; \
 	fi;
 else
