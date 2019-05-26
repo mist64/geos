@@ -9,7 +9,14 @@ C1541        = c1541
 PUCRUNCH     = pucrunch
 D64_TEMPLATE = GEOS64.D64
 D64_RESULT   = geos.d64
+
+ifeq ($(VARIANT),bsw128)
+D64_TEMPLATE = GEOS128.D64
+DESKTOP_CVT  = 128 desktop.cvt
+else
+D64_TEMPLATE = GEOS64.D64
 DESKTOP_CVT  = desktop.cvt
+endif
 
 ASFLAGS      = -I inc -I .
 
@@ -291,6 +298,20 @@ regress:
 clean:
 	rm -rf build
 
+ifeq ($(VARIANT),bsw128)
+$(BUILD_DIR)/$(D64_RESULT): $(BUILD_DIR)/kernal_compressed.prg
+	@if [ -e $(D64_TEMPLATE) ]; then \
+		cp $(D64_TEMPLATE) $@; \
+		echo delete geos128 geoboot128 | $(C1541) $@ ;\
+		echo write $< geos128 | $(C1541) $@ ;\
+		echo \*\*\* Created $@ based on $(D64_TEMPLATE).; \
+	else \
+		echo format geos,00 d64 $@ | $(C1541) >/dev/null; \
+		echo write $< geos128 | $(C1541) $@ >/dev/null; \
+		if [ -e "$(DESKTOP_CVT)" ]; then echo geoswrite "$(DESKTOP_CVT)" | $(C1541) $@; fi >/dev/null; \
+		echo \*\*\* Created fresh $@.; \
+	fi;
+else
 $(BUILD_DIR)/$(D64_RESULT): $(BUILD_DIR)/kernal_compressed.prg
 	@if [ -e $(D64_TEMPLATE) ]; then \
 		cp $(D64_TEMPLATE) $@; \
