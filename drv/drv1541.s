@@ -571,7 +571,9 @@ __InitForIO:
 	sei
 	lda CPU_DATA
 	sta tmpCPU_DATA
+.ifndef bsw128
 	LoadB CPU_DATA, KRNL_IO_IN
+.endif
 	lda grirqen
 	sta tmpgrirqen
 	lda clkreg
@@ -585,11 +587,16 @@ __InitForIO:
 	sta cia2base+13
 	lda #>D_IRQHandler
 	sta irqvec+1
+.ifdef bsw128
+	sta nmivec+1
+.endif
 	lda #<D_IRQHandler
 	sta irqvec
+.ifndef bsw128
 	lda #>D_NMIHandler
 	sta nmivec+1
 	lda #<D_NMIHandler
+.endif
 	sta nmivec
 	lda #%00111111
 	sta cia2base+2
@@ -621,6 +628,9 @@ IniForIO0:
 	rts
 
 D_IRQHandler:
+.ifdef bsw128
+	PopB $ff00
+.endif
 	pla
 	tay
 	pla
@@ -639,8 +649,10 @@ __DoneWithIO:
 	lda cia2base+13
 	lda tmpgrirqen
 	sta grirqen
+.ifndef bsw128
 	lda tmpCPU_DATA
 	sta CPU_DATA
+.endif
 	lda tmpPS
 	pha
 	plp
