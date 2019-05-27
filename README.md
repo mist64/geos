@@ -82,7 +82,7 @@ Run `make` to build the original "BSW" GEOS for C64. This will create the follow
 
 * raw KERNAL components: `kernal.bin`, `lokernal.bin`, `init.bin`
 * disk drive drivers: `drv1541.bin`, `drv1571.bin`, `drv1581.bin`
-* input drivers: `amigamse.bin`, `joydrv.bin`, `lightpen.bin`, `mse1531.bin`, `koalapad.bin`, `pcanalog.bin`
+* input drivers: `amigamse.bin`, `joydrv.bin`, `lightpen.bin`, `mse1351.bin`, `koalapad.bin`, `pcanalog.bin`
 * combined KERNAL image (`SYS 49155`): `kernal_combined.prg`
 * compressed KERNAL image (`RUN`): `kernal_compressed.prg`
 * disk image: `geos.d64`
@@ -112,7 +112,7 @@ By default, the KERNAL image will contain the Commodore 1541 disk driver (`drv15
 
     make DRIVE=<drive> INPUT=<input>
 
-Supported drives are `drv1541`, `drv1571` and `drv1581`. Supported input devices are `amigamse`, `joydrv`, `koalapad`, `lightpen`, `mse1531` and `pcanalog`.
+Supported drives are `drv1541`, `drv1571` and `drv1581`. Supported input devices are `amigamse`, `joydrv`, `koalapad`, `lightpen`, `mse1351` and `pcanalog`.
 
 
 ## Customization

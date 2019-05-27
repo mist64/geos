@@ -1,7 +1,7 @@
 ; GEOS by Berkeley Softworks
 ; reverse engineered by Maciej Witkowiak, Michael Steil
 ;
-; Commodore 1531 mouse input driver
+; Commodore 1351 mouse input driver
 
 .include "const.inc"
 .include "geossym.inc"

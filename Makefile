@@ -240,7 +240,7 @@ DRIVER_SOURCES= \
 	input/joydrv.bin \
 	input/amigamse.bin \
 	input/lightpen.bin \
-	input/mse1531.bin \
+	input/mse1351.bin \
 	input/koalapad.bin \
 	input/pcanalog.bin
 
@@ -276,7 +276,7 @@ ALL_BINS= \
 	$(BUILD_DIR)/input/joydrv.bin \
 	$(BUILD_DIR)/input/amigamse.bin \
 	$(BUILD_DIR)/input/lightpen.bin \
-	$(BUILD_DIR)/input/mse1531.bin \
+	$(BUILD_DIR)/input/mse1351.bin \
 	$(BUILD_DIR)/input/koalapad.bin \
 	$(BUILD_DIR)/input/pcanalog.bin
 
@@ -396,8 +396,8 @@ $(BUILD_DIR)/input/joydrv.bin: $(BUILD_DIR)/input/joydrv.o $(INPUTCFG) $(DEPS)
 $(BUILD_DIR)/input/lightpen.bin: $(BUILD_DIR)/input/lightpen.o $(INPUTCFG) $(DEPS)
 	$(LD) -C $(INPUTCFG) $(BUILD_DIR)/input/lightpen.o -o $@
 
-$(BUILD_DIR)/input/mse1531.bin: $(BUILD_DIR)/input/mse1531.o $(INPUTCFG) $(DEPS)
-	$(LD) -C $(INPUTCFG) $(BUILD_DIR)/input/mse1531.o -o $@
+$(BUILD_DIR)/input/mse1351.bin: $(BUILD_DIR)/input/mse1351.o $(INPUTCFG) $(DEPS)
+	$(LD) -C $(INPUTCFG) $(BUILD_DIR)/input/mse1351.o -o $@
 
 $(BUILD_DIR)/input/koalapad.bin: $(BUILD_DIR)/input/koalapad.o $(INPUTCFG) $(DEPS)
 	$(LD) -C $(INPUTCFG) $(BUILD_DIR)/input/koalapad.o -o $@
