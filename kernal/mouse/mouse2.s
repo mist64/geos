@@ -83,7 +83,7 @@ ProcessMouse:
 	; Wheels doesn't call the mouse driver.
 	; For a joystick, this means that the 
 	; pointer can't be moved while it's
-	; invisible, and for a 1531 mouse, it means
+	; invisible, and for a 1351 mouse, it means
 	; the input registers may overflow in the
 	; worst case, causing the pointer to jump.
 	;
