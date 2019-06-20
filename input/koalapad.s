@@ -3,30 +3,237 @@
 ;
 ; Koala pad input driver
 
-; TODO: reassemble
+.include "const.inc"
+.include "geossym.inc"
+.include "geosmac.inc"
+.include "c64.inc"
 
 .segment "inputdrv"
 
-.byte $4c, $90, $fe, $4c, $9a, $fe, $4c, $9b, $fe, $00, $08, $08, $00, $00, $00, $00
-.byte $a9, $00, $85, $3b, $a9, $08, $85, $3a, $85, $3c, $60, $24, $30, $30, $03, $4c
-.byte $36, $ff, $a5, $01, $48, $a9, $35, $85, $01, $ad, $02, $dc, $48, $ad, $03, $dc
-.byte $48, $ad, $00, $dc, $48, $20, $37, $ff, $ad, $8e, $fe, $49, $ff, $8d, $8e, $fe
-.byte $d0, $65, $20, $5b, $ff, $ad, $19, $d4, $38, $e9, $1f, $b0, $02, $a9, $00, $85
-.byte $02, $46, $02, $46, $02, $46, $02, $38, $e5, $02, $c9, $0c, $90, $49, $c9, $ab
-.byte $f0, $02, $b0, $43, $85, $02, $ad, $1a, $d4, $c9, $32, $90, $3a, $c9, $f9, $f0
-.byte $02, $b0, $34, $85, $03, $ad, $b7, $84, $f0, $03, $20, $6d, $ff, $a9, $00, $8d
-.byte $8f, $fe, $a5, $02, $ae, $8a, $fe, $ac, $8c, $fe, $20, $b1, $ff, $8c, $8c, $fe
-.byte $8e, $8a, $fe, $a5, $03, $ae, $8b, $fe, $ac, $8d, $fe, $20, $b1, $ff, $8c, $8d
-.byte $fe, $8e, $8b, $fe, $20, $85, $ff, $68, $8d, $00, $dc, $68, $8d, $03, $dc, $68
-.byte $8d, $02, $dc, $68, $85, $01, $60, $a9, $00, $8d, $02, $dc, $8d, $03, $dc, $ad
-.byte $01, $dc, $29, $04, $cd, $89, $fe, $f0, $11, $8d, $89, $fe, $0a, $0a, $0a, $0a
-.byte $0a, $8d, $05, $85, $a5, $39, $09, $20, $85, $39, $60, $a9, $ff, $8d, $02, $dc
-.byte $a9, $40, $8d, $00, $dc, $a2, $6e, $ea, $ea, $ca, $d0, $fb, $60, $a5, $3b, $85
-.byte $04, $a5, $3a, $66, $04, $6a, $18, $69, $0c, $8d, $8a, $fe, $a5, $3c, $18, $69
-.byte $32, $8d, $8b, $fe, $60, $2c, $8f, $fe, $30, $26, $a2, $00, $ad, $8a, $fe, $0a
-.byte $90, $01, $e8, $86, $3b, $29, $fe, $85, $3a, $38, $a5, $3a, $e9, $18, $85, $3a
-.byte $a5, $3b, $e9, $00, $85, $3b, $ad, $8b, $fe, $38, $e9, $32, $29, $fe, $85, $3c
-.byte $60, $86, $02, $aa, $38, $e5, $02, $85, $02, $10, $05, $49, $ff, $18, $69, $01
-.byte $c9, $06, $90, $09, $a9, $80, $0d, $8f, $fe, $8d, $8f, $fe, $60, $60, $98, $a4
-.byte $02, $30, $08, $f0, $12, $c9, $00, $10, $0e, $30, $04, $c9, $00, $30, $08, $a9
-.byte $80, $0d, $8f, $fe, $8d, $8f, $fe, $60
+MouseInit:
+	jmp _MouseInit
+SlowMouse:
+	jmp _SlowMouse
+UpdateMouse:
+	jmp _UpdateMouse
+SetMouse:
+
+dat0:
+	.byte 0
+dat1:
+	.byte 0
+dat2:
+	.byte 0
+dat3:
+	.byte 0
+dat4:
+	.byte 0
+dat5:
+	.byte 0
+dat6:
+	.byte 0
+dat7:
+	.byte 0
+
+_MouseInit:
+    LDA #$00
+    STA $3B
+    LDA #$08
+    STA $3A
+    STA $3C
+    RTS
+
+_SlowMouse:
+    BIT $30
+    BMI _UpdateMouse
+    JMP $FF36
+
+_08A2:
+_UpdateMouse:
+    LDA $01
+    PHA
+    LDA #$35
+    STA $01
+    LDA $DC02
+    PHA
+    LDA $DC03
+    PHA
+    LDA $DC00
+    PHA
+    JSR $FF37
+    LDA $FE8E
+    EOR #$FF
+    STA $FE8E
+    BNE _0927
+    JSR $FF5B
+    LDA $D419
+    SEC
+    SBC #$1F
+    BCS _08CF
+    LDA #$00
+_08CF:
+    STA $02
+    LSR $02
+    LSR $02
+    LSR $02
+    SEC
+    SBC $02
+    CMP #$0C
+    BCC _0927
+    CMP #$AB
+    BEQ _08E4
+    BCS _0927
+_08E4:
+    STA $02
+    LDA $D41A
+    CMP #$32
+    BCC _0927
+    CMP #$F9
+    BEQ _08F3
+    BCS _0927
+_08F3:
+    STA $03
+    LDA $84B7
+    BEQ _08FD
+    JSR $FF6D
+_08FD:
+    LDA #$00
+    STA $FE8F
+    LDA $02
+    LDX $FE8A
+    LDY $FE8C
+    JSR $FFB1
+    STY $FE8C
+    STX $FE8A   
+    LDA $03
+    LDX $FE8B
+    LDY $FE8D
+    JSR $FFB1
+    STY $FE8D
+    STX $FE8B
+    JSR $FF85
+_0927:
+    PLA
+    STA $DC00
+    PLA
+    STA $DC03
+    PLA
+    STA $DC02
+    PLA
+    STA $01
+    RTS
+
+_0937:
+    LDA #$00
+    STA $DC02
+    STA $DC03
+    LDA $DC01
+    AND #$04
+    CMP $FE89
+    BEQ _095A
+    STA $FE89
+    ASL A
+    ASL A
+    ASL A
+    ASL A
+    ASL A
+    STA $8505
+    LDA $39
+    ORA #$20
+    STA $39
+_095A:
+    RTS
+
+_095b:
+    LDA #$FF
+    STA $DC02
+    LDA #$40
+    STA $DC00
+    LDX #$6E
+_0967:
+    NOP
+    NOP
+    DEX
+    BNE _0967
+    RTS
+
+_096d:
+    LDA $3B
+    STA $04
+    LDA $3A
+    ROR $04
+    ROR A
+    CLC
+    ADC #$0C
+    STA $FE8A
+    LDA $3C
+    CLC
+    ADC #$32
+    STA $FE8B
+    RTS
+
+_0985:
+    BIT $FE8F
+    BMI _09B0
+    LDX #$00
+    LDA $FE8A
+    ASL A
+    BCC _0993
+    INX
+_0993:
+    STX $3B
+    AND #$FE
+    STA $3A
+    SEC
+    LDA $3A
+    SBC #$18
+    STA $3A
+    LDA $3B
+    SBC #$00
+    STA $3B
+    LDA $FE8B
+    SEC
+    SBC #$32
+    AND #$FE
+    STA $3C
+_09B0:
+    RTS
+
+_09b1:
+    STX $02
+    TAX
+    SEC
+    SBC $02
+    STA $02
+    BPL _09C0
+    EOR #$FF
+    CLC
+    ADC #$01
+_09C0:
+    CMP #$06
+    BCC _09CD
+    LDA #$80
+    ORA $FE8F
+    STA $FE8F
+    RTS
+_09CD:
+    RTS
+
+_09ce:
+    TYA
+    LDY $02
+    BMI _09DB
+    BEQ _09E7
+    CMP #$00
+    BPL _09E7
+    BMI _09DF
+    CMP #$00
+_09DB:
+    BMI _09E7
+_09DF:
+    LDA #$80
+    ORA $FE8F
+    STA $FE8F
+_09E7:
+    RTS
+
