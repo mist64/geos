@@ -36,204 +36,204 @@ dat7:
 	.byte 0
 
 _MouseInit:
-    LDA #$00
-    STA $3B
-    LDA #$08
-    STA $3A
-    STA $3C
-    RTS
+	lda #$00
+	sta $3b
+	lda #$08
+	sta $3a
+	sta $3c
+	rts
 
 _SlowMouse:
-    BIT $30
-    BMI _UpdateMouse
-    JMP $FF36
+	bit $30
+	bmi _UpdateMouse
+	jmp $ff36
 
-_08A2:
+_08a2:
 _UpdateMouse:
-    LDA $01
-    PHA
-    LDA #$35
-    STA $01
-    LDA $DC02
-    PHA
-    LDA $DC03
-    PHA
-    LDA $DC00
-    PHA
-    JSR $FF37
-    LDA $FE8E
-    EOR #$FF
-    STA $FE8E
-    BNE _0927
-    JSR $FF5B
-    LDA $D419
-    SEC
-    SBC #$1F
-    BCS _08CF
-    LDA #$00
-_08CF:
-    STA $02
-    LSR $02
-    LSR $02
-    LSR $02
-    SEC
-    SBC $02
-    CMP #$0C
-    BCC _0927
-    CMP #$AB
-    BEQ _08E4
-    BCS _0927
-_08E4:
-    STA $02
-    LDA $D41A
-    CMP #$32
-    BCC _0927
-    CMP #$F9
-    BEQ _08F3
-    BCS _0927
-_08F3:
-    STA $03
-    LDA $84B7
-    BEQ _08FD
-    JSR $FF6D
-_08FD:
-    LDA #$00
-    STA $FE8F
-    LDA $02
-    LDX $FE8A
-    LDY $FE8C
-    JSR $FFB1
-    STY $FE8C
-    STX $FE8A   
-    LDA $03
-    LDX $FE8B
-    LDY $FE8D
-    JSR $FFB1
-    STY $FE8D
-    STX $FE8B
-    JSR $FF85
+	lda $01
+	pha
+	lda #$35
+	sta $01
+	lda $dc02
+	pha
+	lda $dc03
+	pha
+	lda $dc00
+	pha
+	jsr $ff37
+	lda $fe8e
+	eor #$ff
+	sta $fe8e
+	bne _0927
+	jsr $ff5b
+	lda $d419
+	sec
+	sbc #$1f
+	bcs _08cf
+	lda #$00
+_08cf:
+	sta $02
+	lsr $02
+	lsr $02
+	lsr $02
+	sec
+	sbc $02
+	cmp #$0c
+	bcc _0927
+	cmp #$ab
+	beq _08e4
+	bcs _0927
+_08e4:
+	sta $02
+	lda $d41a
+	cmp #$32
+	bcc _0927
+	cmp #$f9
+	beq _08f3
+	bcs _0927
+_08f3:
+	sta $03
+	lda $84b7
+	beq _08fd
+	jsr $ff6d
+_08fd:
+	lda #$00
+	sta $fe8f
+	lda $02
+	ldx $fe8a
+	ldy $fe8c
+	jsr $ffb1
+	sty $fe8c
+	stx $fe8a
+	lda $03
+	ldx $fe8b
+	ldy $fe8d
+	jsr $ffb1
+	sty $fe8d
+	stx $fe8b
+	jsr $ff85
 _0927:
-    PLA
-    STA $DC00
-    PLA
-    STA $DC03
-    PLA
-    STA $DC02
-    PLA
-    STA $01
-    RTS
+	pla
+	sta $dc00
+	pla
+	sta $dc03
+	pla
+	sta $dc02
+	pla
+	sta $01
+	rts
 
 _0937:
-    LDA #$00
-    STA $DC02
-    STA $DC03
-    LDA $DC01
-    AND #$04
-    CMP $FE89
-    BEQ _095A
-    STA $FE89
-    ASL A
-    ASL A
-    ASL A
-    ASL A
-    ASL A
-    STA $8505
-    LDA $39
-    ORA #$20
-    STA $39
-_095A:
-    RTS
+	lda #$00
+	sta $dc02
+	sta $dc03
+	lda $dc01
+	and #$04
+	cmp $fe89
+	beq _095a
+	sta $fe89
+	asl a
+	asl a
+	asl a
+	asl a
+	asl a
+	sta $8505
+	lda $39
+	ora #$20
+	sta $39
+_095a:
+	rts
 
 _095b:
-    LDA #$FF
-    STA $DC02
-    LDA #$40
-    STA $DC00
-    LDX #$6E
+	lda #$ff
+	sta $dc02
+	lda #$40
+	sta $dc00
+	ldx #$6e
 _0967:
-    NOP
-    NOP
-    DEX
-    BNE _0967
-    RTS
+	nop
+	nop
+	dex
+	bne _0967
+	rts
 
 _096d:
-    LDA $3B
-    STA $04
-    LDA $3A
-    ROR $04
-    ROR A
-    CLC
-    ADC #$0C
-    STA $FE8A
-    LDA $3C
-    CLC
-    ADC #$32
-    STA $FE8B
-    RTS
+	lda $3b
+	sta $04
+	lda $3a
+	ror $04
+	ror a
+	clc
+	adc #$0c
+	sta $fe8a
+	lda $3c
+	clc
+	adc #$32
+	sta $fe8b
+	rts
 
 _0985:
-    BIT $FE8F
-    BMI _09B0
-    LDX #$00
-    LDA $FE8A
-    ASL A
-    BCC _0993
-    INX
+	bit $fe8f
+	bmi _09b0
+	ldx #$00
+	lda $fe8a
+	asl a
+	bcc _0993
+	inx
 _0993:
-    STX $3B
-    AND #$FE
-    STA $3A
-    SEC
-    LDA $3A
-    SBC #$18
-    STA $3A
-    LDA $3B
-    SBC #$00
-    STA $3B
-    LDA $FE8B
-    SEC
-    SBC #$32
-    AND #$FE
-    STA $3C
-_09B0:
-    RTS
+	stx $3b
+	and #$fe
+	sta $3a
+	sec
+	lda $3a
+	sbc #$18
+	sta $3a
+	lda $3b
+	sbc #$00
+	sta $3b
+	lda $fe8b
+	sec
+	sbc #$32
+	and #$fe
+	sta $3c
+_09b0:
+	rts
 
 _09b1:
-    STX $02
-    TAX
-    SEC
-    SBC $02
-    STA $02
-    BPL _09C0
-    EOR #$FF
-    CLC
-    ADC #$01
-_09C0:
-    CMP #$06
-    BCC _09CD
-    LDA #$80
-    ORA $FE8F
-    STA $FE8F
-    RTS
-_09CD:
-    RTS
+	stx $02
+	tax
+	sec
+	sbc $02
+	sta $02
+	bpl _09c0
+	eor #$ff
+	clc
+	adc #$01
+_09c0:
+	cmp #$06
+	bcc _09cd
+	lda #$80
+	ora $fe8f
+	sta $fe8f
+	rts
+_09cd:
+	rts
 
 _09ce:
-    TYA
-    LDY $02
-    BMI _09DB
-    BEQ _09E7
-    CMP #$00
-    BPL _09E7
-    BMI _09DF
-    CMP #$00
-_09DB:
-    BMI _09E7
-_09DF:
-    LDA #$80
-    ORA $FE8F
-    STA $FE8F
-_09E7:
-    RTS
+	tya
+	ldy $02
+	bmi _09db
+	beq _09e7
+	cmp #$00
+	bpl _09e7
+	bmi _09df
+	cmp #$00
+_09db:
+	bmi _09e7
+_09df:
+	lda #$80
+	ora $fe8f
+	sta $fe8f
+_09e7:
+	rts
 
