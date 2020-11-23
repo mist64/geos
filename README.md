@@ -46,7 +46,7 @@ The default shell of GEOS is *deskTop*, a file manager an application launcher.
 
 Several powerful applications are available for GEOS, including
 
-* geoWrite
+* [geoWrite](https://github.com/mist64/geowrite)
 * geoPaint
 * geoPublish
 * geoCalc
