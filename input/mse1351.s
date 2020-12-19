@@ -1,14 +1,14 @@
 ; GEOS by Berkeley Softworks
 ; reverse engineered by Maciej Witkowiak, Michael Steil
 ;
-; Commodore 1531 mouse input driver
+; Commodore 1351 mouse input driver
 
 .include "const.inc"
 .include "geossym.inc"
 .include "geosmac.inc"
 .include "c64.inc"
 
-.segment "mse1531"
+.segment "inputdrv"
 
 MouseInit:
 	jmp _MouseInit
@@ -16,7 +16,10 @@ SlowMouse:
 	jmp _SlowMouse
 UpdateMouse:
 	jmp _UpdateMouse
+.ifdef bsw128
 SetMouse:
+	rts
+.endif
 
 tmpFire:
 	.byte 0

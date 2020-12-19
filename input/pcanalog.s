@@ -3,7 +3,7 @@
 ;
 ; pcanalog input driver
 
-.segment "pcanalog"
+.segment "inputdrv"
 
 .byte $4c, $94, $fe, $4c, $a0, $fe, $4c, $a1, $fe, $00, $2d, $33, $39, $07, $05, $39
 .byte $3e, $43, $08, $04, $a9, $00, $85, $3b, $a9, $00, $85, $3a, $a9, $00, $85, $3c

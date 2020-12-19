@@ -9,7 +9,7 @@
 .include "jumptab.inc"
 .include "c64.inc"
 
-.segment "amigamse"
+.segment "inputdrv"
 
 MouseInit:
 	jmp _MouseInit
@@ -17,6 +17,10 @@ SlowMouse:
 	jmp _SlowMouse
 UpdateMouse:
 	jmp _UpdateMouse
+.ifdef bsw128
+SetMouse:
+	rts
+.endif
 
 acceleration:
 	.byte 3

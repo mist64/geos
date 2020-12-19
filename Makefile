@@ -7,9 +7,15 @@ AS           = ca65
 LD           = ld65
 C1541        = c1541
 PUCRUNCH     = pucrunch
-D64_TEMPLATE = GEOS64.D64
+EXOMIZER     = exomizer
 D64_RESULT   = geos.d64
 DESKTOP_CVT  = desktop.cvt
+
+ifeq ($(VARIANT),bsw128)
+D64_TEMPLATE = GEOS128.D64
+else
+D64_TEMPLATE = GEOS64.D64
+endif
 
 ASFLAGS      = -I inc -I .
 
@@ -232,7 +238,7 @@ DRIVER_SOURCES= \
 	input/joydrv.bin \
 	input/amigamse.bin \
 	input/lightpen.bin \
-	input/mse1531.bin \
+	input/mse1351.bin \
 	input/koalapad.bin \
 	input/pcanalog.bin
 
@@ -268,7 +274,7 @@ ALL_BINS= \
 	$(BUILD_DIR)/input/joydrv.bin \
 	$(BUILD_DIR)/input/amigamse.bin \
 	$(BUILD_DIR)/input/lightpen.bin \
-	$(BUILD_DIR)/input/mse1531.bin \
+	$(BUILD_DIR)/input/mse1351.bin \
 	$(BUILD_DIR)/input/koalapad.bin \
 	$(BUILD_DIR)/input/pcanalog.bin
 
@@ -291,11 +297,25 @@ regress:
 clean:
 	rm -rf build
 
+ifeq ($(VARIANT),bsw128)
 $(BUILD_DIR)/$(D64_RESULT): $(BUILD_DIR)/kernal_compressed.prg
 	@if [ -e $(D64_TEMPLATE) ]; then \
 		cp $(D64_TEMPLATE) $@; \
-		echo delete geos geoboot | $(C1541) $@ >/dev/null; \
-		echo write $< geos | $(C1541) $@ >/dev/null; \
+		echo delete geos128 geoboot128 | $(C1541) $@ ;\
+		echo write $< geos128 | $(C1541) $@ ;\
+		echo \*\*\* Created $@ based on $(D64_TEMPLATE).; \
+	else \
+		echo format geos,00 d64 $@ | $(C1541) >/dev/null; \
+		echo write $< geos128 | $(C1541) $@ >/dev/null; \
+		if [ -e $(DESKTOP_CVT) ]; then echo geoswrite $(DESKTOP_CVT) | $(C1541) $@; fi >/dev/null; \
+		echo \*\*\* Created fresh $@.; \
+	fi;
+else
+$(BUILD_DIR)/$(D64_RESULT): $(BUILD_DIR)/kernal_compressed.prg
+	@if [ -e $(D64_TEMPLATE) ]; then \
+		cp $(D64_TEMPLATE) $@; \
+		echo delete geos geoboot | $(C1541) $@ ;\
+		echo write $< geos | $(C1541) $@ ;\
 		echo \*\*\* Created $@ based on $(D64_TEMPLATE).; \
 	else \
 		echo format geos,00 d64 $@ | $(C1541) >/dev/null; \
@@ -303,12 +323,14 @@ $(BUILD_DIR)/$(D64_RESULT): $(BUILD_DIR)/kernal_compressed.prg
 		if [ -e $(DESKTOP_CVT) ]; then echo geoswrite $(DESKTOP_CVT) | $(C1541) $@; fi >/dev/null; \
 		echo \*\*\* Created fresh $@.; \
 	fi;
+endif
 
 $(BUILD_DIR)/kernal_compressed.prg: $(BUILD_DIR)/kernal_combined.prg
 	@echo Creating $@
 ifeq ($(VARIANT), bsw128)
-	# pucrunch can't compress for C128 :(
-	cp $< $@
+	# start address ($4800) is underneath BASIC ROM on the 128; turn off BASIC
+	# and KERNAL before jumping to unpacked code
+	$(EXOMIZER) sfx 0x4800 -t128 -Di_ram_exit='$$3e' -o $@ $<
 else
 	$(PUCRUNCH) -f -c64 -x0x5000 $< $@ 2> /dev/null
 endif
@@ -321,8 +343,12 @@ ifeq ($(VARIANT), bsw128)
 	cat $(BUILD_DIR)/kernal/relocator.bin /dev/zero | dd bs=1 count=1024 >> $(BUILD_DIR)/tmp.bin 2> /dev/null
 # kernal.bin($5000)    @ $5000-$5400 -> $4C00
 	cat $(BUILD_DIR)/kernal/kernal.bin /dev/zero | dd bs=1 count=1024 >> $(BUILD_DIR)/tmp.bin 2> /dev/null
-# kernal.bin($5000)    @ $C000-$0000 -> $5000
-	cat $(BUILD_DIR)/kernal/kernal.bin /dev/zero | dd bs=1 count=16384 skip=28672 >> $(BUILD_DIR)/tmp.bin 2> /dev/null
+# kernal.bin($5000)    @ $C000-$FD00 -> $5000
+	cat $(BUILD_DIR)/kernal/kernal.bin /dev/zero | dd bs=1 count=15616 skip=28672 >> $(BUILD_DIR)/tmp.bin 2> /dev/null
+# input*.bin($FD00)    @ $FD00-$FE80 -> $8D00
+	cat $(BUILD_DIR)/input/$(INPUT).bin /dev/zero | dd bs=1 count=384 >> $(BUILD_DIR)/tmp.bin 2> /dev/null
+# kernal.bin($5000)    @ $FE80-$0000 -> $8E80
+	cat $(BUILD_DIR)/kernal/kernal.bin /dev/zero | dd bs=1 count=384 skip=44672 >> $(BUILD_DIR)/tmp.bin 2> /dev/null
 # drv*.bin($9000)      @ $9000-$9D80 -> $9000
 	cat $(BUILD_DIR)/drv/$(DRIVE).bin /dev/zero | dd bs=1 count=3456 >> $(BUILD_DIR)/tmp.bin 2> /dev/null
 # kernal.bin($5000)    @ $9D80-$A000 -> $9D80
@@ -344,6 +370,12 @@ else
 	@mv $(BUILD_DIR)/tmp.bin $(BUILD_DIR)/kernal_combined.prg
 endif
 
+ifeq ($(VARIANT),bsw128)
+INPUTCFG = input/inputdrv_bsw128.cfg
+else
+INPUTCFG = input/inputdrv.cfg
+endif
+
 $(BUILD_DIR)/drv/drv1541.bin: $(BUILD_DIR)/drv/drv1541.o drv/drv1541.cfg $(DEPS)
 	$(LD) -C drv/drv1541.cfg $(BUILD_DIR)/drv/drv1541.o -o $@
 
@@ -353,23 +385,23 @@ $(BUILD_DIR)/drv/drv1571.bin: $(BUILD_DIR)/drv/drv1571.o drv/drv1571.cfg $(DEPS)
 $(BUILD_DIR)/drv/drv1581.bin: $(BUILD_DIR)/drv/drv1581.o drv/drv1581.cfg $(DEPS)
 	$(LD) -C drv/drv1581.cfg $(BUILD_DIR)/drv/drv1581.o -o $@
 
-$(BUILD_DIR)/input/amigamse.bin: $(BUILD_DIR)/input/amigamse.o input/amigamse.cfg $(DEPS)
-	$(LD) -C input/amigamse.cfg $(BUILD_DIR)/input/amigamse.o -o $@
+$(BUILD_DIR)/input/amigamse.bin: $(BUILD_DIR)/input/amigamse.o $(INPUTCFG) $(DEPS)
+	$(LD) -C $(INPUTCFG) $(BUILD_DIR)/input/amigamse.o -o $@
 
-$(BUILD_DIR)/input/joydrv.bin: $(BUILD_DIR)/input/joydrv.o input/joydrv.cfg $(DEPS)
-	$(LD) -C input/joydrv.cfg $(BUILD_DIR)/input/joydrv.o -o $@
+$(BUILD_DIR)/input/joydrv.bin: $(BUILD_DIR)/input/joydrv.o $(INPUTCFG) $(DEPS)
+	$(LD) -C $(INPUTCFG) $(BUILD_DIR)/input/joydrv.o -o $@
 
-$(BUILD_DIR)/input/lightpen.bin: $(BUILD_DIR)/input/lightpen.o input/lightpen.cfg $(DEPS)
-	$(LD) -C input/lightpen.cfg $(BUILD_DIR)/input/lightpen.o -o $@
+$(BUILD_DIR)/input/lightpen.bin: $(BUILD_DIR)/input/lightpen.o $(INPUTCFG) $(DEPS)
+	$(LD) -C $(INPUTCFG) $(BUILD_DIR)/input/lightpen.o -o $@
 
-$(BUILD_DIR)/input/mse1531.bin: $(BUILD_DIR)/input/mse1531.o input/mse1531.cfg $(DEPS)
-	$(LD) -C input/mse1531.cfg $(BUILD_DIR)/input/mse1531.o -o $@
+$(BUILD_DIR)/input/mse1351.bin: $(BUILD_DIR)/input/mse1351.o $(INPUTCFG) $(DEPS)
+	$(LD) -C $(INPUTCFG) $(BUILD_DIR)/input/mse1351.o -o $@
 
-$(BUILD_DIR)/input/koalapad.bin: $(BUILD_DIR)/input/koalapad.o input/koalapad.cfg $(DEPS)
-	$(LD) -C input/koalapad.cfg $(BUILD_DIR)/input/koalapad.o -o $@
+$(BUILD_DIR)/input/koalapad.bin: $(BUILD_DIR)/input/koalapad.o $(INPUTCFG) $(DEPS)
+	$(LD) -C $(INPUTCFG) $(BUILD_DIR)/input/koalapad.o -o $@
 
-$(BUILD_DIR)/input/pcanalog.bin: $(BUILD_DIR)/input/pcanalog.o input/pcanalog.cfg $(DEPS)
-	$(LD) -C input/pcanalog.cfg $(BUILD_DIR)/input/pcanalog.o -o $@
+$(BUILD_DIR)/input/pcanalog.bin: $(BUILD_DIR)/input/pcanalog.o $(INPUTCFG) $(DEPS)
+	$(LD) -C $(INPUTCFG) $(BUILD_DIR)/input/pcanalog.o -o $@
 
 $(BUILD_DIR)/%.o: %.s
 	@mkdir -p `dirname $@`

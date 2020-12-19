@@ -11,6 +11,10 @@
 
 BSWFont:
 .ifdef wheels
+	; This is the German variant of the original BSW font:
+	; * "@" is replaced with "§"
+	; * "[\]" is replaced with "ÄÖÜ"
+	; * "{|}~" is replaced with "äöüß"
 	.byte $06,$3c,$00,$09,$08,$00,$cc,$00,$00,$00,$05,$00,$07,$00,$0b,$00
 	.byte $11,$00,$17,$00,$1d,$00,$23,$00,$25,$00,$29,$00,$2d,$00,$33,$00
 	.byte $39,$00,$3c,$00,$41,$00,$43,$00,$4a,$00,$4f,$00,$52,$00,$56,$00
@@ -60,6 +64,9 @@ BSWFont:
 	.byte $00,$00,$10,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
 	.byte $00
 .elseif .defined(gateway_font)
+	; This is the updated version of the original BSW font:
+	; * The "C=" logo is the condensed variant.
+	; * The width of "z" is fixed.
 	.byte $06,$3c,$00,$09,$08,$00,$cc,$00,$00,$00,$05,$00,$07,$00,$0b,$00
 	.byte $11,$00,$17,$00,$1d,$00,$23,$00,$25,$00,$29,$00,$2d,$00,$33,$00
 	.byte $39,$00,$3c,$00,$41,$00,$43,$00,$4a,$00,$4f,$00,$52,$00,$56,$00
@@ -108,6 +115,10 @@ BSWFont:
 	.byte $00,$00,$3f,$c0,$00,$00,$00,$04,$02,$00,$00,$00,$10,$10,$00,$00
 	.byte $00,$00,$20,$02,$00,$00,$00,$00
 .else
+	; This is the original BSW font:
+	; * The "C=" logo is the wide variant.
+	; * There is a bug where the "z" character has an extra empty column
+	;   on the right. 
 	.byte $06,$3c,$00,$09,$08,$00,$cc,$00,$00,$00,$05,$00,$07,$00,$0b,$00
 	.byte $11,$00,$17,$00,$1d,$00,$23,$00,$25,$00,$29,$00,$2d,$00,$33,$00
 	.byte $39,$00,$3c,$00,$41,$00,$43,$00,$4a,$00,$4f,$00,$52,$00,$56,$00
