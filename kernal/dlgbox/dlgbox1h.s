@@ -33,12 +33,14 @@
 .import GetString
 .import PutString
 
+.ifdef wheels_size
+.import DBKeyVector2
+.endif
 .ifdef wheels
 .import SetupRAMOpCall
 .import RstrKernal
 .import GetFEntries
 .import GetNewKernal
-.import DBKeyVector2
 .import FetchRAM
 .import CopyString
 .endif
@@ -49,7 +51,7 @@
 .global DBDoTXTSTR
 .global DBDoVARSTR
 
-.ifdef wheels
+.ifdef wheels_size
 .global StringGetNext
 .endif
 
