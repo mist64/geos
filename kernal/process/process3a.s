@@ -22,7 +22,7 @@
 .import _DoExecDelay
 .import _RemoveDelay
 
-.ifdef wheels
+.ifdef wheels_size
 .import UnfreezeProcess
 .import UnblockProcess
 .endif

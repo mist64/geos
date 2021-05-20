@@ -23,7 +23,9 @@ Add2:
         sta     r6L
         bcc     @1
         inc     r6H
-@1:	rts
+@1:
+Add2_return:
+	rts
 .else
 	AddVW 2, r6
 Add2_return:

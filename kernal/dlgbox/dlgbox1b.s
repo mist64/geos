@@ -20,7 +20,7 @@
 .import DBDoVARSTR
 .import DBDoTXTSTR
 .import DBDoIcons
-.ifdef wheels
+.ifdef wheels_fixes
 .import DoESC_RULER
 .endif
 
