@@ -362,7 +362,7 @@ ifeq ($(VARIANT), bsw128)
 
 else
 	@echo Creating $@ from kernal.bin $(DRIVE).bin $(INPUT).bin
-	printf "\x00\x50" > $(BUILD_DIR)/tmp.bin
+	awk 'BEGIN { printf "%c%c", 0, 80 }' > $(BUILD_DIR)/tmp.bin
 	dd if=$(BUILD_DIR)/kernal/kernal.bin bs=1 count=16384 >> $(BUILD_DIR)/tmp.bin 2> /dev/null
 	cat $(BUILD_DIR)/drv/$(DRIVE).bin /dev/zero | dd bs=1 count=3456 >> $(BUILD_DIR)/tmp.bin 2> /dev/null
 	cat $(BUILD_DIR)/kernal/kernal.bin /dev/zero | dd bs=1 count=24832 skip=19840 >> $(BUILD_DIR)/tmp.bin 2> /dev/null
