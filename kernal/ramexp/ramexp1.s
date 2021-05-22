@@ -75,6 +75,7 @@ Plus60KTestEnd:
 
 .if .defined(useRamCart64) || .defined(useRamCart128)
 DetectRamExp:
+ASSERT_NOT_BELOW_IO
 	LoadB CPU_DATA, IO_IN
 	LoadW RAMC_BASE, 0
 	ldx RAMC_WINDOW
