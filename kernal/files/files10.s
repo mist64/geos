@@ -36,6 +36,15 @@
 .import ReadR9
 .endif
 
+.ifdef useRamExp
+.import RamExpRead
+.import RamExpGetStat
+.import CmpString
+.import DeskTopOpen
+.import DeskTopRecord
+.import DeskTopName
+.endif
+
 .global _AppendRecord
 .global _CloseRecordFile
 .global _WriteRecord

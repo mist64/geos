@@ -35,6 +35,13 @@
 .import StashRAM
 .endif
 
+.ifdef useRamExp
+.import RamExpRead
+.import RamExpGetStat
+.import RamExpWrite
+.import RamExpPutStat
+.endif
+
 .global _LdDeskAcc
 .global _RstrAppl
 

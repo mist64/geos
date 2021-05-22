@@ -9,6 +9,19 @@
 .include "kernal.inc"
 .include "c64.inc"
 
+.ifdef useRamExp
+.global RamExpSetStat
+.global RamExpGetStat
+.global RamExpPutStat
+.global RamExpRead
+.global RamExpWrite
+.global DeskTopOpen
+.global DeskTopStart
+.global DeskTopExec
+.global DeskTopLgh
+.global DeskTopRecord
+.endif
+
 .segment "ramexp2"
 
 .ifdef useRamExp
