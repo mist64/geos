@@ -205,11 +205,6 @@ _RstrAppl:
 	lda #0
 .elseif .defined(useRamExp)
 ; restore from other bank
-	ldx DeskAccSP
-	txs
-	tax
-	PushW DeskAccPC
-	rts
 	jsr RamExpGetStat
 	MoveW diskBlkBuf+DACC_ST_ADDR, r0
 	MoveB diskBlkBuf+DACC_LGH, r2H
