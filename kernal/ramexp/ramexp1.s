@@ -140,6 +140,7 @@ LoadDTLp:
 	jsr NewDisk
 	jmp LoadDTLp
 LoadDTCont:
+	MoveW r5, r9
 	jsr GetFHdrInfo
 	MoveW fileHeader+O_GHST_ADDR, DeskTopStart
 	MoveW fileHeader+O_GHST_VEC, DeskTopExec
