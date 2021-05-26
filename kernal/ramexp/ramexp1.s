@@ -9,10 +9,35 @@
 .include "kernal.inc"
 .include "c64.inc"
 
+.ifdef useRamExp
+.import OpenRecordFile
+.import ReadRecord
+.import PointRecord
+.import NewDisk
+.import FindFile
+.import GetFHdrInfo
+.import ToBASIC
+.import DoDlgBox
+.import _EnterDT_DB
+.import DeskTopName
+.import RamExpGetStat
+.import RamExpPutStat
+.import RamExpWrite
+.import DeskTopOpen
+.import DeskTopStart
+.import DeskTopExec
+.import DeskTopLgh
+.endif
+
+.ifdef useRamExp
+.global LoadDeskTop
+.global DetectRamExp
+.endif
+
 .segment "ramexp1"
 
 .ifdef usePlus60K
-DetectPlus60K:
+DetectRamExp:
 ASSERT_NOT_BELOW_IO
 	LoadB CPU_DATA, IO_IN
 	ldx #0
@@ -49,7 +74,7 @@ Plus60KTestEnd:
 .endif
 
 .if .defined(useRamCart64) || .defined(useRamCart128)
-DetectRamCart:
+DetectRamExp:
 ASSERT_NOT_BELOW_IO
 	LoadB CPU_DATA, IO_IN
 	LoadW RAMC_BASE, 0
@@ -115,6 +140,7 @@ LoadDTLp:
 	jsr NewDisk
 	jmp LoadDTLp
 LoadDTCont:
+	MoveW r5, r9
 	jsr GetFHdrInfo
 	MoveW fileHeader+O_GHST_ADDR, DeskTopStart
 	MoveW fileHeader+O_GHST_VEC, DeskTopExec

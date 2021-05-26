@@ -33,13 +33,8 @@
 ; used by header.s
 .global _ResetHandle
 
-.ifdef usePlus60K
-.import DetectPlus60K
-.endif
-.if .defined(useRamCart64) || .defined(useRamCart128)
-.import DetectRamCart
-.endif
 .ifdef useRamExp
+.import DetectRamExp
 .import LoadDeskTop
 .endif
 
@@ -149,11 +144,8 @@ OrigResetHandle:
 	ldx #$ff
 	jsr _DoFirstInitIO
 	jsr InitGEOEnv
-.ifdef usePlus60K
-	jsr DetectPlus60K
-.endif
-.if .defined(useRamCart64) || .defined(useRamCart128)
-	jsr DetectRamCart
+.ifdef useRamExp
+	jsr DetectRamExp
 .endif
 	jsr GetDirHead
 	MoveB bootSec, r1H
