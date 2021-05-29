@@ -3,10 +3,10 @@
 bsw=1
 drv1541=1
 
+.include "config.inc"
 .include "const.inc"
 .include "geossym.inc"
 .include "geosmac.inc"
-.include "config.inc"
 .include "kernal.inc"
 .include "c64.inc" 
 .include "jumptab.inc"
@@ -44,9 +44,10 @@ LDC08   = $DC08
 L88C7   = ramBase
 _ramBase = ramBase-8
 
-version	= $C00F		; GEOS version, $20 = 2.0, $13 = 1.3
-LC012	= $C012
-LC013	= $C013
+; GEOS Kernal fixed locations
+version		= $C00F		; GEOS version, $20 = 2.0, $13 = 1.3
+sysFlgCopy	= $C012
+c128Flag	= $C013		; bit 7==1 -> GEOS 128
 
 LC2B1	= SetDevice+1
 LC2B2	= SetDevice+2
@@ -93,10 +94,9 @@ APP_START:
         JMP     StartGUI	; no, it's application run, load GUI from chain #1
 
 L0418:
-        BIT     LC013
-        BMI     L0479
+	bbsf	7, c128Flag, L0479	; are we on GEOS 128?
 
-        LDA     curDrive
+        LDA     curDrive	; .. no
         STA     L1DC8
         TAY
         LDA     _driveType,Y
@@ -153,22 +153,15 @@ L0479:
         JMP     EnterDeskTop
 
 L047C:
-        BIT     LC013
-        BMI     L048E
-
-        LDA     version
-        CMP     #$14
-        BCS     L048E
-
-        JSR     L04CC
-
+	bbsf	7, c128Flag, @1	; skip if we're on GEOS 128
+	CmpBI	version, $14	; skip if GEOS 64 version higher than 1.4
+        BCS     @1
+        JSR     PatchGEOS1_3
         JSR     L048F
-
-L048E:
-        RTS
+@1:	RTS
 
 L048F:
-        LDA     #$C3
+        LDA     #$C3	; $c310 - arbitrary address less than 255 bytes before L04C2 values are matched
         STA     r0H
         LDA     #$10
         STA     r0L
@@ -176,12 +169,11 @@ L048F:
         STY     r1L
         JSR     L04A2
 
-        LDA     #$05
-        STA     r1L
+	LoadB	r1L, 5
 L04A2:
         LDX     r1L
 L04A4:
-        LDA     (r0L),Y
+        LDA     (r0),Y
         CMP     L04C2,X
         BEQ     L04B3
 
@@ -204,34 +196,31 @@ L04B7:
         LDA     L04C2,X
         BNE     L04A4
 
-        LDA     #$34
-        STA     (r0L),Y
+        LDA     #$34		; patch GEOS Kernal to use CMP #"4" instead of CMP "5" in _EnterDeskTop at fileHeader+O_GHFNAME+15; DeskTop minor version number???
+        STA     (r0),Y
         RTS
 
 L04C2:
-        .byte    $AD,$5C,$81,$C9,$00
+        .byte    $AD,$5C,$81,$C9,$00 ; 4 bytes compared against _EnterDeskTop content at $c38d:
+		;LDA fileHeader+O_GHFNAME+15
+		;CMP #"5" ; <- without the final '5' value
 
         .byte    " V1.",$00
 
-L04CC:
-        LDA     version
-        CMP     #$13
-        BNE     L04EB
+PatchGEOS1_3:
+	CmpBI	version, $13	; GEOS 1.3?
+        BNE     @1
 
-        LDA     LC2B2
-        STA     r0H
-        LDA     LC2B1
-        STA     r0L
-        LDY     #$00
-        LDA     (r0L),Y
-        CMP     #$EA
-        BEQ     L04EB
+	MoveW	SetDevice+1, r0
+        LDY     #0
+        LDA     (r0),Y
+        CMP     #$EA		; opcode NOP
+        BEQ     @1
 
         LDY     #$03
-        LDA     #$3D
-        STA     (r0L),Y
-L04EB:
-        RTS
+        LDA     #$3D		; opcode AND $xxxx,X or address?
+        STA     (r0),Y
+@1:	RTS
 
 StartGUI:
         JSR     OpenConfigureFile
@@ -281,7 +270,7 @@ L0558:
 L0563:
         AND     #$A0
         STA     sysRAMFlg
-        STA     LC012
+        STA     sysFlgCopy
         LDA     L1DC9
         CMP     #$02
         BCS     L057B
@@ -980,7 +969,7 @@ L0986:
         LDA     sysRAMFlg
         AND     #$BF
         STA     sysRAMFlg
-        STA     LC012
+        STA     sysFlgCopy
         STA     L040A
         LDY     L1DF3
         LDA     L1DEF
@@ -998,7 +987,7 @@ L09AE:
         LDA     sysRAMFlg
         ORA     #$40
         STA     sysRAMFlg
-        STA     LC012
+        STA     sysFlgCopy
         STA     L040A
         LDY     driveType
         BEQ     L09C9
@@ -1671,7 +1660,7 @@ L0E73:
 L0ED5:
         LDY     #$00
 L0ED7:
-        LDA     (r5L),Y
+        LDA     (r5),Y
         STA     OS_VARS,Y
         INY
         BNE     L0ED7
@@ -1854,7 +1843,7 @@ L0FE5:
         STA     r2L
         JSR     L6216
 
-        LDA     LC012
+        LDA     sysFlgCopy
         STA     sysRAMFlg
         LDA     #$85
         STA     r0H
