@@ -1,2 +1,5 @@
 *.o
 *.cvt
+*.map
+*.lab
+.*.swp

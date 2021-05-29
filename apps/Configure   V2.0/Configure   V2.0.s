@@ -15,7 +15,8 @@
 
 		.segment "FILEINFO"
 
-	.import __VLIR0_START__, __STARTUP_RUN__
+	.import __VLIR0_START__
+	.import APP_START
 
 	.byte 3, 21, 63 | $80
 
@@ -32,17 +33,17 @@
 	.byte %11111111, %11111111, %11111111
 
 	.byte 131, 14, 1
-	.word __VLIR0_START__, __VLIR0_START__ - 1, __STARTUP_RUN__
+	.word __VLIR0_START__, __VLIR0_START__ - 1, APP_START
 
 	.byte "Configure"
 	.res  (12 - 9), $20
 	.byte "V2.0"
 	.byte 0, 0, 0
-	.byte $80
+	.byte $80 ; XXX what mode is that?
 
 	.byte "Berkeley Softworks"
 	.byte 0
-	;.res  (63 - 19)
+	;.res  (63 - 19) ; uncomment if we ignore junk below
 	.res 21
 	; ??? junk ???
 	.byte $e1, $e1, $e1
