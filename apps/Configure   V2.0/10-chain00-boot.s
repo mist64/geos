@@ -22,6 +22,7 @@ L1AD1	= $1ad1
 L1DA5	= $1da5 ; buffer for 1(+1?) for found filenames
 
 L1DB6   = $1DB6
+L1DBE	= $1DBE
 L1DC6   = $1DC6
 L1DC7   = $1DC7
 L1DC8   = $1DC8
@@ -1414,43 +1415,29 @@ L0DDC:
         JMP     DoneWithIO
 
 L0DDF:
-	LoadW	r0, $1dbe
+	LoadW	r0, L1DBE
 	LoadW_	r1, 0
 	LoadW	r2, 8
         JSR     FetchRAM
 
-        LDA     #$0E
-        STA     r0H
-        LDA     #$2A
-        STA     r0L
+	LoadW	r0, L0E2A
         JSR     StashRAM
 
-        LDA     #$1D
-        STA     r0H
-        LDA     #$B6
-        STA     r0L
+	LoadW	r0, L1DB6
         JSR     FetchRAM
 
-        LDA     #$1D
-        STA     r0H
-        LDA     #$BE
-        STA     r0L
+	LoadW	r0, L1DBE
         JSR     StashRAM
 
-        LDY     #$07
-L0E1B:
-        LDA     L0E2A,Y
+        LDY     #8-1
+@1:	LDA     L0E2A,Y
         CMP     L1DB6,Y
-        BNE     L0E28
-
+        BNE	@2 
         DEY
-        BPL     L0E1B
-
+        BPL	@1
         SEC
         RTS
-
-L0E28:
-        CLC
+@2:	CLC
         RTS
 
 L0E2A:
@@ -1683,9 +1670,9 @@ L0FAA:
         BNE     L0FA5
 
         JSR     i_FillRam
-	.word	$0500 ; count
-	.word	$8400 ; address
-	.byte	$00   ; value
+	.word	OS_VARS_LGH	; count
+	.word	dirEntryBuf	; address
+	.byte	$00		; value
 
 L0FC2:
         LDA     #$00
