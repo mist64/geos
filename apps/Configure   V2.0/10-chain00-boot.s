@@ -1012,7 +1012,7 @@ DriverOffsetsL:
 DriverOffsetsH:
 	.hibytes DriverOffsets
 
-	; 0A2A
+	; 0A2A = DriverOffsetsL+8
         .byte    $00,$80,$00,$80,$83,$90,$9E,$AB
 
 L0A32:
@@ -1086,21 +1086,14 @@ L0A96:
 
         JSR     L0AC0
 
-        LDA     #$FF
-        STA     L8001
-        LDA     #$80
-        STA     r4H
-        LDA     #$00
-        STA     r4L
-        LDA     #$12
-        STA     r1L
-        LDA     #$01
-        STA     r1H
+	LoadB	diskBlkBuf+1, $ff	; clear link to next sector
+	LoadW	r4, diskBlkBuf		; buffer
+	LoadB	r1L, 18			; dir track
+	LoadB	r1H, 1			; 1st dir entry sector
         JSR     PutBlock
 
-        INC     r1L
-        LDA     #$08
-        STA     r1H
+        INC     r1L			; dir track+1 ?
+	LoadB	r1H, 8			; sector 8?
         JSR     PutBlock
 
         LDA     #$00
@@ -1219,10 +1212,7 @@ L0C6E:
 L0C6F:
         JSR     L0CC4
 
-        LDA     #$01
-        STA     r2H
-        LDA     #$00
-        STA     r2L
+	LoadW	r2, $0100
 L0C7A:
         JSR     L0CD4
 
@@ -1279,12 +1269,8 @@ L0CC3:
         RTS
 
 L0CC4:
-        LDA     r0H
-        STA     L0D41
-        LDA     r0L
-        STA     L0D40
-        LDA     #$20
-        STA     L1DCD
+	MoveW	r0, L0D40
+	LoadB	L1DCD, $20
         RTS
 
 L0CD4:
@@ -1300,10 +1286,7 @@ L0CD4:
 L0CE4:
         JSR     InitForIO
 
-        LDA     #$0D
-        STA     r0H
-        LDA     #$3D
-        STA     r0L
+	LoadW	r0, L0D3D		; M-R command
         JSR     L0D43
 
         BEQ     L0CF8
@@ -1342,16 +1325,8 @@ L0D08:
 
         JSR     DoneWithIO
 
-        LDA     #$00
-        STA     L1DCD
-        CLC
-        LDA     #$20
-        ADC     L0D40
-        STA     L0D40
-        BCC     L0D3A
-
-        INC     L0D41
-L0D3A:
+	LoadB	L1DCD, 0
+	AddVW	$20, L0D40
 	bra	L0CD4
 
 L0D3D:	.byte	"M-R"
@@ -1376,7 +1351,7 @@ L0D43:	LoadB	STATUS, 0
         RTS
 @2:
         JSR     LFFAE
-        LDX     #$0D
+        LDX     #DEV_NOT_FOUND
         RTS
 
 L0D6F:	LoadB	NUMDRV, 0
@@ -1391,16 +1366,13 @@ L0D6F:	LoadB	NUMDRV, 0
 L0D82:
         JSR     InitForIO
 
-        LDA     #$00
-        STA     ramExpSize
-        LDA     #$02
-        STA     L1DC6
+	LoadB	ramExpSize, 0
+	LoadB	L1DC6, 2
         LDA     EXP_BASE
         AND     #$10
         BEQ     L0D9B
 
-        LDA     #$08
-        STA     L1DC6
+	LoadB	L1DC6, 8
 L0D9B:
         LDA     EXP_BASE
         AND     #$E0
@@ -1421,10 +1393,8 @@ L0DB3:
         CMP     LDF02
         BNE     L0DDC
 
-        LDA     #$01
-        STA     ramExpSize
-        LDA     #$00
-        STA     r3L
+	LoadB	ramExpSize, 1
+	LoadB	r3L, 0
 L0DC4:
         JSR     L0DDF
 
@@ -1436,8 +1406,7 @@ L0DC4:
 
         INC     ramExpSize
         INC     r3L
-        CLV
-        BVC     L0DC4
+	bra	L0DC4
 
 L0DD9:
         DEC     ramExpSize
@@ -1445,17 +1414,9 @@ L0DDC:
         JMP     DoneWithIO
 
 L0DDF:
-        LDA     #$1D
-        STA     r0H
-        LDA     #$BE
-        STA     r0L
-        LDA     #$00
-        STA     r1L
-        STA     r1H
-        LDA     #$00
-        STA     r2H
-        LDA     #$08
-        STA     r2L
+	LoadW	r0, $1dbe
+	LoadW_	r1, 0
+	LoadW	r2, 8
         JSR     FetchRAM
 
         LDA     #$0E
