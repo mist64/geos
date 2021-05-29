@@ -1,3 +1,7 @@
+
+; this was used to prepare initial version of Configure   V2.0.s, which was later manually edited
+; DON'T run grc65 again on this file!
+
 HEADER AUTO_EXEC "CONFIGURE" "Configure" "2.0" {
     author    "Berkeley Softworks"
     info      "Allows varying disk configurations:  1541, 1571, 1581 & RAM disks supported."
