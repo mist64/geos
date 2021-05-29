@@ -13,6 +13,11 @@ drv1541=1
 
 .import __STARTUP_RUN__
 .global APP_START
+.global EndChain0
+
+L1162	= $1162		; chain 1 load address 
+L1205   = $1205		; chain 1 start address
+L1DA5	= $1da5 ; buffer for 1(+1?) for found filenames
 
 L1DB6   = $1DB6
 L1DC6   = $1DC6
@@ -39,7 +44,7 @@ LDC08   = $DC08
 L88C7   = ramBase
 _ramBase = ramBase-8
 
-LC00F	= $C00F
+version	= $C00F		; GEOS version, $20 = 2.0, $13 = 1.3
 LC012	= $C012
 LC013	= $C013
 
@@ -68,27 +73,24 @@ LFFB4   = $FFB4
  
 
 	.segment "STARTUP"
-APP_START = __STARTUP_RUN__+5
-
 L03FE = __STARTUP_RUN__-8
 
-       
+	; 0406 == __STARTUP__RUN__
 	.byte    $02,$01
-
+	; 0408
 L0408:
         .byte    $00,$00
-
+	; 040a
 L040A:
         .byte    $00
-
-L040B:
+	; 040b
+APP_START:
         JSR     L047C
 
-        LDA     firstBoot
-        CMP     #$FF
-        BNE     L0418
+	CmpBI	firstBoot, $ff	; is this run during boot?
+        BNE     L0418		; yes
 
-        JMP     L04EC
+        JMP     StartGUI	; no, it's application run, load GUI from chain #1
 
 L0418:
         BIT     LC013
@@ -102,8 +104,9 @@ L0418:
         JSR     L0D82
 
         JSR     i_MoveData
-
-        .word    $5000,$1DFC,$0400
+        .word	$5000 ; source
+	.word	$1DFC ; dest (behind chain0+chain1+$0d80?)
+	.word	$0400 ; length
 
 L0436:
         LDA     #$01
@@ -142,8 +145,9 @@ L0462:
         STA     NUMDRV
 L0470:
         JSR     i_MoveData
-
-        .word    $1DFC,$5000,$0400
+        .word	$1DFC ; source (see above)
+	.word	$5000 ; dest
+	.word	$0400 ; length
 
 L0479:
         JMP     EnterDeskTop
@@ -152,7 +156,7 @@ L047C:
         BIT     LC013
         BMI     L048E
 
-        LDA     LC00F
+        LDA     version
         CMP     #$14
         BCS     L048E
 
@@ -210,7 +214,7 @@ L04C2:
         .byte    " V1.",$00
 
 L04CC:
-        LDA     LC00F
+        LDA     version
         CMP     #$13
         BNE     L04EB
 
@@ -229,67 +233,43 @@ L04CC:
 L04EB:
         RTS
 
-L04EC:
-        JSR     L0522
-
+StartGUI:
+        JSR     OpenConfigureFile
         TXA
-        BNE     L050E
+        BNE	@1
 
-        LDA     #$01
-        JSR     PointRecord
+        LDA	#$01			; chain 1
+        JSR	PointRecord
 
-        LDA     #$11 ; chain 1 load address
-        STA     r7H
-        LDA     #$62
-        STA     r7L
-        LDA     #$FF
-        STA     r2L
-        STA     r2H
-        JSR     ReadRecord
-
+	LoadW	r7, L1162 		; chain 1 load address
+	LoadW_	r2, $ffff 		; length
+        JSR	ReadRecord
         TXA
-        BNE     L050E
+        BNE     @1
+        JMP     L1205			; chain 1 start address
+@1:	JMP     EnterDeskTop 		; error
 
-	L1205 = $1205 ; chain 1 start address
-        JMP     L1205
-
-L050E:
-        JMP     EnterDeskTop
-
+ConfigureClass:
         .byte    "Configure   V2.0",$00
 
-L0522:
+OpenConfigureFile:
         LDX     #$00
-        LDA     L06AC
-        BNE     L0557
+        LDA     ConfigureFileOpenedFlag	; are we open?
+        BNE     @1			; yes, skip this procedure
 
-        LDA     #$1D
-        STA     r6H
-        LDA     #$A5
-        STA     r6L
-        LDA     #$0E
-        STA     r7L
-        LDA     #$01
-        STA     r7H
-        LDA     #$05
-        STA     r10H
-        LDA     #$11
-        STA     r10L
+	LoadW	r6, L1DA5
+	LoadB	r7L, AUTO_EXEC
+	LoadB	r7H, 1 ; number of files found
+	LoadW	r10, ConfigureClass
         JSR     FindFTypes
-
         TXA
-        BNE     L0557
+        BNE     @1
 
-        LDA     #$1D
-        STA     r0H
-        LDA     #$A5
-        STA     r0L
+	LoadW	r0, L1DA5
         JSR     OpenRecordFile
 
-        LDA     #$FF
-        STA     L06AC
-L0557:
-        RTS
+        LoadB	ConfigureFileOpenedFlag, $ff	; mark that this file (CONFIGURE) is open
+@1:	RTS
 
 L0558:
         JSR     ExitTurbo
@@ -455,13 +435,12 @@ L064A:
         BNE     L0671
 
         LDX     #$00
-        LDA     L06AC
+        LDA     ConfigureFileOpenedFlag
         BEQ     L0671
 
         JSR     CloseRecordFile
 
-        LDA     #$00
-        STA     L06AC
+        LoadB	ConfigureFileOpenedFlag, 0
 L0671:
         RTS
 
@@ -477,7 +456,7 @@ L0672:
 
         TYA
         PHA
-        JSR     L0522
+        JSR     OpenConfigureFile
 
         PLA
         TAY
@@ -505,8 +484,8 @@ L06AA:
         TXA
         RTS
 
-L06AC:
-        .byte    $00
+ConfigureFileOpenedFlag:
+        .byte    $00	; 0 = file closed, 1 = CONFIGURE file open (for chain reading)
 
 L06AD:
         .byte    $00,$00,$00,$00
@@ -1823,8 +1802,9 @@ L0FAA:
         BNE     L0FA5
 
         JSR     i_FillRam
-
-        .byte    $00,$05,$00,$84,$00
+	.word	$0500 ; count
+	.word	$8400 ; address
+	.byte	$00   ; value
 
 L0FC2:
         LDA     #$00
@@ -2054,4 +2034,6 @@ L1158:
 
         STX     CPU_DATA
         RTS
+
+EndChain0:
 
