@@ -17,6 +17,8 @@ drv1541=1
 
 L1162	= $1162		; chain 1 load address 
 L1205   = $1205		; chain 1 start address
+L15A6	= $15A6
+L1AD1	= $1ad1
 L1DA5	= $1da5 ; buffer for 1(+1?) for found filenames
 
 L1DB6   = $1DB6
@@ -44,13 +46,12 @@ LDC08   = $DC08
 L88C7   = ramBase
 _ramBase = ramBase-8
 
+DRIVER_BASE_REU	= $3C80		; space for 4*$0d80 = $3600 disk drivers in REU bank 0
+
 ; GEOS Kernal fixed locations
 version		= $C00F		; GEOS version, $20 = 2.0, $13 = 1.3
 sysFlgCopy	= $C012
 c128Flag	= $C013		; bit 7==1 -> GEOS 128
-
-LC2B1	= SetDevice+1
-LC2B2	= SetDevice+2
 
 ;EXP_BASE = $DF00
 LDF01   = $DF01
@@ -74,16 +75,19 @@ LFFB4   = $FFB4
  
 
 	.segment "STARTUP"
-L03FE = __STARTUP_RUN__-8
 
+_confDriveType = *-8
+confDriveType:			; this is indexed by drive device number
 	; 0406 == __STARTUP__RUN__
-	.byte    $02,$01
+	.byte    $02,$01	; drive 8 type 1571, drive 9 type 1541
 	; 0408
 L0408:
-        .byte    $00,$00
+        .byte    $00,$00	; ? does this belong to confDriveType? 2 or 4 drives?
 	; 040a
-L040A:
-        .byte    $00
+_confSysRamFlg:
+        .byte    $00	; sysRAMFlg / sysFlgCopy shadow
+
+
 	; 040b
 APP_START:
         JSR     L047C
@@ -109,8 +113,7 @@ L0418:
 	.word	$0400 ; length
 
 L0436:
-        LDA     #$01
-        STA     NUMDRV
+	LoadB	NUMDRV, 1
         JSR     L0558
 
         LDA     L1DC8
@@ -141,8 +144,7 @@ L0462:
 
         JSR     L0738
 
-        LDA     #$01
-        STA     NUMDRV
+	LoadB	NUMDRV, 1
 L0470:
         JSR     i_MoveData
         .word	$1DFC ; source (see above)
@@ -161,10 +163,7 @@ L047C:
 @1:	RTS
 
 L048F:
-        LDA     #$C3	; $c310 - arbitrary address less than 255 bytes before L04C2 values are matched
-        STA     r0H
-        LDA     #$10
-        STA     r0L
+        LoadW	r0, $C310	; $c310 - arbitrary address less than 255 bytes before L04C2 values are matched
         LDY     #$00
         STY     r1L
         JSR     L04A2
@@ -266,13 +265,12 @@ L0558:
         LDA     ramExpSize
         BEQ     L0563
 
-        LDA     L040A
+        LDA     _confSysRamFlg
 L0563:
         AND     #$A0
         STA     sysRAMFlg
         STA     sysFlgCopy
-        LDA     L1DC9
-        CMP     #$02
+	CmpBI	L1DC9, 2
         BCS     L057B
 
         JSR     L0C33
@@ -316,15 +314,12 @@ L05A5:
         JSR     L06B1
 
         JSR     L064A
-
-        TXA
-        BNE     L05F7
+	bnex	L05F7
 
         JSR     PurgeTurbo
 
         LDY     #$03
-        LDA     #$00
-        STA     NUMDRV
+	LoadB	NUMDRV, 0
 L05C1:
         STA     driveType,Y
         STA     turboFlags,Y
@@ -363,21 +358,19 @@ L05F8:
         LDA     ramExpSize
         BEQ     L0615
 
-        LDA     #$08
-        STA     L1DEF
-        LDA     L1DCA
-        STA     L1DF3
+	LoadB	L1DEF, 8
+	MoveB	L1DCA, L1DF3
 L0608:
         JSR     L0986
 
         INC     L1DEF
-        LDA     L1DEF
-        CMP     #$0C
+	CmpBI	L1DEF, 8+4
         BNE     L0608
 
 L0615:
         RTS
 
+;0616, no jump to here?
         LDY     curDrive
         LDA     _driveType,Y
         BEQ     L0649
@@ -390,18 +383,12 @@ L0615:
 
         LDA     #$FF
         STA     L06AD,Y
-        LDA     L0A22,Y
-        STA     r1L
-        LDA     L0A26,Y
+        LDA     DriverOffsetsL,Y
+        STA     r1L			; dest
+        LDA     DriverOffsetsH,Y
         STA     r1H
-        LDA     #$90
-        STA     r0H
-        LDA     #$00
-        STA     r0L
-        LDA     #$0D
-        STA     r2H
-        LDA     #$80
-        STA     r2L
+	LoadW	r0, DISK_BASE		; source
+	LoadW	r2, DISK_DRV_LGH	; length
         JSR     MoveData
 
 L0649:
@@ -410,38 +397,33 @@ L0649:
 L064A:
         LDA     L1DCA
         JSR     L0672
-
-        BNE     L0671
+        BNE	@1
 
         LDA     L1DCB
         JSR     L0672
-
-        BNE     L0671
+        BNE	@1
 
         LDA     L1DCC
         JSR     L0672
+        BNE	@1
 
-        BNE     L0671
+        LDX     #0
+        LDA     ConfigureFileOpenedFlag		; is CONFIGURE closed?
+        BEQ     @1				; yes, skip
 
-        LDX     #$00
-        LDA     ConfigureFileOpenedFlag
-        BEQ     L0671
-
-        JSR     CloseRecordFile
-
-        LoadB	ConfigureFileOpenedFlag, 0
-L0671:
-        RTS
+        JSR     CloseRecordFile			; close it now
+        LoadB	ConfigureFileOpenedFlag, 0	; and flag that it's closed
+@1:	RTS
 
 L0672:
         LDX     #$00
         TAY
-        BEQ     L06AA
+        BEQ     @1
 
         JSR     L0A32
 
-        LDA     L06AD,Y
-        BNE     L06AA
+        LDA     L06AD,Y				; was it already loaded?
+        BNE	@1
 
         TYA
         PHA
@@ -450,48 +432,42 @@ L0672:
         PLA
         TAY
         TXA
-        BNE     L06AA
+        BNE     @1
 
         LDA     #$FF
-        STA     L06AD,Y
-        LDA     L0A22,Y
-        STA     r7L
-        LDA     L0A26,Y
+        STA     L06AD,Y				; mark that this chain was loaded?
+        LDA     DriverOffsetsL,Y
+        STA     r7L				; buffer for ReadRecord
+        LDA     DriverOffsetsH,Y
         STA     r7H
         TYA
-        CLC
-        ADC     #$02
+	addv	2				; skip over first two chains (boot, gui)
         JSR     PointRecord
 
-        LDA     #$0D
-        STA     r2H
-        LDA     #$80
-        STA     r2L
+	LoadW	r2, DISK_DRV_LGH		; length
         JSR     ReadRecord
 
-L06AA:
-        TXA
+@1:	TXA
         RTS
 
 ConfigureFileOpenedFlag:
         .byte    $00	; 0 = file closed, 1 = CONFIGURE file open (for chain reading)
 
 L06AD:
-        .byte    $00,$00,$00,$00
+        .byte    $00,$00,$00,$00		; marks that these chains (disk drivers from CONFIGURE) were loaded?
 
 L06B1:
-        LDA     #$01
-        STA     r0L
+	LoadB	r0L, 1
         LDA     L1DC8
         EOR     #$01
         TAY
-        LDA     L03FE,Y
+        LDA     _confDriveType,Y
         LDX     L1DCB
         JSR     L06EA
 
         STA     L1DCB
         LDY     L1DC8
-        LDA     L03FE,Y
+        LDA     _confDriveType,Y
         AND     #$7F
         LDX     L1DCA
         JSR     L06EA
@@ -606,47 +582,38 @@ L0768:
 
         CMP     #$01
         BNE     L077E
-
         JMP     L07AF
 
 L077E:
         CMP     #$02
         BNE     L0785
-
         JMP     L07D7
 
 L0785:
         CMP     #$03
         BNE     L078C
-
         JMP     L07E7
 
 L078C:
         CMP     #$41
         BNE     L0796
-
         JSR     L07AF
-
         JMP     L07F7
 
 L0796:
         CMP     #$43
         BNE     L07A0
-
         JSR     L07E7
-
         JMP     L0818
 
 L07A0:
         CMP     #$81
         BNE     L07A7
-
         JMP     L0839
 
 L07A7:
         CMP     #$82
         BNE     L07AE
-
         JMP     L086B
 
 L07AE:
@@ -663,10 +630,9 @@ L07AF:
         LDY     L1DEF
         LDA     #$01
         STA     _driveType,Y
-        STA     L03FE,Y
+        STA     _confDriveType,Y
         LDA     #$00
         STA     _ramBase,Y
-	L15A6 = $15A6
         DEC     L15A6
         RTS
 
@@ -714,7 +680,7 @@ L07F7:
         STA     _ramBase,Y
         LDA     #$41
         STA     _driveType,Y
-        STA     L03FE,Y
+        STA     _confDriveType,Y
         JSR     NewDisk
 
         DEC     L15A6
@@ -733,7 +699,7 @@ L0818:
         STA     _ramBase,Y
         LDA     #$43
         STA     _driveType,Y
-        STA     L03FE,Y
+        STA     _confDriveType,Y
         JSR     NewDisk
 
         DEC     L15A6
@@ -757,7 +723,7 @@ L0839:
         STA     _ramBase,Y
         LDA     #$81
         STA     _driveType,Y
-        STA     L03FE,Y
+        STA     _confDriveType,Y
         LDA     L1DEF
         JSR     L073D
 
@@ -784,7 +750,7 @@ L086B:
         STA     _ramBase,Y
         LDA     #$82
         STA     _driveType,Y
-        STA     L03FE,Y
+        STA     _confDriveType,Y
         LDA     L1DEF
         JSR     L073D
 
@@ -812,7 +778,6 @@ L089D:
         BVC     L08C5
 
 L08BC:
-	L1AD1 = $1ad1
         JSR     L1AD1
 
         LDA     L1DEF
@@ -822,7 +787,7 @@ L08C5:
         DEC     L15A6
         LDY     L1DEF
         LDA     _driveType,Y
-        STA     L03FE,Y
+        STA     _confDriveType,Y
         LDA     #$00
         STA     _ramBase,Y
         RTS
@@ -967,28 +932,24 @@ L0986:
         BNE     L09AE
 
         LDA     sysRAMFlg
-        AND     #$BF
+        AND     #%10111111
         STA     sysRAMFlg
         STA     sysFlgCopy
-        STA     L040A
+        STA     _confSysRamFlg
         LDY     L1DF3
         LDA     L1DEF
         JSR     L09FB
 
-        LDA     #$90
-        STA     r1H
-        LDA     #$00
-        STA     r1L
+	LoadW	r1, DISK_BASE	; dest = disk driver
         JSR     MoveData
-
         RTS
 
 L09AE:
         LDA     sysRAMFlg
-        ORA     #$40
+        ORA     #%01000000
         STA     sysRAMFlg
         STA     sysFlgCopy
-        STA     L040A
+        STA     _confSysRamFlg
         LDY     driveType
         BEQ     L09C9
 
@@ -1022,42 +983,36 @@ L09E3:
 
         JSR     StashRAM
 
-        LDA     #$90
-        STA     r1H
-        LDA     #$00
-        STA     r1L
+	LoadW	r1, DISK_BASE	; dest = disk driver
         JSR     MoveData
-
         RTS
 
 L09FB:
         PHA
         JSR     L0A32
 
-        LDA     L0A22,Y
-        STA     r0L
-        LDA     L0A26,Y
+        LDA     DriverOffsetsL,Y
+        STA     r0L			; source
+        LDA     DriverOffsetsH,Y
         STA     r0H
         PLA
         TAY
-        LDA     L0A22,Y
-        STA     r1L
-        LDA     L0A26,Y
+        LDA     DriverOffsetsL,Y
+        STA     r1L			; dest
+        LDA     DriverOffsetsH,Y
         STA     r1H
-        LDA     #$0D
-        STA     r2H
-        LDA     #$80
-        STA     r2L
-        LDA     #$00
-        STA     r3L
+	LoadW	r2, DISK_DRV_LGH	; length
+	LoadB	r3L, 0			; bank
         RTS
 
-L0A22:
-        .byte    $80,$00,$80,$00
+.define DriverOffsets DRIVER_BASE_REU, DRIVER_BASE_REU + 1 * DISK_DRV_LGH, DRIVER_BASE_REU + 2 * DISK_DRV_LGH, DRIVER_BASE_REU + 3 * DISK_DRV_LGH
 
-L0A26:
-        .byte    $3C,$4A,$57,$65
+DriverOffsetsL:
+	.lobytes DriverOffsets
+DriverOffsetsH:
+	.hibytes DriverOffsets
 
+	; 0A2A
         .byte    $00,$80,$00,$80,$83,$90,$9E,$AB
 
 L0A32:
@@ -1397,64 +1352,40 @@ L0D08:
 
         INC     L0D41
 L0D3A:
-        CLV
-        BVC     L0CD4
+	bra	L0CD4
 
-        EOR     L522D
-L0D40:
-        BRK
-L0D41:
-        .byte    $00
+L0D3D:	.byte	"M-R"
+L0D40:	.byte	$00
+L0D41:	.byte	$00
+L0D42:	.byte	$20
 
-L0D42:
-	L00A9 = $00a9
-        JSR     L00A9
-
-L0D43 = L0D42+1
-        STA     STATUS
+L0D43:	LoadB	STATUS, 0
         LDA     curDrive
         JSR     LFFB1
-
-        BIT     STATUS
-        BMI     L0D69
-
+	bbsf	7, STATUS, @2
         LDA     #$FF
         JSR     LFF93
-
-        BIT     STATUS
-        BMI     L0D69
-
-        LDY     #$00
-L0D5C:
-        LDA     (r0L),Y
+	bbsf	7, STATUS, @2
+        LDY     #0
+@1:	LDA     (r0),Y
         JSR     LFFA8
-
         INY
-        CPY     #$06
-        BCC     L0D5C
-
+        CPY     #6
+        BCC	@1
         LDX     #$00
         RTS
-
-L0D69:
+@2:
         JSR     LFFAE
-
         LDX     #$0D
         RTS
 
-L0D6F:
-        LDA     #$00
-        STA     NUMDRV
-        LDY     #$01
-L0D76:
-        LDA     driveType,Y
-        BEQ     L0D7E
-
+L0D6F:	LoadB	NUMDRV, 0
+        LDY     #1
+@1:	LDA     driveType,Y
+        BEQ     @2
         INC     NUMDRV
-L0D7E:
-        DEY
-        BPL     L0D76
-
+@2:	DEY
+        BPL     @1
         RTS
 
 L0D82:
