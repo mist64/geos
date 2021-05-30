@@ -7,7 +7,7 @@ configure.cvt: *.s geos.cfg
 
 regress: configure.cvt
 	hexdump -Cv configure.cvt > configure.hex
-	-diff --suppress-common-lines -y configure.hex configure-reference.hex > configure.diff
+	-diff --suppress-common-lines -y configure.hex configure-reference.hex > configure.diff || true
 	diff --suppress-common-lines -y configure.diff configure-expected.diff
 
 
