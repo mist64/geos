@@ -20,6 +20,11 @@ chain1LoadAddr = __STARTUP_RUN__+__STARTUP_SIZE__	; $1162
 chain1RunAddr  = chain1LoadAddr+$a3			; $1205
 chain1EndAddr  = chain1LoadAddr+__OVERLAY1_SIZE__	; $1da5 ($1162+$0c43)
 
+; NOTE:
+; as long as GUI (chain1) is in binary form
+; *NOTHING* can be changed in this code as parts here are called from GUI as click actions
+; clearly CONFIGURE chain #0 (boot code) contains too much code not used during boot process
+
 ; inside GUI code
 L15A6	= $15A6			; a byte that is decremented
 L1AD1	= $1AD1			; a function
@@ -73,8 +78,8 @@ confDriveType:			; this is indexed by drive device number
 	; 0406 == __STARTUP__RUN__
 	.byte    $02,$01	; drive 8 type 1571, drive 9 type 1541
 	; 0408
-L0408:
-        .byte    $00,$00	; ? does this belong to confDriveType? 2 or 4 drives?
+confDriveType10:
+        .byte    $00,$00	; drive 10 none, drive 11 unused (placeholder only)
 	; 040a
 _confSysRamFlg:
         .byte    $00	; sysRAMFlg / sysFlgCopy shadow
@@ -94,7 +99,7 @@ APP_START:
         TAY
         LDA     _driveType,Y
         STA     bootDriveType
-        JSR     L0D82
+        JSR     disoverRamExpSize
 
         JSR     i_MoveData	; preserve booter code ($5000-$5400), why?
         .word	$5000 ; source
@@ -249,33 +254,32 @@ L0558:
 	CmpBI	bootDriveType, DRV_1571
         BCS     :+
 
-        JSR     L0C33
+        JSR     discoverDriveType
         CMP     #$FF
         BNE     :+
         LDA     #$01
 :	STA     L1DCA
+
         LDA     curDrive
         EOR     #$01
         JSR     SetDevice
-
-        JSR     L0C33
+        JSR     discoverDriveType
         CMP     #$FF
         BNE     :+
         LDA     #$00
 :	STA     L1DCB
+
         LDA     ramExpSize
         BEQ     :+
 
         LDA     #10
         JSR     SetDevice
-
-        JSR     L0C33
-
+        JSR     discoverDriveType
         CMP     #$FF
         BNE     :++
-
 :	LDA     #$00
 :	STA     L1DCC
+
         LDA     bootDriveNumber
         JSR     SetDevice
 
@@ -332,7 +336,9 @@ L05F8:
         BNE	:-
 :	RTS
 
-;0616, no jump to here?
+;0616, no jump to here? only from GUI?
+.assert *=$0616, error, "Function at $0616"
+InstDrvr: 				; Install driver at DISK_BASE
         LDY     curDrive
         LDA     _driveType,Y
         BEQ     :+
@@ -357,15 +363,15 @@ L05F8:
 
 CloseConfigure:
         LDA     L1DCA
-        JSR     L0672
+        JSR     LoadDrvr
         BNE	:+
 
         LDA     L1DCB
-        JSR     L0672
+        JSR     LoadDrvr
         BNE	:+
 
         LDA     L1DCC
-        JSR     L0672
+        JSR     LoadDrvr
         BNE	:+
 
         LDX     #0
@@ -376,7 +382,8 @@ CloseConfigure:
         LoadB	ConfigureFileOpenedFlag, 0	; and flag that it's closed
 :	RTS
 
-L0672:	; input A = number of driver or driver type or drive number (0-3)
+LoadDrvr:					; Load Driver into buffer	
+	; input A = number of driver or driver type or drive number (0-3)
         LDX     #$00
         TAY
         BEQ     :+
@@ -427,7 +434,7 @@ L06B1:
         STA     L1DCB
         LDY     bootDriveNumber
         LDA     _confDriveType,Y
-        AND     #$7F
+        AND     #%01111111
         LDX     L1DCA
         JSR     L06EA
 
@@ -435,7 +442,7 @@ L06B1:
         LDA     ramExpSize
         BEQ     :+
 
-        LDA     L0408
+        LDA     confDriveType10
         LDX     L1DCC
         JSR     L06EA
 
@@ -516,49 +523,49 @@ L0768:
         PLA
         BEQ     L07AE
 
-        CMP     #$01
+        CMP     #DRV_1541
         BNE     L077E
         JMP     L07AF
 
 L077E:
-        CMP     #$02
+        CMP     #DRV_1571
         BNE     L0785
         JMP     L07D7
 
 L0785:
-        CMP     #$03
+        CMP     #DRV_1581
         BNE     L078C
         JMP     L07E7
 
 L078C:
-        CMP     #$41
+        CMP     #$40+DRV_1541		; 1541 with RAM shadow
         BNE     L0796
         JSR     L07AF
         JMP     L07F7
 
 L0796:
-        CMP     #$43
+        CMP     #$40+DRV_1581		; 1581 with RAM shadow
         BNE     L07A0
         JSR     L07E7
         JMP     L0818
 
 L07A0:
-        CMP     #$81
+        CMP     #$80+DRV_1541		; RAM 1541
         BNE     L07A7
         JMP     L0839
 
 L07A7:
-        CMP     #$82
+        CMP     #$80+DRV_1571		; RAM 1571
         BNE     L07AE
         JMP     L086B
 
 L07AE:
         RTS
 
-L07AF:	CmpBI	L1DF0, 1
+L07AF:	CmpBI	L1DF0, DRV_1541
         BEQ     :++
 
-        CMP     #$41
+        CMP     #$40+DRV_1541
         BNE     :+
 
         LDY     L1DEF
@@ -570,58 +577,58 @@ L07AF:	CmpBI	L1DF0, 1
         DEC     L15A6
         RTS
 
-:	LoadB	L1DF3, 1
+:	LoadB	L1DF3, DRV_1541
         JMP     L089D
 :	RTS
 
-L07D7:	CmpBI	L1DF0, 2
+L07D7:	CmpBI	L1DF0, DRV_1571
         BEQ     :+
-	LoadB	L1DF3, 2
+	LoadB	L1DF3, DRV_1571
         JMP     L089D
 :	RTS
 
-L07E7:	CmpBI	L1DF0, 3
+L07E7:	CmpBI	L1DF0, DRV_1581
         BEQ     :+
-	LoadB	L1DF3, 3
+	LoadB	L1DF3, DRV_1581
         JMP     L089D
 :	RTS
 
-L07F7:	CmpBI	L1DF0, $41
+L07F7:	CmpBI	L1DF0, $40+DRV_1541
         BEQ     :+
-        LDA     #$41
+        LDA     #$40+DRV_1541
         JSR     L08D7
         LDY     L1DEF
         STA     _ramBase,Y
-        LDA     #$41
+        LDA     #$40+DRV_1541
         STA     _driveType,Y
         STA     _confDriveType,Y
         JSR     NewDisk
         DEC     L15A6
 :	RTS
 
-L0818:	CmpBI	L1DF0, $43
+L0818:	CmpBI	L1DF0, $40+DRV_1581
         BEQ     :+
-        LDA     #$43
+        LDA     #$40+DRV_1581
         JSR     L08D7
         LDY     L1DEF
         STA     _ramBase,Y
-        LDA     #$43
+        LDA     #$40+DRV_1581
         STA     _driveType,Y
         STA     _confDriveType,Y
         JSR     NewDisk
         DEC     L15A6
 :	RTS
 
-L0839:	CmpBI	L1DF0, $81
+L0839:	CmpBI	L1DF0, $80+DRV_1541
         BEQ     :+
-	LoadB	L1DF3, $81
+	LoadB	L1DF3, $80+DRV_1541
         JSR     L0986
         INC     NUMDRV
-        LDA     #$81
+        LDA     #$80+DRV_1541
         JSR     L08D7
         LDY     L1DEF
         STA     _ramBase,Y
-        LDA     #$81
+        LDA     #$80+DRV_1541
         STA     _driveType,Y
         STA     _confDriveType,Y
         LDA     L1DEF
@@ -630,16 +637,16 @@ L0839:	CmpBI	L1DF0, $81
         DEC     L15A6
 :	RTS
 
-L086B:	CmpBI	L1DF0, $82
+L086B:	CmpBI	L1DF0, $80+DRV_1571
         BEQ     :+
-	LoadB	L1DF3, $82
+	LoadB	L1DF3, $80+DRV_1571
         JSR     L0986
         INC     NUMDRV
-        LDA     #$82
+        LDA     #$80+DRV_1571
         JSR     L08D7
         LDY     L1DEF
         STA     _ramBase,Y
-        LDA     #$82
+        LDA     #$80+DRV_1571
         STA     _driveType,Y
         STA     _confDriveType,Y
         LDA     L1DEF
@@ -902,30 +909,30 @@ L0A41:
         INY
         BNE     L0A41
 
-	LoadB	L0B60, $34
-	LoadB	L0ACD, $00
+	LoadB	ramDiskName, '4'			; '4' as 'RAM1541'
+	LoadB	doubleSidedFlag, $00		; single sided
         LDY     curDrive
         LDA     _driveType,Y
-        AND     #$0F
+        AND     #%00001111
         LDY     #$BD
-        CMP     #$01
+        CMP     #DRV_1541
         BEQ     :+
         LDY     #$00
-	LoadB	L0B60, $37
-	LoadB	L0ACD, $80
+	LoadB	ramDiskName, '7'			; '7' as 'RAM1571'
+	LoadB	doubleSidedFlag, $80		; double sided
 :	DEY
-        LDA     L0ACA,Y
+        LDA     dirHeadTemplate,Y
         STA     curDirHead,Y
         TYA
         BNE     :-
 
         LDY     curDrive
         LDA     _driveType,Y
-        AND     #$0F
-        CMP     #$01
-        BEQ     L0A96
+        AND     #%00001111
+        CMP     #DRV_1541
+        BEQ	@SaveDirHead			; RAM1541, skip over dir2Head preparations
 
-        LDY     #$00
+        LDY     #0
         TYA
 :	STA     dir2Head,Y
         INY
@@ -933,12 +940,12 @@ L0A41:
 
         LDY     #$69
 :	DEY
-        LDA     L0BCA,Y
+        LDA     dir2HeadTemplate,Y
         STA     dir2Head,Y
         TYA
         BNE     :-
 
-L0A96:
+@SaveDirHead:				; 0a96
         JSR     PutDirHead
 
         JSR     L0AC0
@@ -949,8 +956,8 @@ L0A96:
 	LoadB	r1H, 1			; 1st dir entry sector
         JSR     PutBlock
 
-        INC     r1L			; dir track+1 ?
-	LoadB	r1H, 8			; sector 8?
+        INC     r1L			; off-page directory track = 19 (see below in template)
+	LoadB	r1H, 8			; off-page directory sector = 8 (see below in template)
         JSR     PutBlock
 
         LDA     #$00
@@ -966,10 +973,10 @@ L0AC3:
 
         RTS
 
-L0ACA:
+dirHeadTemplate:					; 0aca
         .byte    $12,$01,$41
 
-L0ACD:
+doubleSidedFlag:					; 0acd
         .byte    $00,$15,$FF,$FF,$1F,$15,$FF,$FF
         .byte    $1F,$15,$FF,$FF,$1F,$15,$FF,$FF
         .byte    $1F,$15,$FF,$FF,$1F,$15,$FF,$FF
@@ -987,15 +994,18 @@ L0ACD:
         .byte    $03,$12,$FF,$FF,$03,$12,$FF,$FF
         .byte    $03,$11,$FF,$FF,$01,$11,$FF,$FF
         .byte    $01,$11,$FF,$FF,$01,$11,$FF,$FF
-        .byte    $01,$11,$FF,$FF,$01,$52,$41,$4D
-        .byte    $20,$31,$35
+        .byte    $01,$11,$FF,$FF,$01
 
-L0B60:
-        .byte    $37,$31,$A0,$A0,$A0,$A0,$A0,$A0
-        .byte    $A0,$A0,$A0,$A0,$52,$44,$A0,$32
-        .byte    $41,$A0,$A0,$A0,$A0,$13,$08,$47
-        .byte    $45,$4F,$53,$20,$66,$6F,$72,$6D
-        .byte    $61,$74,$20,$56,$31,$2E,$30,$00
+ramDiskName = * + 6
+	.byte	"RAM 1571"
+
+        .byte    $A0,$A0,$A0,$A0,$A0,$A0
+        .byte    $A0,$A0,$A0,$A0
+	.byte	"RD",$A0,"2A"
+        .byte    $A0,$A0,$A0,$A0
+	.byte	19, 8					; off-page directory OFF_OP_TR_SC t&s
+	.byte	"GEOS format V1.0"
+        .byte    $00
         .byte    $00,$00,$00,$00,$00,$00,$00,$00
         .byte    $00,$00,$00,$00,$00,$00,$00,$00
         .byte    $00,$00,$00,$00,$00,$00,$00,$00
@@ -1006,7 +1016,7 @@ L0B60:
         .byte    $12,$12,$12,$12,$12,$11,$11,$11
         .byte    $11,$11
 
-L0BCA:
+dir2HeadTemplate:
         .byte    $FF,$FF,$1F,$FF,$FF,$1F,$FF,$FF
         .byte    $1F,$FF,$FF,$1F,$FF,$FF,$1F,$FF
         .byte    $FF,$1F,$FF,$FF,$1F,$FF,$FF,$1F
@@ -1022,8 +1032,8 @@ L0BCA:
         .byte    $FF,$FF,$01,$FF,$FF,$01,$FF,$FF
         .byte    $01
 
-L0C33:
-	LoadW	r0, $e580	; ??? XXX
+discoverDriveType:				; 0c33
+	LoadW	r0, $e580	; magic value in drive ROM at this address ???
         JSR     L0C6F
 
         CPX     #$00
@@ -1031,29 +1041,29 @@ L0C33:
         CMP     #$00
         BNE     :+
 
-	LoadW	r0, $a6c0	; ??? XXX
+	LoadW	r0, $a6c0	; magic value in drive ROM at this address ???
         JSR     L0C6F
 
 :	CPX     #$00
-        BNE     :+
+        BNE     @nodev
 
         TAX
-        LDA     #$01
+        LDA     #DRV_1541
         CPX     #$41
-        BEQ     :++
+        BEQ     :+
 
-        LDA     #$02
+        LDA     #DRV_1571
         CPX     #$71
-        BEQ     :++
+        BEQ     :+
 
-        LDA     #$03
+        LDA     #DRV_1581
         CPX     #$81
-        BEQ     :++
+        BEQ     :+
 
-        LDA     #$FF
-        BNE     :++
+        LDA     #$FF		; unknown?
+        BNE     :+
 
-:	LDA     #$00
+@nodev:	LDA     #$00		; none
 :	RTS
 
 L0C6F:
@@ -1200,49 +1210,46 @@ L0D6F:	LoadB	NUMDRV, 0
         BPL     :--
         RTS
 
-L0D82:
+disoverRamExpSize:					; 0d82
         JSR     InitForIO
 
 	LoadB	ramExpSize, 0
 	LoadB	L1DC6, 2
 	bbrf	4, EXP_BASE, L0D9B
 
-	LoadB	L1DC6, 8
+	LoadB	L1DC6, 8	; max ram size = 8 banks?
 L0D9B:
         LDA     EXP_BASE
         AND     #%11100000
-        BNE     L0DDC
+        BNE     @nodev
 
 	LoadB	EXP_BASE+2, $55
         CMP     EXP_BASE+2
-        BNE     L0DDC
+        BNE     @nodev
 
 	LoadB	EXP_BASE+2, $aa
         LDY     #$00
 :	DEY
-        BNE	:-
+        BNE	:-		; wait a bit
 
         CMP     EXP_BASE+2
-        BNE     L0DDC
+        BNE     @nodev
 
 	LoadB	ramExpSize, 1
-	LoadB	r3L, 0
-L0DC4:
-        JSR     L0DDF
+	LoadB	r3L, 0		; start with RAM bank 0
 
-        BCC     L0DD9
+:	JSR     L0DDF
+        BCC     @1
 
-        LDA     ramExpSize
-        CMP     L1DC6
-        BEQ     L0DDC
+	CmpB	ramExpSize, L1DC6
+        BEQ     @nodev		; max ram size = 8 banks?
 
         INC     ramExpSize
-        INC     r3L
-	bra	L0DC4
+        INC     r3L		; next RAM bank
+	bra	:-
 
-L0DD9:
-        DEC     ramExpSize
-L0DDC:
+@1:	DEC     ramExpSize
+@nodev:
         JMP     DoneWithIO
 
 L0DDF:
@@ -1266,9 +1273,9 @@ L0DDF:
         BNE	:+ 
         DEY
         BPL	:-
-        SEC
+        SEC				; same here and there
         RTS
-:	CLC
+:	CLC				; different here and there
         RTS
 
 RamCheckString:
@@ -1299,10 +1306,10 @@ L0E46:
         JSR     StashRAM
 
 :	JSR     ClearRegistersLBytes
-	LoadB	r0L, $80
+	LoadB	r0L, $80			; stash $9d80-9fff
         STA     r2L
 	LoadB	r0H, $9D
-	LoadB	r1H, $B9
+	LoadB	r1H, $B9			; to REU $0B900
 	LoadB	r3L, 0
 	LoadB	r2H, 2
         JSR     StashRAM
@@ -1318,7 +1325,7 @@ L0E46:
         LoadW	r0, $8000
         LoadW	r1, $cc40
         LoadW	r2, $0100
-	LoadB	r3L, 0        
+	LoadB	r3L, 0
 
 :	LDY     #0
 :	LDA     (r5),Y
@@ -1347,7 +1354,33 @@ L0EF6:
 	LoadW	r0, $0f0c
         JMP     StashRAM
 
+;Rboot Fetch Sequence
+;RE0_8300	0D80	K_9000	Boot Disk Driver (Always Drive 8)
+;RE0_B900	$280	K_9D80	JmpIndx
+;RE0_BB80	C0	K_BF40	Start of GEOS Kernal
+;RE0_BCC0	$0F80	K_C080	Kernal
+;RE0_CC40	$3000	K_D000	Kernal
+;
+;RE0_798E	4	Drive Types
+;RE0_7A16	3	Year/Month/Day
+;RE0_7DC3	2	Ram Exp Size
+;RE0_7DC7	4	RamBanks for each Drive
+;RE0_7E00	$500
+;RE0_8300
+
+	;The Remaining blocks are Stashed into the REU at 7E00
+	;When a Ram Reboot starts this code is fetched to $6000.
+	;This code cannot be changed without manualy recalculating the jsr address to
+	;RBFetchRAM; Next version of geoProgrammer will be able to set psect address's
+	;so inset blocks like this will work like any other.
+	;Best way to changes here with
+	;geoProgrammer as is, would be to start this with a single bra entry then RBStashRam
+	;then the remainder of the code. That would make the entire reboot code relocatable
+	;with no recompile/relink needed.
+
+
 ; XXX ??? no entry here
+;REU RAM Reboot *= $6000
         SEI
         CLD
         LDX     #$FF
@@ -1515,4 +1548,10 @@ L110F:
 
         STX     CPU_DATA
         RTS
+
+
+; checks for binary data
+.assert chain1LoadAddr=$1162, error, "Chain 1 (GUI) must start at $1162"
+.assert chain1EndAddr=$1da5, error, "Chain 1 (GUI) must end at $1da5"
+
 
