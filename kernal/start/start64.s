@@ -196,7 +196,7 @@ OrigResetHandle:
 	cpx #30
 	bne @7
 	LoadW r9, dirEntryBuf
-	LoadW EnterDeskTop+1, _ResetHandle
+	LoadW EnterDeskTop+1, OrigResetHandle
 	LoadB r0L, 0
 	jsr LdApplic
 bootTr:
