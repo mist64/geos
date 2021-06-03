@@ -45,6 +45,9 @@ SetMouse:
 .endif
 
 lastF:		.byte 0				;last status of Fire
+
+; calibration values
+; [xlow,xav] and [xav,xhigh] are ignored, this is center joystick jitter
 xlow:		.byte $2d			;less than this are 'left' 
 xav:		.byte $33			;middle POTX
 xhigh:		.byte $39			;higher than this are 'right'
@@ -56,9 +59,8 @@ yhigh:		.byte $43
 ylstep:		.byte $08
 yhstep:		.byte $04
 
-Init:		LoadB mouseXPos+1, 0		;init mouse=init position
-		LoadB mouseXPos, 0
-		LoadB mouseYPos, 0
+Init:		LoadW mouseXPos, 0		;init mouse=init position
+		sta mouseYPos
 Exit:		rts
 
 ;UpdateMouse is called by IRQ routine
@@ -122,11 +124,7 @@ XHok:
 		ldy #r1L
 		jsr Ddiv
 
-		lda mouseXPos
-		add r0L
-		sta mouseXPos
-		
-		;AddB r0L, mouseXPos
+		AddB r0L, mouseXPos
 		lda mouseXPos+1
 		adc #0
 		sta mouseXPos+1
@@ -199,7 +197,7 @@ ReadF:		LoadB cia1base+2, 0		;read fire status
 		bpl Fire2
 		asl a
 Fire2:		sta mouseData
-		smbf_ MOUSE_BIT, pressFlag
+		smbf MOUSE_BIT, pressFlag
 
 Finish:		PopB cia1base+3
 		PopB cia1base+2
