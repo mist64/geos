@@ -31,138 +31,161 @@
 ; adapted for cc65 on 2021-06-03 by Maciej Witkowiak
 
 
-;ProgStart
+MouseInit:
 		jmp Init			;MOUSE_JMP
+SlowMouse:
 		jmp Exit			;SlowMouse
+UpdateMouse:
 		jmp Update			;UpdateMouse
 
-lastF		.byte 0				;last status of Fire
-xlow		.byte 40			;less than this are 'left' 
-xav		.byte 46			;middle POTX
-xhigh		.byte 52			;higher than this are 'right'
-xlostp		.byte 6				;step in middle-low X
-xhstep		.byte 5				;step in middle-high X
-ylow		.byte 44			;same as x but for POTY
-yav		.byte 49
-yhigh		.byte 54
-ylstep		.byte 6
-yhstep		.byte 6
+.ifdef bsw128
+SetMouse:
+		jmp Exit
+		jmp Exit			; ??? why it's here?
+.endif
 
-Init		#LoadW mouseXPos, NULL		;init mouse=init position
-		#LoadB mouseYPos, NULL
-Exit		rts
+lastF:		.byte 0				;last status of Fire
+xlow:		.byte $2d			;less than this are 'left' 
+xav:		.byte $33			;middle POTX
+xhigh:		.byte $39			;higher than this are 'right'
+xlostp:		.byte $07				;step in middle-low X
+xhstep:		.byte $05				;step in middle-high X
+ylow:		.byte $39			;same as x but for POTY
+yav:		.byte $3e
+yhigh:		.byte $43
+ylstep:		.byte $08
+yhstep:		.byte $04
+
+Init:		LoadB mouseXPos+1, 0		;init mouse=init position
+		LoadB mouseXPos, 0
+		LoadB mouseYPos, 0
+Exit:		rts
 
 ;UpdateMouse is called by IRQ routine
 
-Update		#bbrf MOUSEON_BIT, mouseOn, Exit
-		#PushB CPU_DATA
-		#LoadB CPU_DATA, $35		;turn on I/O
-		#PushB cia1base+0		;preserve keyboard port
-		#PushB cia1base+2
-		#PushB cia1base+3
-		#LoadB cia1base+2, $ff
-		#LoadB cia1base+0, %01000000	;select paddle 1 (out of 4)
+Update:		bbrf MOUSEON_BIT, mouseOn, Exit
+		START_IO
+		PushB cia1base+0		;preserve keyboard port
+		PushB cia1base+2
+		PushB cia1base+3
+		LoadB cia1base+2, $ff
+		LoadB cia1base+0, %01000000	;select paddle 1 (out of 4)
 
 		ldx #$66
-Here		nop				;delay for SID for loading
+:		nop				;delay for SID for loading
 		nop				;POT capacitors
 		nop
 		dex
-		bne Here
+		bne :-
 
-		#CmpB sidbase+$19, xlow		;read X register
+		CmpB sidbase+$19, xlow		;read X register
 		bmi XLO
 		cmp xhigh
 		bpl XHI
 		jmp ReadY		
 
-XLO		sta r0L				;proceed with left
+XLO:		sta r0L				;proceed with left
 		lda xav
-		#sub r0L
+		sub r0L
 		sta r0L
-		#MoveB xlostp, r1L
-		#LoadB r0H, NULL
+		MoveB xlostp, r1L
+		LoadB r0H, 0
 		sta r1H
 
 		ldx #r0L
 		ldy #r1L
 		jsr Ddiv
 
-		#SubB r0L, mouseXPos
+		SubB r0L, mouseXPos
 		lda mouseXPos+1
 		beq Hi0
 		sbc #0
 		sta mouseXPos+1
 
-yread		jmp ReadY
-Hi0		bcs yread
-		#LoadB mouseXPos, NULL
+yread:		jmp ReadY
+Hi0:		bcs yread
+		LoadB mouseXPos, 0
 		jmp ReadY
 
-XHI		#sub xav			;proceed with right
+XHI:		sub xav			;proceed with right
 		sta r0L
-		#MoveB xhstep, r1L
-		#LoadB r0H, NULL
+		lda xhstep
+.ifdef bsw128
+		bbrf 7, graphMode, XHok	;check 40/80 mode
+		lsr
+XHok:
+.endif
+		sta r1L
+		LoadB r0H, 0
 		sta r1H
 		ldx #r0L
 		ldy #r1L
 		jsr Ddiv
 
-		#AddB r0L, mouseXPos
+		lda mouseXPos
+		add r0L
+		sta mouseXPos
+		
+		;AddB r0L, mouseXPos
 		lda mouseXPos+1
 		adc #0
 		sta mouseXPos+1
 		beq yread
-
-		#CmpBI mouseXPos, (320-256)
+.ifndef bsw128
+		CmpBI mouseXPos, (320-256)
 		bmi yread
-		#LoadB mouseXPos, (319-256)
+		LoadB mouseXPos, (319-256)
+.endif
 
-ReadY		#CmpB sidbase+$1a, ylow		;read Y register
+ReadY:		CmpB sidbase+$1a, ylow		;read Y register
 		bmi YLO
 		cmp yhigh
 		bpl YHI
 		jmp ReadF
 
-YLO		sta r0L				;proceed with up
+YLO:		sta r0L				;proceed with up
 		lda yav
-		#sub r0L
+		sub r0L
 		sta r0L
-		#MoveB ylstep, r1L
-		#LoadB r0H, NULL
+		MoveB ylstep, r1L
+		LoadB r0H, 0
 		sta r1H
 		ldx #r0L
 		ldy #r1L
 		jsr Ddiv
 
 		lda mouseYPos
-		#sub r0L
+		sub r0L
 		bcc YZe
 		sta mouseYPos
 		jmp ReadF
 
-YZe		#LoadB mouseYPos, NULL
+YZe:		LoadB mouseYPos, 0
 		jmp ReadF
 
-YHI		#sub yav			;proceed with down
+YHI:		sub yav			;proceed with down
 		sta r0L
-		#MoveB yhstep, r1L
-		#LoadB r0H, NULL
+		MoveB yhstep, r1L
+		LoadB r0H, 0
 		sta r1H
 		ldx #r0L
 		ldy #r1L
 		jsr Ddiv
 
 		lda mouseYPos
-		#add r0L
+		add r0L
+.ifdef bsw128
+		sta mouseYPos
+.else
 		cmp #199
 		bcs YMax
 		sta mouseYPos
 		jmp ReadF
 
-YMax		#LoadB mouseYPos, 199
+YMax:		LoadB mouseYPos, 199
+.endif
 
-ReadF		#LoadB cia1base+2, NULL		;read fire status
+ReadF:		LoadB cia1base+2, 0		;read fire status
 		sta cia1base+3
 		lda cia1base+1
 		and #%00001100			;read both fire buttons
@@ -175,13 +198,12 @@ ReadF		#LoadB cia1base+2, NULL		;read fire status
 		asl a
 		bpl Fire2
 		asl a
-Fire2		sta mouseData
-		#smbf MOUSE_BIT, pressFlag
+Fire2:		sta mouseData
+		smbf_ MOUSE_BIT, pressFlag
 
-Finish		#PopB cia1base+3
-		#PopB cia1base+2
-		#PopB cia1base+0
-		#PopB CPU_DATA
+Finish:		PopB cia1base+3
+		PopB cia1base+2
+		PopB cia1base+0
+		END_IO
 		rts
 
-;ProgEnd
