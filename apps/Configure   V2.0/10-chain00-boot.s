@@ -1,8 +1,4 @@
 
-; to make config.inc happy - GEOS 64 with 1541
-bsw=1
-drv1541=1
-
 .include "config.inc"
 .include "const.inc"
 .include "geossym.inc"
