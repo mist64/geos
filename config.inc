@@ -131,6 +131,10 @@ config_inc = 1
 	; GEOS2000
 	; bug - when 0 no blinking in menu
 	;newMenu_5 = 1
+
+	; RTC driver to set date&time upon boot
+	;rtc_Ultimate2Plus = 1
+
 .endif
 
 ; Feel (almost) free to change values below:
@@ -159,6 +163,10 @@ REUDskDrvSPC    =    $8300                      ; base for 4*DISK_DRV_LGH disk d
 useRamExp = 1
 .else
 REUPresent = 1
+.endif
+
+.if .defined(rtc_Ultimate2Plus)
+useRTC = 1
 .endif
 
 .ifdef traps
