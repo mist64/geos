@@ -810,9 +810,9 @@ SendDOSCmd:
 	PushB rcr
 	LoadB rcr,    %01000110		; share bottom 4K with bank 0 to have serialFlag (k_Listen will write to it)
 	LoadB STATUS, 0
-	lda serialFlag			; why 1571 DOS example does this?
-	and #%10111111
-	sta serialFlag
+;	lda serialFlag			; why 1571 DOS example does this?
+;	and #%10111111
+;	sta serialFlag
 	lda curDrive
 	jsr k_Listen
 	bbsf 7, STATUS, SndDOSCmdErr
