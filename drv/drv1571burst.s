@@ -25,6 +25,10 @@
 
 ; DISADVANTAGES
 ; - preparatory routines (listen/.../unlisten) take much time (do they?)
+; - a bit slower than BSW drivecode even on my 1571 with expanded RAM and ROM patch to cache whole tracks at once
+;   loading 128DeskTop on U2+ emulated 1571 with original code: 12s+15s (until menu, until pointer appears)
+;   loading 128DeskTop on real 1571 with this code:             13s+18s
+; - not sure which combination for NewDisk is better: 'I', Inquire, I+Inquire or Query; it is required because even initalized drive reports 29,disk id mismatch
 
 ; MFM burst
 ; https://github.com/michielboland/c64stuff/blob/master/asm/serial.s
@@ -824,9 +828,28 @@ __EnterTurbo:
 __PurgeTurbo:
 __ExitTurbo:
 	LoadB interleave, 8
-__NewDisk:
 	ldx #0
 	rts
+
+__NewDisk:					;9854
+		JSR InitForIO
+		LDX #>NewDiskCommand
+		LDA #<NewDiskCommand
+		LDY #1
+		JSR SendDOSCmd
+		bnex NewDiskErr
+		LDX #>InquireDisk_Cmd
+		LDA #<InquireDisk_Cmd
+		LDY #3
+;;		LDX #>QueryDisk_Cmd
+;;		LDA #<QueryDisk_Cmd
+;;		LDY #4
+;;		JSR SendDOSCmd
+NewDiskErr:	JMP DoneWithIO
+
+NewDiskCommand:		.byte "I"
+InquireDisk_Cmd:	.byte "U0", 4
+QueryDisk_Cmd:		.byte "U0", 138, 18		;QueryDisk on track 18
 
 __ChangeDiskDevice:
 	sta ChngDskDev_Number
