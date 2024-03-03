@@ -867,7 +867,7 @@ ChngDskDev_Number:
 
 __NewDisk:
 	jsr InitForIO
-.ifdef dontuse
+;.ifdef dontuse
 	ldx #>NewDiskCommand
 	lda #<NewDiskCommand
 	ldy #1
@@ -877,24 +877,24 @@ __NewDisk:
 	lda #<InquireDisk_Cmd
 	ldy #3
 	jsr SendDOSCmd
-.endif
-	ldx #>QueryDisk_Cmd
-	lda #<QueryDisk_Cmd
-	ldy #4
-	jsr SendDOSCmd
+;.endif
+;	ldx #>QueryDisk_Cmd
+;	lda #<QueryDisk_Cmd
+;	ldy #4
+;	jsr SendDOSCmd
 NewDsk1:
 	jmp DoneWithIO
 
-.ifdef dontuse
+;.ifdef dontuse
 NewDiskCommand:
 		.byte "I"
 InquireDisk_Cmd:
 		.byte "U0"
 		.byte 4
-.endif
-QueryDisk_Cmd:
-		.byte "U0"
-		.byte 138,18		;QueryDisk on track 18
+;.endif
+;QueryDisk_Cmd:
+;		.byte "U0"
+;		.byte 138,18		;QueryDisk on track 18
 
 __ReadBlock:
 _ReadLink:
