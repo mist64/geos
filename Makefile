@@ -309,7 +309,7 @@ $(BUILD_DIR)/$(D64_RESULT): $(BUILD_DIR)/kernal_compressed.prg
 	else \
 		echo format geos,00 d64 $@ | $(C1541) >/dev/null; \
 		echo write $< geos128 | $(C1541) $@ >/dev/null; \
-		if [ -e $(DESKTOP_CVT) ]; then echo geoswrite $(DESKTOP_CVT) | $(C1541) $@; fi >/dev/null; \
+		if [ -e "$(DESKTOP_CVT)" ]; then echo geoswrite "$(DESKTOP_CVT)" | $(C1541) $@; fi >/dev/null; \
 		echo \*\*\* Created fresh $@.; \
 	fi;
 else
