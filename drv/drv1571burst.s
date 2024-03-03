@@ -22,7 +22,6 @@
 ; - ease of porting to 1581 (?)
 ; - ease of porting to remote drive emulators (64net/2, 64hdd, IDE64 (?))
 ; 	not really, this one does it using block read functions only https://github.com/MEGA65/c64-GEOS2000/blob/master/src/drv/drvf011.tas
-; ? patch ReadFile (files1a2b.s) to use fastload utility command ?
 
 ; DISADVANTAGES
 ; - preparatory routines (listen/.../unlisten) take much time (do they?)
@@ -31,11 +30,11 @@
 ; https://github.com/michielboland/c64stuff/blob/master/asm/serial.s
 ; burst commands chapter
 ; https://commodore.software/downloads?task=download.send&id=12906:mapping-the-commodore-128&catid=218 p 530 (517)
-
+; - there is fastload utility function but it uses filename, not t&s so we can't use it to patch ReadFile (files1a2b.s)
 
 .segment "drv1571"
 
-;serialFlag	= $0a1c	;!!! in BANK0 !!!
+;serialFlag	= $0a1c	; in BANK0
 
 cia1Data	= $dc0c
 cia1ICR		= $dc0d
@@ -825,6 +824,7 @@ __EnterTurbo:
 __PurgeTurbo:
 __ExitTurbo:
 	LoadB interleave, 8
+__NewDisk:
 	ldx #0
 	rts
 
@@ -847,39 +847,6 @@ ChngDskDev_Command:
 		.byte "U0>"
 ChngDskDev_Number:
 		.byte 8
-
-__NewDisk:
-	ldx #0				; XXX when we don't have drivecode DOS makes sure to track disk changes
-	rts
-	jsr InitForIO
-;.ifdef dontuse
-	ldx #>NewDiskCommand
-	lda #<NewDiskCommand
-	ldy #1
-	jsr SendDOSCmd
-;;	bnex NewDsk1
-;;	ldx #>InquireDisk_Cmd
-;;	lda #<InquireDisk_Cmd
-;;	ldy #3
-;;	jsr SendDOSCmd
-;.endif
-;	ldx #>QueryDisk_Cmd
-;	lda #<QueryDisk_Cmd
-;	ldy #4
-;	jsr SendDOSCmd
-;;NewDsk1:
-	jmp DoneWithIO
-
-;.ifdef dontuse
-NewDiskCommand:
-		.byte "I"
-;;InquireDisk_Cmd:
-;;		.byte "U0"
-;;		.byte 4
-;.endif
-;QueryDisk_Cmd:
-;		.byte "U0"
-;		.byte 138,18		;QueryDisk on track 18
 
 SendBurstCommand:
 	sta ReadWriteCmd
@@ -938,7 +905,6 @@ RdBurstLp:
 	STX ciaSerialClk
 	LDA cia1Data
 	STA (r4),y
-inc $d020
 	INY
 	BNE RdBurstLp
 
@@ -946,7 +912,6 @@ inc $d020
 
 RdLinkErr:
 	tax
-LoadB $d020, 0
 	rts
 
 ReadBlk_Command:
