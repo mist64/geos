@@ -30,10 +30,22 @@
 
 ;BUGS
 ; - no write_block yet
-; - locks when keyboard/joystick input, but IRQs are issued (CIA1 config?)
+;	https://www.zimmers.net/anonftp/pub/cbm/manuals/drives/1571_Users_Guide_252095-04_(1985_Aug).pdf p 82 (90)
+; - send DOS command uses Listen which uses $0a1c serialFlag - should switch to bank0 there; maybe that was the reason for lockup sometimes?
+;   (BUT listen goes through trampoline which should handle that)
+; - copy $ff47 code to here (k_Spinp)
+
+; pure U0 (block read/write) driver
+; https://github.com/MEGA65/c64-GEOS2000/blob/master/src/drv/drvf011.tas
+;	! doesn't use NewDisk at all
+; MFM burst
+; https://github.com/michielboland/c64stuff/blob/master/asm/serial.s
 
 ;$ff47 is not in GEOS Kernal mirror!
-;	(just copy what it does?)
+;	(just copy what it does)
+;	E5C3-E5FF C=1 -> fast, C=0 -> slow
+; https://klasek.at/c64/c128-rom-listing.html#$E5C3
+; https://commodore.software/downloads?task=download.send&id=12906:mapping-the-commodore-128&catid=218 p 530 (517)
 ;$0a1c should be checked in BANK0!!!
 
 ; __NewDisk: I+Inquire seems better than query because head doesn't go back to track 1
@@ -789,7 +801,7 @@ __DoneWithIO:
 	plp
 	rts
 
-SendDOSCmd:
+SendDOSCmd:				; XXX uses k_Listen which *will* store to serialFlag (switch to bank0 prior to this)
 	stx z8c
 	sta z8b
 	sty z8d
@@ -887,7 +899,6 @@ _ReadLink:
 RdLink0:
 	; Burst Read command
 	LoadB ReadWriteCmd, $00
-	jsr InitForIO			; XXX ? init within init?
 	lda r1L
 	sta ReadBlk_CmdTr
 	sta ReadBlk_CmdTr2
@@ -903,10 +914,10 @@ LoadB $d020, 2
 	LoadB $d506, %01000110		; share bottom $2000 to have serialFlag
 	LoadB $ff00, %01001110 	; bank 1 with HI-ROM and I/O
 
-	lda serialFlag
-	and #%10111111
-	sta serialFlag
-	LDA curDrive
+	;lda serialFlag ; why this was done? copied from DOS book?
+	;and #%10111111
+	;sta serialFlag
+	LDA curDrive		; this is SendDOSCmd
 	JSR k_Listen
 	BIT STATUS
 	BPL RdDev
@@ -980,7 +991,6 @@ RdLinkErr:
 	STA STATUS
 	PopB $d506
 	PopB $ff00
-	JSR DoneWithIO
 	LDX STATUS
 LoadB $d020, 0
 	RTS
@@ -1004,7 +1014,6 @@ WrBlock0:	; perform write
 		; Burst Write command
 		LoadB ReadWriteCmd, $02
 	
-		JSR InitForIO
 		LDA r1L
 		STA ReadBlk_CmdTr
 		STA ReadBlk_CmdTr2
