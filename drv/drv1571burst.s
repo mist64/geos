@@ -21,11 +21,10 @@
 ; - ability to use MFM formats (only 256 b. blocks, but some might be bigger than 1571)
 ; - ease of porting to 1581 (?)
 ; - ease of porting to remote drive emulators (64net/2, 64hdd, IDE64 (?))
+; 	not really, this one does it using block read functions only https://github.com/MEGA65/c64-GEOS2000/blob/master/src/drv/drvf011.tas
 
 ; DISADVANTAGES
-; - disk login doesn't work always for GCR, sometimes need to nearly unlock disk to
-;   make head move (like when reading bad sector) then everything is OK
-; - preparatory routines (listen/.../unlisten) take much time
+; - preparatory routines (listen/.../unlisten) take much time (do they?)
 
 
 ;BUGS
@@ -35,9 +34,6 @@
 ;   (BUT listen goes through trampoline which should handle that)
 ; - copy $ff47 code to here (k_Spinp)
 
-; pure U0 (block read/write) driver
-; https://github.com/MEGA65/c64-GEOS2000/blob/master/src/drv/drvf011.tas
-;	! doesn't use NewDisk at all
 ; MFM burst
 ; https://github.com/michielboland/c64stuff/blob/master/asm/serial.s
 
@@ -46,9 +42,7 @@
 ;	E5C3-E5FF C=1 -> fast, C=0 -> slow
 ; https://klasek.at/c64/c128-rom-listing.html#$E5C3
 ; https://commodore.software/downloads?task=download.send&id=12906:mapping-the-commodore-128&catid=218 p 530 (517)
-;$0a1c should be checked in BANK0!!!
 
-; __NewDisk: I+Inquire seems better than query because head doesn't go back to track 1
 
 .segment "drv1571"
 
@@ -869,6 +863,8 @@ ChngDskDev_Number:
 		.byte 8
 
 __NewDisk:
+	ldx #0				; XXX when we don't have drivecode DOS makes sure to track disk changes
+	rts
 	jsr InitForIO
 ;.ifdef dontuse
 	ldx #>NewDiskCommand
