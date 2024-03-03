@@ -801,30 +801,36 @@ __DoneWithIO:
 	plp
 	rts
 
-SendDOSCmd:				; XXX uses k_Listen which *will* store to serialFlag (switch to bank0 prior to this)
-	stx z8c
+SendDOSCmd:
+	stx z8c				; x/a vector must be above bottom 4K
 	sta z8b
 	sty z8d
+	PushB config
+	LoadB config, %01001110		; bank 1 with HIROM and I/O (avoid GEOS trampoline to save time)
+	PushB rcr
+	LoadB rcr,    %01000110		; share bottom 4K with bank 0 to have serialFlag (k_Listen will write to it)
 	LoadB STATUS, 0
 	lda curDrive
 	jsr k_Listen
-	bbsf 7, STATUS, SndDOSCmd1
-	lda #$6f			; XXX $ff or $6f like in .tas?
+	bbsf 7, STATUS, SndDOSCmdErr
+	lda #$6f
 	jsr k_Second
-	bbsf 7, STATUS, SndDOSCmd1
+	bbsf 7, STATUS, SndDOSCmdErr
 	ldy #0
-SndDOSCmd0:
-	lda (z8b),y
+:	lda (z8b),y
 	jsr k_Ciout
 	iny
 	cpy z8d
-	bcc SndDOSCmd0
-	jsr k_Unlsn			; XXX doesn't appear in 1571.s
-	ldx #0
-	rts
-SndDOSCmd1:
+	bcc :-
+	lda #0
+	.byte $2c
+SndDOSCmdErr:
+	lda #DEV_NOT_FOUND
+	sta z8d
 	jsr k_Unlsn
-	ldx #DEV_NOT_FOUND
+	PopB rcr
+	PopB config
+	ldx z8d
 	rts
 
 __EnterTurbo:
@@ -904,96 +910,71 @@ RdLink0:
 	sta ReadBlk_CmdTr2
 	lda r1H
 	sta ReadBlk_CmdSec
-;x
-LoadB $d020, 2
-	LoadB STATUS, 0
+	ldx #>ReadBlk_Command
+	lda #<ReadBlk_Command
+	ldy #7
+	jsr SendDOSCmd
+	beqx :+
+	rts
+:
+	lda serialFlag
+	and #%01000000
+	bne :+
+	;; no fast serial/burst available?
+	ldx #DEV_NOT_FOUND
+	rts
 
-	;; alter memory configuration to avoid GEOS trampolines
-	PushB $ff00
-	PushB $d506
-	LoadB $d506, %01000110		; share bottom $2000 to have serialFlag
-	LoadB $ff00, %01001110 	; bank 1 with HI-ROM and I/O
-
-	;lda serialFlag ; why this was done? copied from DOS book?
-	;and #%10111111
-	;sta serialFlag
-	LDA curDrive		; this is SendDOSCmd
-	JSR k_Listen
-	BIT STATUS
-	BPL RdDev
-	JSR k_Unlsn
-LoadB $d020, 1
-	LDA #DEV_NOT_FOUND
-	JMP RdLinkErr
-
-RdDev:
-	LDA #$6f
-	JSR k_Second
-	LDY #0
-RdLink1:
-	LDA ReadBlk_Command,y
-	JSR k_Ciout
-	INY
-	CPY #7
-	BNE RdLink1
-
-	JSR k_Unlsn
-	LDA serialFlag
-	AND #%01000000
-	BNE RdBurst
-
-LoadB $d020, 3
-	LDA #DEV_NOT_FOUND	; not a burst
-	JMP RdLinkErr
-
+:
 RdBurst:
-	LoadB $d506, %01000000	; no sharing - all is bank 1
-	LoadB $ff00, %01001110 ; bank 1 with HI-ROM and I/O
-	SEI
+	PushB config
+	LoadB config, %01001110		; bank 1 only with HIROM and I/O
+	PushB rcr
+	LoadB rcr,    %01000000		; no sharing - all is bank 1
+	SEI				; XXX needed ?
 	CLC
-	JSR k_Spinp
+	JSR k_Spinp			; only reason why HIROM is enabled
 	BIT cia1ICR
 	LDA ciaSerialClk
 	EOR #$10
 	STA ciaSerialClk
 
 RdBurstRead:
-LoadB $d020, 7
 	LDA #8
-	BIT cia1ICR
-	BEQ *-3
+:	BIT cia1ICR			; wait for status byte
+	BEQ :-
 	LDA ciaSerialClk
 	EOR #$10
 	STA ciaSerialClk
 
 	LDA cia1Data
 	STA STATUS
-	AND #%00001111
+	AND #%00001111			; error?
 	CMP #2
-	BCS RdLinkErr
+	BCS RdLinkErr			; yes
 
-	LDY #0
+	LDY #0				; no, read the data
 RdBurstLp:
 	LDA ciaSerialClk
 	EOR #$10
 	TAX
 	LDA #8
-	BIT cia1ICR
-	BEQ *-3
+:	BIT cia1ICR			; wait for next byte
+	BEQ :-
 	STX ciaSerialClk
 	LDA cia1Data
 	STA (r4),y
+inc $d020
 	INY
 	BNE RdBurstLp
+
 	LDA #0		; no error
 
 RdLinkErr:
-	STA STATUS
-	PopB $d506
-	PopB $ff00
-	LDX STATUS
+	tax
+	PopB rcr
+	PopB config
 LoadB $d020, 0
-	RTS
+	rts
 
 ReadBlk_Command:
 		.byte "U0"
