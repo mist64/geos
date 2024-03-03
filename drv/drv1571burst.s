@@ -875,25 +875,25 @@ __NewDisk:
 	lda #<NewDiskCommand
 	ldy #1
 	jsr SendDOSCmd
-	bnex NewDsk1
-	ldx #>InquireDisk_Cmd
-	lda #<InquireDisk_Cmd
-	ldy #3
-	jsr SendDOSCmd
+;;	bnex NewDsk1
+;;	ldx #>InquireDisk_Cmd
+;;	lda #<InquireDisk_Cmd
+;;	ldy #3
+;;	jsr SendDOSCmd
 ;.endif
 ;	ldx #>QueryDisk_Cmd
 ;	lda #<QueryDisk_Cmd
 ;	ldy #4
 ;	jsr SendDOSCmd
-NewDsk1:
+;;NewDsk1:
 	jmp DoneWithIO
 
 ;.ifdef dontuse
 NewDiskCommand:
 		.byte "I"
-InquireDisk_Cmd:
-		.byte "U0"
-		.byte 4
+;;InquireDisk_Cmd:
+;;		.byte "U0"
+;;		.byte 4
 ;.endif
 ;QueryDisk_Cmd:
 ;		.byte "U0"
