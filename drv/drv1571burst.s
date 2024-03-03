@@ -27,26 +27,19 @@
 ; DISADVANTAGES
 ; - preparatory routines (listen/.../unlisten) take much time (do they?)
 
-
-;BUGS
-; - no write_block yet
-;	https://www.zimmers.net/anonftp/pub/cbm/manuals/drives/1571_Users_Guide_252095-04_(1985_Aug).pdf p 82 (90)
-
 ; MFM burst
 ; https://github.com/michielboland/c64stuff/blob/master/asm/serial.s
-
+; burst commands chapter
 ; https://commodore.software/downloads?task=download.send&id=12906:mapping-the-commodore-128&catid=218 p 530 (517)
 
 
 .segment "drv1571"
 
-serialFlag	= $0a1c	;!!! in BANK0 !!!
+;serialFlag	= $0a1c	;!!! in BANK0 !!!
 
 cia1Data	= $dc0c
 cia1ICR		= $dc0d
 ciaSerialClk	= $dd00
-
-DriveAddy = $0300
 
 k_Listen	= $ffb1
 k_Second	= $ff93
@@ -888,15 +881,8 @@ NewDiskCommand:
 ;		.byte "U0"
 ;		.byte 138,18		;QueryDisk on track 18
 
-__ReadBlock:
-_ReadLink:
-	jsr CheckParams
-	bcs RdLink0
-	ldy #0
-	rts
-RdLink0:
-	; Burst Read command
-	LoadB ReadWriteCmd, $00
+SendBurstCommand:
+	sta ReadWriteCmd
 	lda r1L
 	sta ReadBlk_CmdTr
 	sta ReadBlk_CmdTr2
@@ -905,7 +891,18 @@ RdLink0:
 	ldx #>ReadBlk_Command
 	lda #<ReadBlk_Command
 	ldy #7
-	jsr SendDOSCmd
+	jmp SendDOSCmd
+
+__ReadBlock:
+_ReadLink:
+	jsr CheckParams
+	bcs RdLink0
+	ldy #0
+	rts
+RdLink0:
+	; Burst Read command
+	lda #$00
+	jsr SendBurstCommand
 	beqx :+
 	rts
 
@@ -962,31 +959,68 @@ ReadBlk_CmdTr2:	.byte 1
 
 
 __WriteBlock:
-	ldx #0
-	rts
-		JSR CheckParams
-		BCS WrBlock0
-		RTS
-WrBlock0:	; perform write
-		; Burst Write command
-		LoadB ReadWriteCmd, $02
-	
-		LDA r1L
-		STA ReadBlk_CmdTr
-		STA ReadBlk_CmdTr2
-		LDA r1H
-		STA ReadBlk_CmdSec
-		; ...
-		RTS
-
 __VerWriteBlock:
-		JSR CheckParams
-		BCS VWrBlock0
-		RTS
-VWrBlock0:	; perform write, then
-		; read, if failed -> upto tryCount=3
-		; if read failed -> again, upto errCount=5
-		JMP __WriteBlock
+	jsr CheckParams
+	bcs WrBlock0
+	rts
+WrBlock0:
+	; Burst Write command
+	lda #$02
+	jsr SendBurstCommand
+	beqx :+
+	rts
+
+:
+	sei				; XXX needed?
+	LoadB z8d, $40			; clock starts high
+
+	jsr Spoutput			; serial port out
+
+	ldy #0
+WrLoop0:
+	lda ciaSerialClk		; check clock
+	cmp ciaSerialClk		; debounce
+	bne WrLoop0
+	eor z8d
+	and #$40
+	beq WrLoop0
+
+	lda z8d				; change status of old clk
+	eor #$40
+	sta z8d
+
+	lda (r4),y
+	sta cia1Data			; send data
+
+	lda #8
+:	bit cia1ICR			; wait for transmission
+	beq :-
+
+	iny
+	bne WrLoop0
+
+	; talker turnaround
+	jsr Spinput
+	bit cia1ICR			; clear pending interrupts
+	lda ciaSerialClk		; set clock low, tell him we are ready
+	ora #$10
+	sta ciaSerialClk
+
+	lda #8
+:	bit cia1ICR			; wait for transmission
+	beq :-
+
+	lda cia1Data			; status byte
+	sta STATUS
+	and #%00001111			; error?
+	cmp #2
+	bcs WrErr			; yes
+
+	ldx #0				; no error
+	.byte $2c
+WrErr:	ldx #WR_VER_ERR
+	rts
+
 
 ; copy of k_Spinp code from C128 Kernal
 Spinput:
