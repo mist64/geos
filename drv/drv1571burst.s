@@ -22,6 +22,7 @@
 ; - ease of porting to 1581 (?)
 ; - ease of porting to remote drive emulators (64net/2, 64hdd, IDE64 (?))
 ; 	not really, this one does it using block read functions only https://github.com/MEGA65/c64-GEOS2000/blob/master/src/drv/drvf011.tas
+; ? patch ReadFile (files1a2b.s) to use fastload utility command ?
 
 ; DISADVANTAGES
 ; - preparatory routines (listen/.../unlisten) take much time (do they?)
@@ -30,17 +31,10 @@
 ;BUGS
 ; - no write_block yet
 ;	https://www.zimmers.net/anonftp/pub/cbm/manuals/drives/1571_Users_Guide_252095-04_(1985_Aug).pdf p 82 (90)
-; - send DOS command uses Listen which uses $0a1c serialFlag - should switch to bank0 there; maybe that was the reason for lockup sometimes?
-;   (BUT listen goes through trampoline which should handle that)
-; - copy $ff47 code to here (k_Spinp)
 
 ; MFM burst
 ; https://github.com/michielboland/c64stuff/blob/master/asm/serial.s
 
-;$ff47 is not in GEOS Kernal mirror!
-;	(just copy what it does)
-;	E5C3-E5FF C=1 -> fast, C=0 -> slow
-; https://klasek.at/c64/c128-rom-listing.html#$E5C3
 ; https://commodore.software/downloads?task=download.send&id=12906:mapping-the-commodore-128&catid=218 p 530 (517)
 
 
@@ -58,7 +52,6 @@ k_Listen	= $ffb1
 k_Second	= $ff93
 k_Ciout		= $ffa8
 k_Unlsn		= $ffae
-k_Spinp		= $ff47		; XXX !!! this is NOT in kernal mirror jump table in bank 1
 
 _InitForIO:
 	.word __InitForIO
@@ -916,13 +909,9 @@ RdLink0:
 	beqx :+
 	rts
 
-:	PushB config
-	LoadB config, %01001110		; bank 1 only with HIROM and I/O
-	PushB rcr
-	LoadB rcr,    %01000000		; no sharing - all is bank 1
+:
 	SEI				; XXX needed ?
-	CLC
-	JSR k_Spinp			; only reason why HIROM is enabled
+	jsr Spinput
 	BIT cia1ICR			; clear ICR register
 	LDA ciaSerialClk
 	EOR #$10			; toggle CLK
@@ -960,8 +949,6 @@ inc $d020
 
 RdLinkErr:
 	tax
-	PopB rcr
-	PopB config
 LoadB $d020, 0
 	rts
 
@@ -1001,6 +988,35 @@ VWrBlock0:	; perform write, then
 		; if read failed -> again, upto errCount=5
 		JMP __WriteBlock
 
+; copy of k_Spinp code from C128 Kernal
+Spinput:
+; serial port as input ; E5C3
+	lda cia1base+14
+	and #%10000000
+	ora #%00001000
+	sta cia1base+14			; setup for input
+	lda $d505
+	and #%11110111			; mmu serial direction input
+	sta $d505
+	rts
+
+; serial port as output ; E5D6
+Spoutput:
+	lda $d505
+	ora #%00001000			; serial port line as output
+	sta $d505
+	lda #%01111111			; no interrupts
+	sta cia1ICR
+	lda #0				; serial port timer: 1 bit every 4 cycles
+	sta cia1base+5
+	lda #3				; or 3..? (6us)
+	sta cia1base+4
+	lda cia1base+14
+	and #%10000000			; keep TOD
+	ora #%01010101
+	sta cia1base+14			; setup for output
+	bit cia1ICR			; clear pending interrupts
+	rts
 
 tmpclkreg:
 	.byte 0
