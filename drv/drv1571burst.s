@@ -810,6 +810,9 @@ SendDOSCmd:
 	PushB rcr
 	LoadB rcr,    %01000110		; share bottom 4K with bank 0 to have serialFlag (k_Listen will write to it)
 	LoadB STATUS, 0
+	lda serialFlag			; why 1571 DOS example does this?
+	and #%10111111
+	sta serialFlag
 	lda curDrive
 	jsr k_Listen
 	bbsf 7, STATUS, SndDOSCmdErr
@@ -916,29 +919,19 @@ RdLink0:
 	jsr SendDOSCmd
 	beqx :+
 	rts
-:
-	lda serialFlag
-	and #%01000000
-	bne :+
-	;; no fast serial/burst available?
-	ldx #DEV_NOT_FOUND
-	rts
 
-:
-RdBurst:
-	PushB config
+:	PushB config
 	LoadB config, %01001110		; bank 1 only with HIROM and I/O
 	PushB rcr
 	LoadB rcr,    %01000000		; no sharing - all is bank 1
 	SEI				; XXX needed ?
 	CLC
 	JSR k_Spinp			; only reason why HIROM is enabled
-	BIT cia1ICR
+	BIT cia1ICR			; clear ICR register
 	LDA ciaSerialClk
-	EOR #$10
+	EOR #$10			; toggle CLK
 	STA ciaSerialClk
 
-RdBurstRead:
 	LDA #8
 :	BIT cia1ICR			; wait for status byte
 	BEQ :-
@@ -955,7 +948,7 @@ RdBurstRead:
 	LDY #0				; no, read the data
 RdBurstLp:
 	LDA ciaSerialClk
-	EOR #$10
+	EOR #$10			; toggle CLK
 	TAX
 	LDA #8
 :	BIT cia1ICR			; wait for next byte
