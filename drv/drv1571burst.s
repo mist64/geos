@@ -28,7 +28,6 @@
 ; - a bit slower than BSW drivecode even on my 1571 with expanded RAM and ROM patch to cache whole tracks at once
 ;   loading 128DeskTop on U2+ emulated 1571 with original code: 12s+15s (until menu, until pointer appears)
 ;   loading 128DeskTop on real 1571 with this code:             13s+18s
-; - not sure which combination for NewDisk is better: 'I', Inquire, I+Inquire or Query; it is required because even initalized drive reports 29,disk id mismatch
 
 ; MFM burst
 ; https://github.com/michielboland/c64stuff/blob/master/asm/serial.s
@@ -831,25 +830,34 @@ __ExitTurbo:
 	ldx #0
 	rts
 
-__NewDisk:					;9854
+__NewDisk:
 		JSR InitForIO
-		LDX #>NewDiskCommand
-		LDA #<NewDiskCommand
-		LDY #1
-		JSR SendDOSCmd
-		bnex NewDiskErr
-		LDX #>InquireDisk_Cmd
+
+		ldx #>InquireStatus_Cmd
+		lda #<InquireStatus_Cmd
+		ldy #3
+		jsr SendDOSCmd
+		jsr GetBurstByte
+		and #%00001111
+		cmp #2				; anything in status?
+		bcs @statusnonzero		; yes
+		ldx #0
+		beq @end
+@statusnonzero:	cmp #%00001011			; $0b, disk change?
+		beq @inquiredisk		; yes, inquire
+		tax				; different error, return in X
+		bne @end
+
+@inquiredisk:	LDX #>InquireDisk_Cmd
 		LDA #<InquireDisk_Cmd
 		LDY #3
-;;		LDX #>QueryDisk_Cmd
-;;		LDA #<QueryDisk_Cmd
-;;		LDY #4
-;;		JSR SendDOSCmd
-NewDiskErr:	JMP DoneWithIO
+		JSR SendDOSCmd
+		jsr GetBurstByte		; read back status, do anything with it?
+@end:		jmp DoneWithIO
 
-NewDiskCommand:		.byte "I"
 InquireDisk_Cmd:	.byte "U0", 4
-QueryDisk_Cmd:		.byte "U0", 138, 18		;QueryDisk on track 18
+
+InquireStatus_Cmd:	.byte "U0", %11001100
 
 __ChangeDiskDevice:
 	sta ChngDskDev_Number
@@ -883,20 +891,7 @@ SendBurstCommand:
 	ldy #7
 	jmp SendDOSCmd
 
-__ReadBlock:
-_ReadLink:
-	jsr CheckParams
-	bcs RdLink0
-	ldy #0
-	rts
-RdLink0:
-	; Burst Read command
-	lda #$00
-	jsr SendBurstCommand
-	beqx :+
-	rts
-
-:
+GetBurstByte:
 	SEI				; XXX needed ?
 	jsr Spinput
 	BIT cia1ICR			; clear ICR register
@@ -913,7 +908,23 @@ RdLink0:
 
 	LDA cia1Data
 	STA STATUS
-	AND #%00001111			; error?
+	rts
+
+__ReadBlock:
+_ReadLink:
+	jsr CheckParams
+	bcs RdLink0
+	ldy #0
+	rts
+RdLink0:
+	; Burst Read command
+	lda #$00
+	jsr SendBurstCommand
+	beqx :+
+	rts
+
+:	jsr GetBurstByte		; read status byte
+	AND #%00001111			; any error?
 	CMP #2
 	BCS RdLinkErr			; yes
 
