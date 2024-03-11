@@ -81,7 +81,7 @@ Without pucrunch/c1541, you can still build an uncompressed KERNAL binary image.
 Run `make` to build the original "BSW" GEOS for C64. This will create the following files in directory `build/bsw`:
 
 * raw KERNAL components: `kernal.bin`, `lokernal.bin`, `init.bin`
-* disk drive drivers: `drv1541.bin`, `drv1571.bin`, `drv1581.bin`
+* disk drive drivers: `drv1541.bin`, `drv1571.bin`, `drv1571burst.bin`, `drv1581.bin`
 * input drivers: `amigamse.bin`, `joydrv.bin`, `lightpen.bin`, `mse1351.bin`, `koalapad.bin`, `pcanalog.bin`
 * combined KERNAL image (`SYS 49155`): `kernal_combined.prg`
 * compressed KERNAL image (`RUN`): `kernal_compressed.prg`
@@ -114,6 +114,7 @@ By default, the KERNAL image will contain the Commodore 1541 disk driver (`drv15
 
 Supported drives are `drv1541`, `drv1571` and `drv1581`. Supported input devices are `amigamse`, `joydrv`, `koalapad`, `lightpen`, `mse1351` and `pcanalog`.
 
+For C128, with `VARIANT=bsw128` you can also choose to use `DRIVE=drv1571burst` to use native DOS Burst Command Instruction Set instead of speed loader.
 
 ## Customization
 
