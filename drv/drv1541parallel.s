@@ -1042,8 +1042,8 @@ Drv_RecvByte_1:
 	lda #$10
 :	bit $180d
 	beq :-
-	bit $1800			; clear CB1
 	lda $1801			; read data
+	bit $1800			; clear CB1
 	dey
 	sta ($73),y
 	bne Drv_RecvByte_1
