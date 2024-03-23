@@ -688,32 +688,23 @@ SndDOSCmd1:
 	ldx #DEV_NOT_FOUND
 	rts
 
-DUNK4:
+DUNK4:					; A/X addr of procedure to run, without parameters
 	stx z8c
 	sta z8b
-	ldy #2
+	ldy #2				; 2 bytes to send
 	bne DUNK4_3
-DUNK4_1:
+DUNK4_1:				; A/X addr of procedure to run, r1 t&s parameters
 	stx z8c
 	sta z8b
-DUNK4_2:
-	ldy #4
-	lda r1H
-	sta DTrkSec+1
-	lda r1L
-	sta DTrkSec
+DUNK4_2:				; called by NewDisk, but why send r1?
+	ldy #4				; 4 bytes to send
+	MoveW r1, DTrkSec
 DUNK4_3:
-	lda z8c
-	sta DExeProc+1
-	lda z8b
-	sta DExeProc
-	lda #>DExeProc
-	sta z8c
-	lda #<DExeProc
-	sta z8b
+	MoveW z8b, DExeProc
+	LoadW z8b, DExeProc
 	jmp Hst_SendByte
 
-DUNK5:
+DUNK5:					; receive 2 bytes, but ignorethe first(?)
 	ldy #1
 	jsr Hst_RecvByte
 	pha
@@ -859,13 +850,9 @@ __NewDisk:
 	bnex NewDsk2
 	jsr ClearCache
 	jsr InitForIO
-	lda #0
-	sta errCount
+	LoadB errCount, 0
 NewDsk0:
-	lda #>Drv_NewDisk
-	sta z8c
-	lda #<Drv_NewDisk
-	sta z8b
+	LoadW z8b, Drv_NewDisk
 	jsr DUNK4_2
 	jsr GetDOSError
 	beq NewDsk1
@@ -969,7 +956,7 @@ VWrBlock1:
 	beqx VWrBlock2
 	dec tryCount
 	bne VWrBlock1
-	ldx #$25
+	ldx #WR_VER_ERR
 	inc errCount
 	lda errCount
 	cmp #5
@@ -991,13 +978,9 @@ GetDOSError:
 	lda #<Drv_SendByte_0
 	jsr DUNK4
 GetDError:
-	lda #>errStore
-	sta z8c
-	lda #<errStore
-	sta z8b
+	LoadW z8b, errStore
 	jsr DUNK5
-	lda errStore
-	pha
+	PushB errStore
 	tay
 	lda DOSErrTab-1,y
 	tay
@@ -1528,10 +1511,6 @@ DExeProc:
 	.word 0
 DTrkSec:
 	.word 0
-tmpDD00:
-	.byte 0
-tmpDD00_2:
-	.byte 0
 errCount:
 	.byte 0
 errStore:
