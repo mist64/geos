@@ -633,13 +633,12 @@ __DoneWithIO:
 	rts
 
 Hst_RecvByte:
-Hst_RecvByte_0:
 :	lda cia2base+13		; wait for flag
 	beq :-
 	lda cia2base+1		; read data
 	dey
 	sta (z8b),y
-	bne Hst_RecvByte_0
+	bne :-
 	rts
 
 Hst_SendByte:
@@ -1034,12 +1033,8 @@ Drv_SendByte_0:
 	ldy #0
 	sty $73
 	sty $74
-	iny
-	sty $71
-	ldy #0
-	lda $71
 	jsr Drv_SendByte_1
-	ldy $71
+	ldy #1
 Drv_SendByte_1:
 	LoadB $1803, $ff	; port A output
 Drv_SendByte_2:
