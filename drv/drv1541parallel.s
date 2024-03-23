@@ -11,9 +11,10 @@
 .include "jumptab.inc"
 .include "c64.inc"
 
-.segment "drv1541"
+.import __drv1541_drivecode_RUN__
+.import __drv1541_drivecode_SIZE__
 
-DriveAddy = $0300
+.segment "drv1541"
 
 _InitForIO:
 	.word __InitForIO
@@ -776,15 +777,9 @@ SendExitTurbo:
 
 SendCODE:
 	jsr InitForIO
-	lda #>DriveCode
-	sta z8e
-	lda #<DriveCode
-	sta z8d
-	lda #>DriveAddy
-	sta WriteAddy+1
-	lda #<DriveAddy
-	sta WriteAddy
-	LoadB z8f, $1a
+	LoadW z8d, DriveCode
+	LoadW WriteAddy, __drv1541_drivecode_RUN__
+	LoadB z8f, (<(__drv1541_drivecode_SIZE__ / $0020))
 SndCDE0:
 	jsr SendCHUNK
 	bnex SndCDE1
