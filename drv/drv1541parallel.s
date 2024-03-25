@@ -634,12 +634,18 @@ __DoneWithIO:
 	rts
 
 Hst_RecvByte:
+	MoveW z8b, RecvAddr
+:	nop			; delay adjusted to Drv_SendByte timing
+	nop			; so that branch after wait for flag is mostly not taken
+	nop			; (4xNOP)=28 cycles per byte loop
+	nop
 :	lda cia2base+13		; wait for flag
 	beq :-
 	lda cia2base+1		; read data
 	dey
-	sta (z8b),y
-	bne :-
+RecvAddr = *+1
+	sta $8000,y
+	bne :--
 	rts
 
 Hst_SendByte:
@@ -1002,39 +1008,48 @@ DOSErrTab:
 
 DriveCode:
 .segment "drv1541_drivecode"
-;		.org DriveAddy
 
-Drv_SendByte:
+Drv_SendByte:			; send 256 bytes, then length (1) and status byte from $00
 	ldy #0
-	jsr Drv_SendByte_1
-Drv_SendByte_0:
-	LoadB $1803, $ff
-	LoadB $1801, $01
-	lda #$10
-:	bit $180d
-	beq :-
-	bit $1800
-	ldy $00
-	sty $1801
-:	bit $180d
-	beq :-
-	bit $1800
-	LoadB $1803, $00
-	rts
+	MoveW $73, Drv_SendAddr
 Drv_SendByte_1:
 	LoadB $1803, $ff	; port A output
-Drv_SendByte_2:
-	dey
+	dey			; first byte
 	lda ($73),y
-	sta $1801		; send data
+	sta $1801		; send first byte
+	lda #$10		; bit mask for handshake test
+Drv_SendByte_2:			; 27 cycles per byte
+	cpy #0
+	beq Drv_SendByteEnd
+	dey
+:	bit $180d		; wait for handshake
+	beq :-
+Drv_SendAddr = *+1
+	ldx $0700,y		; 1 cycle faster than lda ($73),y and we can keep A unchanged for bit test
+	stx $1801		; send data
+	bit $1800		; clear flag from previous handshake
+	jmp Drv_SendByte_2
+
+Drv_SendByteEnd:
+:	bit $180d		; wait for handshake
+	beq :-
+	bit $1800		; clear flag
+
+Drv_SendByte_0:
+	LoadB $1803, $ff	; send length (1) and status byte from $00
+	LoadB $1801, $01	; send length
 	lda #$10
 :	bit $180d		; wait for handshake
 	beq :-
 	bit $1800		; clear flag
-	cpy #0
-	bne Drv_SendByte_2
+	ldy $00
+	sty $1801		; send status
+:	bit $180d		; wait for handshake
+	beq :-
+	bit $1800		; clear flag
 	LoadB $1803, $00	; port A input
 	rts
+
 
 Drv_RecvWord:
 	ldy #1
