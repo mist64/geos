@@ -1,7 +1,9 @@
 ; GEOS by Berkeley Softworks
 ; reverse engineered by Maciej Witkowiak, Michael Steil
 ;
-; Commodore 1541 disk driver with parallel cable
+; Commodore 1541 disk driver with parallel cable by Maciej Witkowiak
+; NOTE: OPTIMAL_INTERLEAVE has to be determined experimentally
+; NOTE2: if drive code jams - check if 'jmp (DExecAddy)' is on page boundary - it's dangerously close
 
 .include "const.inc"
 .include "geossym.inc"
@@ -13,6 +15,9 @@
 
 .import __drv1541_drivecode_RUN__
 .import __drv1541_drivecode_SIZE__
+
+; we send data about 2,5 times faster, so it must be smaller than 8
+OPTIMAL_INTERLEAVE = 8
 
 .segment "drv1541"
 
@@ -721,6 +726,7 @@ DUNK5:					; receive 2 bytes, but ignorethe first(?)
 	rts
 
 __EnterTurbo:
+	LoadB interleave, OPTIMAL_INTERLEAVE
 	lda curDrive
 	jsr SetDevice
 	ldx curDrive
