@@ -1008,11 +1008,19 @@ Drv_SendByte:
 	ldy #0
 	jsr Drv_SendByte_1
 Drv_SendByte_0:
-	ldy #0
-	sty $73
-	sty $74
-	jsr Drv_SendByte_1
-	ldy #1
+	LoadB $1803, $ff
+	LoadB $1801, $01
+	lda #$10
+:	bit $180d
+	beq :-
+	bit $1800
+	ldy $00
+	sty $1801
+:	bit $180d
+	beq :-
+	bit $1800
+	LoadB $1803, $00
+	rts
 Drv_SendByte_1:
 	LoadB $1803, $ff	; port A output
 Drv_SendByte_2:
