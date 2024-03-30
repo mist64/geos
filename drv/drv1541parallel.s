@@ -13,8 +13,14 @@
 .include "jumptab.inc"
 .include "c64.inc"
 
+.import __DRIVE0300_START__
+
 .import __drv1541_drivecode_RUN__
 .import __drv1541_drivecode_SIZE__
+.import __drv1541_zp_RUN__
+.import __drv1541_zp_LOAD__
+.import __drv1541_zp_SIZE__
+
 
 OPTIMAL_INTERLEAVE = 6 ; 6 gives a 22% speedup
 
@@ -745,9 +751,9 @@ EntTur0:
 	jsr SendDOSCmd
 	bnex EntTur4
 	jsr $ffae
+	sei
 :	lda cia2base+13			; wait for initial sync
 	beq :-
-	sei
 	jsr DoneWithIO
 	ldx curDrive
 	lda _turboFlags,x
@@ -780,8 +786,8 @@ SendExitTurbo:
 SendCODE:
 	jsr InitForIO
 	LoadW z8d, DriveCode
-	LoadW WriteAddy, __drv1541_drivecode_RUN__
-	LoadB z8f, (<(__drv1541_drivecode_SIZE__ / $0020))
+	LoadW WriteAddy, __DRIVE0300_START__
+	LoadB z8f, (<((__drv1541_drivecode_SIZE__) / $0020))
 SndCDE0:
 	jsr SendCHUNK
 	bnex SndCDE1
@@ -910,12 +916,15 @@ _ReadLink:
 	jsr DoCacheRead
 	bne RdBlock2
 RdBlock0:
+	ldx #>Drv_RecvZP
+	lda #<Drv_RecvZP
+	jsr DUNK4_1
+	LoadW z8b, __drv1541_zp_LOAD__
+	ldy #<(__drv1541_zp_SIZE__)
+	jsr Hst_SendByte
 	ldx #>Drv_ReadSec
 	lda #<Drv_ReadSec
 	jsr DUNK4_1
-	ldx #>Drv_SendByte
-	lda #<Drv_SendByte
-	jsr DUNK4
 	MoveW r4, z8b
 	ldy #0
 	jsr Hst_RecvByte
@@ -1014,6 +1023,13 @@ DOSErrTab:
 DriveCode:
 .segment "drv1541_drivecode"
 
+DExecAddy = $0a		; unused t&s for buffer $0500
+DDatas = DExecAddy+2		; unused t&s for buffer $0600
+
+gcrdecode:
+.byte $03, $99, $99, $99, $99, $99, $99, $99, $99, $80, $00, $10, $99, $c0, $40, $50, $99, $99, $20, $30, $99, $f0, $60, $70, $99, $90, $a0, $b0, $99, $d0, $e0, $7f, $76, $80, $99, $90, $99, $99, $99, $76, $7f, $08, $00, $01, $99, $0c, $04, $05, $99, $99, $02, $03, $99, $0f, $06, $07, $99, $09, $0a, $0b, $99, $0d, $0e, $99, $99, $00, $20, $a0, $6c, $4c, $2c, $0c, $80, $08, $08, $0c, $99, $0f, $09, $0d, $00, $00, $08, $99, $00, $99, $01, $99, $10, $01, $0c, $99, $04, $99, $05, $99, $99, $10, $30, $b0, $02, $99, $03, $99, $c0, $0c, $0f, $99, $06, $99, $07, $99, $40, $04, $09, $99, $0a, $99, $0b, $99, $50, $05, $0d, $99, $0e, $90, $00, $d0, $40, $99, $20, $e0, $60, $80, $a0, $c0, $e0, $99, $00, $04, $02, $06, $0a, $0e, $20, $02, $18, $99, $10, $99, $11, $99, $30, $03, $1c, $99, $14, $99, $15, $99, $99, $c0, $f0, $d0, $12, $99, $13, $99, $f0, $0f, $1f, $99, $16, $99, $17, $99, $60, $06, $19, $99, $1a, $99, $1b, $99, $70, $07, $1d, $99, $1e, $a4, $a4, $a4, $a3, $40, $60, $e0, $15, $13, $12, $11, $90, $09, $01, $05, $03, $07, $0b, $99, $a0, $0a, $99, $99, $99, $99, $99, $99, $b0, $0b, $99, $99, $99, $99, $99, $99, $99, $50, $70, $99, $99, $99, $99, $99, $d0, $0d, $99, $99, $99, $99, $99, $99, $e0, $0e, $99, $99, $99, $99, $99, $99, $99, $99, $99, $99, $99, $99, $99, $99
+
+
 Drv_SendByte:			; send 256 bytes, then length (1) and status byte from $00
 	ldy #0
 	MoveW $73, Drv_SendAddr
@@ -1042,6 +1058,7 @@ Drv_SendByteEnd:
 
 Drv_SendByte_0:
 	LoadB $1803, $ff	; send length (1) and status byte from $00
+Drv_SendStatus:
 	LoadB $1801, $01	; send length
 	lda #$10
 :	bit $180d		; wait for handshake
@@ -1108,6 +1125,10 @@ DriveLoop:
 	lda #<(DriveLoop-1)
 	pha
 	jmp (DExecAddy)
+
+Drv_RecvZP:
+	LoadW $73, __drv1541_zp_RUN__
+	jmp Drv_RecvWord
 
 Drv_ExitTurbo:
 	jsr D_DUNK4_1
@@ -1340,7 +1361,9 @@ D_DUNK11_1:
 	stx $3f
 	LoadB $1c0c, $ee
 	lda $45
-	cmp #$10
+	bne :+
+	jmp FastReadSector
+:	cmp #$10
 	beq D_DUNK11_3
 	cmp #$30
 	beq D_DUNK11_2
@@ -1421,12 +1444,249 @@ D_DUNK12_3:
 	LoadB $48, $ff
 	rts
 
-DExecAddy:
-	.word 0
-DDatas:
-	;.word 0
+FastReadSector:
+	;;
+;	ldx #0
+;:	lda z:<__drv1541_zp_RUN__,x
+;;XXX	sta $0700,x
+;	lda FastReadZp,x
+;	sta z:<__drv1541_zp_RUN__,x
+;	inx
+;	cpx #<__drv1541_zp_SIZE__
+;	bne :-
+	;;
+	;; XXX store stack
+
+		; Encode t&s into GCR
+
+		MoveW $12, $16		; ID1,2
+		MoveW DDatas, $18	; t&s
+		lda #0
+		eor $16
+		eor $17
+		eor $18
+		eor $19
+		sta $1a			; parity
+		jsr $f934		; encode to GCR, result in $24-2b
+
+		LoadB $00, 1		; no error by default
+
+		; Wait for sync + compare encoded header (like DOS does)
+waitheader:
+		jsr $f556		; wait for sync
+		;ldy #0			; F556 sets Y to 0
+:		bvc *
+		clv
+		lda $1c01
+		cmp $24,y
+		bne waitheader		; next one
+		iny
+		cpy #8
+		bne :-			; XXX ROM does check for maximum number of tries, error would jump to sendblock below with error $02
+
+		; code from Spindle 3.1 by lft, linusakesson.net/software/spindle/
+		; Wait for a data block
+
+		ldx	#0		; will be ff when entering the loop
+		txs
+waitsync:
+		bit	$1c00
+		bpl	*-3
+
+		bit	$1c00
+		bmi	*-3
+
+		lda	$1c01	; ack the sync byte
+		clv
+		bvc	*
+		lda	$1c01	; aaaaabbb, which is 01010.010(01) for a header
+		clv		; or 01010.101(11) for data
+		eor	#$55
+		bne	waitsync
+
+		bvc	*
+		lda	$1c01	; bbcccccd
+		clv
+		.byt	$4b,$3f			; asr imm, d -> carry
+		sta	first_mod3+1
+
+		bvc	*
+		lax	$1c01			; 0 1 2 3	ddddeeee
+		.byt	$6b,$f0			; 4 5		arr imm, ddddd000
+		clv				; 6 7
+		tay				; 8 9
+first_mod3:	lda	gcrdecode		; 10 11 12 13	lsb = 000ccccc
+		ora	gcrdecode+1,y		; 14 15 16 17	y = ddddd000, lsb = 00000001
+		pha				; 18 19 20	first byte to $100
+
+		; get sector number from the lowest 5 bits of the first byte
+
+		and	#$1f			; 21 22
+		tay				; 23 24
+		nop ; lda interested,y		; 25 26
+		nop ; lda interested,y		; 27 28
+		nop ; beq notint (not taken)	; 29 30
+		;lda	interested,y		; 25 26 27 28
+;mod_safety:
+		;beq	notint			; 29 30
+
+		jmp	zpc_entry		; 31 32 33	x = ----eeee
+zp_return:
+		.byt	$6b,$f0			; arr imm, ddddd000
+		tay
+		lda	gcrdecode,x		; x = 000ccccc
+		ora	gcrdecode+1,y		; y = ddddd000, lsb = 00000001
+
+	sta $24			; checksum
+
+	; send out data, compute checksum
+	ldy #$ff
+	sty $1803		; port B output
+	iny
+	sty $25			; clear computed checksum
+:	pla
+	sta $1801		; send next byte (reversed order, as host expects)
+	eor $25
+	sta $25			; update checksum
+	lda #$10		; handshake test bit pattern
+:	bit $180d		; wait for handshake
+	beq :-
+	bit $1800		; clear CB1 flag
+	dey
+	cpy #0
+	bne :--
+
+	; compare checksum ($24==$25)
+	CmpB $24, $25
+	beq :+
+	LoadB $00, 5		; checksum error
+	; if header was found in time and checksum is OK then send status byte==1
+	; if header not found, send error $04
+:	jsr Drv_SendStatus
+
+	; restore stack
+	ldx #$45
+	txs
+
+	; restore zp
+
+;	ldx #0
+;:	lda $0700,x
+;;XXX	sta z:<__drv1541_zp_RUN__,x
+;	inx
+;	cpx #<__drv1541_zp_SIZE__
+;	bne :-
+
+	; return to main loop (XXX ExitTurbo must warm reset drive somehow)
+	jmp DriveLoop
+
+;FastReadZp:
+.segment "drv1541"
+Drv_ZPCode:
+.segment "drv1541_zp" : zeropage
+
+prof_zp:
+zpc_loop:
+		; This nop is needed for the slow bitrates (at least for 00),
+		; because apparently the third byte after a bvc sync might not be
+		; ready at cycle 65 after all.
+
+		; However, with the nop, the best case time for the entire loop
+		; is 128 cycles, which leaves too little slack for motor speed
+		; variance at bitrate 11.
+
+		; Thus, we modify the bne instruction at the end of the loop to
+		; either include or skip the nop depending on the current
+		; bitrate.
+
+		nop
+
+		lax	$1c01			; 62 63 64 65	ddddeeee
+		.byte	$6b,$f0			; 66 67		arr imm, ddddd000
+		clv				; 68 69
+		tay				; 70 71
+zpc_mod3:	lda	gcrdecode		; 72 73 74 75	lsb = 000ccccc
+		ora	gcrdecode+1,y		; 76 77 78 79	y = ddddd000, lsb = 00000001
+
+		; first read in [0..25]
+		; second read in [32..51]
+		; third read in [64..77]
+		; clv in [64..77]
+		; in total, 80 cycles from bvc
+
+		bvc	*			; 0 1
+
+		pha				; 2 3 4		second complete byte (nybbles c, d)
+zpc_entry:
+		lda	#$0f			; 5 6
+		sax	z:zpc_mod5+1		; 7 8 9
+
+		lda	$1c01			; 10 11 12 13	efffffgg
+		ldx	#$03			; 14 15
+		sax	z:zpc_mod7+1		; 16 17 18
+		.byte	$4b,$fc			; 19 20		asr imm, 0efffff0
+		tay				; 21 22
+		ldx	#$79			; 23 24
+zpc_mod5:	lda	gcrdecode,x		; 25 26 27 28	lsb = 0000eeee, x = 01111001
+		eor	gcrdecode+$40,y		; 29 30 31 32	y = 0efffff0, lsb = 01000000
+		pha				; 33 34 35	third complete byte (nybbles e, f)
+
+		lax	$1c01			; 36 37 38 39	ggghhhhh
+		clv				; 40 41
+		and	#$1f			; 42 43
+		tay				; 44 45
+
+		; first read in [0..25]
+		; second read in [32..51]
+		; clv in [32..51]
+		; in total, 46 cycles from bvc
+
+		bvc	*			; 0 1
+
+		lda	#$e0			; 2 3
+		.byte $cb, $00	; sbx	#0			; 4 5
+zpc_mod7:	lda	gcrdecode,x		; 6 7 8 9	x = ggg00000, lsb = 000000gg
+		ora	gcrdecode+$20,y		; 10 11 12 13	y = 000hhhhh, lsb = 00100000
+		pha				; 14 15 16	fourth complete byte (nybbles g, h)
+
+		; start of a new 5-byte chunk
+
+		lda	$1c01			; 17 18 19 20	aaaaabbb
+		ldx	#$f8			; 21 22
+		sax	z:zpc_mod1+1		; 23 24 25
+		and	#$07			; 26 27
+		ora	#$08			; 28 29
+		tay				; 30 31
+
+		lda	$1c01			; 32 33 34 35	bbcccccd
+		ldx	#$c0			; 36 37
+		sax	z:zpc_mod2+1		; 38 39 40
+		.byt	$4b,$3f			; 41 42		asr imm, 000ccccc, d -> carry
+		sta	z:zpc_mod3+1		; 43 44 45
+
+zpc_mod1:	lda	gcrdecode		; 46 47 48 49	lsb = aaaaa000
+zpc_mod2:	eor	gcrdecode,y		; 50 51 52 53	lsb = bb000000, y = 00001bbb
+		pha				; 54 55 56	first complete byte (nybbles a, b)
+
+		tsx				; 57 58
+BNE_WITH_NOP	=	(zpc_loop - (* + 2)) & $ff
+BNE_WITHOUT_NOP	=	(zpc_loop + 1 - (* + 2)) & $ff
+zpc_bne:	.byt	$d0,BNE_WITHOUT_NOP	; 59 60 61	bne zpc_loop
+
+		ldx	z:zpc_mod3+1		; 61 62 63
+		lda	$1c01			; 64 65 66 67	ddddeeee
+		jmp	zp_return
+
 .segment "drv1541_b"
 
+	.ifndef dontcare
+ClearCache:
+DoClearCache:
+DoCacheRead:
+DoCacheWrite:
+DoCacheVerify:
+	rts
+.else
 ClrCacheDat:
 	.word 0
 
@@ -1523,6 +1783,7 @@ CacheTabH:
 	.byte $01, $01, $01, $01, $01, $01, $01, $01
 	.byte $01, $01, $02, $02, $02, $02, $02, $02
 	.byte $02, $02, $02, $02
+.endif
 
 tmpclkreg:
 	.byte 0

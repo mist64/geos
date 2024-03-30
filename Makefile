@@ -17,7 +17,7 @@ else
 D64_TEMPLATE = GEOS64.D64
 endif
 
-ASFLAGS      = -I inc -I .
+ASFLAGS      = -I inc -I . --cpu 6502X
 
 # code that is in front bank of all variants
 KERNAL_SOURCES= \
@@ -382,7 +382,7 @@ $(BUILD_DIR)/drv/drv1541.bin: $(BUILD_DIR)/drv/drv1541.o drv/drv1541.cfg $(DEPS)
 	$(LD) -C drv/drv1541.cfg $(BUILD_DIR)/drv/drv1541.o -o $@
 
 $(BUILD_DIR)/drv/drv1541parallel.bin: $(BUILD_DIR)/drv/drv1541parallel.o drv/drv1541parallel.cfg $(DEPS)
-	$(LD) -C drv/drv1541parallel.cfg $(BUILD_DIR)/drv/drv1541parallel.o -o $@
+	$(LD) -C drv/drv1541parallel.cfg -m $(BUILD_DIR)/drv/drv1541parallel.map $(BUILD_DIR)/drv/drv1541parallel.o -o $@
 
 $(BUILD_DIR)/drv/drv1571.bin: $(BUILD_DIR)/drv/drv1571.o drv/drv1571.cfg $(DEPS)
 	$(LD) -C drv/drv1571.cfg $(BUILD_DIR)/drv/drv1571.o -o $@
