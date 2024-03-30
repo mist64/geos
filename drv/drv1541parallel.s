@@ -16,8 +16,7 @@
 .import __drv1541_drivecode_RUN__
 .import __drv1541_drivecode_SIZE__
 
-; we send data about 2,5 times faster, so it must be smaller than 8
-OPTIMAL_INTERLEAVE = 8
+OPTIMAL_INTERLEAVE = 6 ; 6 gives a 22% speedup
 
 .segment "drv1541"
 
