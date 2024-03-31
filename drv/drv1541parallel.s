@@ -976,7 +976,7 @@ WrBlock1:
 	MoveW r4, z8b
 	ldy #0
 	jsr Hst_SendByte
-	jsr GetDOSError
+	jsr GetDError
 	beq WrBlock2
 	inc errCount
 	cpy errCount
@@ -1429,7 +1429,7 @@ D_DUNK11_8:
 	lda #1
 D_DUNK11_9:
 	sta $00
-	rts
+	jmp Drv_SendByte_0			; set port to output, send status from $00
 
 Drv_DoReadSector:
 		; Encode t&s into GCR
