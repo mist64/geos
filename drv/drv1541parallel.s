@@ -757,8 +757,9 @@ __EnterTurbo:
 	lda _turboFlags,x
 	bmi EntTur0
 	jsr SendCODE
-	bnex EntTur5
-	ldx curDrive
+	beqx :+
+	jmp EntTur5
+:	ldx curDrive
 	lda #%10000000
 	sta _turboFlags,x
 EntTur0:
@@ -769,10 +770,43 @@ EntTur0:
 	lda #<EnterCommand
 	jsr SendDOSCmd
 	bnex EntTur4
+	lda cia2base+13			; clear flag
 	jsr $ffae
 	sei
 :	lda cia2base+13			; wait for initial sync
 	beq :-
+:	lda cia2base+13			; twice (some part of M-E or DriveStart setup will trigger handhsake pulse)
+	beq :-
+	lda cia2base+1			; confirm
+
+	; send remainder code for zero page
+	LoadB LastOper, $ff
+	jsr ReloadDrvZP
+
+	; fast send rest of drive code: pages $03-$07
+	LoadB EntTH+1, >DriveCode
+	LoadW r1, __DRIVE0300_START__		; target address
+EntTur1:
+	ldx #>Drv_RecvZP			; recieve data
+	lda #<Drv_RecvZP
+	jsr DUNK4_1
+	LoadB z8b, <DriveCode			; source address
+EntTH:	lda #>DriveCode
+	sta z8c
+	ldy #0
+	jsr Hst_SendByte
+	inc r1H
+	inc EntTH+1
+	CmpBI r1H, $08
+	bne EntTur1
+	; send page 7 data also to page 2
+	LoadB r1H, $02
+	ldx #>Drv_RecvZP
+	lda #<Drv_RecvZP
+	jsr DUNK4_1
+	LoadW z8b, DriveCode+$0400
+	ldy #<(__DRIVE0300_LAST__-__DRIVE0300_START__)
+	jsr Hst_SendByte
 	jsr DoneWithIO
 	ldx curDrive
 	lda _turboFlags,x
@@ -804,9 +838,9 @@ SendExitTurbo:
 
 SendCODE:
 	jsr InitForIO
-	LoadW z8d, DriveCode
-	LoadW WriteAddy, __DRIVE0300_START__
-	LoadB z8f, (<((__drv1541_drivecode_SIZE__) / $0020))
+	LoadW z8d, DriveCode+$0100	; skip over first page (gcr decode, send only 1 page of code)
+	LoadW WriteAddy, __DRIVE0300_START__+$0100
+	LoadB z8f, <($00ff/$20)
 SndCDE0:
 	jsr SendCHUNK
 	bnex SndCDE1
@@ -865,7 +899,7 @@ __ExitTurbo:
 	jsr SendExitTurbo
 	ldx curDrive
 	lda _turboFlags,x
-	and #%10111111
+	and #%00111111			; clear bit 7 because we *have to* reload the code
 	sta _turboFlags,x
 ExiTur0:
 	pla
@@ -927,14 +961,7 @@ ChngDskDv0:
 	pla
 	rts
 
-__ReadBlock:
-_ReadLink:
-	jsr CheckParams_1
-	bcc RdBlock2
-	bbrf 6, curType, RdBlock0
-	jsr DoCacheRead
-	bne RdBlock2
-RdBlock0:
+ReloadDrvZP:
 	lda LastOper				; need to reload ZP code?
 	beq :+					; no, it's already there
 	LoadB LastOper, 0			; mark that ZP code is loaded
@@ -947,7 +974,18 @@ RdBlock0:
 	ldy #<(__drv1541_zp_SIZE__)		; bytes ($00=256)
 	jsr Hst_SendByte
 	PopW r1
-:	ldx #>Drv_ReadSec			; read sector and status
+:	rts
+
+__ReadBlock:
+_ReadLink:
+	jsr CheckParams_1
+	bcc RdBlock2
+	bbrf 6, curType, RdBlock0
+	jsr DoCacheRead
+	bne RdBlock2
+RdBlock0:
+	jsr ReloadDrvZP
+	ldx #>Drv_ReadSec			; read sector and status
 	lda #<Drv_ReadSec
 	jsr DUNK4_1
 	MoveW r4, z8b
@@ -1078,24 +1116,22 @@ DriveStart:
 	PushB $49
 	LoadB $1803, $00		; port A input
 	LoadB $180c, $0b
-	lda $1801			; notify we're runing (initial sync)
-	bit $1800			; clear CB1
 	bit $180c
 	lda $180f
 	and #%11011111
 	sta $180f
-	ldx #0
-	stx DLastOper			; READ allowed
-:	lda $0700,x			; cache code that would be in the write buffer zone
-	sta $0200,x
-	inx
-	cpx #<(__DRIVE0300_LAST__-__DRIVE0300_START__)
-	bne :-
+	LoadB DLastOper,0		; READ allowed
+	bit $1800			; clear CB1
+	lda $1801			; notify we're runing (initial sync)
+	lda #$10
+:	bit $180d			; sync
+	beq :-
+	bit $1800			; clear CB1
 DriveLoop:
-	jsr D_DUNK8
+	jsr Drv_LedOFF
 	LoadW $73, DExecAddy		; set rcv buffer to next command 
 	jsr Drv_RecvWord		; receive address
-	jsr D_DUNK8_1
+	jsr Drv_LedON
 	LoadW $73, $0700		; buffer to data
 	lda #>(DriveLoop-1)		; return address
 	pha
@@ -1103,10 +1139,22 @@ DriveLoop:
 	pha
 	jmp (DExecAddy)
 
+Drv_LedOFF:
+	lda #$f7
+	and $1c00
+Drv_LedDo:
+	sta $1c00
+	rts
+Drv_LedON:
+	lda #$08
+	ora $1c00
+	bne Drv_LedDo
+
 Drv_RecvZP:
-;	LoadW $73, __drv1541_zp_RUN__
 	MoveW DDatas, $73
 	jmp Drv_RecvWord
+
+	.assert * < __DRIVE0300_START__ + $1ff, error, "Drv_Recv+DriveStart+DriveLoop+Drv_RecvZP must be within $0400-$04ff"
 
 Drv_ExitTurbo:
 	jsr D_DUNK4_1
@@ -1118,7 +1166,7 @@ Drv_ExitTurbo:
 	pla
 	PopB $49
 	plp
-	rts
+	jmp ($fffc)			; exit through reset vector
 
 Drv_ChngDskDev:
 	lda DDatas
@@ -1259,19 +1307,10 @@ Drv_NewDisk_8:
 	sta $1c00
 	rts
 
-D_DUNK8:			; LED off?
-	lda #$f7
-	bne D_DUNK8_3
-D_DUNK8_1:			; LED on?
-	lda #$08
-	ora $1c00
-	bne Drv_NewDisk_8
-
 D_DUNK8_2:
 	LoadB $20, 0
 	LoadB $3e, $ff
 	lda #$fb
-D_DUNK8_3:
 	and $1c00
 	jmp Drv_NewDisk_8
 
