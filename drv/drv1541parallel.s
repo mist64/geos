@@ -1157,15 +1157,6 @@ Drv_RecvZP:
 	.assert * < __DRIVE0300_START__ + $1ff, error, "Drv_Recv+DriveStart+DriveLoop+Drv_RecvZP must be within $0400-$04ff"
 
 Drv_ExitTurbo:
-	jsr D_DUNK4_1
-	LoadB $33, 0
-	sta $1800
-	jsr $f98f			; turn drive motor off
-	LoadB $1c0c, $ec
-	pla
-	pla
-	PopB $49
-	plp
 	jmp ($fffc)			; exit through reset vector
 
 Drv_ChngDskDev:
@@ -1489,6 +1480,7 @@ Drv_DoReadSector:
 
 		LoadB $00, 1		; no error by default
 
+		ldx #90			; 90 attempts
 		; Wait for sync + compare encoded header (like DOS does)
 waitheader:
 		jsr $f556		; wait for sync
@@ -1497,11 +1489,17 @@ waitheader:
 		clv
 		lda $1c01
 		cmp $24,y
-		bne waitheader		; next one
+		bne nextheader		; next one
 		iny
 		cpy #8
 		bne :-			; XXX ROM does check for maximum number of tries, error would jump to sendblock below with error $02
+		beq foundheader
+nextheader:	dex
+		bne waitheader
+		LoadB $00, 2		; 20, 'read error'
+		jmp Drv_ReadSec_DataOut
 
+foundheader:
 		; code from Spindle 3.1 by lft, linusakesson.net/software/spindle/
 		; Wait for a data block
 
@@ -1557,6 +1555,7 @@ zp_return:
 
 	sta $24			; checksum
 
+Drv_ReadSec_DataOut:
 	; send out data, compute checksum
 	ldy #$ff
 	sty $1803		; port B output
@@ -1574,8 +1573,9 @@ zp_return:
 	cpy #0
 	bne :--
 
-	; compare checksum ($24==$25)
-	CmpB $24, $25
+	CmpBI $00, 1		; if there is error already
+	bne :+			; return it
+	CmpB $24, $25		; otherwise compare checksums
 	beq :+
 	LoadB $00, 5		; checksum error
 	; if header was found in time and checksum is OK then send status byte==1
