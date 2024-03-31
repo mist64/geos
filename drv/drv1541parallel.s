@@ -938,12 +938,15 @@ RdBlock0:
 	lda LastOper				; need to reload ZP code?
 	beq :+					; no, it's already there
 	LoadB LastOper, 0			; mark that ZP code is loaded
-	ldx #>Drv_RecvZP
+	PushW r1
+	LoadW r1, __drv1541_zp_RUN__		; target address
+	ldx #>Drv_RecvZP			; recieve data
 	lda #<Drv_RecvZP
 	jsr DUNK4_1
-	LoadW z8b, __drv1541_zp_LOAD__
-	ldy #<(__drv1541_zp_SIZE__)
+	LoadW z8b, __drv1541_zp_LOAD__		; source address
+	ldy #<(__drv1541_zp_SIZE__)		; bytes ($00=256)
 	jsr Hst_SendByte
+	PopW r1
 :	ldx #>Drv_ReadSec			; read sector and status
 	lda #<Drv_ReadSec
 	jsr DUNK4_1
@@ -1101,7 +1104,8 @@ DriveLoop:
 	jmp (DExecAddy)
 
 Drv_RecvZP:
-	LoadW $73, __drv1541_zp_RUN__
+;	LoadW $73, __drv1541_zp_RUN__
+	MoveW DDatas, $73
 	jmp Drv_RecvWord
 
 Drv_ExitTurbo:
