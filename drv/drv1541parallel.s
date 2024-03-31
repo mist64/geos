@@ -14,6 +14,7 @@
 .include "c64.inc"
 
 .import __DRIVE0300_START__
+.import __DRIVE0300_LAST__
 
 .import __drv1541_drivecode_RUN__
 .import __drv1541_drivecode_SIZE__
@@ -934,13 +935,16 @@ _ReadLink:
 	jsr DoCacheRead
 	bne RdBlock2
 RdBlock0:
+	lda LastOper				; need to reload ZP code?
+	beq :+					; no, it's already there
+	LoadB LastOper, 0			; mark that ZP code is loaded
 	ldx #>Drv_RecvZP
 	lda #<Drv_RecvZP
 	jsr DUNK4_1
 	LoadW z8b, __drv1541_zp_LOAD__
 	ldy #<(__drv1541_zp_SIZE__)
 	jsr Hst_SendByte
-	ldx #>Drv_ReadSec
+:	ldx #>Drv_ReadSec			; read sector and status
 	lda #<Drv_ReadSec
 	jsr DUNK4_1
 	MoveW r4, z8b
@@ -962,6 +966,7 @@ RdBlock2:
 	rts
 
 __WriteBlock:
+__VerWriteBlock:
 	jsr CheckParams
 	bcc WrBlock2
 WrBlock1:
@@ -978,37 +983,6 @@ WrBlock1:
 	beq WrBlock2
 	bcs WrBlock1
 WrBlock2:
-	rts
-
-__VerWriteBlock:
-	jsr CheckParams
-	bcc VWrBlock3
-VWrBlock0:
-	lda #3
-	sta tryCount
-VWrBlock1:
-	ldx #>Drv_ReadSec
-	lda #<Drv_ReadSec
-	jsr DUNK4_1
-	jsr GetDOSError
-	beqx VWrBlock2
-	dec tryCount
-	bne VWrBlock1
-	ldx #WR_VER_ERR
-	inc errCount
-	lda errCount
-	cmp #5
-	beq VWrBlock2
-	pha
-	jsr WriteBlock
-	pla
-	sta errCount
-	beqx VWrBlock0
-VWrBlock2:
-	bnex VWrBlock3
-	bbrf 6, curType, VWrBlock3
-	jmp DoCacheWrite
-VWrBlock3:
 	rts
 
 GetDOSError:
@@ -1043,36 +1017,11 @@ DriveCode:
 
 DExecAddy = $0a		; unused t&s for buffer $0500
 DDatas = DExecAddy+2		; unused t&s for buffer $0600
+DLastOper = $0e		; 1 if $0700-$0790 has to be restored after write
 
 gcrdecode:
 .byte $03, $99, $99, $99, $99, $99, $99, $99, $99, $80, $00, $10, $99, $c0, $40, $50, $99, $99, $20, $30, $99, $f0, $60, $70, $99, $90, $a0, $b0, $99, $d0, $e0, $7f, $76, $80, $99, $90, $99, $99, $99, $76, $7f, $08, $00, $01, $99, $0c, $04, $05, $99, $99, $02, $03, $99, $0f, $06, $07, $99, $09, $0a, $0b, $99, $0d, $0e, $99, $99, $00, $20, $a0, $6c, $4c, $2c, $0c, $80, $08, $08, $0c, $99, $0f, $09, $0d, $00, $00, $08, $99, $00, $99, $01, $99, $10, $01, $0c, $99, $04, $99, $05, $99, $99, $10, $30, $b0, $02, $99, $03, $99, $c0, $0c, $0f, $99, $06, $99, $07, $99, $40, $04, $09, $99, $0a, $99, $0b, $99, $50, $05, $0d, $99, $0e, $90, $00, $d0, $40, $99, $20, $e0, $60, $80, $a0, $c0, $e0, $99, $00, $04, $02, $06, $0a, $0e, $20, $02, $18, $99, $10, $99, $11, $99, $30, $03, $1c, $99, $14, $99, $15, $99, $99, $c0, $f0, $d0, $12, $99, $13, $99, $f0, $0f, $1f, $99, $16, $99, $17, $99, $60, $06, $19, $99, $1a, $99, $1b, $99, $70, $07, $1d, $99, $1e, $a4, $a4, $a4, $a3, $40, $60, $e0, $15, $13, $12, $11, $90, $09, $01, $05, $03, $07, $0b, $99, $a0, $0a, $99, $99, $99, $99, $99, $99, $b0, $0b, $99, $99, $99, $99, $99, $99, $99, $50, $70, $99, $99, $99, $99, $99, $d0, $0d, $99, $99, $99, $99, $99, $99, $e0, $0e, $99, $99, $99, $99, $99, $99, $99, $99, $99, $99, $99, $99, $99, $99
 
-
-Drv_SendByte:			; send 256 bytes, then length (1) and status byte from $00
-	ldy #0
-	MoveW $73, Drv_SendAddr
-Drv_SendByte_1:
-	LoadB $1803, $ff	; port A output
-	dey			; first byte
-	lda ($73),y
-	sta $1801		; send first byte
-	lda #$10		; bit mask for handshake test
-Drv_SendByte_2:			; 27 cycles per byte
-	cpy #0
-	beq Drv_SendByteEnd
-	dey
-:	bit $180d		; wait for handshake
-	beq :-
-Drv_SendAddr = *+1
-	ldx $0700,y		; 1 cycle faster than lda ($73),y and we can keep A unchanged for bit test
-	stx $1801		; send data
-	bit $1800		; clear flag from previous handshake
-	jmp Drv_SendByte_2
-
-Drv_SendByteEnd:
-:	bit $180d		; wait for handshake
-	beq :-
-	bit $1800		; clear flag
 
 Drv_SendByte_0:
 	LoadB $1803, $ff	; send length (1) and status byte from $00
@@ -1132,6 +1081,13 @@ DriveStart:
 	lda $180f
 	and #%11011111
 	sta $180f
+	ldx #0
+	stx DLastOper			; READ allowed
+:	lda $0700,x
+	sta $0200,x
+	inx
+	cpx #<(__DRIVE0300_LAST__-__DRIVE0300_START__)
+	bne :-
 DriveLoop:
 	jsr D_DUNK8
 	LoadW $73, DExecAddy		; set rcv buffer to next command 
@@ -1343,6 +1299,7 @@ D_DUNK9_1:
 	rts
 
 Drv_WriteSec:
+	LoadB DLastOper, 1		; mark that $07xx will be destroyed
 	jsr D_DUNK5
 	ldx $00
 	dex
@@ -1352,8 +1309,18 @@ D_DUNK10_1:
 	jsr Drv_RecvWord
 	lda #$10
 	bne D_DUNK10_2
+
 Drv_ReadSec:
-	jsr D_DUNK5
+	lda DLastOper			; last operation was READ?
+	beq :++
+	ldx #0				; no, restore that code after write
+	stx DLastOper
+:	lda $0200,x
+	sta $0700,x
+	inx
+	cpx #<(__DRIVE0300_LAST__-__DRIVE0300_START__)
+	bne :-
+:	jsr D_DUNK5
 	lda #0
 D_DUNK10_2:
 	ldx $00
@@ -1380,14 +1347,33 @@ D_DUNK11_1:
 	LoadB $1c0c, $ee
 	lda $45
 	bne :+
-	jmp FastReadSector
+	jmp Drv_DoReadSector
 :	cmp #$10
-	beq D_DUNK11_3
-	cmp #$30
+	bne :+
+	jmp Drv_DoWriteSector
+:	cmp #$30
 	beq D_DUNK11_2
 	jmp $f4ca				; Test command code further ($00=read, $10=write, $20=verify, other=read block header)
 D_DUNK11_2:
 	jmp $f3b1				; Read block header, verify ID
+
+D_DUNK12:					; spin up motor
+	lda $20
+	and #$20
+	bne D_DUNK12_3				; already on
+	jsr $f97e				; Turn drive motor on
+D_DUNK12_1:
+	ldy #$80				; delay until it spins up
+:	dex
+	bne :-
+	dey
+	bne :-
+	sty $3e
+D_DUNK12_3:
+	LoadB $48, $ff
+	rts
+
+Drv_DoWriteSector:
 D_DUNK11_3:
 	jsr $f5e9				; Calculate parity for data buffer ($30)
 	sta $3a
@@ -1446,23 +1432,7 @@ D_DUNK11_9:
 	sta $00
 	rts
 
-D_DUNK12:					; spin up motor
-	lda $20
-	and #$20
-	bne D_DUNK12_3				; already on
-	jsr $f97e				; Turn drive motor on
-D_DUNK12_1:
-	ldy #$80				; delay until it spins up
-:	dex
-	bne :-
-	dey
-	bne :-
-	sty $3e
-D_DUNK12_3:
-	LoadB $48, $ff
-	rts
-
-FastReadSector:
+Drv_DoReadSector:
 	;;
 ;	ldx #0
 ;:	lda z:<__drv1541_zp_RUN__,x
@@ -1826,3 +1796,6 @@ tryCount:
 	.byte 0
 borderFlag:
 	.byte 0
+LastOper:
+	.byte $ff
+
