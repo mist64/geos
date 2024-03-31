@@ -1083,7 +1083,7 @@ DriveStart:
 	sta $180f
 	ldx #0
 	stx DLastOper			; READ allowed
-:	lda $0700,x
+:	lda $0700,x			; cache code that would be in the write buffer zone
 	sta $0200,x
 	inx
 	cpx #<(__DRIVE0300_LAST__-__DRIVE0300_START__)
@@ -1245,10 +1245,10 @@ Drv_NewDisk_4:
 Drv_NewDisk_5:
 	txa
 Drv_NewDisk_6:
-	jsr $f24b			; Establish number of sectors per track (in: A=track, out: A=number of sectors on that track)
+	jsr $f24b			; Establish number of sectors per track (in: A=track, out: A=number of sectors on that track, X=speed zone number)
 	sta $43
 Drv_NewDisk_7:
-	lda $1c00
+	lda $1c00			; set speedzone
 	and #$9f
 	ora DTrackTab,x
 Drv_NewDisk_8:
@@ -1271,7 +1271,7 @@ D_DUNK8_3:
 	and $1c00
 	jmp Drv_NewDisk_8
 
-DTrackTab:
+DTrackTab:				; speedzone (bitrate) bits for $1c00
 	.byte $00, $20, $40, $60
 
 D_DUNK9:
@@ -1292,8 +1292,8 @@ D_DUNK9_0:
 	bcc @X
 	ldy #0
 @X:	sty $19
-	LoadB $45, 0
-	LoadW $32, $0018
+	LoadB $45, 0			; job READ
+	LoadW $32, $0018		; sector 18,0
 	jsr D_DUNK11_1
 D_DUNK9_1:
 	rts
@@ -1329,7 +1329,7 @@ D_DUNK10_2:
 	rts
 
 D_DUNK11:
-	lda #$30
+	lda #$30				; job $B0 = SEEK
 D_DUNK11_0:
 	sta $45
 	lda #>DDatas
@@ -1347,15 +1347,14 @@ D_DUNK11_1:
 	LoadB $1c0c, $ee
 	lda $45
 	bne :+
-	jmp Drv_DoReadSector
-:	cmp #$10
+	jmp Drv_DoReadSector			; job $80 = READ
+:	cmp #$10				; job $90 = WRITE
 	bne :+
 	jmp Drv_DoWriteSector
-:	cmp #$30
-	beq D_DUNK11_2
-	jmp $f4ca				; Test command code further ($00=read, $10=write, $20=verify, other=read block header)
-D_DUNK11_2:
-	jmp $f3b1				; Read block header, verify ID
+:	cmp #$30				; job $B0 = SEEK
+	beq :+
+	jmp $f4ca				; Test command code further ($00=read, $10=write, $20=verify, $30 = SEEK, is this ever used?)
+:	jmp $f3b1				; SEEK, Read block header, verify ID
 
 D_DUNK12:					; spin up motor
 	lda $20
@@ -1433,18 +1432,6 @@ D_DUNK11_9:
 	rts
 
 Drv_DoReadSector:
-	;;
-;	ldx #0
-;:	lda z:<__drv1541_zp_RUN__,x
-;;XXX	sta $0700,x
-;	lda FastReadZp,x
-;	sta z:<__drv1541_zp_RUN__,x
-;	inx
-;	cpx #<__drv1541_zp_SIZE__
-;	bne :-
-	;;
-	;; XXX store stack
-
 		; Encode t&s into GCR
 
 		MoveW $12, $16		; ID1,2
@@ -1552,25 +1539,13 @@ zp_return:
 	; if header not found, send error $04
 :	jsr Drv_SendStatus
 
-	; restore stack
+	; restore stack pointer (must be below $01bb)
 	ldx #$45
 	txs
 
-	; restore zp
-
-;	ldx #0
-;:	lda $0700,x
-;;XXX	sta z:<__drv1541_zp_RUN__,x
-;	inx
-;	cpx #<__drv1541_zp_SIZE__
-;	bne :-
-
-	; return to main loop (XXX ExitTurbo must warm reset drive somehow)
+	; return to main loop (XXX ExitTurbo must warm reset drive somehow because we have destroyed stack contents)
 	jmp DriveLoop
 
-;FastReadZp:
-.segment "drv1541"
-Drv_ZPCode:
 .segment "drv1541_zp" : zeropage
 
 prof_zp:
@@ -1667,7 +1642,8 @@ zpc_bne:	.byt	$d0,BNE_WITHOUT_NOP	; 59 60 61	bne zpc_loop
 
 .segment "drv1541_b"
 
-	.ifndef dontcare
+; there is no space for cache code and tables anymore with disk driver area, so no Shadow 1541 possible
+	.ifndef notpossible
 ClearCache:
 DoClearCache:
 DoCacheRead:
@@ -1791,8 +1767,6 @@ DTrkSec:
 errCount:
 	.byte 0
 errStore:
-	.byte 0
-tryCount:
 	.byte 0
 borderFlag:
 	.byte 0
