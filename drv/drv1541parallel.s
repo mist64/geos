@@ -755,17 +755,20 @@ __EnterTurbo:
 	jsr SetDevice
 	ldx curDrive
 	lda _turboFlags,x
-	bmi EntTur0
+;;	bmi EntTur0
+	bpl :+
+	jmp EntTur3
+:	jsr InitForIO
 	jsr SendCODE
 	beqx :+
-	jmp EntTur5
-:	ldx curDrive
-	lda #%10000000
-	sta _turboFlags,x
-EntTur0:
-	and #%01000000
-	bne EntTur3
-	jsr InitForIO
+	jmp EntTur4
+:;	ldx curDrive
+;	lda #%10000000
+;	sta _turboFlags,x
+;;EntTur0:
+;	and #%01000000
+;	bne EntTur3
+;	jsr InitForIO
 	ldx #>EnterCommand
 	lda #<EnterCommand
 	jsr SendDOSCmd
@@ -779,6 +782,7 @@ EntTur0:
 	beq :-
 	lda cia2base+1			; confirm
 
+;EntTur00:
 	; send remainder code for zero page
 	LoadB LastOper, $ff
 	jsr ReloadDrvZP
@@ -809,8 +813,9 @@ EntTH:	lda #>DriveCode
 	jsr Hst_SendByte
 	jsr DoneWithIO
 	ldx curDrive
-	lda _turboFlags,x
-	ora #%01000000
+;;	lda _turboFlags,x
+;;	ora #%01000000
+	lda #%11000000
 	sta _turboFlags,x
 EntTur3:
 	ldx #0
@@ -829,6 +834,8 @@ SendExitTurbo:
 	ldx #>Drv_ExitTurbo
 	lda #<Drv_ExitTurbo
 	jsr DUNK4
+:	lda cia2base+13			; wait for final sync
+	beq :-
 	lda curDrive
 	jsr $ffb1
 	lda #$ef
@@ -837,7 +844,6 @@ SendExitTurbo:
 	jmp DoneWithIO
 
 SendCODE:
-	jsr InitForIO
 	LoadW z8d, DriveCode+$0100	; skip over first page (gcr decode, send only 1 page of code)
 	LoadW WriteAddy, __DRIVE0300_START__+$0100
 	LoadB z8f, <($00ff/$20)
@@ -859,7 +865,7 @@ SndCDE0:
 @Y:	dec z8f
 	bpl SndCDE0
 SndCDE1:
-	jmp DoneWithIO
+	rts
 
 SendCHUNK:
 	lda z8f
@@ -1157,7 +1163,13 @@ Drv_RecvZP:
 	.assert * < __DRIVE0300_START__ + $1ff, error, "Drv_Recv+DriveStart+DriveLoop+Drv_RecvZP must be within $0400-$04ff"
 
 Drv_ExitTurbo:
-	jmp ($fffc)			; exit through reset vector
+	lax #0
+:	sta $00,x
+	sta $0200,x
+	inx
+	bne :-
+	bit $1801			; final sync
+	jmp $eb22			; reset routine, after RAM/ROM test
 
 Drv_ChngDskDev:
 	lda DDatas
@@ -1262,8 +1274,7 @@ Drv_NewDisk_1:
 	ldx #$ff
 	lda #$01
 	jsr D_DUNK6
-	ldx #$01
-	txa
+	lax #$01
 	jsr D_DUNK6
 	lda #$ff
 	jsr D_DUNK6_4
