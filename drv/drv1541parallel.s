@@ -156,9 +156,6 @@ SetDirHead:
 	rts
 
 CheckParams:
-	bbrf 6, curType, CheckParams_1
-	jsr DoCacheVerify
-	beq CheckParams_2
 CheckParams_1:
 	lda #0
 	sta errCount
@@ -183,12 +180,7 @@ __OpenDisk:
 	bnex OpenDsk1
 	jsr GetDirHead
 	bnex OpenDsk1
-	bbrf 6, tmpDriveType, OpenDsk0
-	jsr DoCacheVerify
-	beq OpenDsk0
-	jsr DoClearCache
 	jsr SetDirHead
-	jsr DoCacheWrite
 OpenDsk0:
 	LoadW r5, curDirHead
 	jsr ChkDkGEOS
@@ -760,21 +752,13 @@ __EnterTurbo:
 	jsr SetDevice
 	ldx curDrive
 	lda _turboFlags,x
-;;	bmi EntTur0
 	bpl :+
 	jmp EntTur3
 :	jsr InitForIO
 	jsr SendCODE
 	beqx :+
 	jmp EntTur4
-:;	ldx curDrive
-;	lda #%10000000
-;	sta _turboFlags,x
-;;EntTur0:
-;	and #%01000000
-;	bne EntTur3
-;	jsr InitForIO
-	ldx #>EnterCommand
+:	ldx #>EnterCommand
 	lda #<EnterCommand
 	jsr SendDOSCmd
 	bnex EntTur4
@@ -787,7 +771,6 @@ __EnterTurbo:
 	beq :-
 	lda cia2base+1			; confirm
 
-;EntTur00:
 	; send remainder code for zero page
 	LoadB LastOper, $ff
 	jsr ReloadDrvZP
@@ -918,7 +901,6 @@ ExiTur0:
 	rts
 
 __PurgeTurbo:
-	jsr ClearCache
 	jsr ExitTurbo
 PurTur0:
 	ldy curDrive
@@ -929,7 +911,6 @@ PurTur0:
 __NewDisk:
 	jsr EnterTurbo
 	bnex NewDsk2
-	jsr ClearCache
 	jsr InitForIO
 	LoadB errCount, 0
 NewDsk0:
@@ -990,9 +971,6 @@ __ReadBlock:
 _ReadLink:
 	jsr CheckParams_1
 	bcc RdBlock2
-	bbrf 6, curType, RdBlock0
-	jsr DoCacheRead
-	bne RdBlock2
 RdBlock0:
 	jsr ReloadDrvZP
 	ldx #>Drv_ReadSec			; read sector and status
@@ -1002,16 +980,13 @@ RdBlock0:
 	ldy #0
 	jsr Hst_RecvByte
 	jsr GetDError
-	beqx RdBlock1
+	beq RdBlock1
 	inc errCount
 	cpy errCount
 	beq RdBlock1
 	bcs RdBlock0
 RdBlock1:
 	bnex RdBlock2
-	bbrf 6, curType, RdBlock2
-	jsr DoCacheWrite
-	bra RdBlock2
 RdBlock2:
 	ldy #0
 	rts
@@ -1706,113 +1681,6 @@ zpc_bne:	.byt	$d0,BNE_WITHOUT_NOP	; 59 60 61	bne zpc_loop
 		jmp	zp_return
 
 .segment "drv1541_b"
-
-; there is no space for cache code and tables anymore with disk driver area, so no Shadow 1541 possible
-	.ifndef notpossible
-ClearCache:
-DoClearCache:
-DoCacheRead:
-DoCacheWrite:
-DoCacheVerify:
-	rts
-.else
-ClrCacheDat:
-	.word 0
-
-ClearCache:
-	bbsf 6, curType, DoClearCache
-	rts
-DoClearCache:
-	LoadW r0, ClrCacheDat
-	ldy #0
-	sty r1L
-	sty r1H
-	sty r2H
-	iny
-	iny
-	sty r2L
-	iny
-	sty r3H
-	ldy curDrive
-	lda driveData,y
-	sta r3L
-DoClrCache1:
-	jsr StashRAM
-	inc r1H
-	bne DoClrCache1
-	inc r3L
-	dec r3H
-	bne DoClrCache1
-	rts
-
-DoCacheRead:
-	ldy #%10010001
-	jsr DoCacheDisk
-	ldy #0
-	lda (r4),y
-	iny
-	ora (r4),y
-	rts
-
-GiveNoError:
-	ldx #0
-	rts
-
-DoCacheVerify:
-	ldy #%10010011
-	jsr DoCacheDisk
-	and #$20
-	rts
-
-DoCacheWrite:
-	ldy #%10010000
-DoCacheDisk:
-	PushW r0
-	PushW r1
-	PushW r2
-	PushB r3L
-	tya
-	pha
-	ldy r1L
-	dey
-	lda CacheTabL,y
-	add r1H
-	sta r1H
-	lda CacheTabH,y
-	ldy curDrive
-	adc driveData,y
-	sta r3L
-	ldy #0
-	sty r1L
-	sty r2L
-	iny
-	sty r2H
-	MoveW r4, r0
-	pla
-	tay
-	jsr DoRAMOp
-	tax
-	PopB r3L
-	PopW r2
-	PopW r1
-	PopW r0
-	txa
-	ldx #0
-	rts
-
-CacheTabL:
-	.byte $00, $15, $2a, $3f, $54, $69, $7e, $93
-	.byte $a8, $bd, $d2, $e7, $fc, $11, $26, $3b
-	.byte $50, $65, $78, $8b, $9e, $b1, $c4, $d7
-	.byte $ea, $fc, $0e, $20, $32, $44, $56, $67
-	.byte $78, $89, $9a, $ab
-CacheTabH:
-	.byte $00, $00, $00, $00, $00, $00, $00, $00
-	.byte $00, $00, $00, $00, $00, $01, $01, $01
-	.byte $01, $01, $01, $01, $01, $01, $01, $01
-	.byte $01, $01, $02, $02, $02, $02, $02, $02
-	.byte $02, $02, $02, $02
-.endif
 
 tmpclkreg:
 	.byte 0
