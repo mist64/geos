@@ -789,9 +789,10 @@ EntTH:	lda #>DriveCode
 	jsr Hst_SendByte
 	inc DTrkSecH
 	inc EntTH+1
-	CmpBI DTrkSecH, $08
+	CmpBI DTrkSecH, $07
 	bne EntTur1
 	; send page 7 data also to page 2
+	inc z8c
 	LoadB DTrkSecH, $02
 	ldx #>Drv_RecvZP
 	lda #<Drv_RecvZP
@@ -1105,10 +1106,10 @@ DriveStart:
 	lda $180f
 	and #%11011111
 	sta $180f
-	LoadB DLastOper,0		; READ allowed
 	bit $1800			; clear CB1
 	lda $1801			; notify we're runing (initial sync)
 	lda #$10
+	sta DLastOper			; READ not allowed
 :	bit $180d			; sync
 	beq :-
 	bit $1800			; clear CB1
@@ -1142,22 +1143,8 @@ Drv_RecvZP:
 	.assert * < __DRIVE0300_START__ + $1ff, error, "Drv_Recv+DriveStart+DriveLoop+Drv_RecvZP must be within $0400-$04ff"
 
 Drv_ExitTurbo:
-	jsr Drv_LedOFF
-	ldy $78				; preserve device number
-	lax #0
-:	sta $00,x
-	sta $0200,x
-	inx
-	bne :-
-	bit $1801			; final sync
-	LoadB $180c, $01		; CA1 (ATN IN) trigger on positive edge
-	lda #$82
-	sta $180d			; interrupt possible through ATN IN
-	sta $180e
-	ldx #$45
-	txs
-	tya				; restore device number ($78)
-	jmp $eb45			; reset routine, after RAM/ROM test when device number is set
+	jsr Drv_RestorePage7
+	jmp Drv_DoExitTurbo
 
 Drv_ChngDskDev:
 	lda DDatas
@@ -1350,7 +1337,7 @@ D_DUNK10_1:
 	lda #$10
 	bne D_DUNK10_2
 
-Drv_ReadSec:
+Drv_RestorePage7:
 	lda DLastOper			; last operation was READ?
 	beq :++
 	ldx #0				; no, restore that code after write
@@ -1360,7 +1347,11 @@ Drv_ReadSec:
 	inx
 	cpx #<(__DRIVE0300_LAST__-__DRIVE0300_START__)
 	bne :-
-:	jsr D_DUNK5
+:	rts
+
+Drv_ReadSec:
+	jsr Drv_RestorePage7
+	jsr D_DUNK5
 	lda #0
 D_DUNK10_2:
 	ldx $00
@@ -1470,6 +1461,8 @@ D_DUNK11_8:
 D_DUNK11_9:
 	sta $00
 	jmp Drv_SendByte_0			; set port to output, send status from $00
+
+	.assert * < $700, error, "D_DUNK11 (WriteSector) must end before $0700"
 
 Drv_DoReadSector:
 		; Encode t&s into GCR
@@ -1594,6 +1587,25 @@ Drv_ReadSec_DataOut:
 
 	; return to main loop (XXX ExitTurbo must warm reset drive somehow because we have destroyed stack contents)
 	jmp DriveLoop
+
+Drv_DoExitTurbo:
+	jsr Drv_LedOFF
+	ldy $78				; preserve device number
+	lax #0
+:	sta $00,x
+	sta $0200,x
+	inx
+	bne :-
+	bit $1801			; final sync
+	LoadB $180c, $01		; CA1 (ATN IN) trigger on positive edge
+	lda #$82
+	sta $180d			; interrupt possible through ATN IN
+	sta $180e
+	ldx #$45
+	txs
+	tya				; restore device number ($78)
+	jmp $eb45			; reset routine, after RAM/ROM test when device number is set
+
 
 .segment "drv1541_zp" : zeropage
 
