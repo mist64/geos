@@ -1142,13 +1142,22 @@ Drv_RecvZP:
 	.assert * < __DRIVE0300_START__ + $1ff, error, "Drv_Recv+DriveStart+DriveLoop+Drv_RecvZP must be within $0400-$04ff"
 
 Drv_ExitTurbo:
+	jsr Drv_LedOFF
+	ldy $78				; preserve device number
 	lax #0
 :	sta $00,x
 	sta $0200,x
 	inx
 	bne :-
 	bit $1801			; final sync
-	jmp $eb22			; reset routine, after RAM/ROM test
+	LoadB $180c, $01		; CA1 (ATN IN) trigger on positive edge
+	lda #$82
+	sta $180d			; interrupt possible through ATN IN
+	sta $180e
+	ldx #$45
+	txs
+	tya				; restore device number ($78)
+	jmp $eb45			; reset routine, after RAM/ROM test when device number is set
 
 Drv_ChngDskDev:
 	lda DDatas
