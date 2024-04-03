@@ -43,6 +43,10 @@
 
 OPTIMAL_INTERLEAVE = 3
 
+DExeProc = $80
+DTrkSec  = $82
+DTrkSecH = $83
+
 .segment "drv1541"
 
 _InitForIO:
@@ -106,7 +110,7 @@ ReadBuff:
 	jmp _ReadBuff
 WriteBuff:
 	jmp _WriteBuff
-	jmp DUNK4_2
+	jmp DUNK4_1
 	jmp GetDOSError
 AllocateBlock:
 	jmp _AllocateBlock
@@ -724,18 +728,19 @@ SndDOSCmd1:
 	rts
 
 DUNK4:					; A/X addr of procedure to run, without parameters
-	stx z8c
-	sta z8b
+	stx DExeProc+1
+	sta DExeProc
 	ldy #2				; 2 bytes to send
 	bne DUNK4_3
 DUNK4_1:				; A/X addr of procedure to run, r1 t&s parameters
-	stx z8c
-	sta z8b
-DUNK4_2:				; called by NewDisk, but why send r1?
-	ldy #4				; 4 bytes to send
+	pha
 	MoveW r1, DTrkSec
+	pla
+DUNK4_11:				; A/X addr of procedure to run, parameters in DTrkSec already
+	stx DExeProc+1
+	sta DExeProc
+	ldy #4				; 4 bytes to send
 DUNK4_3:
-	MoveW z8b, DExeProc
 	LoadW z8b, DExeProc
 	jmp Hst_SendByte
 
@@ -789,25 +794,25 @@ __EnterTurbo:
 
 	; fast send rest of drive code: pages $03-$07
 	LoadB EntTH+1, >DriveCode
-	LoadW r1, __DRIVE0300_START__		; target address
+	LoadW DTrkSec, __DRIVE0300_START__	; target address
 EntTur1:
 	ldx #>Drv_RecvZP			; recieve data
 	lda #<Drv_RecvZP
-	jsr DUNK4_1
+	jsr DUNK4_11
 	LoadB z8b, <DriveCode			; source address
 EntTH:	lda #>DriveCode
 	sta z8c
 	ldy #0
 	jsr Hst_SendByte
-	inc r1H
+	inc DTrkSecH
 	inc EntTH+1
-	CmpBI r1H, $08
+	CmpBI DTrkSecH, $08
 	bne EntTur1
 	; send page 7 data also to page 2
-	LoadB r1H, $02
+	LoadB DTrkSecH, $02
 	ldx #>Drv_RecvZP
 	lda #<Drv_RecvZP
-	jsr DUNK4_1
+	jsr DUNK4_11
 	LoadW z8b, DriveCode+$0400
 	ldy #<(__DRIVE0300_LAST__-__DRIVE0300_START__)
 	jsr Hst_SendByte
@@ -928,8 +933,9 @@ __NewDisk:
 	jsr InitForIO
 	LoadB errCount, 0
 NewDsk0:
-	LoadW z8b, Drv_NewDisk
-	jsr DUNK4_2
+	ldx #>Drv_NewDisk
+	lda #<Drv_NewDisk
+	jsr DUNK4_1
 	jsr GetDOSError
 	beq NewDsk1
 	inc errCount
@@ -971,15 +977,13 @@ ReloadDrvZP:
 	lda LastOper				; need to reload ZP code?
 	beq :+					; no, it's already there
 	LoadB LastOper, 0			; mark that ZP code is loaded
-	PushW r1
-	LoadW r1, __drv1541_zp_RUN__		; target address
+	LoadW DTrkSec, __drv1541_zp_RUN__	; target address
 	ldx #>Drv_RecvZP			; recieve data
 	lda #<Drv_RecvZP
-	jsr DUNK4_1
+	jsr DUNK4_11
 	LoadW z8b, __drv1541_zp_LOAD__		; source address
 	ldy #<(__drv1541_zp_SIZE__)		; bytes ($00=256)
 	jsr Hst_SendByte
-	PopW r1
 :	rts
 
 __ReadBlock:
@@ -1186,20 +1190,27 @@ D_DUNK5:
 	dex
 	beq D_DUNK5_2
 D_DUNK5_1:
-	PushB $12
+	lda $12				; was disk logged in?
+	ora $13
+	beq :+				; no, just read the ID
+
+	PushB $12			; preserve current disk ID
 	PushB $13
 	jsr Drv_NewDisk_1
 	PopB $13
 	tax
 	PopB $12
 	ldy $00
-	cpy #$01
-	bne D_DUNK5_41
-	cpx $17
-	bne D_DUNK5_5
+	cpy #$01			; any error?
+	bne D_DUNK5_41			; yes, error
+	cpx $17				; different ID?
+	bne D_DUNK5_5			; yes, error
 	cmp $16
 	bne D_DUNK5_5
-	lda #0
+	beq :++
+
+:	jsr Drv_NewDisk_1		; login disk
+:	lda #0				; ID the same
 D_DUNK5_2:
 	pha
 	lda $22
@@ -1221,7 +1232,7 @@ D_DUNK5_4:
 D_DUNK5_41:
 	rts
 D_DUNK5_5:
-	LoadB $00, $0b
+	LoadB $00, $0b			; ID mismatch
 	rts
 
 D_DUNK6:
@@ -1813,11 +1824,6 @@ tmpCPU_DATA:
 	.byte 0
 tmpmobenble:
 	.byte 0
-	.byte 0
-DExeProc:
-	.word 0
-DTrkSec:
-	.word 0
 errCount:
 	.byte 0
 errStore:
