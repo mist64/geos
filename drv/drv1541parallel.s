@@ -789,10 +789,9 @@ EntTH:	lda #>DriveCode
 	jsr Hst_SendByte
 	inc DTrkSecH
 	inc EntTH+1
-	CmpBI DTrkSecH, $07
+	CmpBI DTrkSecH, >(__DRIVE0300_LAST__)
 	bne EntTur1
-	; send page 7 data also to page 2
-	inc z8c
+	; send page 7 data to page 2
 	LoadB DTrkSecH, $02
 	ldx #>Drv_RecvZP
 	lda #<Drv_RecvZP
@@ -802,8 +801,6 @@ EntTH:	lda #>DriveCode
 	jsr Hst_SendByte
 	jsr DoneWithIO
 	ldx curDrive
-;;	lda _turboFlags,x
-;;	ora #%01000000
 	lda #%11000000
 	sta _turboFlags,x
 EntTur3:
@@ -835,7 +832,7 @@ SendExitTurbo:
 SendCODE:
 	LoadW z8d, DriveCode+$0100	; skip over first page (gcr decode, send only 1 page of code)
 	LoadW WriteAddy, __DRIVE0300_START__+$0100
-	LoadB z8f, <($00ff/$20)
+	LoadB z8f, <( (Drv_END_MW_CODE-__DRIVE0300_START__-$0100) / $0020)
 SndCDE0:
 	jsr SendCHUNK
 	bnex SndCDE1
@@ -1049,24 +1046,6 @@ DLastOper = $0e		; 1 if $0700-$0790 has to be restored after write
 gcrdecode:
 .byte $03, $99, $99, $99, $99, $99, $99, $99, $99, $80, $00, $10, $99, $c0, $40, $50, $99, $99, $20, $30, $99, $f0, $60, $70, $99, $90, $a0, $b0, $99, $d0, $e0, $7f, $76, $80, $99, $90, $99, $99, $99, $76, $7f, $08, $00, $01, $99, $0c, $04, $05, $99, $99, $02, $03, $99, $0f, $06, $07, $99, $09, $0a, $0b, $99, $0d, $0e, $99, $99, $00, $20, $a0, $6c, $4c, $2c, $0c, $80, $08, $08, $0c, $99, $0f, $09, $0d, $00, $00, $08, $99, $00, $99, $01, $99, $10, $01, $0c, $99, $04, $99, $05, $99, $99, $10, $30, $b0, $02, $99, $03, $99, $c0, $0c, $0f, $99, $06, $99, $07, $99, $40, $04, $09, $99, $0a, $99, $0b, $99, $50, $05, $0d, $99, $0e, $90, $00, $d0, $40, $99, $20, $e0, $60, $80, $a0, $c0, $e0, $99, $00, $04, $02, $06, $0a, $0e, $20, $02, $18, $99, $10, $99, $11, $99, $30, $03, $1c, $99, $14, $99, $15, $99, $99, $c0, $f0, $d0, $12, $99, $13, $99, $f0, $0f, $1f, $99, $16, $99, $17, $99, $60, $06, $19, $99, $1a, $99, $1b, $99, $70, $07, $1d, $99, $1e, $a4, $a4, $a4, $a3, $40, $60, $e0, $15, $13, $12, $11, $90, $09, $01, $05, $03, $07, $0b, $99, $a0, $0a, $99, $99, $99, $99, $99, $99, $b0, $0b, $99, $99, $99, $99, $99, $99, $99, $50, $70, $99, $99, $99, $99, $99, $d0, $0d, $99, $99, $99, $99, $99, $99, $e0, $0e, $99, $99, $99, $99, $99, $99, $99, $99, $99, $99, $99, $99, $99, $99
 
-
-Drv_SendByte_0:
-	LoadB $1803, $ff	; send length (1) and status byte from $00
-Drv_SendStatus:
-	LoadB $1801, $01	; send length
-	lda #$10
-:	bit $180d		; wait for handshake
-	beq :-
-	bit $1800		; clear flag
-	ldy $00
-	sty $1801		; send status
-:	bit $180d		; wait for handshake
-	beq :-
-	bit $1800		; clear flag
-	LoadB $1803, $00	; port A input
-	rts
-
-
 Drv_RecvWord:
 	ldy #1
 	jsr Drv_RecvByte
@@ -1086,14 +1065,6 @@ Drv_RecvByte_1:
 	dey
 	sta ($73),y
 	bne Drv_RecvByte_1
-	rts
-
-D_DUNK4:
-	dec $48
-	bne D_DUNK4_1
-	jsr D_DUNK8_2
-D_DUNK4_1:
-	LoadB $1800, 0
 	rts
 
 DriveStart:
@@ -1140,7 +1111,24 @@ Drv_RecvZP:
 	MoveW DDatas, $73
 	jmp Drv_RecvWord
 
-	.assert * < __DRIVE0300_START__ + $1ff, error, "Drv_Recv+DriveStart+DriveLoop+Drv_RecvZP must be within $0400-$04ff"
+Drv_END_MW_CODE:		; marker for end of code that has to be sent via M-W command
+
+Drv_SendByte_0:
+	LoadB $1803, $ff	; send length (1) and status byte from $00
+Drv_SendStatus:
+	LoadB $1801, $01	; send length
+	lda #$10
+:	bit $180d		; wait for handshake
+	beq :-
+	bit $1800		; clear flag
+	ldy $00
+	sty $1801		; send status
+:	bit $180d		; wait for handshake
+	beq :-
+	bit $1800		; clear flag
+	LoadB $1803, $00	; port A input
+	rts
+
 
 Drv_ExitTurbo:
 	jsr Drv_RestorePage7
@@ -1151,6 +1139,14 @@ Drv_ChngDskDev:
 	sta $77
 	eor #$60
 	sta $78
+	rts
+
+D_DUNK4:
+	dec $48
+	bne D_DUNK4_1
+	jsr D_DUNK8_2
+D_DUNK4_1:
+	LoadB $1800, 0
 	rts
 
 D_DUNK5:
