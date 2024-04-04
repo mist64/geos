@@ -1,9 +1,9 @@
 ; GEOS by Berkeley Softworks
 ; reverse engineered by Maciej Witkowiak, Michael Steil
 ;
+; On the fly sector read and GCR decoding code from Spindle 3.1 by lft, linusakesson.net/software/spindle/
+;
 ; Commodore 1541 disk driver with parallel cable by Maciej Witkowiak
-; NOTE: OPTIMAL_INTERLEAVE has to be determined experimentally
-; NOTE2: if drive code jams - check if 'jmp (DExecAddy)' is on page boundary - it's dangerously close
 
 .include "const.inc"
 .include "geossym.inc"
