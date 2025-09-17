@@ -145,6 +145,7 @@ ifneq ($(VARIANT), bsw128)
 	kernal/ramexp/ramexp1.s \
 	kernal/ramexp/ramexp2.s \
 	kernal/rename.s \
+	kernal/rtc/rtc.s \
 	kernal/tobasic/tobasic1.s
 endif
 
