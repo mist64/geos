@@ -234,6 +234,7 @@ endif
 DRIVER_SOURCES= \
 	drv/drv1541.bin \
 	drv/drv1571.bin \
+	drv/drv1571burst.bin \
 	drv/drv1581.bin \
 	input/joydrv.bin \
 	input/amigamse.bin \
@@ -270,6 +271,7 @@ ALL_BINS= \
 	$(BUILD_DIR)/kernal/kernal.bin \
 	$(BUILD_DIR)/drv/drv1541.bin \
 	$(BUILD_DIR)/drv/drv1571.bin \
+	$(BUILD_DIR)/drv/drv1571burst.bin \
 	$(BUILD_DIR)/drv/drv1581.bin \
 	$(BUILD_DIR)/input/joydrv.bin \
 	$(BUILD_DIR)/input/amigamse.bin \
@@ -307,7 +309,7 @@ $(BUILD_DIR)/$(D64_RESULT): $(BUILD_DIR)/kernal_compressed.prg
 	else \
 		echo format geos,00 d64 $@ | $(C1541) >/dev/null; \
 		echo write $< geos128 | $(C1541) $@ >/dev/null; \
-		if [ -e $(DESKTOP_CVT) ]; then echo geoswrite $(DESKTOP_CVT) | $(C1541) $@; fi >/dev/null; \
+		if [ -e "$(DESKTOP_CVT)" ]; then echo geoswrite "$(DESKTOP_CVT)" | $(C1541) $@; fi >/dev/null; \
 		echo \*\*\* Created fresh $@.; \
 	fi;
 else
@@ -381,6 +383,9 @@ $(BUILD_DIR)/drv/drv1541.bin: $(BUILD_DIR)/drv/drv1541.o drv/drv1541.cfg $(DEPS)
 
 $(BUILD_DIR)/drv/drv1571.bin: $(BUILD_DIR)/drv/drv1571.o drv/drv1571.cfg $(DEPS)
 	$(LD) -C drv/drv1571.cfg $(BUILD_DIR)/drv/drv1571.o -o $@
+
+$(BUILD_DIR)/drv/drv1571burst.bin: $(BUILD_DIR)/drv/drv1571burst.o drv/drv1571burst.cfg $(DEPS)
+	$(LD) -C drv/drv1571burst.cfg $(BUILD_DIR)/drv/drv1571burst.o -o $@
 
 $(BUILD_DIR)/drv/drv1581.bin: $(BUILD_DIR)/drv/drv1581.o drv/drv1581.cfg $(DEPS)
 	$(LD) -C drv/drv1581.cfg $(BUILD_DIR)/drv/drv1581.o -o $@
