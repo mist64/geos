@@ -902,12 +902,13 @@ GetBurstByte:
 	LDA #8
 :	BIT cia1ICR			; wait for status byte
 	BEQ :-
+	LDA cia1Data
+	STA STATUS
 	LDA ciaSerialClk
 	EOR #$10
 	STA ciaSerialClk
 
-	LDA cia1Data
-	STA STATUS
+	LDA STATUS
 	rts
 
 __ReadBlock:
@@ -936,8 +937,8 @@ RdBurstLp:
 	LDA #8
 :	BIT cia1ICR			; wait for next byte
 	BEQ :-
-	STX ciaSerialClk
 	LDA cia1Data
+	STX ciaSerialClk
 	STA (r4),y
 	INY
 	BNE RdBurstLp
