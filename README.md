@@ -42,7 +42,7 @@ With just **20 KB** of binary code, the GEOS "KERNAL" has the following features
 	* Memory and strings library
 	* Realtime clock with alarm
 
-The default shell of GEOS is *deskTop*, a file manager an application launcher.
+The default shell of GEOS is *deskTop*, a file manager and application launcher.
 
 Several powerful applications are available for GEOS, including
 
