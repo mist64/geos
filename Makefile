@@ -299,9 +299,12 @@ regress:
 	@echo "********** Building variant 'wheels'"
 	@$(MAKE) VARIANT=wheels all
 	./regress.sh wheels
+	@echo "********** Bulding apps"
+	@$(MAKE) -C apps regress
 
 clean:
 	rm -rf build
+	$(MAKE) -C apps clean
 
 ifeq ($(VARIANT),bsw128)
 $(BUILD_DIR)/$(D64_RESULT): $(BUILD_DIR)/kernal_compressed.prg
@@ -317,18 +320,23 @@ $(BUILD_DIR)/$(D64_RESULT): $(BUILD_DIR)/kernal_compressed.prg
 		echo \*\*\* Created fresh $@.; \
 	fi;
 else
-$(BUILD_DIR)/$(D64_RESULT): $(BUILD_DIR)/kernal_compressed.prg
+$(BUILD_DIR)/$(D64_RESULT): $(BUILD_DIR)/kernal_compressed.prg applications
 	@if [ -e $(D64_TEMPLATE) ]; then \
 		cp $(D64_TEMPLATE) $@; \
-		echo delete geos geoboot | $(C1541) $@ ;\
-		echo write $< geos | $(C1541) $@ ;\
+		echo delete geos geoboot | $(C1541) $@ >/dev/null ;\
+		echo write $< geos | $(C1541) $@ >/dev/null ;\
 		echo \*\*\* Created $@ based on $(D64_TEMPLATE).; \
 	else \
 		echo format geos,00 d64 $@ | $(C1541) >/dev/null; \
 		echo write $< geos | $(C1541) $@ >/dev/null; \
 		if [ -e $(DESKTOP_CVT) ]; then echo geoswrite $(DESKTOP_CVT) | $(C1541) $@; fi >/dev/null; \
 		echo \*\*\* Created fresh $@.; \
-	fi;
+	fi; \
+	if [ -e $(BUILD_DIR)/apps/configure.cvt ]; then \
+		echo delete configure | $(C1541) $@ >/dev/null; \
+		echo geoswrite $(BUILD_DIR)/apps/configure.cvt | $(C1541) $@ >/dev/null ; \
+		echo \*\*\* Wrote custom CONFIGURE $@.; \
+	fi
 endif
 
 $(BUILD_DIR)/kernal_compressed.prg: $(BUILD_DIR)/kernal_combined.prg
@@ -375,6 +383,13 @@ else
 	@cat $(BUILD_DIR)/input/$(INPUT).bin >> $(BUILD_DIR)/tmp.bin 2> /dev/null
 	@mv $(BUILD_DIR)/tmp.bin $(BUILD_DIR)/kernal_combined.prg
 endif
+
+.EXPORT_ALL_VARIABLES:
+	export
+
+applications: $(BUILD_DIR)/drv/drv1541.bin $(BUILD_DIR)/drv/drv1571.bin $(BUILD_DIR)/drv/drv1581.bin
+	@echo Creating apps
+	$(MAKE) -C apps
 
 ifeq ($(VARIANT),bsw128)
 INPUTCFG = input/inputdrv_bsw128.cfg

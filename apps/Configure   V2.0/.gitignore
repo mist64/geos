@@ -1,0 +1,7 @@
+*.o
+*.cvt
+*.map
+*.lab
+.*.swp
+configure.hex
+configure.diff
