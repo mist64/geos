@@ -24,6 +24,11 @@
 .ifdef wheels
 .import GetBlock
 .endif
+.ifdef useRamExp
+.import DeskTopOpen
+.import DeskTopName
+.import CopyString
+.endif
 
 .global _FollowChain
 .global _FindFTypes

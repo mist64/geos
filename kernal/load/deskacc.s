@@ -35,6 +35,13 @@
 .import StashRAM
 .endif
 
+.ifdef useRamExp
+.import RamExpRead
+.import RamExpGetStat
+.import RamExpWrite
+.import RamExpPutStat
+.endif
+
 .global _LdDeskAcc
 .global _RstrAppl
 
@@ -198,11 +205,6 @@ _RstrAppl:
 	lda #0
 .elseif .defined(useRamExp)
 ; restore from other bank
-	ldx DeskAccSP
-	txs
-	tax
-	PushW DeskAccPC
-	rts
 	jsr RamExpGetStat
 	MoveW diskBlkBuf+DACC_ST_ADDR, r0
 	MoveB diskBlkBuf+DACC_LGH, r2H

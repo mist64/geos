@@ -33,6 +33,13 @@
 .import InitMachine
 .endif
 
+.ifdef useRamExp
+.import RamExpRead
+.import DeskTopStart
+.import DeskTopLgh
+.import DeskTopExec
+.endif
+
 .global _EnterDeskTop
 .global _StartAppl
 
