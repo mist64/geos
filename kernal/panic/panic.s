@@ -14,6 +14,9 @@
 .import DoDlgBox
 .import Ddec
 .import EnterDeskTop
+.ifdef gateway
+.import SwapRAM
+.endif
 
 ; syscall
 .global _Panic

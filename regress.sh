@@ -12,12 +12,14 @@ cat build/$variant/kernal/kernal.bin /dev/zero | dd bs=1 count=25216 skip=19840 
 # from reference version
 dd if=/dev/zero bs=1 count=40320 of=build/compare/kernal_reference.bin 2> /dev/null
 cat reference/$variant/lokernal.bin /dev/zero | dd bs=1 count=8640 >> build/compare/kernal_reference.bin 2> /dev/null
-cat reference/$variant/kernal.bin >> build/compare/kernal_reference.bin
+cat reference/$variant/kernal.bin /dev/zero | dd bs=1 count=16576 >> build/compare/kernal_reference.bin 2> /dev/null
 
-dd if=/dev/zero bs=1 count=49152 of=build/compare/kernal2.bin 2> /dev/null
-cat build/$variant/kernal/kernal2.bin >> build/compare/kernal2.bin
-dd if=/dev/zero bs=1 count=49152 of=build/compare/kernal2_reference.bin 2> /dev/null
-cat reference/$variant/kernal2.bin >> build/compare/kernal2_reference.bin
+if [ -e build/$variant/kernal/kernal2.bin ] && [ -e reference/$variant/kernal2.bin ]; then
+	dd if=/dev/zero bs=1 count=49152 of=build/compare/kernal2.bin 2> /dev/null
+	cat build/$variant/kernal/kernal2.bin >> build/compare/kernal2.bin
+	dd if=/dev/zero bs=1 count=49152 of=build/compare/kernal2_reference.bin 2> /dev/null
+	cat reference/$variant/kernal2.bin >> build/compare/kernal2_reference.bin
+fi
 
 #
 # create RAM images of Wheels "new kernal" extensions at $5000
@@ -34,12 +36,18 @@ for i in 0 1 2 3 4 5 6 7 8 9 10 11 x; do
 done
 
 
+fail=0
 for file in kernal kernal2 reu0 reu1 reu2 reu3 reu4 reu5 reu6 reu7 reu8 reu9 reu10 reu11 reux; do
 	if [ -e build/compare/$file.bin ]; then
-		echo $file
 		hexdump -v -C build/compare/$file.bin > build/compare/$file.txt
 		hexdump -v -C build/compare/${file}_reference.bin > build/compare/${file}_reference.txt
-		diff --suppress-common-lines -y build/compare/${file}_reference.txt build/compare/${file}.txt | head -n 40
-		#diff --suppress-common-lines -y build/compare/${file}_reference.txt build/compare/${file}.txt
+		if diff build/compare/${file}_reference.txt build/compare/${file}.txt > /dev/null 2>&1; then
+			echo "$file: OK"
+		else
+			echo "$file: MISMATCH"
+			diff --suppress-common-lines -y build/compare/${file}_reference.txt build/compare/${file}.txt | head -n 40
+			fail=1
+		fi
 	fi
 done
+exit $fail

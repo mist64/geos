@@ -290,6 +290,12 @@ regress:
 	@echo "********** Building variant 'bsw'"
 	@$(MAKE) VARIANT=bsw all
 	./regress.sh bsw
+	@echo "********** Building variant 'gateway'"
+	@$(MAKE) VARIANT=gateway all
+	./regress.sh gateway
+	@echo "********** Building variant 'bsw128'"
+	@$(MAKE) VARIANT=bsw128 all
+	./regress.sh bsw128
 	@echo "********** Building variant 'wheels'"
 	@$(MAKE) VARIANT=wheels all
 	./regress.sh wheels
