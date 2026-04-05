@@ -50,4 +50,31 @@ for file in kernal kernal2 reu0 reu1 reu2 reu3 reu4 reu5 reu6 reu7 reu8 reu9 reu
 		fi
 	fi
 done
+
+# compare disk drivers against reference binaries
+for file in drv1541; do
+	if [ -e reference/$variant/$file.bin ] && [ -e build/$variant/drv/$file.bin ]; then
+		if diff reference/$variant/$file.bin build/$variant/drv/$file.bin > /dev/null 2>&1; then
+			echo "$file: OK"
+		else
+			echo "$file: MISMATCH"
+			diff --suppress-common-lines -y <(hexdump -v -C reference/$variant/$file.bin) <(hexdump -v -C build/$variant/drv/$file.bin) | head -n 20
+			fail=1
+		fi
+	fi
+done
+
+# compare input drivers against reference binaries
+for file in joydrv; do
+	if [ -e reference/$variant/$file.bin ] && [ -e build/$variant/input/$file.bin ]; then
+		if diff reference/$variant/$file.bin build/$variant/input/$file.bin > /dev/null 2>&1; then
+			echo "$file: OK"
+		else
+			echo "$file: MISMATCH"
+			diff --suppress-common-lines -y <(hexdump -v -C reference/$variant/$file.bin) <(hexdump -v -C build/$variant/input/$file.bin) | head -n 20
+			fail=1
+		fi
+	fi
+done
+
 exit $fail
