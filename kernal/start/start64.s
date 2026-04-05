@@ -38,6 +38,9 @@
 .import LoadDeskTop
 .endif
 
+.ifdef useRTC
+.import RTCSetupDateAndTime
+.endif
 
 .segment "start"
 
@@ -121,6 +124,9 @@ ASSERT_NOT_BELOW_IO
 	sta year,y
 	dey
 	bpl @6
+.ifdef useRTC
+	jsr RTCSetupDateAndTime
+.endif
 
 	;
 	jsr FirstInit
