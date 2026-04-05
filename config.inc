@@ -176,6 +176,8 @@ useRTC = 1
 
 .if .defined(drv1541)
 DRV_TYPE = 1 ; DRV_1541
+.elseif .defined(drv1541parallel)
+DRV_TYPE = 1; DRV_1541
 .elseif .defined(drv1571)
 DRV_TYPE = 2; DRV_1571
 .elseif .defined(drv1571burst)

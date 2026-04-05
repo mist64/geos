@@ -1298,7 +1298,7 @@ Drv_ExitTurbo:
 	jsr D_DUNK4_1
 	LoadB $33, 0
 	sta $1800
-	jsr $f98f
+	jsr $f98f			; turn drive motor off
 	LoadB $1c0c, $ec
 	pla
 	pla
@@ -1435,7 +1435,7 @@ Drv_NewDisk_4:
 Drv_NewDisk_5:
 	txa
 Drv_NewDisk_6:
-	jsr $f24b
+	jsr $f24b			; Establish number of sectors per track (in: A=track, out: A=number of sectors on that track)
 	sta $43
 Drv_NewDisk_7:
 	lda $1c00
@@ -1528,11 +1528,11 @@ D_DUNK11_1:
 	beq D_DUNK11_3
 	cmp #$30
 	beq D_DUNK11_2
-	jmp $f4ca
+	jmp $f4ca				; Test command code further ($00=read, $10=write, $20=verify, other=read block header)
 D_DUNK11_2:
-	jmp $f3b1
+	jmp $f3b1				; Read block header, verify ID
 D_DUNK11_3:
-	jsr $f5e9
+	jsr $f5e9				; Calculate parity for data buffer ($30)
 	sta $3a
 	lda $1c00
 	and #$10
@@ -1540,11 +1540,11 @@ D_DUNK11_3:
 	lda #$08
 	bne D_DUNK11_9
 D_DUNK11_4:
-	jsr $f78f
-	jsr $f510
+	jsr $f78f				; Convert 260 bytes (256+4) to 325 bytes group code buffer $01BB-$01FF and ($30)
+	jsr $f510				; Read block header (wait until needed block header arrives)
 	ldx #9
 D_DUNK11_5:
-	bvc D_DUNK11_5
+	bvc D_DUNK11_5				; skip over sync
 	clv
 	dex
 	bne D_DUNK11_5
@@ -1565,14 +1565,14 @@ D_DUNK11_6:
 	bne D_DUNK11_6
 	ldy #$bb
 D_DUNK11_7:
-	lda $0100,y
+	lda $0100,y				; write data
 	bvc *
 	clv
 	sta $1c01
 	iny
 	bne D_DUNK11_7
 D_DUNK11_8:
-	lda ($30),y
+	lda ($30),y				; write data, continued
 	bvc *
 	clv
 	sta $1c01
@@ -1593,9 +1593,9 @@ D_DUNK12:
 	lda $20
 	and #$20
 	bne D_DUNK12_3
-	jsr $f97e
+	jsr $f97e				; Turn drive motor on
 D_DUNK12_1:
-	ldy #$80
+	ldy #$80				; delay until it spins up
 D_DUNK12_2:
 	dex
 	bne D_DUNK12_2
